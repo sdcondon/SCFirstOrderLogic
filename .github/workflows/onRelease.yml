@@ -1,0 +1,34 @@
+name: Push NuGet Packages
+
+on: 
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Set up dotnet
+      uses: actions/setup-dotnet@v1
+
+    - name: Set up Nuget
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+
+    - name: Get package version
+      id: getPackageVersion
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      shell: bash
+
+    - name: Build
+      run: dotnet build -c Release -p:Version=${{ steps.getPackageVersion.outputs.VERSION }}
+      working-directory: ./src
+
+    - name: Push packages
+      run: nuget push "**/*.nupkg" -Source nuget.org
+      working-directory: ./src

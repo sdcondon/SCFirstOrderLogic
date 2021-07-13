@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>LinqToKnowledgeBase.FirstOrderLogic</AssemblyName>
+    <RootNamespace>LinqToKnowledgeBase.FirstOrderLogic</RootNamespace>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageIcon>LinqToKBIcon.png</PackageIcon>
+    <Description>First-order logic inference engine in which knowledge and queries are represented by LINQ expressions.</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageTags>linq inference-engine propositional-logic knowledge-base</PackageTags>
+    <Product>LinqToKnowledgeBase</Product>
+    <PackageId>LinqToKnowledgeBase.FirstOrderLogic</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<None Include="$(SolutionDir)\LinqToKBIcon.png" Link="LinqToKBIcon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>
