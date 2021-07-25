@@ -12,13 +12,6 @@ namespace LinqToKB.FirstOrderLogic.InternalUtilities
             return Expression.Lambda<Predicate<T>>(body, lambda.Parameters);
         }
 
-        public static LambdaExpression MakeSubLambda(this LambdaExpression lambda, Expression body)
-        {
-            // TODO-ROBUSTNESS: Debug check that lambda contains body?
-            // 
-            return Expression.Lambda(body, lambda.Parameters);
-        }
-
         public static Expression<Predicate<T>> MakeSubPredicateExpr2<T>(this Expression<Predicate<T>> lambda, Expression body)
         {
             // TODO-ROBUSTNESS: Debug check that lambda contains body?
@@ -28,7 +21,16 @@ namespace LinqToKB.FirstOrderLogic.InternalUtilities
                 throw new Exception("BOOM");
             }
 
+            // TODO-SHOWSTOPPER: For the lambda to make sense, needs to add the bodyLambda parameters to the parameters here.
+            // But then the result signature is no longer correct. Sorting this out has deep consequences for the design of the lib.
             return Expression.Lambda<Predicate<T>>(bodyLambda.Body, lambda.Parameters);
+        }
+
+        public static LambdaExpression MakeSubLambda(this LambdaExpression lambda, Expression body)
+        {
+            // TODO-ROBUSTNESS: Debug check that lambda contains body?
+            // 
+            return Expression.Lambda(body, lambda.Parameters);
         }
     }
 }

@@ -21,15 +21,29 @@ namespace LinqToKB.FirstOrderLogic
         [Fact]
         public void Smoke2()
         {
-            FOLSentence<string>.TryCreate(d => d.All(x => d.Any(y => x == y)), out var sentence).Should().BeTrue();
+            FOLSentence<object>.TryCreate(d => d.All(x => d.Any(y => x == y)), out var sentence).Should().BeTrue();
 
-            sentence.Should().BeEquivalentTo(new FOLUniversalQuantification<string>(
-                new FOLVariableTerm<string>("x"),
-                new FOLExistentialQuantification<string>(
-                    new FOLVariableTerm<string>("y"),
-                    new FOLEquality<string>(
-                        new FOLVariableTerm<string>("x"),
-                        new FOLVariableTerm<string>("y")))));
+            sentence.Should().BeEquivalentTo(new FOLUniversalQuantification<object>(
+                new FOLVariableTerm<object>("x"),
+                new FOLExistentialQuantification<object>(
+                    new FOLVariableTerm<object>("y"),
+                    new FOLEquality<object>(
+                        new FOLVariableTerm<object>("x"),
+                        new FOLVariableTerm<object>("y")))));
+        }
+
+        [Fact]
+        public void Smoke3()
+        {
+            FOLSentence<object>.TryCreate(d => d.All(x => d.Any(y => x == y)), out var sentence).Should().BeTrue();
+
+            sentence.Should().BeEquivalentTo(new FOLUniversalQuantification<object>(
+                new FOLVariableTerm<object>("x"),
+                new FOLExistentialQuantification<object>(
+                    new FOLVariableTerm<object>("y"),
+                    new FOLEquality<object>(
+                        new FOLVariableTerm<object>("x"),
+                        new FOLVariableTerm<object>("y")))));
         }
     }
 }
