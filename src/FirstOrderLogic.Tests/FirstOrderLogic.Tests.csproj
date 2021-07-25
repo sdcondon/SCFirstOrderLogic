@@ -5,9 +5,9 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>LinqToKnowledgeBase.FirstOrderLogic</RootNamespace>
+    <RootNamespace>LinqToKB.FirstOrderLogic</RootNamespace>
 
-    <AssemblyName>cd</AssemblyName>
+    <AssemblyName>LinqToKB.FirstOrderLogic.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("LinqToKnowledgeBase.FirstOrderLogic.Tests")]
+[assembly: InternalsVisibleTo("LinqToKB.FirstOrderLogic.Tests")]

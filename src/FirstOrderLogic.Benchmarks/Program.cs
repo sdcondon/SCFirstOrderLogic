@@ -2,7 +2,7 @@
 using BenchmarkDotNet.Running;
 using System.Reflection;
 
-namespace LinqToKnowledgeBase.PropositionalLogic.Benchmarks
+namespace LinqToKB.PropositionalLogic.Benchmarks
 {
     [MemoryDiagnoser]
     [InProcess]

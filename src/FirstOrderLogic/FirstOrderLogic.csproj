@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyName>LinqToKnowledgeBase.FirstOrderLogic</AssemblyName>
-    <RootNamespace>LinqToKnowledgeBase.FirstOrderLogic</RootNamespace>
+    <AssemblyName>LinqToKB.FirstOrderLogic</AssemblyName>
+    <RootNamespace>LinqToKB.FirstOrderLogic</RootNamespace>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageIcon>LinqToKBIcon.png</PackageIcon>
