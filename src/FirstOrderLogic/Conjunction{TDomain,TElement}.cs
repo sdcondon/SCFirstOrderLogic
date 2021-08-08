@@ -11,33 +11,35 @@ namespace LinqToKB.FirstOrderLogic
     /// In C#, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
     /// <code>{expression} {&amp;&amp; or &amp;} {expression}</code>
     /// </summary>
+    /// <typeparam name="TDomain">The type of the domain.</typeparam>
     /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
-    public class FOLConjunction<TElement> : FOLComplexSentence<TElement>
+    public class Conjunction<TDomain, TElement> : Sentence<TDomain, TElement>
+        where TDomain : IEnumerable<TElement>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FOLConjunction{TModel}"/> class.
+        /// Initializes a new instance of the <see cref="Conjunction{TDomain, TElement}"/> class.
         /// </summary>
         /// <param name="left">The left side of the conjunction.</param>
         /// <param name="right">The right side of the conjunction.</param>
-        public FOLConjunction(FOLSentence<TElement> left, FOLSentence<TElement> right) => (Left, Right) = (left, right);
+        public Conjunction(Sentence<TDomain, TElement> left, Sentence<TDomain, TElement> right) => (Left, Right) = (left, right);
 
         /// <summary>
         /// Gets the left side of the conjunction.
         /// </summary>
-        public FOLSentence<TElement> Left { get; }
+        public Sentence<TDomain, TElement> Left { get; }
 
         /// <summary>
         /// Gets the right side of the conjunction.
         /// </summary>
-        public FOLSentence<TElement> Right { get; }
+        public Sentence<TDomain, TElement> Right { get; }
 
-        internal static new bool TryCreate(Expression<Predicate<IEnumerable<TElement>>> lambda, out FOLSentence<TElement> sentence)
+        internal static new bool TryCreate(LambdaExpression lambda, out Sentence<TDomain, TElement> sentence)
         {
             if (lambda.Body is BinaryExpression binaryExpr && (binaryExpr.NodeType == ExpressionType.AndAlso || binaryExpr.NodeType == ExpressionType.And)
-                && FOLSentence<TElement>.TryCreate(lambda.MakeSubPredicateExpr(binaryExpr.Left), out var left)
-                && FOLSentence<TElement>.TryCreate(lambda.MakeSubPredicateExpr(binaryExpr.Right), out var right))
+                && Sentence<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Left), out var left)
+                && Sentence<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Right), out var right))
             {
-                sentence = new FOLConjunction<TElement>(left, right);
+                sentence = new Conjunction<TDomain, TElement>(left, right);
                 return true;
             }
 
@@ -48,7 +50,7 @@ namespace LinqToKB.FirstOrderLogic
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (!(obj is FOLConjunction<TElement> otherConjunction))
+            if (!(obj is Conjunction<TDomain, TElement> otherConjunction))
             {
                 return false;
             }

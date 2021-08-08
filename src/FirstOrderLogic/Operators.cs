@@ -1,6 +1,9 @@
 ﻿namespace LinqToKB.FirstOrderLogic
 {
-    public static class Symbols
+    /// <summary>
+    /// Static methods for logical operators that don't exist in C#.
+    /// </summary>
+    public static class Operators
     {
         /// <summary>
         /// Checks if material implication, ⇒, holds.
@@ -13,8 +16,8 @@
         /// <summary>
         /// Checks if material equivalence, ⇔, holds.
         /// </summary>
-        /// <param name="equivalent1"></param>
-        /// <param name="equivalent2"></param>
+        /// <param name="equivalent1">The first equivalent.</param>
+        /// <param name="equivalent2">The second equivalent.</param>
         /// <returns>True if both equivalents are true or both are false; otherwise false.</returns>
         public static bool Iff(bool equivalent1, bool equivalent2) => equivalent1 == equivalent2;
     }

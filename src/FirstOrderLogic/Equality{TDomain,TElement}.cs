@@ -11,34 +11,36 @@ namespace LinqToKB.FirstOrderLogic
     /// In C#, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
     /// <code>{expression} == {expression}</code>
     /// </summary>
+    /// <typeparam name="TDomain">The type of the domain.</typeparam>
     /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
-    public class FOLEquality<TElement> : FOLAtomicSentence<TElement>
+    public class Equality<TDomain, TElement> : Sentence<TDomain, TElement>
+        where TDomain : IEnumerable<TElement>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FOLEquality{TModel}"/> class.
         /// </summary>
         /// <param name="variable">The variable declared by this quantification.</param>
         /// <param name="sentence">The sentence that this quantification applies to.</param>
-        public FOLEquality(FOLTerm<TElement> left, FOLTerm<TElement> right) => (Left, Right) = (left, right);
+        public Equality(Term<TDomain, TElement> left, Term<TDomain, TElement> right) => (Left, Right) = (left, right);
 
         /// <summary>
         /// Gets the left hand side of the equality.
         /// </summary>
-        public FOLTerm<TElement> Left { get; }
+        public Term<TDomain, TElement> Left { get; }
 
         /// <summary>
         /// Gets the right hand side of the equality.
         /// </summary>
-        public FOLTerm<TElement> Right { get; }
+        public Term<TDomain, TElement> Right { get; }
 
-        internal static new bool TryCreate(Expression<Predicate<IEnumerable<TElement>>> lambda, out FOLSentence<TElement> sentence)
+        internal static new bool TryCreate(LambdaExpression lambda, out Sentence<TDomain, TElement> sentence)
         {
             // TODO-ROBUSTNESS: ..and Object.Equals invocation? And others? How to think about map of different types of .NET equality to FOL "equals"?
             if (lambda.Body is BinaryExpression binaryExpr && binaryExpr.NodeType == ExpressionType.Equal
-                && FOLTerm<TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Left), out var left)
-                && FOLTerm<TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Right), out var right))
+                && Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Left), out var left)
+                && Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Right), out var right))
             {
-                sentence = new FOLEquality<TElement>(left, right);
+                sentence = new Equality<TDomain, TElement>(left, right);
                 return true;
             }
 
@@ -49,7 +51,7 @@ namespace LinqToKB.FirstOrderLogic
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (!(obj is FOLEquality<TElement> otherEquality))
+            if (!(obj is Equality<TDomain, TElement> otherEquality))
             {
                 return false;
             }
