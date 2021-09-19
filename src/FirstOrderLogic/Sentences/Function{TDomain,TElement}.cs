@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace LinqToKB.FirstOrderLogic
+namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
     /// Representation of a function term within a sentence of first order logic.

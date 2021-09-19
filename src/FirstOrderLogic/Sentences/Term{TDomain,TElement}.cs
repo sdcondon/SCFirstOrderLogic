@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace LinqToKB.FirstOrderLogic
+namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
     /// Representation of a term within a sentence of first order logic.

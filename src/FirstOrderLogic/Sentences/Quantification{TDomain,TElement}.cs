@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace LinqToKB.FirstOrderLogic
+namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
     /// Representation of a quantification sentence of first order logic.

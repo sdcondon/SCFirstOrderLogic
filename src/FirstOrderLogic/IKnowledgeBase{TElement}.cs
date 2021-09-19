@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LinqToKB.FirstOrderLogic.KnowledgeBases
+namespace LinqToKB.FirstOrderLogic
 {
     /// <summary>
     /// A store of knowledge expressed as statements of propositional logic (in turn expressed as LINQ expressions).

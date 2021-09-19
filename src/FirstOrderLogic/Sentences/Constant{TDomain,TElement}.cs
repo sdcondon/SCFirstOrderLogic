@@ -3,7 +3,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace LinqToKB.FirstOrderLogic
+namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
     /// Representation of a constant term within a sentence of first order logic.

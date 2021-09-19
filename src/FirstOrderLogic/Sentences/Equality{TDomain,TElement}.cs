@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace LinqToKB.FirstOrderLogic
+namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
     /// Representation of an equality sentence of first order logic, In typical FOL syntax, this is written as:

@@ -1,7 +1,6 @@
-﻿using LinqToKB.FirstOrderLogic.KnowledgeBases;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace FirstOrderLogic.ExampleDomains
+namespace LinqToKB.FirstOrderLogic.ExampleDomains
 {
     public static class ElectronicCircuits
     {

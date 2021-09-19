@@ -6,7 +6,7 @@ using System.Reflection;
 using Xunit;
 using static LinqToKB.FirstOrderLogic.Operators;
 
-namespace LinqToKB.FirstOrderLogic
+namespace LinqToKB.FirstOrderLogic.Sentences
 {
     public partial class SentenceTryCreateTests
     {

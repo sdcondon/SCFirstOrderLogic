@@ -1,5 +1,4 @@
-﻿using LinqToKB.FirstOrderLogic.KnowledgeBases;
-using System.Linq;
+﻿using System.Linq;
 using static LinqToKB.FirstOrderLogic.Operators;
 
 namespace LinqToKB.FirstOrderLogic.ExampleDomains.Kinship

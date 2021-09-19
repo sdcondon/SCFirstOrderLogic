@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace LinqToKB.FirstOrderLogic.KnowledgeBases
+namespace LinqToKB.FirstOrderLogic
 {
     /// <summary>
     /// A store of knowledge expressed as statements of propositional logic (in turn expressed as LINQ expressions).
@@ -28,6 +28,7 @@ namespace LinqToKB.FirstOrderLogic.KnowledgeBases
         /// <returns>True if the sentence is known to be true, false if it is known to be false or cannot be determined.</returns>
         public bool Ask(Expression<Predicate<TDomain>> query);
 
-        //// NB: No AskVars just yet..
+        //// NB: No AskVars just yet.. Still half-hoping that using IQueryable with support for Where is doable
+        //// (though the more I think about it the less feasible it seems)
     }
 }
