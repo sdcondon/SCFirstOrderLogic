@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.Generic;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
@@ -8,12 +8,9 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <typeparam name="TDomain">The type of the domain.</typeparam>
     /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
     public abstract class Term<TDomain, TElement>
+        where TDomain : IEnumerable<TElement>
     {
-        internal static bool TryCreate(LambdaExpression lambda, out Term<TDomain, TElement> sentence)
-        {
-            return Function<TDomain, TElement>.TryCreate(lambda, out sentence)
-                || Constant<TDomain, TElement>.TryCreate(lambda, out sentence)
-                || Variable<TDomain, TElement>.TryCreate(lambda, out sentence);
-        }
+        // TODO..
+        //// public abstract T Accept<T>(ISentenceVisitor<T>, T);
     }
 }

@@ -1,7 +1,5 @@
-﻿using LinqToKB.FirstOrderLogic.InternalUtilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
@@ -32,20 +30,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Gets the right side of the disjunction.
         /// </summary>
         public Sentence<TDomain, TElement> Right { get; }
-
-        internal static new bool TryCreate(LambdaExpression lambda, out Sentence<TDomain, TElement> sentence)
-        {
-            if (lambda.Body is BinaryExpression binaryExpr && (binaryExpr.NodeType == ExpressionType.OrElse || binaryExpr.NodeType == ExpressionType.Or)
-                && Sentence<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Left), out var left)
-                && Sentence<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Right), out var right))
-            {
-                sentence = new Disjunction<TDomain, TElement>(left, right);
-                return true;
-            }
-
-            sentence = null;
-            return false;
-        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)

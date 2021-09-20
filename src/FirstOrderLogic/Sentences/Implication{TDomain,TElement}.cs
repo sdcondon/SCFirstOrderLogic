@@ -1,8 +1,5 @@
-﻿using LinqToKB.FirstOrderLogic.InternalUtilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
@@ -18,14 +15,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     public class Implication<TDomain, TElement> : Sentence<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
-        private static readonly (Module Module, int MetadataToken) IfMethod;
-
-        static Implication()
-        {
-            var ifMethod = typeof(Operators).GetMethod(nameof(Operators.If));
-            IfMethod = (ifMethod.Module, ifMethod.MetadataToken);
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Implication{TDomain, TElement}"/> class.
         /// </summary>
@@ -42,20 +31,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Gets the consequent sentence.
         /// </summary>
         public Sentence<TDomain, TElement> Consequent { get; }
-
-        internal static new bool TryCreate(LambdaExpression lambda, out Sentence<TDomain, TElement> sentence)
-        {
-            if (lambda.Body is MethodCallExpression methodCallExpr && (methodCallExpr.Method.Module, methodCallExpr.Method.MetadataToken) == IfMethod
-                && Sentence<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(methodCallExpr.Arguments[0]), out var antecedent)
-                && Sentence<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(methodCallExpr.Arguments[1]), out var consequent))
-            {
-                sentence = new Implication<TDomain, TElement>(antecedent, consequent);
-                return true;
-            }
-
-            sentence = null;
-            return false;
-        }
 
         /// <inheritdoc />
         public override bool Equals(object obj) => obj is Implication<TDomain, TElement> otherImplication && Antecedent.Equals(otherImplication.Antecedent);

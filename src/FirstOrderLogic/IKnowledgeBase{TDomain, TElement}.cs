@@ -28,7 +28,7 @@ namespace LinqToKB.FirstOrderLogic
         /// <returns>True if the sentence is known to be true, false if it is known to be false or cannot be determined.</returns>
         public bool Ask(Expression<Predicate<TDomain>> query);
 
-        //// NB: No AskVars just yet.. Still half-hoping that using IQueryable with support for Where is doable
-        //// (though the more I think about it the less feasible it seems)
+        //// NB: No AskVars just yet.. Still half-hoping that implementing IQueryable with support
+        //// for Where is doable (though the more I think about it the less feasible it seems)
     }
 }

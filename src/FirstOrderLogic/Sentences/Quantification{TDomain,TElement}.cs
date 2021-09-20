@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
@@ -23,12 +22,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Gets the sentence that this quantification applies to.
         /// </summary>
         public Sentence<TDomain, TElement> Sentence { get; }
-
-        internal static new bool TryCreate(LambdaExpression lambda, out Sentence<TDomain, TElement> sentence)
-        {
-            return UniversalQuantification<TDomain, TElement>.TryCreate(lambda, out sentence)
-                || ExistentialQuantification<TDomain, TElement>.TryCreate(lambda, out sentence);
-        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)

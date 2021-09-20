@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
@@ -9,6 +9,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <typeparam name="TDomain">The type of the domain.</typeparam>
     /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
     public class Variable<TDomain, TElement> : Term<TDomain, TElement>
+        where TDomain : IEnumerable<TElement>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Variable{TDomain, TElement}"/> class.
@@ -20,26 +21,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Gets the name of the variable.
         /// </summary>
         public string Name { get; }
-
-        internal static bool TryCreate(LambdaExpression expression, out Variable<TDomain, TElement> term)
-        {
-            if (expression.Body is ParameterExpression parameterExpr
-                && typeof(TElement).IsAssignableFrom(parameterExpr.Type))
-            {
-                term = new Variable<TDomain, TElement>(parameterExpr.Name);
-                return true;
-            }
-
-            term = null;
-            return false;
-        }
-
-        internal static new bool TryCreate(LambdaExpression expression, out Term<TDomain, TElement> term)
-        {
-            var returnValue = TryCreate(expression, out Variable<TDomain, TElement> variableTerm);
-            term = variableTerm;
-            return returnValue;
-        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)

@@ -1,7 +1,5 @@
-﻿using LinqToKB.FirstOrderLogic.InternalUtilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
@@ -27,26 +25,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Gets the sentence that is negated.
         /// </summary>
         public Sentence<TDomain, TElement> Sentence { get; }
-
-        internal static new bool TryCreate(LambdaExpression lambda, out Sentence<TDomain, TElement> sentence)
-        {
-            if (lambda.Body is UnaryExpression unaryExpr && unaryExpr.NodeType == ExpressionType.Not
-                && Sentence<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(unaryExpr.Operand), out var operand))
-            {
-                sentence = new Negation<TDomain, TElement>(operand);
-                return true;
-            }
-            else if (lambda.Body is BinaryExpression binaryExpr && binaryExpr.NodeType == ExpressionType.NotEqual
-                && Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Left), out var left)
-                && Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Right), out var right))
-            {
-                sentence = new Negation<TDomain, TElement>(new Equality<TDomain, TElement>(left, right));
-                return true;
-            }
-
-            sentence = null;
-            return false;
-        }
 
         /// <inheritdoc />
         public override bool Equals(object obj) => obj is Negation<TDomain, TElement> negation && Sentence.Equals(negation.Sentence);

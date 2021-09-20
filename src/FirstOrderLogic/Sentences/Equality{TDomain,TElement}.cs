@@ -1,7 +1,5 @@
-﻿using LinqToKB.FirstOrderLogic.InternalUtilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
@@ -32,21 +30,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Gets the right hand side of the equality.
         /// </summary>
         public Term<TDomain, TElement> Right { get; }
-
-        internal static new bool TryCreate(LambdaExpression lambda, out Sentence<TDomain, TElement> sentence)
-        {
-            // TODO-ROBUSTNESS: ..and Object.Equals invocation? And others? How to think about map of different types of .NET equality to FOL "equals"?
-            if (lambda.Body is BinaryExpression binaryExpr && binaryExpr.NodeType == ExpressionType.Equal
-                && Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Left), out var left)
-                && Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(binaryExpr.Right), out var right))
-            {
-                sentence = new Equality<TDomain, TElement>(left, right);
-                return true;
-            }
-
-            sentence = null;
-            return false;
-        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)

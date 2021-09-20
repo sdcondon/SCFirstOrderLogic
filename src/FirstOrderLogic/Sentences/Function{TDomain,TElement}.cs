@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
@@ -13,6 +12,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <typeparam name="TDomain">The type of the domain.</typeparam>
     /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
     public class Function<TDomain, TElement> : Term<TDomain, TElement>
+        where TDomain : IEnumerable<TElement>
     {
         private readonly MemberInfo member;
 
@@ -36,55 +36,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Gets the arguments of this predicate.
         /// </summary>
         public ReadOnlyCollection<Term<TDomain, TElement>> Arguments { get; }
-
-        internal static new bool TryCreate(LambdaExpression lambda, out Term<TDomain, TElement> term)
-        {
-            // NB: Here we verify that the value of the function is a domain element..
-            if (typeof(TElement).IsAssignableFrom(lambda.Body.Type))
-            {
-                if (lambda.Body is MemberExpression memberExpr
-                    && Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(memberExpr.Expression), out var argument))
-                {
-                    // TElement-valued property access is interpreted as a unary function.
-                    term = new Function<TDomain, TElement>(memberExpr.Member, new[] { argument });
-                    return true;
-                }
-                else if (lambda.Body is MethodCallExpression methodCallExpr
-                    && (methodCallExpr.Object != null || methodCallExpr.Arguments.Count > 0)) // NB: There must be at least one arg - otherwise its a constant, not a function..
-                {
-                    var arguments = new List<Term<TDomain, TElement>>();
-
-                    // If the method is non-static, the instance it is operating on is the first arg of the predicate:
-                    if (methodCallExpr.Object != null)
-                    {
-                        if (!Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(methodCallExpr.Object), out var arg))
-                        {
-                            term = null;
-                            return false;
-                        }
-
-                        arguments.Add(arg);
-                    }
-
-                    foreach (var argExpr in methodCallExpr.Arguments)
-                    {
-                        if (!Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(argExpr), out var arg))
-                        {
-                            term = null;
-                            return false;
-                        }
-
-                        arguments.Add(arg);
-                    }
-
-                    term = new Function<TDomain, TElement>(methodCallExpr.Method, arguments);
-                    return true;
-                }
-            }
-
-            term = null;
-            return false;
-        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)

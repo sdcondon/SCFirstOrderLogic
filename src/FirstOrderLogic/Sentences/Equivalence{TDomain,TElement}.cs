@@ -1,8 +1,5 @@
-﻿using LinqToKB.FirstOrderLogic.InternalUtilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
@@ -18,14 +15,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     public class Equivalence<TDomain, TElement> : Sentence<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
-        private static readonly (Module Module, int MetadataToken) IffMethod;
-
-        static Equivalence()
-        {
-            var iffMethod = typeof(Operators).GetMethod(nameof(Operators.Iff));
-            IffMethod = (iffMethod.Module, iffMethod.MetadataToken);
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="FOLImplication{TModel}"/> class.
         /// </summary>
@@ -42,22 +31,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Gets the second equivalent sentence.
         /// </summary>
         public Sentence<TDomain, TElement> Equivalent2 { get; }
-
-        internal static new bool TryCreate(LambdaExpression lambda, out Sentence<TDomain, TElement> sentence)
-        {
-            // TODO-FEATURE: Would it be reasonable to also accept {sentence} == {sentence} here?
-
-            if (lambda.Body is MethodCallExpression methodCallExpr && (methodCallExpr.Method.Module, methodCallExpr.Method.MetadataToken) == IffMethod
-                && Sentence<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(methodCallExpr.Arguments[0]), out var equivalent1)
-                && Sentence<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(methodCallExpr.Arguments[1]), out var equivalent2))
-            {
-                sentence = new Equivalence<TDomain, TElement>(equivalent1, equivalent2);
-                return true;
-            }
-
-            sentence = null;
-            return false;
-        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)

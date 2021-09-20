@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
@@ -40,68 +39,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Gets the arguments of this predicate.
         /// </summary>
         public ReadOnlyCollection<Term<TDomain, TElement>> Arguments { get; }
-
-        internal static new bool TryCreate(LambdaExpression lambda, out Sentence<TDomain, TElement> sentence)
-        {
-            if (lambda.Body.Type != typeof(bool))
-            {
-                sentence = null;
-                return false;
-            }
-
-            if (lambda.Body is MemberExpression memberExpr && memberExpr.Expression != null) // Non-static field or property access
-            {
-                if (memberExpr.Expression == lambda.Parameters[0]) // i.e. is the domain parameter. Should try to find a cleaner way of doing this..
-                {
-                    // Boolean-valued property access on the domain parameter is interpreted as a ground predicate
-                    sentence = new Predicate<TDomain, TElement>(memberExpr.Member, Array.Empty<Term<TDomain, TElement>>());
-                    return true;
-                }
-                else if (Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(memberExpr.Expression), out var argument))
-                {
-                    // Boolean-valued property access on a term is interpreted as a unary predicate.
-                    sentence = new Predicate<TDomain, TElement>(memberExpr.Member, new[] { argument });
-                    return true;
-                }
-            }
-            else if (lambda.Body is MethodCallExpression methodCallExpr && methodCallExpr.Object != null) // Non-static mmethod call
-            {
-                var arguments = new List<Term<TDomain, TElement>>();
-
-                // If the method is not against on the domain, the instance it is operating on is the first arg of the predicate:
-                if (methodCallExpr.Object != lambda.Parameters[0]) // i.e. is the domain parameter. Should try to find a cleaner way of doing this..
-                {
-                    if (!Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(methodCallExpr.Object), out var arg))
-                    {
-                        sentence = null;
-                        return false;
-                    }
-
-                    arguments.Add(arg);
-                }
-
-                // Each of the method's args should be interpretable as a term.
-                foreach (var argExpr in methodCallExpr.Arguments)
-                {
-                    if (!Term<TDomain, TElement>.TryCreate(lambda.MakeSubLambda(argExpr), out var arg))
-                    {
-                        sentence = null;
-                        return false;
-                    }
-
-                    arguments.Add(arg);
-                }
-
-                sentence = new Predicate<TDomain, TElement>(methodCallExpr.Method, arguments);
-                return true;
-            }
-            //// ... also to consider - certain things will fail the above but could be very sensibly interpreted
-            //// as predicates. E.g. a Contains() call on a property that is a collection of TElements. Or indeed Any on
-            //// an IEnumerable of them.
-
-            sentence = null;
-            return false;
-        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)
