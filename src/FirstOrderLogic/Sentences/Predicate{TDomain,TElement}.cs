@@ -17,8 +17,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     public class Predicate<TDomain, TElement> : Sentence<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
-        private readonly MemberInfo member;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate{TDomain, TElement}"/> class.
         /// </summary>
@@ -26,14 +24,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// <param name="arguments">The arguments of this predicate.</param>
         public Predicate(MemberInfo memberInfo, IList<Term<TDomain, TElement>> arguments)
         {
-            member = memberInfo;
+            Member = memberInfo; // TODO: This is public - so should probably validate that its boolean valued and that the arguments match it..
             Arguments = new ReadOnlyCollection<Term<TDomain, TElement>>(arguments);
         }
 
         /// <summary>
-        /// Gets the name of this predicate.
+        /// Gets the <see cref="MemberInfo"/> instance for the logic behind this predicate.
         /// </summary>
-        public string Name => member.Name;
+        public MemberInfo Member { get; }
 
         /// <summary>
         /// Gets the arguments of this predicate.
@@ -44,7 +42,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         public override bool Equals(object obj)
         {
             if (!(obj is Predicate<TDomain, TElement> otherPredicate)
-                || !MemberInfoEqualityComparer.Instance.Equals(member, otherPredicate.member)
+                || !MemberInfoEqualityComparer.Instance.Equals(Member, otherPredicate.Member)
                 || otherPredicate.Arguments.Count != Arguments.Count)
             {
                 return false;
@@ -66,7 +64,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         {
             var hashCode = new HashCode();
 
-            hashCode.Add(MemberInfoEqualityComparer.Instance.GetHashCode(member));
+            hashCode.Add(MemberInfoEqualityComparer.Instance.GetHashCode(Member));
             foreach (var argument in Arguments)
             {
                 hashCode.Add(argument);

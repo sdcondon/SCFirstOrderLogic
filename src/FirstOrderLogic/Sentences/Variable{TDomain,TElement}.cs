@@ -23,6 +23,9 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         public string Name { get; }
 
         /// <inheritdoc />
+        public override bool IsGroundTerm => false;
+
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             return obj is Variable<TDomain, TElement> otherVariable && Name.Equals(otherVariable.Name); 

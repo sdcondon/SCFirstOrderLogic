@@ -13,26 +13,27 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     public class Constant<TDomain, TElement> : Term<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
-        private readonly MemberInfo member;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Constant{TDomain, TElement}"/> class.
         /// </summary>
         /// <param name="valueExpr">An expression for obtaining the value of the constant.</param>
-        public Constant(MemberInfo memberInfo) => member = memberInfo;
+        public Constant(MemberInfo memberInfo) => Member = memberInfo;
 
         /// <summary>
-        /// Gets the name of the constant.
+        /// Gets the <see cref="MemberInfo"/> instance for the logic behind this constant.
         /// </summary>
-        public string Name => member.Name;
+        public MemberInfo Member { get; }
+
+        /// <inheritdoc />
+        public override bool IsGroundTerm => true;
 
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            return obj is Constant<TDomain, TElement> otherConstant && MemberInfoEqualityComparer.Instance.Equals(otherConstant.member, member);
+            return obj is Constant<TDomain, TElement> otherConstant && MemberInfoEqualityComparer.Instance.Equals(otherConstant.Member, Member);
         }
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(MemberInfoEqualityComparer.Instance.GetHashCode(member));
+        public override int GetHashCode() => HashCode.Combine(MemberInfoEqualityComparer.Instance.GetHashCode(Member));
     }
 }

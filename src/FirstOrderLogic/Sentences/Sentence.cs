@@ -494,6 +494,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         }
 
         /// <remarks>
+        /// TODO-MAINTAINABILITY: This was written when I was thinking about each sentence type
+        /// exposing a lambda directly. If we're not going to do that then this does more work 
+        /// than needed - don't need a sub-lambda..
+        /// <para/>
         /// TODO-USABILITY: One way to introduce stronger type-safety here would be to add a (possibly
         /// empty) variable container - e.g. Expression<Predicate<TDomain, VariableContainer<TElement>>>.
         /// Or perhaps Expresison<Predicate<FOLScope<TDomain, TElement>>>. Something for v2...

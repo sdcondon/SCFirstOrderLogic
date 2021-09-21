@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
@@ -14,8 +15,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     public class Function<TDomain, TElement> : Term<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
-        private readonly MemberInfo member;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate{TDomain, TElement}"/> class.
         /// </summary>
@@ -23,14 +22,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// <param name="arguments">The arguments of this predicate.</param>
         public Function(MemberInfo memberInfo, IList<Term<TDomain, TElement>> arguments)
         {
-            member = memberInfo;
+            Member = memberInfo;
             Arguments = new ReadOnlyCollection<Term<TDomain, TElement>>(arguments);
         }
 
         /// <summary>
-        /// Gets the name of this predicate.
+        /// Gets the <see cref="MemberInfo"/> instance for the logic behind this function.
         /// </summary>
-        public string Name => member.Name;
+        public MemberInfo Member { get; }
 
         /// <summary>
         /// Gets the arguments of this predicate.
@@ -38,10 +37,13 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         public ReadOnlyCollection<Term<TDomain, TElement>> Arguments { get; }
 
         /// <inheritdoc />
+        public override bool IsGroundTerm => Arguments.All(a => a.IsGroundTerm);
+
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (!(obj is Function<TDomain, TElement> otherFunction)
-                || !MemberInfoEqualityComparer.Instance.Equals(otherFunction.member, member)
+                || !MemberInfoEqualityComparer.Instance.Equals(otherFunction.Member, Member)
                 || otherFunction.Arguments.Count != Arguments.Count)
             {
                 return false;
@@ -63,7 +65,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         {
             var hashCode = new HashCode();
 
-            hashCode.Add(MemberInfoEqualityComparer.Instance.GetHashCode(member));
+            hashCode.Add(MemberInfoEqualityComparer.Instance.GetHashCode(Member));
             foreach (var argument in Arguments)
             {
                 hashCode.Add(argument);

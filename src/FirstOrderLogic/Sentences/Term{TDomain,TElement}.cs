@@ -10,7 +10,12 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     public abstract class Term<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
-        // TODO..
-        //// public abstract T Accept<T>(ISentenceVisitor<T>, T);
+        // TODO, perhaps..
+        ////public abstract T Accept<T>(ISentenceVisitor<T> visitor);
+        
+        /// <summary>
+        /// Gets a value indicating whether the term is a ground term - that is, that it contains no variables.
+        /// </summary>
+        public abstract bool IsGroundTerm { get; }
     }
 }

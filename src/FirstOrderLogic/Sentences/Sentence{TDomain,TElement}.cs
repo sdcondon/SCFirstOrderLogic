@@ -11,8 +11,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         where TDomain : IEnumerable<TElement>
     {
         // TODO.. if we end up wanting it, visitor pattern for converting to equivalent lambda better than explicit lambda prop as shown below
-        // and we'll want visitor anyway to work with sentences..
-        //// public abstract T Accept<T>(ISentenceVisitor<T>, T);
+        ////public abstract T Accept<T>(ISentenceVisitor<T> visitor);
 
         // TODO-FEATURE: Ultimately might be useful for verification - but can add this later..
         // NB: Not Expression<Predicate<TDomain>> since sub-sentences will probably also include
