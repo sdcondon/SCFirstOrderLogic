@@ -6,7 +6,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <summary>
     /// Representation of an equality sentence of first order logic, In typical FOL syntax, this is written as:
     /// <code>{term} = {term}</code>
-    /// In C#, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
+    /// In LinqToKB, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
     /// <code>{expression} == {expression}</code>
     /// </summary>
     /// <typeparam name="TDomain">The type of the domain.</typeparam>

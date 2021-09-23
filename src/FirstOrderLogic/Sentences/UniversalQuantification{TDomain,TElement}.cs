@@ -5,7 +5,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <summary>
     /// Representation of a universal quantification sentence of first order logic. In typical FOL syntax, this is written as:
     /// <code>∀ {variable}, {sentence}</code>
-    /// In C#, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
+    /// In LinqToKB, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
     /// <code>{domain}.All({variable} => {expression})</code>
     /// </summary>
     /// <typeparam name="TDomain">The type of the domain.</typeparam>

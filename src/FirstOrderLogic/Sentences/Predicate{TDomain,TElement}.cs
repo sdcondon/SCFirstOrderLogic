@@ -9,7 +9,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <summary>
     /// Representation of an predicate sentence of first order logic, In typical FOL syntax, this is written as:
     /// <code>Predicate({term}, ..)</code>
-    /// In C#, the equivalent expression acting on the domain (as well as any relevant variables and constants) is a boolean-valued property or method call
+    /// In LinqToKB, the equivalent expression acting on the domain (as well as any relevant variables and constants) is a boolean-valued property or method call
     /// on a TElement, or a boolean-valued property or method call on TDomain.
     /// </summary>
     /// <typeparam name="TDomain">The type of the domain.</typeparam>

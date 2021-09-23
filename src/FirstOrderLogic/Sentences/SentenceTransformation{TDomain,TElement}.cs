@@ -7,7 +7,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <summary>
     /// Base class for trnasformations of <see cref="Sentence{TDomain, TElement}"/> instances.
     /// </summary>
-    /// <typeparam name="TDomain">the type of the domain of the sentences to transform.</typeparam>
+    /// <typeparam name="TDomain">The type of the domain of the sentences to transform.</typeparam>
     /// <typeparam name="TElement">The type of the elements of the sentences to transform.</typeparam>
     public abstract class SentenceTransformation<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
