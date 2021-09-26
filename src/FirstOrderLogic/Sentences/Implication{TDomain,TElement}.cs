@@ -7,7 +7,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// Representation of a material implication sentence of first order logic. In typical FOL syntax, this is written as:
     /// <code>{sentence} ⇒ {sentence}</code>
     /// In LinqToKB, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
-    /// <code>Symbols.If({expression}, {expression})</code>
+    /// <code>Operators.If({expression}, {expression})</code>
     /// (Consumers are encouraged to include <c>using static LinqToKB.FirstOrderLogic.Symbols;</c> to make this a little shorter)
     /// </summary>
     /// <typeparam name="TDomain">The type of the domain.</typeparam>

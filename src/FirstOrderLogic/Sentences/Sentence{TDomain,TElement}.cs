@@ -10,7 +10,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     public abstract class Sentence<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
-        // TODO.. if we end up wanting it, visitor pattern for converting to equivalent lambda better than explicit lambda prop as shown below
+        // TODO.. if we end up wanting it, visitor pattern for converting (back) to equivalent lambda better than explicit lambda prop as shown below
         ////public abstract T Accept<T>(ISentenceVisitor<T> visitor);
 
         // TODO-FEATURE: Ultimately might be useful for verification - but can add this later..
