@@ -14,12 +14,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     {
         /// <summary>
         /// Transforms a <see cref="Sentence{TDomain, TElement}"/> instance.
-        /// The default implementation simply invokes the Visit.. method appropriate to the actual type of the sentence.
+        /// The default implementation simply invokes the Apply method appropriate to the actual type of the sentence.
         /// </summary>
         /// <param name="sentence">The sentence to visit.</param>
         /// <returns>The transformed <see cref="Sentence{TDomain, TElement}"/>.</returns>
         public virtual Sentence<TDomain, TElement> ApplyToSentence(Sentence<TDomain, TElement> sentence)
         {
+            // TODO-PERFORMANCE: Using "proper" visitor pattern will be (ever so slightly) faster than this -
+            // decide if its worth the extra complexity.
             return sentence switch
             {
                 Conjunction<TDomain, TElement> conjunction => ApplyToConjunction(conjunction),
@@ -31,7 +33,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 Negation<TDomain, TElement> negation => ApplyToNegation(negation),
                 Predicate<TDomain, TElement> predicate => ApplyToPredicate(predicate),
                 UniversalQuantification<TDomain, TElement> universalQuantification => ApplyToUniversalQuantification(universalQuantification),
-                _ => throw new ArgumentException("Unsupported sentence type") // TODO: better exception message..
+                _ => throw new ArgumentException("Unsupported sentence type")
             };
         }
 

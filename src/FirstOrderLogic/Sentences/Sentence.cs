@@ -259,7 +259,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
 
             sentence = null;
             return false;
-        }
+        } 
 
         internal static bool TryCreateFunction<TDomain, TElement>(LambdaExpression lambda, out Term<TDomain, TElement> term)
             where TDomain : IEnumerable<TElement>

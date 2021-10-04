@@ -39,21 +39,21 @@ See the [ExampleDomains project](./src/FirstOrderLogic.ExampleDomains) for some 
 | **FoL** | **FoL Syntax** | **C# Expression** |
 | --- | --- | --- |
 | Conjunction | `{sentence} ∧ {sentence}` | `{expression} {&& or &} {expression}` |
-|Disjunction|`{sentence} ∨ {sentence}`|`{expression} { or } {expression}`|
+|Disjunction|`{sentence} ∨ {sentence}`|`{expression} {|| or |} {expression}`|
 |Material equivalence|`{sentence} ⇔ {sentence}`|`Operators.Iff({expression}, {expression})` *|
 |Material implication|`{sentence} ⇒ {sentence}`|`Operators.If({expression}, {expression})` *|
 |Negation|`¬{sentence}`|`!{expression}`|
-|Existential quantification|`∃ {variable}, {sentence}`|`{domain}.Any({variable} => {expression})` **|
-|Universal quantification|`∀ {variable}, {sentence}`|`{domain}.All({variable} => {expression})` **|
+|Existential quantification|`∃ {variable}, {sentence}`|`{domain}.Any({variable} => {expression})` †|
+|Universal quantification|`∀ {variable}, {sentence}`|`{domain}.All({variable} => {expression})` †|
 |Equality|`{sentence} = {sentence}`|`{expression} == {expression}`|
-|Predicate|`{predicate symbol}({term}, ..)`|A boolean-valued property or method call on a TElement, or a boolean-valued property or method call on TDomain.|
-|Constant|`{constant symbol}`|Access of a TElement-valued property or parameterless method on TDomain ***|
+|Predicate|`{predicate symbol}({term}, ..)`|A boolean-valued property or method call on a TElement, or a boolean-valued property or method call on TDomain (for ground predicates).|
+|Constant|`{constant symbol}`|Access of a TElement-valued property or parameterless method on TDomain ‡|
 |Function|`{function symbol}({term}, ...)`|Invocation of a TElement-valued method on TElement that accepts only TElement-valued paramaters, or access of a TElement-valued property of TElement|
 |Variable|`{variable symbol}`|A variable from the lambda passed to All or Any|
 
 \* C# lacks a single operator appropriate for material equivalence and implication, so LinqToKB offers some shorthand methods in the `Operators` static class. Library consumers are encouraged use `using static LinqToKB.FirstOrderLogic.Symbols;` where appropriate
 
-\** LinqToKB also defines some more overloads of `All` and `Any` that accept multiple parameters - which can help with keeping expressions simple when there are multiple variables involved
+† LinqToKB also defines some more overloads of `All` and `Any` that accept multiple parameters - which can help with keeping expressions simple when there are multiple variables involved
 
-\*** How to deal effectively with constants is an open question. At present, they can be declared as TElement-valued props on the domain, but this doesn't facilitate existential instantiation, let alone "real world" scenarios where being able to define constants at run-time is surely a pretty fundamental requirement. Keyed collections of constants seem the obvious approach, but exactly how is the question. Convention-based (e.g. any IDictionary<string, TElement> on the domain type assumed to be a collection of constants, or - better - a TElement valued indexer..) or something stronger (e.g. domains *must* implement IRuntimeConstantContainer&lt;TElement&gt; which defines a string-keyed, TElement-valued indexer?), or something else? The latter seems like it might be needed given the need for algorithms to define constants on the fly.
+‡ How to deal effectively with constants is an open question. At present, they can be declared as TElement-valued props on the domain, but this doesn't facilitate existential instantiation, let alone "real world" scenarios where being able to define constants at run-time is surely a pretty fundamental requirement. Keyed collections of constants seem the obvious approach, but exactly how is the question. Convention-based (e.g. any IDictionary<string, TElement> on the domain type assumed to be a collection of constants, or - better - a TElement valued indexer..) or something stronger (e.g. domains *must* implement IRuntimeConstantContainer&lt;TElement&gt; which defines a string-keyed, TElement-valued indexer?), or something else? The latter seems like it might be needed given the need for algorithms to define constants on the fly.
 
