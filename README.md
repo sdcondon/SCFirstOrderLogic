@@ -39,7 +39,7 @@ See the [ExampleDomains project](./src/FirstOrderLogic.ExampleDomains) for some 
 | **FoL** | **FoL Syntax** | **C# Expression** |
 | --- | --- | --- |
 | Conjunction | `{sentence} ∧ {sentence}` | `{expression} {&& or &} {expression}` |
-|Disjunction|`{sentence} ∨ {sentence}`|`{expression} {|| or |} {expression}`|
+|Disjunction|`{sentence} ∨ {sentence}`|`{expression} {\|\| or \|} {expression}`|
 |Material equivalence|`{sentence} ⇔ {sentence}`|`Operators.Iff({expression}, {expression})` *|
 |Material implication|`{sentence} ⇒ {sentence}`|`Operators.If({expression}, {expression})` *|
 |Negation|`¬{sentence}`|`!{expression}`|
@@ -51,7 +51,7 @@ See the [ExampleDomains project](./src/FirstOrderLogic.ExampleDomains) for some 
 |Function|`{function symbol}({term}, ...)`|Invocation of a TElement-valued method on TElement that accepts only TElement-valued paramaters, or access of a TElement-valued property of TElement|
 |Variable|`{variable symbol}`|A variable from the lambda passed to All or Any|
 
-\* C# lacks a single operator appropriate for material equivalence and implication, so LinqToKB offers some shorthand methods in the `Operators` static class. Library consumers are encouraged use `using static LinqToKB.FirstOrderLogic.Symbols;` where appropriate
+\* C# lacks a single operator appropriate for material equivalence and implication, so LinqToKB offers some shorthand methods in the `Operators` static class. Library consumers are encouraged use `using static LinqToKB.FirstOrderLogic.Operators;` where appropriate
 
 † LinqToKB also defines some more overloads of `All` and `Any` that accept multiple parameters - which can help with keeping expressions simple when there are multiple variables involved
 
