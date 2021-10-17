@@ -1,118 +1,91 @@
 ﻿using FluentAssertions;
+using FlUnit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
-using Xunit;
 using static LinqToKB.FirstOrderLogic.Operators;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
-    public partial class SentenceTryCreateTests
+    public class SentenceTests
     {
-        private static readonly MemberInfo groundPredicate1 = typeof(ISimpleDomain).GetProperty(nameof(ISimpleDomain.GroundPredicate1));
-        private static readonly MemberInfo groundPredicate2 = typeof(ISimpleDomain).GetProperty(nameof(ISimpleDomain.GroundPredicate2));
-        private static readonly MemberInfo constant1 = typeof(ISimpleDomain).GetProperty(nameof(ISimpleDomain.Constant1));
-        private static readonly MemberInfo parent = typeof(ISimpleElement).GetProperty(nameof(ISimpleElement.Parent));
-        private static readonly IList<Term<ISimpleDomain, ISimpleElement>> emptyArgList = Array.Empty<Term<ISimpleDomain, ISimpleElement>>();
-
-        [Fact]
-        public void Conjunction_AlsoPredicate()
-        {
-            Sentence.TryCreate<ISimpleDomain, ISimpleElement>(d => d.GroundPredicate1 && d.GroundPredicate2, out var sentence).Should().BeTrue();
-
-            sentence.Should().BeEquivalentTo(new Conjunction<ISimpleDomain, ISimpleElement>(
-                new Predicate<ISimpleDomain, ISimpleElement>(groundPredicate1, emptyArgList),
-                new Predicate<ISimpleDomain, ISimpleElement>(groundPredicate2, emptyArgList)));
-        }
-
-        [Fact]
-        public void Disjunction_AlsoPredicate()
-        {
-            Sentence.TryCreate<ISimpleDomain, ISimpleElement>(d => d.GroundPredicate1 || d.GroundPredicate2, out var sentence).Should().BeTrue();
-
-            sentence.Should().BeEquivalentTo(new Disjunction<ISimpleDomain, ISimpleElement>(
-                new Predicate<ISimpleDomain, ISimpleElement>(groundPredicate1, emptyArgList),
-                new Predicate<ISimpleDomain, ISimpleElement>(groundPredicate2, emptyArgList)));
-        }
-
-        [Fact]
-        public void Equality_AlsoFunctionAndConstant()
-        {
-            Sentence.TryCreate<ISimpleDomain, ISimpleElement>(d => d.Constant1.Parent == d.Constant1, out var sentence).Should().BeTrue();
-
-            sentence.Should().BeEquivalentTo(new Equality<ISimpleDomain, ISimpleElement>(
-                new Function<ISimpleDomain, ISimpleElement>(parent, new[] { new Constant<ISimpleDomain, ISimpleElement>(constant1) }),
-                new Constant<ISimpleDomain, ISimpleElement>(constant1)));
-        }
-
-        [Fact]
-        public void Equivalence_AlsoPredicate()
-        {
-            Sentence.TryCreate<ISimpleDomain, ISimpleElement>(d => Iff(d.GroundPredicate1, d.GroundPredicate2), out var sentence).Should().BeTrue();
-
-            sentence.Should().BeEquivalentTo(new Equivalence<ISimpleDomain, ISimpleElement>(
-                new Predicate<ISimpleDomain, ISimpleElement>(groundPredicate1, emptyArgList),
-                new Predicate<ISimpleDomain, ISimpleElement>(groundPredicate2, emptyArgList)));
-        }
-
-        [Fact]
-        public void ExistentialQuantification_AlsoEqualityFunctionVariableAndConstant()
-        {
-            Sentence.TryCreate<ISimpleDomain, ISimpleElement>(d => d.Any(x => x.Parent == d.Constant1), out var sentence).Should().BeTrue();
-
-            sentence.Should().BeEquivalentTo(new ExistentialQuantification<ISimpleDomain, ISimpleElement>(
-                new Variable<ISimpleDomain, ISimpleElement>("x"),
-                new Equality<ISimpleDomain, ISimpleElement>(
-                    new Function<ISimpleDomain, ISimpleElement>(parent, new[] { new Variable<ISimpleDomain, ISimpleElement>("x") }),
-                    new Constant<ISimpleDomain, ISimpleElement>(constant1))));
-        }
-
-        [Fact]
-        public void Implication_AlsoPredicate()
-        {
-            Sentence.TryCreate<ISimpleDomain, ISimpleElement>(d => If(d.GroundPredicate1, d.GroundPredicate2), out var sentence).Should().BeTrue();
-
-            sentence.Should().BeEquivalentTo(new Implication<ISimpleDomain, ISimpleElement>(
-                new Predicate<ISimpleDomain, ISimpleElement>(groundPredicate1, emptyArgList),
-                new Predicate<ISimpleDomain, ISimpleElement>(groundPredicate2, emptyArgList)));
-        }
-
-        [Fact]
-        public void Negation_AlsoPredicate()
-        {
-            Sentence.TryCreate<ISimpleDomain, ISimpleElement>(d => !d.GroundPredicate1, out var sentence).Should().BeTrue();
-
-            sentence.Should().BeEquivalentTo(new Negation<ISimpleDomain, ISimpleElement>(
-                new Predicate<ISimpleDomain, ISimpleElement>(groundPredicate1, emptyArgList)));
-        }
-
-        [Fact]
-        public void UniversalQuantification_AlsoEqualityFunctionVariableAndConstant()
-        {
-            Sentence.TryCreate<ISimpleDomain, ISimpleElement>(d => d.All(x => x.Parent == d.Constant1), out var sentence).Should().BeTrue();
-
-            sentence.Should().BeEquivalentTo(new UniversalQuantification<ISimpleDomain, ISimpleElement>(
-                new Variable<ISimpleDomain, ISimpleElement>("x"),
-                new Equality<ISimpleDomain, ISimpleElement>(
-                    new Function<ISimpleDomain, ISimpleElement>(parent, new[] { new Variable<ISimpleDomain, ISimpleElement>("x") }),
-                    new Constant<ISimpleDomain, ISimpleElement>(constant1))));
-        }
-
-        private interface ISimpleDomain : IEnumerable<ISimpleElement>
+        private interface IDomain : IEnumerable<IElement>
         {
             bool GroundPredicate1 { get; }
-
             bool GroundPredicate2 { get; }
-
-            ISimpleElement Constant1 { get; }
+            IElement Constant1 { get; }
         }
 
-        private interface ISimpleElement
+        private interface IElement
         {
-            ISimpleElement Parent { get; }
-
-            bool Predicate { get; }
+            IElement Parent { get; }
         }
+
+        private static readonly MemberInfo groundPredicate1 = typeof(IDomain).GetProperty(nameof(IDomain.GroundPredicate1));
+        private static readonly MemberInfo groundPredicate2 = typeof(IDomain).GetProperty(nameof(IDomain.GroundPredicate2));
+        private static readonly MemberInfo constant1 = typeof(IDomain).GetProperty(nameof(IDomain.Constant1));
+        private static readonly MemberInfo parent = typeof(IElement).GetProperty(nameof(IElement.Parent));
+        private static readonly IList<Term<IDomain, IElement>> emptyArgList = Array.Empty<Term<IDomain, IElement>>();
+
+        private record TestCase(Expression<Predicate<IDomain>> Expression, Sentence<IDomain, IElement> ExpectedSentence);
+
+        public static Test TryCreate => TestThat
+            .GivenEachOf(() => new[]
+            {
+                new TestCase(
+                    Expression: d => d.GroundPredicate1 && d.GroundPredicate2,
+                    ExpectedSentence: new Conjunction<IDomain, IElement>(
+                        new Predicate<IDomain, IElement>(groundPredicate1, emptyArgList),
+                        new Predicate<IDomain, IElement>(groundPredicate2, emptyArgList))),
+
+                new TestCase(
+                    Expression: d => d.GroundPredicate1 || d.GroundPredicate2,
+                    ExpectedSentence: new Disjunction<IDomain, IElement>(
+                        new Predicate<IDomain, IElement>(groundPredicate1, emptyArgList),
+                        new Predicate<IDomain, IElement>(groundPredicate2, emptyArgList))),
+
+                new TestCase(
+                    Expression: d => d.Constant1.Parent == d.Constant1,
+                    ExpectedSentence: new Equality<IDomain, IElement>(
+                        new Function<IDomain, IElement>(parent, new[] { new Constant<IDomain, IElement>(constant1) }),
+                        new Constant<IDomain, IElement>(constant1))),
+
+                new TestCase(
+                    Expression: d => Iff(d.GroundPredicate1, d.GroundPredicate2),
+                    ExpectedSentence: new Equivalence<IDomain, IElement>(
+                        new Predicate<IDomain, IElement>(groundPredicate1, emptyArgList),
+                        new Predicate<IDomain, IElement>(groundPredicate2, emptyArgList))),
+
+                new TestCase(
+                    Expression: d => d.Any(x => x.Parent == d.Constant1),
+                    ExpectedSentence: new ExistentialQuantification<IDomain, IElement>(
+                        new Variable<IDomain, IElement>("x"),
+                        new Equality<IDomain, IElement>(
+                            new Function<IDomain, IElement>(parent, new[] { new Variable<IDomain, IElement>("x") }),
+                            new Constant<IDomain, IElement>(constant1)))),
+
+                new TestCase(
+                    Expression: d => If(d.GroundPredicate1, d.GroundPredicate2),
+                    ExpectedSentence: new Implication<IDomain, IElement>(
+                        new Predicate<IDomain, IElement>(groundPredicate1, emptyArgList),
+                        new Predicate<IDomain, IElement>(groundPredicate2, emptyArgList))),
+
+                new TestCase(
+                    Expression: d => !d.GroundPredicate1,
+                    ExpectedSentence: new Negation<IDomain, IElement>(
+                        new Predicate<IDomain, IElement>(groundPredicate1, emptyArgList))),
+
+                new TestCase(
+                    Expression: d => d.All(x => x.Parent == d.Constant1),
+                    ExpectedSentence: new UniversalQuantification<IDomain, IElement>(
+                        new Variable<IDomain, IElement>("x"),
+                        new Equality<IDomain, IElement>(
+                            new Function<IDomain, IElement>(parent, new[] { new Variable<IDomain, IElement>("x") }),
+                            new Constant<IDomain, IElement>(constant1)))),
+            })
+            .When(tc => Sentence.Create<IDomain, IElement>(tc.Expression))
+            .Then((tc, tr) => tr.Result.Should().BeEquivalentTo(tc.ExpectedSentence, o => o.RespectingRuntimeTypes()), "Returned sentence");
     }
 }

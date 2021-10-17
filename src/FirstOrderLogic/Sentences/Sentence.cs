@@ -67,6 +67,41 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         }
 
         /// <summary>
+        /// Creates and returns the <see cref="Sentence{TDomain, TElement}"/> instance that is logically equivalent to
+        /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
+        /// </summary>
+        ///  <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
+        /// <param name="lambda">The lambda expression.</param>
+        /// <returns>The created sentence.</returns>
+        public static Sentence<TDomain, TElement> Create<TDomain, TElement>(Expression<Predicate<TDomain>> lambda)
+            where TDomain : IEnumerable<TElement>
+        {
+            if (!TryCreate<TDomain, TElement>(lambda, out var sentence))
+            {
+                throw new ArgumentException("Expression is not convertible to a sentence of first order logic", nameof(sentence));
+            }
+
+            return sentence;
+        }
+
+        /// <summary>
+        /// Creates and returns the <see cref="Sentence{TDomain, TElement}"/> instance that is logically equivalent to
+        /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
+        /// </summary>
+        ///  <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
+        /// <param name="lambda">The lambda expression.</param>
+        /// <returns>The created sentence.</returns>
+        public static Sentence<IEnumerable<TElement>, TElement> Create<TElement>(Expression<Predicate<IEnumerable<TElement>>> lambda)
+        {
+            if (!TryCreate<TElement>(lambda, out var sentence))
+            {
+                throw new ArgumentException("Expression is not convertible to a sentence of first order logic", nameof(sentence));
+            }
+
+            return sentence;
+        }
+
+        /// <summary>
         /// Tries to create the <see cref="Sentence{TDomain, TElement}"/> instance that is logically equivalent to
         /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
         /// </summary>
