@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.FirstOrderLogic.Sentences
+namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 {
     public class SentenceUnifier<TDomain, TElement>
         where TDomain : IEnumerable<TElement>

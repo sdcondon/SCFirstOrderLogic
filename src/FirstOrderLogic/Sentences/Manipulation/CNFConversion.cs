@@ -1,0 +1,144 @@
+﻿using System.Collections.Generic;
+
+namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
+{
+    /// <summary>
+    /// Implementation of <see cref="SentenceTransformation{TDomain, TElement}"/> that converts sentences to conjunctive normal form.
+    /// </summary>
+    /// <typeparam name="TDomain"></typeparam>
+    /// <typeparam name="TElement"></typeparam>
+    public class CNFConversion<TDomain, TElement> : SentenceTransformation<TDomain, TElement>
+        where TDomain : IEnumerable<TElement>
+    {
+        private readonly ImplicationElimination implicationElimination = new ImplicationElimination();
+        private readonly NNFConversion nnfConversion = new NNFConversion();
+        private readonly VariableStandardisation variableStandardisation = new VariableStandardisation();
+        private readonly Skolemisation skolemisation = new Skolemisation();
+        private readonly UniversalQuantifierElimination universalQuantifierElimination = new UniversalQuantifierElimination();
+        private readonly DisjunctionDistribution disjunctionDistribution = new DisjunctionDistribution();
+
+        public override Sentence<TDomain, TElement> ApplyToSentence(Sentence<TDomain, TElement> sentence)
+        {
+            // MIGHT be possible to do some of these conversions at the same time, but for now
+            // at least, do them sequentially.
+            sentence = implicationElimination.ApplyToSentence(sentence);
+            sentence = nnfConversion.ApplyToSentence(sentence);
+            sentence = variableStandardisation.ApplyToSentence(sentence);
+            sentence = skolemisation.ApplyToSentence(sentence);
+            sentence = universalQuantifierElimination.ApplyToSentence(sentence);
+            sentence = disjunctionDistribution.ApplyToSentence(sentence);
+
+            return sentence;
+        }
+
+        private class ImplicationElimination : SentenceTransformation<TDomain, TElement>
+        {
+            public override Sentence<TDomain, TElement> ApplyToImplication(Implication<TDomain, TElement> implication)
+            {
+                return ApplyToSentence(new Disjunction<TDomain, TElement>(
+                    new Negation<TDomain, TElement>(implication.Antecedent),
+                    implication.Consequent));
+            }
+        }
+
+        private class NNFConversion : SentenceTransformation<TDomain, TElement>
+        {
+            public override Sentence<TDomain, TElement> ApplyToNegation(Negation<TDomain, TElement> negation)
+            {
+                Sentence<TDomain, TElement> sentence;
+
+                if (negation.Sentence is Negation<TDomain, TElement> n)
+                {
+                    // Eliminate double negative: ¬(¬P) ≡ P
+                    sentence = n.Sentence;
+                }
+                else if (negation.Sentence is Conjunction<TDomain, TElement> c)
+                {
+                    // Apply de Morgan: ¬(P ∧ Q) ≡ (¬P ∨ ¬Q)
+                    sentence = new Disjunction<TDomain, TElement>(
+                        new Negation<TDomain, TElement>(c.Left),
+                        new Negation<TDomain, TElement>(c.Right));
+                }
+                else if (negation.Sentence is Disjunction<TDomain, TElement> d)
+                {
+                    // Apply de Morgan: ¬(P ∨ Q) ≡ (¬P ∧ ¬Q)
+                    sentence = new Conjunction<TDomain, TElement>(
+                        new Negation<TDomain, TElement>(d.Left),
+                        new Negation<TDomain, TElement>(d.Right));
+                }
+                else if (negation.Sentence is UniversalQuantification<TDomain, TElement> u)
+                {
+                    // Apply ¬∀x, p ≡ ∃x, ¬p
+                    sentence = new ExistentialQuantification<TDomain, TElement>(
+                        u.Variable,
+                        new Negation<TDomain, TElement>(u.Sentence));
+                }
+                else if (negation.Sentence is ExistentialQuantification<TDomain, TElement> e)
+                {
+                    // Apply ¬∃x, p ≡ ∀x, ¬p
+                    sentence = new UniversalQuantification<TDomain, TElement>(
+                        e.Variable,
+                        new Negation<TDomain, TElement>(e.Sentence));
+                }
+                else
+                {
+                    sentence = negation;
+                }
+
+                return ApplyToSentence(sentence);
+            }
+        }
+
+        private class VariableStandardisation : SentenceTransformation<TDomain, TElement>
+        {
+        }
+
+        private class Skolemisation : SentenceTransformation<TDomain, TElement>
+        {
+            // TODO: will require changes to how we model things...
+        }
+
+        private class UniversalQuantifierElimination : SentenceTransformation<TDomain, TElement>
+        {
+            public override Sentence<TDomain, TElement> ApplyToUniversalQuantification(UniversalQuantification<TDomain, TElement> universalQuantification)
+            {
+                return ApplyToSentence(universalQuantification.Sentence);
+            }
+        }
+
+        /// <summary>
+        /// Sentence trnasformation that recursively distributes disjunctions over conjunctions.
+        /// </summary>
+        private class DisjunctionDistribution : SentenceTransformation<TDomain, TElement>
+        {
+            public override Sentence<TDomain, TElement> ApplyToDisjunction(Disjunction<TDomain, TElement> disjunction)
+            {
+                Sentence<TDomain, TElement> sentence;
+
+                if (disjunction.Right is Conjunction<TDomain, TElement> cRight)
+                {
+                    // Apply distribution of ∨ over ∧: (α ∨ (β ∧ γ)) ≡ ((α ∨ β) ∧ (α ∨ γ))
+                    // NB the "else if" below is fine (i.e. we don't need a seperate case for if they are both &&s)
+                    // since if b.Left is also an &&, well end up distributing over it once we recurse down as far
+                    // as the Expression.OrElses we create here.
+                    sentence = new Conjunction<TDomain, TElement>(
+                        new Disjunction<TDomain, TElement>(disjunction.Left, cRight.Left),
+                        new Disjunction<TDomain, TElement>(disjunction.Left, cRight.Right));
+                }
+                else if (disjunction.Left is Conjunction<TDomain, TElement> cLeft)
+                {
+                    // Apply distribution of ∨ over ∧: ((β ∧ γ) ∨ α) ≡ ((β ∨ α) ∧ (γ ∨ α))
+                    sentence = new Conjunction<TDomain, TElement>(
+                        new Disjunction<TDomain, TElement>(cLeft.Left, disjunction.Right),
+                        new Disjunction<TDomain, TElement>(cLeft.Right, disjunction.Right));
+                }
+                else
+                {
+                    sentence = disjunction;
+                }
+
+                return ApplyToSentence(sentence);
+            }
+        }
+    }
+}

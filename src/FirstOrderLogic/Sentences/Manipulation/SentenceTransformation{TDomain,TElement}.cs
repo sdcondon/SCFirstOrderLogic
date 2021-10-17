@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.FirstOrderLogic.Sentences
+namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 {
     /// <summary>
     /// Base class for trnasformations of <see cref="Sentence{TDomain, TElement}"/> instances.
