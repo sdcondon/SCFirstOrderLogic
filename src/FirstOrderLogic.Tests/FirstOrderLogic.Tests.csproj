@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="FlUnit" Version="0.10.0" />
-    <PackageReference Include="FlUnit.VS.TestAdapter" Version="0.10.0">
+    <PackageReference Include="FlUnit" Version="0.11.0" />
+    <PackageReference Include="FlUnit.VS.TestAdapter" Version="0.11.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -86,6 +86,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                             new Constant<IDomain, IElement>(constant1)))),
             })
             .When(tc => Sentence.Create<IDomain, IElement>(tc.Expression))
-            .Then((tc, tr) => tr.Result.Should().BeEquivalentTo(tc.ExpectedSentence, o => o.RespectingRuntimeTypes()), "Returned sentence");
+            .Then((tc, sentence) => sentence.Should().BeEquivalentTo(tc.ExpectedSentence, o => o.RespectingRuntimeTypes()), "Returned sentence should be as expected");
     }
 }
