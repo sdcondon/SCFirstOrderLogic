@@ -91,6 +91,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         private class VariableStandardisation : SentenceTransformation<TDomain, TElement>
         {
+            // TODO!
         }
 
         private class Skolemisation : SentenceTransformation<TDomain, TElement>

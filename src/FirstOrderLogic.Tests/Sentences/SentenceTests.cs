@@ -31,7 +31,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
 
         private record TestCase(Expression<Predicate<IDomain>> Expression, Sentence<IDomain, IElement> ExpectedSentence);
 
-        public static Test TryCreate => TestThat
+        public static Test Creation => TestThat
             .GivenEachOf(() => new[]
             {
                 new TestCase(

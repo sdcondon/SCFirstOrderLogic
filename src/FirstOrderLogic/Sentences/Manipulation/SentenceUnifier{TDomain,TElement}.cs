@@ -13,7 +13,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             out IDictionary<Variable<TDomain, TElement>, Term<TDomain, TElement>> unifier)
         {
             unifier = new Dictionary<Variable<TDomain, TElement>, Term<TDomain, TElement>>();
-            return TryUnify(x, y, unifier);
+
+            if (!TryUnify(x, y, unifier))
+            {
+                unifier = null;
+                return false;
+            }
+
+            return true;
         }
 
         private bool TryUnify(

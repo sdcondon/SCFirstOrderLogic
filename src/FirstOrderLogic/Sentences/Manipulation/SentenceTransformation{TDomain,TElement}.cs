@@ -5,7 +5,7 @@ using System.Linq;
 namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 {
     /// <summary>
-    /// Base class for trnasformations of <see cref="Sentence{TDomain, TElement}"/> instances.
+    /// Base class for transformations of <see cref="Sentence{TDomain, TElement}"/> instances.
     /// </summary>
     /// <typeparam name="TDomain">The type of the domain of the sentences to transform.</typeparam>
     /// <typeparam name="TElement">The type of the elements of the sentences to transform.</typeparam>
