@@ -171,8 +171,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             Term<TDomain, TElement> other,
             IDictionary<Variable<TDomain, TElement>, Term<TDomain, TElement>> unifier)
         {
-            Term<TDomain, TElement> value;
-            if (unifier.TryGetValue(variable, out value))
+            if (unifier.TryGetValue(variable, out var value))
             {
                 return TryUnify(other, value, unifier);
             }
@@ -196,20 +195,22 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             Function<TDomain, TElement> y,
             IDictionary<Variable<TDomain, TElement>, Term<TDomain, TElement>> unifier)
         {
-            if (!MemberInfoEqualityComparer.Instance.Equals(x.Member, y.Member))
+            // Dunno if this is the right way to unify (i.e. skolems can't unify with non-skolems?).. More reading and time will tell, but wouldn't be surprised if this needs to change..
+            if ((x is DomainFunction<TDomain, TElement> domainX && y is DomainFunction<TDomain, TElement> domainY && !MemberInfoEqualityComparer.Instance.Equals(domainX.Member, domainY.Member))
+                || (x is SkolemFunction<TDomain, TElement> skolemX && y is SkolemFunction<TDomain, TElement> skolemY && skolemX.Label.Equals(skolemY.Label)))
             {
-                return false;
-            }
-
-            foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
-            {
-                if (!TryUnify(args.x, args.y, unifier))
+                foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
                 {
-                    return false;
+                    if (!TryUnify(args.x, args.y, unifier))
+                    {
+                        return false;
+                    }
                 }
+
+                return true;
             }
 
-            return true;
+            return false;
         }
     }
 }

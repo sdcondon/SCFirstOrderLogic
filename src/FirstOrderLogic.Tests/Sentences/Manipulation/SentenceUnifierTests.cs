@@ -18,9 +18,9 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             bool Knows(IPerson other);
         }
 
-        private static Function<IPeople, IPerson> Mother(Term<IPeople, IPerson> child)
+        private static DomainFunction<IPeople, IPerson> Mother(Term<IPeople, IPerson> child)
         {
-            return new Function<IPeople, IPerson>(typeof(IPerson).GetProperty(nameof(IPerson.Mother)), new[] { child });
+            return new DomainFunction<IPeople, IPerson>(typeof(IPerson).GetProperty(nameof(IPerson.Mother)), new[] { child });
         }
 
         private static Predicate<IPeople, IPerson> Knows(Term<IPeople, IPerson> knower, Term<IPeople, IPerson> known)
@@ -30,8 +30,8 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         private static readonly Constant<IPeople, IPerson> john = new Constant<IPeople, IPerson>(typeof(IPeople).GetProperty(nameof(IPeople.John)));
         private static readonly Constant<IPeople, IPerson> jane = new Constant<IPeople, IPerson>(typeof(IPeople).GetProperty(nameof(IPeople.Jane)));
-        private static readonly Variable<IPeople, IPerson> x = new Variable<IPeople, IPerson>("x");
-        private static readonly Variable<IPeople, IPerson> y = new Variable<IPeople, IPerson>("y");
+        private static readonly Variable<IPeople, IPerson> x = new Variable<IPeople, IPerson>(new VariableDeclaration<IPeople, IPerson>("x"));
+        private static readonly Variable<IPeople, IPerson> y = new Variable<IPeople, IPerson>(new VariableDeclaration<IPeople, IPerson>("y"));
 
         private record TestCase(Sentence<IPeople, IPerson> Sentence1, Sentence<IPeople, IPerson> Sentence2, Dictionary<Variable<IPeople, IPerson>, Term<IPeople, IPerson>> ExpectedUnifier = null);
 

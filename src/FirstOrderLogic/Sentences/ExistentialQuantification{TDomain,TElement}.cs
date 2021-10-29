@@ -18,7 +18,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// </summary>
         /// <param name="variable">The variable declared by this quantification.</param>
         /// <param name="sentence">The sentence that this quantification applies to.</param>
-        public ExistentialQuantification(Variable<TDomain, TElement> variable, Sentence<TDomain, TElement> sentence)
+        public ExistentialQuantification(VariableDeclaration<TDomain, TElement> variable, Sentence<TDomain, TElement> sentence)
             : base(variable, sentence)
         {
         }

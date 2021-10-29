@@ -18,7 +18,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// </summary>
         /// <param name="variable">The variable declared by this quantification.</param>
         /// <param name="sentence">The sentence that this quantification applies to.</param>
-        public UniversalQuantification(Variable<TDomain, TElement> variable, Sentence<TDomain, TElement> sentence)
+        public UniversalQuantification(VariableDeclaration<TDomain, TElement> variable, Sentence<TDomain, TElement> sentence)
             : base(variable, sentence)
         {
         }

@@ -14,13 +14,13 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// <summary>
         /// Initializes a new instance of the <see cref="Variable{TDomain, TElement}"/> class.
         /// </summary>
-        /// <param name="name">The name of the variable.</param>
-        public Variable(string name) => Name = name;
+        /// <param name="name">The declaration of the variable.</param>
+        public Variable(VariableDeclaration<TDomain, TElement> declaration) => Declaration = declaration;
 
         /// <summary>
-        /// Gets the name of the variable.
+        /// Gets the declaration of the variable.
         /// </summary>
-        public string Name { get; }
+        public VariableDeclaration<TDomain, TElement> Declaration { get; }
 
         /// <inheritdoc />
         public override bool IsGroundTerm => false;
@@ -28,13 +28,13 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            return obj is Variable<TDomain, TElement> otherVariable && Name.Equals(otherVariable.Name); 
+            return obj is Variable<TDomain, TElement> otherVariable && Declaration.Equals(otherVariable.Declaration); 
         }
 
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name);
+            return HashCode.Combine(Declaration);
         }
     }
 }

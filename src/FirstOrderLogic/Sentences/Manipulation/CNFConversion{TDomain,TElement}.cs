@@ -17,25 +17,25 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         private readonly UniversalQuantifierElimination universalQuantifierElimination = new UniversalQuantifierElimination();
         private readonly DisjunctionDistribution disjunctionDistribution = new DisjunctionDistribution();
 
-        public override Sentence<TDomain, TElement> ApplyToSentence(Sentence<TDomain, TElement> sentence)
+        public override Sentence<TDomain, TElement> ApplyTo(Sentence<TDomain, TElement> sentence)
         {
-            // MIGHT be possible to do some of these conversions at the same time, but for now
+            // Might be possible to do some of these conversions at the same time, but for now
             // at least, do them sequentially.
-            sentence = implicationElimination.ApplyToSentence(sentence);
-            sentence = nnfConversion.ApplyToSentence(sentence);
-            sentence = variableStandardisation.ApplyToSentence(sentence);
-            sentence = skolemisation.ApplyToSentence(sentence);
-            sentence = universalQuantifierElimination.ApplyToSentence(sentence);
-            sentence = disjunctionDistribution.ApplyToSentence(sentence);
+            sentence = implicationElimination.ApplyTo(sentence);
+            sentence = nnfConversion.ApplyTo(sentence);
+            sentence = variableStandardisation.ApplyTo(sentence);
+            sentence = skolemisation.ApplyTo(sentence);
+            sentence = universalQuantifierElimination.ApplyTo(sentence);
+            sentence = disjunctionDistribution.ApplyTo(sentence);
 
             return sentence;
         }
 
         private class ImplicationElimination : SentenceTransformation<TDomain, TElement>
         {
-            public override Sentence<TDomain, TElement> ApplyToImplication(Implication<TDomain, TElement> implication)
+            public override Sentence<TDomain, TElement> ApplyTo(Implication<TDomain, TElement> implication)
             {
-                return ApplyToSentence(new Disjunction<TDomain, TElement>(
+                return base.ApplyTo((Sentence<TDomain, TElement>)new Disjunction<TDomain, TElement>(
                     new Negation<TDomain, TElement>(implication.Antecedent),
                     implication.Consequent));
             }
@@ -43,7 +43,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         private class NNFConversion : SentenceTransformation<TDomain, TElement>
         {
-            public override Sentence<TDomain, TElement> ApplyToNegation(Negation<TDomain, TElement> negation)
+            public override Sentence<TDomain, TElement> ApplyTo(Negation<TDomain, TElement> negation)
             {
                 Sentence<TDomain, TElement> sentence;
 
@@ -85,7 +85,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                     sentence = negation;
                 }
 
-                return ApplyToSentence(sentence);
+                return ApplyTo(sentence);
             }
         }
 
@@ -101,9 +101,9 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         private class UniversalQuantifierElimination : SentenceTransformation<TDomain, TElement>
         {
-            public override Sentence<TDomain, TElement> ApplyToUniversalQuantification(UniversalQuantification<TDomain, TElement> universalQuantification)
+            public override Sentence<TDomain, TElement> ApplyTo(UniversalQuantification<TDomain, TElement> universalQuantification)
             {
-                return ApplyToSentence(universalQuantification.Sentence);
+                return ApplyTo(universalQuantification.Sentence);
             }
         }
 
@@ -112,7 +112,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         /// </summary>
         private class DisjunctionDistribution : SentenceTransformation<TDomain, TElement>
         {
-            public override Sentence<TDomain, TElement> ApplyToDisjunction(Disjunction<TDomain, TElement> disjunction)
+            public override Sentence<TDomain, TElement> ApplyTo(Disjunction<TDomain, TElement> disjunction)
             {
                 Sentence<TDomain, TElement> sentence;
 
@@ -138,7 +138,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                     sentence = disjunction;
                 }
 
-                return ApplyToSentence(sentence);
+                return ApplyTo(sentence);
             }
         }
     }

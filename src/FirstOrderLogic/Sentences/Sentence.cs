@@ -260,34 +260,34 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AnyMethod)
                     && methodCallExpr.Arguments[1] is LambdaExpression anyLambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, anyLambda), out var subSentence)
-                    && TryCreateVariable(MakeSubLambda(lambda, anyLambda.Parameters[0]), out Variable<TDomain, TElement> variableTerm))
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, anyLambda.Parameters[0]), out VariableDeclaration<TDomain, TElement> declaration))
                 {
-                    sentence = new ExistentialQuantification<TDomain, TElement>(variableTerm, subSentence);
+                    sentence = new ExistentialQuantification<TDomain, TElement>(declaration, subSentence);
                     return true;
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAnyMethod2)
                     && methodCallExpr.Arguments[1] is LambdaExpression any2Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, any2Lambda), out var all2SubSentence)
-                    && TryCreateVariable(MakeSubLambda(lambda, any2Lambda.Parameters[0]), out Variable<TDomain, TElement> variableTerm1Of2)
-                    && TryCreateVariable(MakeSubLambda(lambda, any2Lambda.Parameters[1]), out Variable<TDomain, TElement> variableTerm2Of2))
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, any2Lambda.Parameters[0]), out VariableDeclaration<TDomain, TElement> declaration1Of2)
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, any2Lambda.Parameters[1]), out VariableDeclaration<TDomain, TElement> declaration2Of2))
                 {
                     sentence = new ExistentialQuantification<TDomain, TElement>(
-                        variableTerm1Of2,
-                        new ExistentialQuantification<TDomain, TElement>(variableTerm2Of2, all2SubSentence));
+                        declaration1Of2,
+                        new ExistentialQuantification<TDomain, TElement>(declaration2Of2, all2SubSentence));
                     return true;
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAnyMethod3)
                     && methodCallExpr.Arguments[1] is LambdaExpression any3Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, any3Lambda), out var all3SubSentence)
-                    && TryCreateVariable(MakeSubLambda(lambda, any3Lambda.Parameters[0]), out Variable<TDomain, TElement> variableTerm1Of3)
-                    && TryCreateVariable(MakeSubLambda(lambda, any3Lambda.Parameters[1]), out Variable<TDomain, TElement> variableTerm2Of3)
-                    && TryCreateVariable(MakeSubLambda(lambda, any3Lambda.Parameters[2]), out Variable<TDomain, TElement> variableTerm3Of3))
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, any3Lambda.Parameters[0]), out VariableDeclaration<TDomain, TElement> declaration1Of3)
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, any3Lambda.Parameters[1]), out VariableDeclaration<TDomain, TElement> declaration2Of3)
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, any3Lambda.Parameters[2]), out VariableDeclaration<TDomain, TElement> declaration3Of3))
                 {
                     sentence = new UniversalQuantification<TDomain, TElement>(
-                        variableTerm1Of3,
+                        declaration1Of3,
                         new ExistentialQuantification<TDomain, TElement>(
-                            variableTerm2Of3,
-                            new ExistentialQuantification<TDomain, TElement>(variableTerm3Of3, all3SubSentence)));
+                            declaration2Of3,
+                            new ExistentialQuantification<TDomain, TElement>(declaration3Of3, all3SubSentence)));
                     return true;
                 }
             }
@@ -306,7 +306,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                     && TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, memberExpr.Expression), out var argument))
                 {
                     // TElement-valued property access is interpreted as a unary function.
-                    term = new Function<TDomain, TElement>(memberExpr.Member, new[] { argument });
+                    term = new DomainFunction<TDomain, TElement>(memberExpr.Member, new[] { argument });
                     return true;
                 }
                 else if (lambda.Body is MethodCallExpression methodCallExpr
@@ -337,7 +337,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                         arguments.Add(arg);
                     }
 
-                    term = new Function<TDomain, TElement>(methodCallExpr.Method, arguments);
+                    term = new DomainFunction<TDomain, TElement>(methodCallExpr.Method, arguments);
                     return true;
                 }
             }
@@ -470,34 +470,34 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AllMethod)
                     && methodCallExpr.Arguments[1] is LambdaExpression allLambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, allLambda), out var allSubSentence)
-                    && TryCreateVariable(MakeSubLambda(lambda, allLambda.Parameters[0]), out Variable<TDomain, TElement> variableTerm))
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, allLambda.Parameters[0]), out VariableDeclaration<TDomain, TElement> declaration))
                 {
-                    sentence = new UniversalQuantification<TDomain, TElement>(variableTerm, allSubSentence);
+                    sentence = new UniversalQuantification<TDomain, TElement>(declaration, allSubSentence);
                     return true;
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAllMethod2)
                     && methodCallExpr.Arguments[1] is LambdaExpression all2Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, all2Lambda), out var all2SubSentence)
-                    && TryCreateVariable(MakeSubLambda(lambda, all2Lambda.Parameters[0]), out Variable<TDomain, TElement> variableTerm1Of2)
-                    && TryCreateVariable(MakeSubLambda(lambda, all2Lambda.Parameters[1]), out Variable<TDomain, TElement> variableTerm2Of2))
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, all2Lambda.Parameters[0]), out VariableDeclaration<TDomain, TElement> declaration1Of2)
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, all2Lambda.Parameters[1]), out VariableDeclaration<TDomain, TElement> declaration2Of2))
                 {
                     sentence = new UniversalQuantification<TDomain, TElement>(
-                        variableTerm1Of2,
-                        new UniversalQuantification<TDomain, TElement>(variableTerm2Of2, all2SubSentence));
+                        declaration1Of2,
+                        new UniversalQuantification<TDomain, TElement>(declaration2Of2, all2SubSentence));
                     return true;
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAllMethod3)
                     && methodCallExpr.Arguments[1] is LambdaExpression all3Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, all3Lambda), out var all3SubSentence)
-                    && TryCreateVariable(MakeSubLambda(lambda, all3Lambda.Parameters[0]), out Variable<TDomain, TElement> variableTerm1Of3)
-                    && TryCreateVariable(MakeSubLambda(lambda, all3Lambda.Parameters[1]), out Variable<TDomain, TElement> variableTerm2Of3)
-                    && TryCreateVariable(MakeSubLambda(lambda, all3Lambda.Parameters[2]), out Variable<TDomain, TElement> variableTerm3Of3))
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, all3Lambda.Parameters[0]), out VariableDeclaration<TDomain, TElement> declaration1Of3)
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, all3Lambda.Parameters[1]), out VariableDeclaration<TDomain, TElement> declaration2Of3)
+                    && TryCreateVariableDeclaration(MakeSubLambda(lambda, all3Lambda.Parameters[2]), out VariableDeclaration<TDomain, TElement> declaration3Of3))
                 {
                     sentence = new UniversalQuantification<TDomain, TElement>(
-                        variableTerm1Of3,
+                        declaration1Of3,
                         new UniversalQuantification<TDomain, TElement>(
-                            variableTerm2Of3,
-                            new UniversalQuantification<TDomain, TElement>(variableTerm3Of3, all3SubSentence)));
+                            declaration2Of3,
+                            new UniversalQuantification<TDomain, TElement>(declaration3Of3, all3SubSentence)));
                     return true;
                 }
             }
@@ -506,26 +506,33 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        internal static bool TryCreateVariable<TDomain, TElement>(LambdaExpression expression, out Variable<TDomain, TElement> term)
+        internal static bool TryCreateVariableDeclaration<TDomain, TElement>(LambdaExpression expression, out VariableDeclaration<TDomain, TElement> variableDeclaration)
             where TDomain : IEnumerable<TElement>
         {
             if (expression.Body is ParameterExpression parameterExpr
                 && typeof(TElement).IsAssignableFrom(parameterExpr.Type))
             {
-                term = new Variable<TDomain, TElement>(parameterExpr.Name);
+                variableDeclaration = new VariableDeclaration<TDomain, TElement>(parameterExpr.Name);
                 return true;
             }
 
-            term = null;
+            variableDeclaration = null;
             return false;
         }
 
         internal static bool TryCreateVariable<TDomain, TElement>(LambdaExpression expression, out Term<TDomain, TElement> term)
             where TDomain : IEnumerable<TElement>
         {
-            var returnValue = TryCreateVariable(expression, out Variable<TDomain, TElement> variableTerm);
-            term = variableTerm;
-            return returnValue;
+            if (expression.Body is ParameterExpression parameterExpr
+                && typeof(TElement).IsAssignableFrom(parameterExpr.Type))
+            {
+                // NB: doesn't refer to a singular variable declaration object - but since equality is correctly implemented, not a huge deal. Maybe revisit later?
+                term = new Variable<TDomain, TElement>(new VariableDeclaration<TDomain, TElement>(parameterExpr.Name));
+                return true;
+            }
+
+            term = null;
+            return false;
         }
 
         /// <remarks>

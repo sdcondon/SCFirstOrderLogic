@@ -49,7 +49,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 new TestCase(
                     Expression: d => d.Constant1.Parent == d.Constant1,
                     ExpectedSentence: new Equality<IDomain, IElement>(
-                        new Function<IDomain, IElement>(parent, new[] { new Constant<IDomain, IElement>(constant1) }),
+                        new DomainFunction<IDomain, IElement>(parent, new[] { new Constant<IDomain, IElement>(constant1) }),
                         new Constant<IDomain, IElement>(constant1))),
 
                 new TestCase(
@@ -61,9 +61,9 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 new TestCase(
                     Expression: d => d.Any(x => x.Parent == d.Constant1),
                     ExpectedSentence: new ExistentialQuantification<IDomain, IElement>(
-                        new Variable<IDomain, IElement>("x"),
+                        new VariableDeclaration<IDomain, IElement>("x"),
                         new Equality<IDomain, IElement>(
-                            new Function<IDomain, IElement>(parent, new[] { new Variable<IDomain, IElement>("x") }),
+                            new DomainFunction<IDomain, IElement>(parent, new[] { new Variable<IDomain, IElement>(new VariableDeclaration<IDomain, IElement>("x")) }),
                             new Constant<IDomain, IElement>(constant1)))),
 
                 new TestCase(
@@ -80,9 +80,9 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 new TestCase(
                     Expression: d => d.All(x => x.Parent == d.Constant1),
                     ExpectedSentence: new UniversalQuantification<IDomain, IElement>(
-                        new Variable<IDomain, IElement>("x"),
+                        new VariableDeclaration<IDomain, IElement>("x"),
                         new Equality<IDomain, IElement>(
-                            new Function<IDomain, IElement>(parent, new[] { new Variable<IDomain, IElement>("x") }),
+                            new DomainFunction<IDomain, IElement>(parent, new[] { new Variable<IDomain, IElement>(new VariableDeclaration<IDomain, IElement>("x")) }),
                             new Constant<IDomain, IElement>(constant1)))),
             })
             .When(tc => Sentence.Create<IDomain, IElement>(tc.Expression))

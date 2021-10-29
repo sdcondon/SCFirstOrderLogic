@@ -11,12 +11,12 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     public abstract class Quantification<TDomain, TElement> : Sentence<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
-        protected Quantification(Variable<TDomain, TElement> variable, Sentence<TDomain, TElement> sentence) => (Variable, Sentence) = (variable, sentence);
+        protected Quantification(VariableDeclaration<TDomain, TElement> variable, Sentence<TDomain, TElement> sentence) => (Variable, Sentence) = (variable, sentence);
 
         /// <summary>
         /// Gets the variable declared by this quantification.
         /// </summary>
-        public Variable<TDomain, TElement> Variable { get; }
+        public VariableDeclaration<TDomain, TElement> Variable { get; }
 
         /// <summary>
         /// Gets the sentence that this quantification applies to.
@@ -26,6 +26,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
+            // TODO-BUG: universal and existential quantification of same var on same sentence considered equal...
             return obj is Quantification<TDomain, TElement> quantification
                 && Variable.Equals(quantification.Variable)
                 && Sentence.Equals(quantification.Sentence);
