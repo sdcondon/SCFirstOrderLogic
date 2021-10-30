@@ -23,8 +23,8 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.NaturalNumbers
         // var kb = new ResolutionKnowledgeBase<INaturalNumbers, INaturalNumber>(); // ..or a different KB implementation - none implemented yet
         // kb.AddNaturalNumberAxioms();
         // kb.Tell(..facts about the specific problem..);
-        // ..perhaps ultimately something like kb.Link(myDomainLogicAdapter); for dynamic constant management
-        // kb.Ask()..
+        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(myDomainAdapter); for runtime "constants"
+        // kb.Ask(..my query..);
         //
         // Would this be better as a public read-only axioms collection and an IKnowledgeBase extension to tell multiple facts at once?
         // kb.Tell(NaturalNumberKnowledge.Axioms);

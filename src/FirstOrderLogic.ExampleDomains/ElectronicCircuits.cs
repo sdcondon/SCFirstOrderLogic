@@ -49,11 +49,11 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.ElectronicCircuits
         // var kb = new ResolutionKnowledgeBase<ICircuitElements, ICircuitElement>(); // ..or a different KB implementation - none implemented yet
         // kb.AddElectronicCircuitAxioms();
         // kb.Tell(..facts about the specific problem..);
-        // ..perhaps ultimately something like kb.Link(myDomainLogicAdapter); for dynamic constant management
-        // kb.Ask()..
+        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(myDomainAdapter); for runtime "constants"
+        // kb.Ask(..my query..);
         //
         // Would this be better as a public read-only axioms collection and an IKnowledgeBase extension to tell multiple facts at once?
-        // kb.Tell(ElectronCircuitKnowledge.Axioms);
+        // kb.Tell(ElectronicCircuitKnowledge.Axioms);
         // ..could also gracefully provide theorems then, and also allows for axiom examination without a KB instance..
 
         public static void AddElectronicCircuitAxioms(this IKnowledgeBase<ICircuitElements, ICircuitElement> knowledgeBase)
