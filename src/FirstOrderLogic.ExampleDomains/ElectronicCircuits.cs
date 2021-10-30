@@ -53,8 +53,8 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.ElectronicCircuits
         // kb.Ask(..my query..);
         //
         // Would this be better as a public read-only axioms collection and an IKnowledgeBase extension to tell multiple facts at once?
-        // kb.Tell(ElectronicCircuitKnowledge.Axioms);
-        // ..could also gracefully provide theorems then, and also allows for axiom examination without a KB instance..
+        // i.e. kb.Tell(ElectronicCircuitKnowledge.Axioms); ..could also gracefully provide theorems then, and also allows for axiom
+        // examination without a KB instance..
 
         public static void AddElectronicCircuitAxioms(this IKnowledgeBase<ICircuitElements, ICircuitElement> knowledgeBase)
         {

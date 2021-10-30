@@ -42,8 +42,8 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.Kinship
         // kb.Ask(..my query..);
         //
         // Would this be better as a public read-only axioms collection and an IKnowledgeBase extension to tell multiple facts at once?
-        // kb.Tell(KinshipKnowledge.Axioms);
-        // ..could also gracefully provide theorems then, and also allows for axiom examination with a KB instance..
+        // i.e. kb.Tell(KinshipKnowledge.Axioms); ..could also gracefully provide theorems then (performance..), and also allows for axiom
+        // examination without a KB instance..
         public static void AddKinshipAxioms(this IKnowledgeBase<IPerson> knowledgeBase)
         {
             //// AXIOMS:
