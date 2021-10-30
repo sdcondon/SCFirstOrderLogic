@@ -2,32 +2,40 @@
 using System.Linq;
 using static LinqToKB.FirstOrderLogic.Operators;
 
-namespace LinqToKB.FirstOrderLogic.ExampleDomains
+namespace LinqToKB.FirstOrderLogic.ExampleDomains.NaturalNumbers
 {
-    public static class NaturalNumbers
+    public interface INaturalNumbers : IEnumerable<INaturalNumber>
     {
-        static NaturalNumbers()
+        INaturalNumber Zero { get; }
+    }
+
+    public interface INaturalNumber
+    {
+        INaturalNumber Successor { get; }
+
+        INaturalNumber Add(INaturalNumber x);
+    }
+
+    public static class KnowledgeBaseExtensions
+    {
+        // Usage (note the separation of concerns for knowledge base implementation and the domain):
+        //
+        // var kb = new ResolutionKnowledgeBase<INaturalNumbers, INaturalNumber>(); // ..or a different KB implementation - none implemented yet
+        // kb.AddNaturalNumberAxioms();
+        // kb.Tell(..facts about the specific problem..);
+        // ..perhaps ultimately something like kb.Link(myDomainLogicAdapter); for dynamic constant management
+        // kb.Ask()..
+        //
+        // Would this be better as a public read-only axioms collection and an IKnowledgeBase extension to tell multiple facts at once?
+        // kb.Tell(NaturalNumberKnowledge.Axioms);
+        // ..could also gracefully provide theorems then, and also allows for axiom examination without a KB instance..
+
+        public static void AddNaturalNumberAxioms(this IKnowledgeBase<INaturalNumbers, INaturalNumber> knowledgeBase)
         {
-            KnowledgeBase = null; // TODO!
-
-            KnowledgeBase.Tell(d => d.All(x => x.Successor != d.Zero));
-            KnowledgeBase.Tell(d => d.All((x, y) => If(x != y, x.Successor != y.Successor)));
-            KnowledgeBase.Tell(d => d.All(x => d.Zero.Add(x) == x));
-            KnowledgeBase.Tell(d => d.All((x, y) => x.Successor.Add(y) == x.Add(y).Successor));
-        }
-
-        public static IKnowledgeBase<INaturalNumbers, INaturalNumber> KnowledgeBase { get; }
-
-        public interface INaturalNumbers : IEnumerable<INaturalNumber>
-        {
-            INaturalNumber Zero { get; }
-        }
-
-        public interface INaturalNumber
-        {
-            INaturalNumber Successor { get; }
-
-            INaturalNumber Add(INaturalNumber x);
+            knowledgeBase.Tell(d => d.All(x => x.Successor != d.Zero));
+            knowledgeBase.Tell(d => d.All((x, y) => If(x != y, x.Successor != y.Successor)));
+            knowledgeBase.Tell(d => d.All(x => d.Zero.Add(x) == x));
+            knowledgeBase.Tell(d => d.All((x, y) => x.Successor.Add(y) == x.Add(y).Successor));
         }
     }
 }

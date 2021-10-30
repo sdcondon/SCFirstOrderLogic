@@ -19,7 +19,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Initializes a new instance of the <see cref="Predicate{TDomain, TElement}"/> class.
         /// </summary>
         /// <param name="memberInfo"></param>
-        /// <param name="arguments">The arguments of this predicate.</param>
+        /// <param name="arguments">The arguments of this function.</param>
         public DomainFunction(MemberInfo memberInfo, IList<Term<TDomain, TElement>> arguments)
             : base(arguments)
         {

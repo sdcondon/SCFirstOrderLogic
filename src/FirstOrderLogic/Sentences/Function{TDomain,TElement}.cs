@@ -17,7 +17,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate{TDomain, TElement}"/> class.
         /// </summary>
-        /// <param name="arguments">The arguments of this predicate.</param>
+        /// <param name="arguments">The arguments of this function.</param>
         public Function(IList<Term<TDomain, TElement>> arguments)
         {
             Arguments = new ReadOnlyCollection<Term<TDomain, TElement>>(arguments);

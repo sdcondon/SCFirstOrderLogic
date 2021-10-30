@@ -20,7 +20,7 @@ Benefits of using LINQ expressions:
 Drawbacks of using LINQ expressions:
 * Obviously (as alluded to above, and also mentioned below), allowing for constants declared at runtime raises some (surmountable) challenges.
 * By using C#, there is a danger in confusing C# operators with the elements of first order logic that they are mapped to - creating a risk to learning outcomes.
-That is, while it may be intuitive to map the C# `||` operator to a disjunction in PL, they do of course represent very different things.
+That is, while it may be intuitive to map the C# `||` operator to a disjunction in FoL, they do of course represent very different things.
 Compared to uses of LINQ such as LINQ to SQL (where the system being mapped to is very obviously distinct), it is perhaps less obvious that there IS still a different system (first order logic) being mapped to here. This is important to bear in mind while working with this library.
 * Simple FoL sentences are nice and simple to represent in C#, but more complex ones get a little gnarly. An example from the source text book, `∀x [∀y Animal(y) ⇒ Loves(x, y)] ⇒ [∃y Loves(y, x)]` ("everyone who loves all animals is loved by something"), is the following in C#: `d => d.All(x => If(d.All(y => If(y.IsAnimal, x.Loves(y))), d.Any(y => y.Loves(x))))`.
 
