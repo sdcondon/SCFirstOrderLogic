@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using static LinqToKB.FirstOrderLogic.Operators;
 
 namespace LinqToKB.FirstOrderLogic.ExampleDomains.NaturalNumbers
@@ -16,26 +18,22 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.NaturalNumbers
         INaturalNumber Add(INaturalNumber x);
     }
 
-    public static class KnowledgeBaseExtensions
+    public static class NaturalNumberKnowledge
     {
         // Usage (note the separation of concerns for knowledge base implementation and the domain):
         //
         // var kb = new ResolutionKnowledgeBase<INaturalNumbers, INaturalNumber>(); // ..or a different KB implementation - none implemented yet
-        // kb.AddNaturalNumberAxioms();
+        // kb.Tell(NaturalNumberKnowledge.Axioms);
         // kb.Tell(..facts about the specific problem..);
-        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(myDomainAdapter); for runtime "constants"
+        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter), where domainAdpater is an INaturalNumbers.. 
         // kb.Ask(..my query..);
-        //
-        // Would this be better as a public read-only axioms collection and an IKnowledgeBase extension to tell multiple facts at once?
-        // i.e. kb.Tell(NaturalNumberKnowledge.Axioms); ..could also gracefully provide theorems then, and also allows for axiom
-        // examination without a KB instance..
-
-        public static void AddNaturalNumberAxioms(this IKnowledgeBase<INaturalNumbers, INaturalNumber> knowledgeBase)
+        public static IReadOnlyCollection<Expression<Predicate<INaturalNumbers>>> Axioms { get; } = new List<Expression<Predicate<INaturalNumbers>>>()
         {
-            knowledgeBase.Tell(d => d.All(x => x.Successor != d.Zero));
-            knowledgeBase.Tell(d => d.All((x, y) => If(x != y, x.Successor != y.Successor)));
-            knowledgeBase.Tell(d => d.All(x => d.Zero.Add(x) == x));
-            knowledgeBase.Tell(d => d.All((x, y) => x.Successor.Add(y) == x.Add(y).Successor));
-        }
+            d => d.All(x => x.Successor != d.Zero),
+            d => d.All((x, y) => If(x != y, x.Successor != y.Successor)),
+            d => d.All(x => d.Zero.Add(x) == x),
+            d => d.All((x, y) => x.Successor.Add(y) == x.Add(y).Successor),
+
+        }.AsReadOnly();
     }
 }

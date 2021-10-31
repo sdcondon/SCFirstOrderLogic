@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using static LinqToKB.FirstOrderLogic.Operators;
 
 namespace LinqToKB.FirstOrderLogic.ExampleDomains.Kinship
@@ -31,44 +34,44 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.Kinship
         IPerson Father { get; }
     }
 
-    public static class KnowledgeBaseExtensions
+    public static class KinshipKnowledge
     {
         // Usage (note the separation of concerns for knowledge base implementation and the domain):
         //
         // var kb = new ResolutionKnowledgeBase<IPerson>(); // ..or a different KB implementation - none implemented yet
-        // kb.AddKinshipAxioms();
+        // kb.Tell(KinshipKnowledge.Axioms);
         // kb.Tell(..facts about the specific problem..);
-        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(myDomainAdapter); for runtime "constants"
+        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter), where domainAdpater is an IEnumerable<IPerson>.. 
         // kb.Ask(..my query..);
-        //
-        // Would this be better as a public read-only axioms collection and an IKnowledgeBase extension to tell multiple facts at once?
-        // i.e. kb.Tell(KinshipKnowledge.Axioms); ..could also gracefully provide theorems then (performance..), and also allows for axiom
-        // examination without a KB instance..
-        public static void AddKinshipAxioms(this IKnowledgeBase<IPerson> knowledgeBase)
+        public static IReadOnlyCollection<Expression<Predicate<IEnumerable<IPerson>>>> Axioms { get; } = new List<Expression<Predicate<IEnumerable<IPerson>>>>()
         {
-            //// AXIOMS:
-
             // One's mother is one's female parent:
-            knowledgeBase.Tell(d => d.All((m, c) => Iff(c.Mother == m, m.IsFemale && m.IsParent(c))));
+            d => d.All((m, c) => Iff(c.Mother == m, m.IsFemale && m.IsParent(c))),
 
             // Ones' husband is one's male spouse:
-            knowledgeBase.Tell(d => d.All((w, h) => Iff(h.IsHusband(w), h.IsMale && h.IsSpouse(w))));
+            d => d.All((w, h) => Iff(h.IsHusband(w), h.IsMale && h.IsSpouse(w))),
 
             // Male and female are disjoint categories:
-            knowledgeBase.Tell(d => d.All(x => Iff(x.IsMale, !x.IsFemale)));
+            d => d.All(x => Iff(x.IsMale, !x.IsFemale)),
 
             // Parent and child are inverse relations:
-            knowledgeBase.Tell(d => d.All((p, c) => Iff(p.IsParent(c), c.IsChild(p))));
+            d => d.All((p, c) => Iff(p.IsParent(c), c.IsChild(p))),
 
             // A grandparent is a parent of one's parent:
-            knowledgeBase.Tell(d => d.All((g, c) => Iff(g.IsGrandparent(c), d.Any(p => g.IsParent(p) && p.IsParent(c)))));
+            d => d.All((g, c) => Iff(g.IsGrandparent(c), d.Any(p => g.IsParent(p) && p.IsParent(c)))),
 
             // A sibling is another child of one's parents:
-            knowledgeBase.Tell(d => d.All((x, y) => Iff(x.IsSibling(y), x != y && d.Any(p => p.IsParent(x) && p.IsParent(y)))));
+            d => d.All((x, y) => Iff(x.IsSibling(y), x != y && d.Any(p => p.IsParent(x) && p.IsParent(y)))),
 
-            //// THEOREMS:
+        }.AsReadOnly();
 
-            //KnowledgeBase.Tell(d => d.All((x, y) => Iff(x.IsSibling(y), y.IsSibling(x)));
-        }
+
+        // Theorems are derivable from axioms, but might be useful for performance...
+        public static IReadOnlyCollection<Expression<Predicate<IEnumerable<IPerson>>>> Theorems { get; } = new List<Expression<Predicate<IEnumerable<IPerson>>>>()
+        {
+            // Siblinghood is commutative:
+            d => d.All((x, y) => Iff(x.IsSibling(y), y.IsSibling(x))),
+
+        }.AsReadOnly();
     }
 }

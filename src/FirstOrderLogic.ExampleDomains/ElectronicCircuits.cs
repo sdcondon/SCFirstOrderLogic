@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace LinqToKB.FirstOrderLogic.ExampleDomains.ElectronicCircuits
 {
@@ -36,29 +38,25 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.ElectronicCircuits
         bool IsCircuit { get; }
 
         //// Binary predicates:
-        // TODO! Other examples are more complete..
+        // TODO! The other examples are more complete..
 
         //// Unary functions:
         ICircuitElement GateType { get; }
     }
 
-    public static class KnowledgeBaseExtensions
+    public static class ElectronicCircuitKnowledge
     {
         // Usage (note the separation of concerns for knowledge base implementation and the domain):
         //
         // var kb = new ResolutionKnowledgeBase<ICircuitElements, ICircuitElement>(); // ..or a different KB implementation - none implemented yet
-        // kb.AddElectronicCircuitAxioms();
+        // kb.Tell(ElectronicCircuitKnowledge.Axioms);
         // kb.Tell(..facts about the specific problem..);
-        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(myDomainAdapter); for runtime "constants"
+        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter), where domainAdpater is an ICircuitElements.. 
         // kb.Ask(..my query..);
-        //
-        // Would this be better as a public read-only axioms collection and an IKnowledgeBase extension to tell multiple facts at once?
-        // i.e. kb.Tell(ElectronicCircuitKnowledge.Axioms); ..could also gracefully provide theorems then, and also allows for axiom
-        // examination without a KB instance..
-
-        public static void AddElectronicCircuitAxioms(this IKnowledgeBase<ICircuitElements, ICircuitElement> knowledgeBase)
+        public static IReadOnlyCollection<Expression<Predicate<ICircuitElements>>> Axioms { get; } = new List<Expression<Predicate<ICircuitElements>>>()
         {
-            // TODO! Other examples are more complete..
-        }
+            //// TODO! The other examples are more complete..
+
+        }.AsReadOnly();
     }
 }
