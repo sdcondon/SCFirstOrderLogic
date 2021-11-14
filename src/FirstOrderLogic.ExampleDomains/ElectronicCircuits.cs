@@ -44,6 +44,9 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.ElectronicCircuits
         ICircuitElement GateType { get; }
     }
 
+    /// <summary>
+    /// Container for fundamental knowledge about the <see cref="ICircuitElements"/> domain.
+    /// </summary>
     public static class ElectronicCircuitKnowledge
     {
         // Usage (note the separation of concerns for knowledge base implementation and the domain):
@@ -51,7 +54,7 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.ElectronicCircuits
         // var kb = new ResolutionKnowledgeBase<ICircuitElements, ICircuitElement>(); // ..or a different KB implementation - none implemented yet
         // kb.Tell(ElectronicCircuitKnowledge.Axioms);
         // kb.Tell(..facts about the specific problem..);
-        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter), where domainAdpater is an ICircuitElements.. 
+        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter, opts), where domainAdapter is an ICircuitElements.. 
         // kb.Ask(..my query..);
         public static IReadOnlyCollection<Expression<Predicate<ICircuitElements>>> Axioms { get; } = new List<Expression<Predicate<ICircuitElements>>>()
         {

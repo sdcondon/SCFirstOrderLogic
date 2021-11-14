@@ -35,7 +35,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         {
             public override Sentence<TDomain, TElement> ApplyTo(Implication<TDomain, TElement> implication)
             {
-                return base.ApplyTo((Sentence<TDomain, TElement>)new Disjunction<TDomain, TElement>(
+                return ApplyTo(new Disjunction<TDomain, TElement>(
                     new Negation<TDomain, TElement>(implication.Antecedent),
                     implication.Consequent));
             }
@@ -82,7 +82,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                 }
                 else
                 {
-                    sentence = negation;
+                    return base.ApplyTo(negation);
                 }
 
                 return ApplyTo(sentence);
@@ -135,7 +135,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                 }
                 else
                 {
-                    sentence = disjunction;
+                    return base.ApplyTo(disjunction);
                 }
 
                 return ApplyTo(sentence);

@@ -18,6 +18,12 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         public Variable(VariableDeclaration<TDomain, TElement> declaration) => Declaration = declaration;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="Variable{TDomain, TElement}"/> class.
+        /// </summary>
+        /// <param name="name">The name of the variable.</param>
+        public Variable(string name) => Declaration = new VariableDeclaration<TDomain, TElement>(name);
+
+        /// <summary>
         /// Gets the declaration of the variable.
         /// </summary>
         public VariableDeclaration<TDomain, TElement> Declaration { get; }

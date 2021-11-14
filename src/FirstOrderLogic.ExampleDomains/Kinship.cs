@@ -34,6 +34,9 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.Kinship
         IPerson Father { get; }
     }
 
+    /// <summary>
+    /// Container for fundamental knowledge about the kinship domain.
+    /// </summary>
     public static class KinshipKnowledge
     {
         // Usage (note the separation of concerns for knowledge base implementation and the domain):
@@ -41,7 +44,7 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.Kinship
         // var kb = new ResolutionKnowledgeBase<IPerson>(); // ..or a different KB implementation - none implemented yet
         // kb.Tell(KinshipKnowledge.Axioms);
         // kb.Tell(..facts about the specific problem..);
-        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter), where domainAdpater is an IEnumerable<IPerson>.. 
+        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter, opts), where domainAdapter is an IEnumerable<IPerson>.. 
         // kb.Ask(..my query..);
         public static IReadOnlyCollection<Expression<Predicate<IEnumerable<IPerson>>>> Axioms { get; } = new List<Expression<Predicate<IEnumerable<IPerson>>>>()
         {
@@ -64,7 +67,6 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.Kinship
             d => d.All((x, y) => Iff(x.IsSibling(y), x != y && d.Any(p => p.IsParent(x) && p.IsParent(y)))),
 
         }.AsReadOnly();
-
 
         // Theorems are derivable from axioms, but might be useful for performance...
         public static IReadOnlyCollection<Expression<Predicate<IEnumerable<IPerson>>>> Theorems { get; } = new List<Expression<Predicate<IEnumerable<IPerson>>>>()

@@ -18,6 +18,9 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.NaturalNumbers
         INaturalNumber Add(INaturalNumber x);
     }
 
+    /// <summary>
+    /// Container for fundamental knowledge about the <see cref="INaturalNumbers"/> domain.
+    /// </summary>
     public static class NaturalNumberKnowledge
     {
         // Usage (note the separation of concerns for knowledge base implementation and the domain):
@@ -25,7 +28,7 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.NaturalNumbers
         // var kb = new ResolutionKnowledgeBase<INaturalNumbers, INaturalNumber>(); // ..or a different KB implementation - none implemented yet
         // kb.Tell(NaturalNumberKnowledge.Axioms);
         // kb.Tell(..facts about the specific problem..);
-        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter), where domainAdpater is an INaturalNumbers.. 
+        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter, opts), where domainAdapter is an INaturalNumbers.. 
         // kb.Ask(..my query..);
         public static IReadOnlyCollection<Expression<Predicate<INaturalNumbers>>> Axioms { get; } = new List<Expression<Predicate<INaturalNumbers>>>()
         {
