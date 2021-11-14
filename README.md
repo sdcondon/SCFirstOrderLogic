@@ -6,7 +6,7 @@ Experimental [first-order logic](https://en.wikipedia.org/wiki/First-order_logic
 That is, rather than directly giving the knowledge base sentences of first order logic (which obviously can't be done in C#), we (represent domains as IEnumerable&lt;TElement&gt; and) `Tell` an `IKnowledgeBase` bool-valued expressions that are guaranteed to be true for all models that it will be `Ask`ed about - which the knowledge base then converts into the entailed sentences of first order logic.
 
 Created just for fun while reading _Artificial Intelligence: A Modern Approach_ (3rd Edition - [ISBN 978-1292153964](https://www.google.com/search?q=isbn+978-1292153964)) - so may prove interesting to the .NET-inclined reading the same book.
-The language integration aspect of this (admittedly the raison d'être of the library) may or may not turn out to be useful - but if it doesn't, it can still be a learning resource. As such, care has been taken to include decent XML documentation and explanatory inline comments where helpful.
+The language integration aspect of this (admittedly the raison d'être of the library) may or may not turn out to be useful - but if it doesn't, it can still be a learning resource for first-order logic. As such, care has been taken to include decent XML documentation and explanatory inline comments where helpful.
 For real-world scenarios, there are other better inference engines out there (that don't lumber themselves with potentially useless language integration).
 
 Benefits of using LINQ expressions:
