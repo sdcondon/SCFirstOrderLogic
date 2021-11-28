@@ -148,7 +148,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="Negation{TDomain, TElement}"/> instance. 
-        /// The default implementation returns an <see cref="Negation{TDomain, TElement}"/> of the result of calling <see cref="ApplyTo"/> on both of the existing sub-sentences.
+        /// The default implementation returns a <see cref="Negation{TDomain, TElement}"/> of the result of calling <see cref="ApplyTo"/> on the current sub-sentence.
         /// </summary>
         /// <param name="negation">The <see cref="Negation{TDomain, TElement}"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence{TDomain, TElement}"/>.</returns>
@@ -166,7 +166,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="Predicate{TDomain, TElement}"/> instance. 
-        /// The default implementation returns an <see cref="Predicate{TDomain, TElement}"/> pointed at the same <see cref="MemberInfo"/> and with an argument list that is the result of calling <see cref="ApplyTo"/> on both of the existing arguments.
+        /// The default implementation returns a <see cref="Predicate{TDomain, TElement}"/> pointed at the same <see cref="MemberInfo"/> and with an argument list that is the result of calling <see cref="ApplyTo"/> on both of the existing arguments.
         /// </summary>
         /// <param name="predicate">The <see cref="Predicate{TDomain, TElement}"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence{TDomain, TElement}"/>.</returns>
@@ -184,7 +184,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="UniversalQuantification{TDomain, TElement}{TDomain, TElement}"/> instance. 
-        /// The default implementation returns an <see cref="UniversalQuantification{TDomain, TElement}"/> for which the variable declaration is the result of <see cref="ApplyTo"/> on the existing declaration, and the sentence is the result of <see cref="ApplyTo"/> on the existing sentence.
+        /// The default implementation returns a <see cref="UniversalQuantification{TDomain, TElement}"/> for which the variable declaration is the result of <see cref="ApplyTo"/> on the existing declaration, and the sentence is the result of <see cref="ApplyTo"/> on the existing sentence.
         /// </summary>
         /// <param name="universalQuantification">The <see cref="UniversalQuantification{TDomain, TElement}"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence{TDomain, TElement}"/>.</returns>
@@ -241,12 +241,18 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="Variable{TDomain, TElement}"/> instance.
-        /// The default implementation simply returns the variable unchanged.
+        /// The default implementation returns a <see cref="Variable{TDomain, TElement}"/> of the result of calling <see cref="ApplyTo"/> on the current declaration.
         /// </summary>
         /// <param name="term">The variable to visit.</param>
         /// <returns>The transformed term.</returns>
         public virtual Term<TDomain, TElement> ApplyTo(Variable<TDomain, TElement> variable)
         {
+            var variableDeclaration = ApplyTo(variable.Declaration);
+            if (variableDeclaration != variable.Declaration)
+            {
+                return new Variable<TDomain, TElement>(variableDeclaration);
+            }
+
             return variable;
         }
 
