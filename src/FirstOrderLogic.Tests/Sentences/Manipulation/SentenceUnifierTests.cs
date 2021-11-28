@@ -72,7 +72,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                 result.returnValue = new SentenceUnifier<IPeople, IPerson>().TryUnify(tc.Sentence1, tc.Sentence2, out result.unifier);
                 return result;
             })
-            .Then((tc, r) => r.returnValue.Should().BeTrue(), "Return value")
+            .ThenReturns((tc, r) => r.returnValue.Should().BeTrue(), "Return value")
             .And((tc, r) => r.unifier.Should().Equal(tc.ExpectedUnifier), "Unifier");
 
         public static Test TryUnifyNegative => TestThat
@@ -88,7 +88,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                 result.returnValue = new SentenceUnifier<IPeople, IPerson>().TryUnify(tc.Sentence1, tc.Sentence2, out result.unifier);
                 return result;
             })
-            .Then((tc, r) => r.returnValue.Should().BeFalse(), "Return value")
+            .ThenReturns((tc, r) => r.returnValue.Should().BeFalse(), "Return value")
             .And((tc, r) => r.unifier.Should().BeNull(), "Unifier");
     }
 }

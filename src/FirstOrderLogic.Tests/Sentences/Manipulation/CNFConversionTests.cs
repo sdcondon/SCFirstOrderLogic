@@ -1,8 +1,7 @@
-﻿using FlUnit;
-using FluentAssertions;
+﻿using FluentAssertions;
+using FlUnit;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using static LinqToKB.FirstOrderLogic.Operators;
 
 namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
