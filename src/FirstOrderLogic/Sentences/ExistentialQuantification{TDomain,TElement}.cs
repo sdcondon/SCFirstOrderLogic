@@ -14,7 +14,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         where TDomain : IEnumerable<TElement>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FOLExistentialQuantification{TModel}"/> class.
+        /// Initializes a new instance of the <see cref="ExistentialQuantification{TDomain,TModel}"/> class.
         /// </summary>
         /// <param name="variable">The variable declared by this quantification.</param>
         /// <param name="sentence">The sentence that this quantification applies to.</param>

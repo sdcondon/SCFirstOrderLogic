@@ -16,7 +16,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         where TDomain : IEnumerable<TElement>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FOLNegation{TModel}"/> class.
+        /// Initializes a new instance of the <see cref="Negation{TDomain,TModel}"/> class.
         /// </summary>
         /// <param name="sentence">The sentence that is negated.</param>
         public Negation(Sentence<TDomain, TElement> sentence) => Sentence = sentence;

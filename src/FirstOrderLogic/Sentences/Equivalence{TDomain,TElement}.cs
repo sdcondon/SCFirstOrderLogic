@@ -16,7 +16,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         where TDomain : IEnumerable<TElement>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FOLImplication{TModel}"/> class.
+        /// Initializes a new instance of the <see cref="Implication{TDomain,TModel}"/> class.
         /// </summary>
         /// <param name="equivalent1">The first equivalent sentence.</param>
         /// <param name="equivalent2">The second equivalent sentence.</param>
