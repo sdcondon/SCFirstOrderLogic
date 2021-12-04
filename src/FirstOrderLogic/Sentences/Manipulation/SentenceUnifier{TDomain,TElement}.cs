@@ -121,7 +121,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             Predicate<TDomain, TElement> y,
             IDictionary<Variable<TDomain, TElement>, Term<TDomain, TElement>> unifier)
         {
-            if (!MemberInfoEqualityComparer.Instance.Equals(x.Member, y.Member))
+            if (!x.SymbolEquals(y))
             {
                 return false;
             }
@@ -196,7 +196,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             IDictionary<Variable<TDomain, TElement>, Term<TDomain, TElement>> unifier)
         {
             // Dunno if this is the right way to unify (i.e. skolems can't unify with non-skolems?).. More reading and time will tell, but wouldn't be surprised if this needs to change..
-            if ((x is DomainFunction<TDomain, TElement> domainX && y is DomainFunction<TDomain, TElement> domainY && !MemberInfoEqualityComparer.Instance.Equals(domainX.Member, domainY.Member))
+            if ((x is MemberFunction<TDomain, TElement> domainX && y is MemberFunction<TDomain, TElement> domainY && !MemberInfoEqualityComparer.Instance.Equals(domainX.Member, domainY.Member))
                 || (x is SkolemFunction<TDomain, TElement> skolemX && y is SkolemFunction<TDomain, TElement> skolemY && skolemX.Label.Equals(skolemY.Label)))
             {
                 foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))

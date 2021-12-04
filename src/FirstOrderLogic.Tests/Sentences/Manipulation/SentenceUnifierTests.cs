@@ -18,14 +18,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             bool Knows(IPerson other);
         }
 
-        private static DomainFunction<IPeople, IPerson> Mother(Term<IPeople, IPerson> child)
+        private static MemberFunction<IPeople, IPerson> Mother(Term<IPeople, IPerson> child)
         {
-            return new DomainFunction<IPeople, IPerson>(typeof(IPerson).GetProperty(nameof(IPerson.Mother)), new[] { child });
+            return new MemberFunction<IPeople, IPerson>(typeof(IPerson).GetProperty(nameof(IPerson.Mother)), new[] { child });
         }
 
         private static Predicate<IPeople, IPerson> Knows(Term<IPeople, IPerson> knower, Term<IPeople, IPerson> known)
         {
-            return new Predicate<IPeople, IPerson>(typeof(IPerson).GetMethod(nameof(IPerson.Knows)), new Term<IPeople, IPerson>[] { knower, known });
+            return new MemberPredicate<IPeople, IPerson>(typeof(IPerson).GetMethod(nameof(IPerson.Knows)), new Term<IPeople, IPerson>[] { knower, known });
         }
 
         private static readonly Constant<IPeople, IPerson> john = new Constant<IPeople, IPerson>(typeof(IPeople).GetProperty(nameof(IPeople.John)));

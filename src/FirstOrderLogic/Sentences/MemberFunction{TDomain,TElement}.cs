@@ -12,15 +12,15 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// </summary>
     /// <typeparam name="TDomain">The type of the domain.</typeparam>
     /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
-    public class DomainFunction<TDomain, TElement> : Function<TDomain, TElement>
+    public class MemberFunction<TDomain, TElement> : Function<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Predicate{TDomain, TElement}"/> class.
+        /// Initializes a new instance of the <see cref="MemberFunction{TDomain, TElement}"/> class.
         /// </summary>
         /// <param name="memberInfo"></param>
         /// <param name="arguments">The arguments of this function.</param>
-        public DomainFunction(MemberInfo memberInfo, IList<Term<TDomain, TElement>> arguments)
+        public MemberFunction(MemberInfo memberInfo, IList<Term<TDomain, TElement>> arguments)
             : base(arguments)
         {
             Member = memberInfo;
@@ -34,7 +34,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (!(obj is DomainFunction<TDomain, TElement> otherFunction)
+            if (!(obj is MemberFunction<TDomain, TElement> otherFunction)
                 || !MemberInfoEqualityComparer.Instance.Equals(otherFunction.Member, Member)
                 || otherFunction.Arguments.Count != Arguments.Count)
             {

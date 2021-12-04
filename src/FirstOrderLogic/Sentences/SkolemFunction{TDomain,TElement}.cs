@@ -13,7 +13,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         where TDomain : IEnumerable<TElement>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Predicate{TDomain, TElement}"/> class.
+        /// Initializes a new instance of the <see cref="SkolemFunction{TDomain, TElement}"/> class.
         /// </summary>
         /// <param name="label"></param>
         /// <param name="arguments">The arguments of this function.</param>

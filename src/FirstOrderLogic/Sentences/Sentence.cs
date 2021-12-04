@@ -306,7 +306,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                     && TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, memberExpr.Expression), out var argument))
                 {
                     // TElement-valued property access is interpreted as a unary function.
-                    term = new DomainFunction<TDomain, TElement>(memberExpr.Member, new[] { argument });
+                    term = new MemberFunction<TDomain, TElement>(memberExpr.Member, new[] { argument });
                     return true;
                 }
                 else if (lambda.Body is MethodCallExpression methodCallExpr
@@ -337,7 +337,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                         arguments.Add(arg);
                     }
 
-                    term = new DomainFunction<TDomain, TElement>(methodCallExpr.Method, arguments);
+                    term = new MemberFunction<TDomain, TElement>(methodCallExpr.Method, arguments);
                     return true;
                 }
             }
@@ -396,13 +396,13 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 if (memberExpr.Expression == lambda.Parameters[0]) // i.e. is the domain parameter. Should try to find a cleaner way of doing this..
                 {
                     // Boolean-valued property access on the domain parameter is interpreted as a ground predicate
-                    sentence = new Predicate<TDomain, TElement>(memberExpr.Member, Array.Empty<Term<TDomain, TElement>>());
+                    sentence = new MemberPredicate<TDomain, TElement>(memberExpr.Member, Array.Empty<Term<TDomain, TElement>>());
                     return true;
                 }
                 else if (TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, memberExpr.Expression), out var argument))
                 {
                     // Boolean-valued property access on a term is interpreted as a unary predicate.
-                    sentence = new Predicate<TDomain, TElement>(memberExpr.Member, new[] { argument });
+                    sentence = new MemberPredicate<TDomain, TElement>(memberExpr.Member, new[] { argument });
                     return true;
                 }
             }
@@ -434,7 +434,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                     arguments.Add(arg);
                 }
 
-                sentence = new Predicate<TDomain, TElement>(methodCallExpr.Method, arguments);
+                sentence = new MemberPredicate<TDomain, TElement>(methodCallExpr.Method, arguments);
                 return true;
             }
             //// ... also to consider - certain things will fail the above but could be very sensibly interpreted

@@ -22,14 +22,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         private static Predicate<IDomain, IElement> IsAnimal(Term<IDomain, IElement> term)
         {
-            return new Predicate<IDomain, IElement>(
+            return new MemberPredicate<IDomain, IElement>(
                 typeof(IElement).GetProperty(nameof(IElement.IsAnimal)).GetMethod,
                 new[] { term });
         }
 
         private static Predicate<IDomain, IElement> Loves(Term<IDomain, IElement> term1, Term<IDomain, IElement> term2)
         {
-            return new Predicate<IDomain, IElement>(
+            return new MemberPredicate<IDomain, IElement>(
                 typeof(IElement).GetMethod(nameof(IElement.Loves)),
                 new[] { term1, term2 });
         }

@@ -166,17 +166,32 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="Predicate{TDomain, TElement}"/> instance. 
-        /// The default implementation returns a <see cref="Predicate{TDomain, TElement}"/> pointed at the same <see cref="MemberInfo"/> and with an argument list that is the result of calling <see cref="ApplyTo"/> on both of the existing arguments.
+        /// The default implementation simply invokes the <see cref="ApplyTo"/> method appropriate to the type of the predicate.
         /// </summary>
         /// <param name="predicate">The <see cref="Predicate{TDomain, TElement}"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence{TDomain, TElement}"/>.</returns>
         public virtual Sentence<TDomain, TElement> ApplyTo(Predicate<TDomain, TElement> predicate)
         {
+            return predicate switch
+            {
+                MemberPredicate<TDomain, TElement> memberPredicate => ApplyTo(memberPredicate),
+                _ => throw new ArgumentException()
+            };
+        }
+
+        /// <summary>
+        /// Applies this transformation to a <see cref="MemberPredicate{TDomain, TElement}"/> instance. 
+        /// The default implementation returns a <see cref="MemberPredicate{TDomain, TElement}"/> pointed at the same <see cref="MemberInfo"/> and with an argument list that is the result of calling <see cref="ApplyTo"/> on both of the existing arguments.
+        /// </summary>
+        /// <param name="predicate">The <see cref="Predicate{TDomain, TElement}"/> instance to visit.</param>
+        /// <returns>The transformed <see cref="Sentence{TDomain, TElement}"/>.</returns>
+        public virtual Sentence<TDomain, TElement> ApplyTo(MemberPredicate<TDomain, TElement> predicate)
+        {
             var arguments = predicate.Arguments.Select(a => ApplyTo(a)).ToList();
 
             if (arguments.Zip(predicate.Arguments, (x, y) => (x, y)).Any(t => t.x != t.y))
             {
-                return new Predicate<TDomain, TElement>(predicate.Member, arguments);
+                return new MemberPredicate<TDomain, TElement>(predicate.Member, arguments);
             }
 
             return predicate;
@@ -198,17 +213,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             }
 
             return universalQuantification;
-        }
-
-        /// <summary>
-        /// Applies this transformation to a <see cref="VariableDeclaration{TDomain, TElement}"/> instance.
-        /// The default implementation simply returns the passed value.
-        /// </summary>
-        /// <param name="variableDeclaration">The <see cref="VariableDeclaration{TDomain, TElement}"/> instance to transform.</param>
-        /// <returns>The transformed <see cref="Variable{TDomain, TElement}"/> declaration.</returns>
-        public virtual VariableDeclaration<TDomain, TElement> ApplyTo(VariableDeclaration<TDomain, TElement> variableDeclaration)
-        {
-            return variableDeclaration;
         }
 
         /// <summary>
@@ -266,25 +270,25 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         {
             return function switch
             {
-                DomainFunction<TDomain, TElement> domainFunction => ApplyTo(domainFunction),
+                MemberFunction<TDomain, TElement> domainFunction => ApplyTo(domainFunction),
                 SkolemFunction<TDomain, TElement> skolemFunction => ApplyTo(skolemFunction),
                 _ => throw new ArgumentException()
             };
         }
 
         /// <summary>
-        /// Applies this transformation to a <see cref="DomainFunction{TDomain, TElement}"/> instance.
-        /// The default implementation returns a <see cref="DomainFunction{TDomain, TElement}"/> pointed at the same <see cref="MemberInfo"/> and with an argument list that is the result of calling <see cref="ApplyTo"/> on each of the existing arguments.
+        /// Applies this transformation to a <see cref="MemberFunction{TDomain, TElement}"/> instance.
+        /// The default implementation returns a <see cref="MemberFunction{TDomain, TElement}"/> pointed at the same <see cref="MemberInfo"/> and with an argument list that is the result of calling <see cref="ApplyTo"/> on each of the existing arguments.
         /// </summary>
         /// <param name="domainFunction">The function to visit.</param>
         /// <returns>The transformed term.</returns>
-        public virtual Term<TDomain, TElement> ApplyTo(DomainFunction<TDomain, TElement> domainFunction)
+        public virtual Term<TDomain, TElement> ApplyTo(MemberFunction<TDomain, TElement> domainFunction)
         {
             var arguments = domainFunction.Arguments.Select(a => ApplyTo(a)).ToList();
 
             if (arguments.Zip(domainFunction.Arguments, (x, y) => (x, y)).Any(t => t.x != t.y))
             {
-                return new DomainFunction<TDomain, TElement>(domainFunction.Member, arguments);
+                return new MemberFunction<TDomain, TElement>(domainFunction.Member, arguments);
             }
 
             return domainFunction;
@@ -306,6 +310,17 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             }
 
             return skolemFunction;
+        }
+
+        /// <summary>
+        /// Applies this transformation to a <see cref="VariableDeclaration{TDomain, TElement}"/> instance.
+        /// The default implementation simply returns the passed value.
+        /// </summary>
+        /// <param name="variableDeclaration">The <see cref="VariableDeclaration{TDomain, TElement}"/> instance to transform.</param>
+        /// <returns>The transformed <see cref="Variable{TDomain, TElement}"/> declaration.</returns>
+        public virtual VariableDeclaration<TDomain, TElement> ApplyTo(VariableDeclaration<TDomain, TElement> variableDeclaration)
+        {
+            return variableDeclaration;
         }
     }
 }
