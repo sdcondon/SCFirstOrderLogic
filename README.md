@@ -12,9 +12,13 @@ For real-world scenarios, there are other better inference engines out there (th
 Benefits of using LINQ expressions:
 * Your sentences of propositional logic can be expressed in the familiar, plain-old C#, with the operators you would expect (e.g. `&&`, `||` and `!`).
 * Further, your rules are expressed in code that is directly integrable with domain implementations, should they exist. This (may turn out to be useless, but) may:
-  * Provide a way of integrating the rest of your business logic (in particular, known constants) with the knowledge base. For example, a knowledge base could derive known constants and their functions/predicates by enumerating an actual implementation of IEnumerable&lt;TElement&gt;. Of course, the fact that we often only know particular things about constants doesn't mesh particularly well with having a real object graph. However, given that any implementation is likely to be an adapter anyway (as, for example, LinqToKB doesn't engage with the .NET type system much - more on this below), there could be a convention based thing where exceptions thrown by the implementation are classed as unknowns by the knowledge base. This may (probably will..) turn out to be more complex than is useful, but you never know (and the real goal here is teaching myself FoL anyway, so I'm not too fussed if it doesn't pan out).
+  * Provide a way of integrating the rest of your business logic (in particular, known constants) with the knowledge base.
+  For example, a knowledge base could derive known constants and their functions/predicates by enumerating an actual implementation of IEnumerable&lt;TElement&gt;.
+  Of course, the fact that we often only know particular things about constants doesn't mesh particularly well with having a real object graph.
+  However, given that any implementation is likely to be an adapter anyway (as, for example, LinqToKB doesn't engage with the .NET type system much - more on this below),
+  there could be a convention based thing where exceptions thrown by the implementation are classed as unknowns by the knowledge base.
+  This may (probably will..) turn out to be more complex than is useful, but you never know (and the real goal here is teaching myself FoL anyway, so I'm not too fussed if it doesn't pan out).
   * Provide a way of validating a domain implementation with the knowledge base.
-  * NB: the potential for this kind of thing is the only reason that the sentence types are generic - in preparation for strong typed methods to support this integration.
 * LINQ already includes much of the plumbing to make this happen - expression trees, visitor classes etc - making the conversion from one to the other fairly straightforward.
 
 Drawbacks of using LINQ expressions:
