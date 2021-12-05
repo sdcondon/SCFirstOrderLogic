@@ -91,12 +91,60 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         private class VariableStandardisation : SentenceTransformation<TDomain, TElement>
         {
-            // TODO!
+            public override Sentence<TDomain, TElement> ApplyTo(Sentence<TDomain, TElement> sentence)
+            {
+                var variableScopeFinder = new VariableScopeFinder();
+                variableScopeFinder.ApplyTo(sentence);
+                return new VariableRenamer(variableScopeFinder.VariableScopes).ApplyTo(sentence);
+            }
+
+            // Ick: Double-nested class.
+            // Ick: A "Transformation" that doesn't transform. More evidence to suggest introduction of visitor pattern at some point.
+            private class VariableScopeFinder : SentenceTransformation<TDomain, TElement>
+            {
+                public List<Sentence<TDomain, TElement>> VariableScopes { get; } = new List<Sentence<TDomain, TElement>>();
+
+                public override Sentence<TDomain, TElement> ApplyTo(ExistentialQuantification<TDomain, TElement> existentialQuantification)
+                {
+                    VariableScopes.Add(existentialQuantification);
+                    return base.ApplyTo(existentialQuantification);
+                }
+
+                public override Sentence<TDomain, TElement> ApplyTo(UniversalQuantification<TDomain, TElement> universalQuantification)
+                {
+                    VariableScopes.Add(universalQuantification);
+                    return base.ApplyTo(universalQuantification);
+                }
+            }
+
+            // Ick: Double-nested class.
+            private class VariableRenamer : SentenceTransformation<TDomain, TElement>
+            {
+                Dictionary<VariableDeclaration<TDomain, TElement>, VariableDeclaration<TDomain, TElement>> mapping;
+
+                public VariableRenamer(IEnumerable<Sentence<TDomain, TElement>> variableScopes)
+                {
+                    foreach (var scope in variableScopes)
+                    {
+
+                    }
+                }
+
+                public override VariableDeclaration<TDomain, TElement> ApplyTo(VariableDeclaration<TDomain, TElement> variableDeclaration)
+                {
+                    if (mapping.TryGetValue(variableDeclaration, out var newDeclaration))
+                    {
+                        return newDeclaration;
+                    }
+
+                    return variableDeclaration;
+                }
+            }
         }
 
         private class Skolemisation : SentenceTransformation<TDomain, TElement>
         {
-            // TODO: will require changes to how we model things...
+            // TODO!
         }
 
         private class UniversalQuantifierElimination : SentenceTransformation<TDomain, TElement>
