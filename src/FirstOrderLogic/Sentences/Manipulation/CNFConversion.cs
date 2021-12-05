@@ -3,12 +3,9 @@
 namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 {
     /// <summary>
-    /// Implementation of <see cref="SentenceTransformation{TDomain, TElement}"/> that converts sentences to conjunctive normal form.
+    /// Implementation of <see cref="SentenceTransformation"/> that converts sentences to conjunctive normal form.
     /// </summary>
-    /// <typeparam name="TDomain"></typeparam>
-    /// <typeparam name="TElement"></typeparam>
-    public class CNFConversion<TDomain, TElement> : SentenceTransformation<TDomain, TElement>
-        where TDomain : IEnumerable<TElement>
+    public class CNFConversion : SentenceTransformation
     {
         private readonly ImplicationElimination implicationElimination = new ImplicationElimination();
         private readonly NNFConversion nnfConversion = new NNFConversion();
@@ -17,7 +14,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         private readonly UniversalQuantifierElimination universalQuantifierElimination = new UniversalQuantifierElimination();
         private readonly DisjunctionDistribution disjunctionDistribution = new DisjunctionDistribution();
 
-        public override Sentence<TDomain, TElement> ApplyTo(Sentence<TDomain, TElement> sentence)
+        public override Sentence ApplyTo(Sentence sentence)
         {
             // Might be possible to do some of these conversions at the same time, but for now
             // at least, do them sequentially.
@@ -31,54 +28,54 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             return sentence;
         }
 
-        private class ImplicationElimination : SentenceTransformation<TDomain, TElement>
+        private class ImplicationElimination : SentenceTransformation
         {
-            public override Sentence<TDomain, TElement> ApplyTo(Implication<TDomain, TElement> implication)
+            public override Sentence ApplyTo(Implication implication)
             {
-                return ApplyTo(new Disjunction<TDomain, TElement>(
-                    new Negation<TDomain, TElement>(implication.Antecedent),
+                return ApplyTo(new Disjunction(
+                    new Negation(implication.Antecedent),
                     implication.Consequent));
             }
         }
 
-        private class NNFConversion : SentenceTransformation<TDomain, TElement>
+        private class NNFConversion : SentenceTransformation
         {
-            public override Sentence<TDomain, TElement> ApplyTo(Negation<TDomain, TElement> negation)
+            public override Sentence ApplyTo(Negation negation)
             {
-                Sentence<TDomain, TElement> sentence;
+                Sentence sentence;
 
-                if (negation.Sentence is Negation<TDomain, TElement> n)
+                if (negation.Sentence is Negation n)
                 {
                     // Eliminate double negative: ¬(¬P) ≡ P
                     sentence = n.Sentence;
                 }
-                else if (negation.Sentence is Conjunction<TDomain, TElement> c)
+                else if (negation.Sentence is Conjunction c)
                 {
                     // Apply de Morgan: ¬(P ∧ Q) ≡ (¬P ∨ ¬Q)
-                    sentence = new Disjunction<TDomain, TElement>(
-                        new Negation<TDomain, TElement>(c.Left),
-                        new Negation<TDomain, TElement>(c.Right));
+                    sentence = new Disjunction(
+                        new Negation(c.Left),
+                        new Negation(c.Right));
                 }
-                else if (negation.Sentence is Disjunction<TDomain, TElement> d)
+                else if (negation.Sentence is Disjunction d)
                 {
                     // Apply de Morgan: ¬(P ∨ Q) ≡ (¬P ∧ ¬Q)
-                    sentence = new Conjunction<TDomain, TElement>(
-                        new Negation<TDomain, TElement>(d.Left),
-                        new Negation<TDomain, TElement>(d.Right));
+                    sentence = new Conjunction(
+                        new Negation(d.Left),
+                        new Negation(d.Right));
                 }
-                else if (negation.Sentence is UniversalQuantification<TDomain, TElement> u)
+                else if (negation.Sentence is UniversalQuantification u)
                 {
                     // Apply ¬∀x, p ≡ ∃x, ¬p
-                    sentence = new ExistentialQuantification<TDomain, TElement>(
+                    sentence = new ExistentialQuantification(
                         u.Variable,
-                        new Negation<TDomain, TElement>(u.Sentence));
+                        new Negation(u.Sentence));
                 }
-                else if (negation.Sentence is ExistentialQuantification<TDomain, TElement> e)
+                else if (negation.Sentence is ExistentialQuantification e)
                 {
                     // Apply ¬∃x, p ≡ ∀x, ¬p
-                    sentence = new UniversalQuantification<TDomain, TElement>(
+                    sentence = new UniversalQuantification(
                         e.Variable,
-                        new Negation<TDomain, TElement>(e.Sentence));
+                        new Negation(e.Sentence));
                 }
                 else
                 {
@@ -89,9 +86,9 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             }
         }
 
-        private class VariableStandardisation : SentenceTransformation<TDomain, TElement>
+        private class VariableStandardisation : SentenceTransformation
         {
-            public override Sentence<TDomain, TElement> ApplyTo(Sentence<TDomain, TElement> sentence)
+            public override Sentence ApplyTo(Sentence sentence)
             {
                 var variableScopeFinder = new VariableScopeFinder();
                 variableScopeFinder.ApplyTo(sentence);
@@ -100,17 +97,17 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
             // Ick: Double-nested class.
             // Ick: A "Transformation" that doesn't transform. More evidence to suggest introduction of visitor pattern at some point.
-            private class VariableScopeFinder : SentenceTransformation<TDomain, TElement>
+            private class VariableScopeFinder : SentenceTransformation
             {
-                public List<Sentence<TDomain, TElement>> VariableScopes { get; } = new List<Sentence<TDomain, TElement>>();
+                public List<Sentence> VariableScopes { get; } = new List<Sentence>();
 
-                public override Sentence<TDomain, TElement> ApplyTo(ExistentialQuantification<TDomain, TElement> existentialQuantification)
+                public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
                 {
                     VariableScopes.Add(existentialQuantification);
                     return base.ApplyTo(existentialQuantification);
                 }
 
-                public override Sentence<TDomain, TElement> ApplyTo(UniversalQuantification<TDomain, TElement> universalQuantification)
+                public override Sentence ApplyTo(UniversalQuantification universalQuantification)
                 {
                     VariableScopes.Add(universalQuantification);
                     return base.ApplyTo(universalQuantification);
@@ -118,11 +115,11 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             }
 
             // Ick: Double-nested class.
-            private class VariableRenamer : SentenceTransformation<TDomain, TElement>
+            private class VariableRenamer : SentenceTransformation
             {
-                Dictionary<VariableDeclaration<TDomain, TElement>, VariableDeclaration<TDomain, TElement>> mapping;
+                Dictionary<VariableDeclaration, VariableDeclaration> mapping;
 
-                public VariableRenamer(IEnumerable<Sentence<TDomain, TElement>> variableScopes)
+                public VariableRenamer(IEnumerable<Sentence> variableScopes)
                 {
                     foreach (var scope in variableScopes)
                     {
@@ -130,7 +127,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                     }
                 }
 
-                public override VariableDeclaration<TDomain, TElement> ApplyTo(VariableDeclaration<TDomain, TElement> variableDeclaration)
+                public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
                 {
                     if (mapping.TryGetValue(variableDeclaration, out var newDeclaration))
                     {
@@ -142,14 +139,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             }
         }
 
-        private class Skolemisation : SentenceTransformation<TDomain, TElement>
+        private class Skolemisation : SentenceTransformation
         {
             // TODO!
         }
 
-        private class UniversalQuantifierElimination : SentenceTransformation<TDomain, TElement>
+        private class UniversalQuantifierElimination : SentenceTransformation
         {
-            public override Sentence<TDomain, TElement> ApplyTo(UniversalQuantification<TDomain, TElement> universalQuantification)
+            public override Sentence ApplyTo(UniversalQuantification universalQuantification)
             {
                 return ApplyTo(universalQuantification.Sentence);
             }
@@ -158,28 +155,28 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         /// <summary>
         /// Sentence trnasformation that recursively distributes disjunctions over conjunctions.
         /// </summary>
-        private class DisjunctionDistribution : SentenceTransformation<TDomain, TElement>
+        private class DisjunctionDistribution : SentenceTransformation
         {
-            public override Sentence<TDomain, TElement> ApplyTo(Disjunction<TDomain, TElement> disjunction)
+            public override Sentence ApplyTo(Disjunction disjunction)
             {
-                Sentence<TDomain, TElement> sentence;
+                Sentence sentence;
 
-                if (disjunction.Right is Conjunction<TDomain, TElement> cRight)
+                if (disjunction.Right is Conjunction cRight)
                 {
                     // Apply distribution of ∨ over ∧: (α ∨ (β ∧ γ)) ≡ ((α ∨ β) ∧ (α ∨ γ))
                     // NB the "else if" below is fine (i.e. we don't need a seperate case for if they are both &&s)
                     // since if b.Left is also an &&, well end up distributing over it once we recurse down as far
                     // as the Expression.OrElses we create here.
-                    sentence = new Conjunction<TDomain, TElement>(
-                        new Disjunction<TDomain, TElement>(disjunction.Left, cRight.Left),
-                        new Disjunction<TDomain, TElement>(disjunction.Left, cRight.Right));
+                    sentence = new Conjunction(
+                        new Disjunction(disjunction.Left, cRight.Left),
+                        new Disjunction(disjunction.Left, cRight.Right));
                 }
-                else if (disjunction.Left is Conjunction<TDomain, TElement> cLeft)
+                else if (disjunction.Left is Conjunction cLeft)
                 {
                     // Apply distribution of ∨ over ∧: ((β ∧ γ) ∨ α) ≡ ((β ∨ α) ∧ (γ ∨ α))
-                    sentence = new Conjunction<TDomain, TElement>(
-                        new Disjunction<TDomain, TElement>(cLeft.Left, disjunction.Right),
-                        new Disjunction<TDomain, TElement>(cLeft.Right, disjunction.Right));
+                    sentence = new Conjunction(
+                        new Disjunction(cLeft.Left, disjunction.Right),
+                        new Disjunction(cLeft.Right, disjunction.Right));
                 }
                 else
                 {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace LinqToKB.FirstOrderLogic.Sentences
+﻿namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
     /// Representation of a universal quantification sentence of first order logic. In typical FOL syntax, this is written as:
@@ -8,17 +6,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// In LinqToKB, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
     /// <code>{domain}.All({variable} => {expression})</code>
     /// </summary>
-    /// <typeparam name="TDomain">The type of the domain.</typeparam>
-    /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
-    public class UniversalQuantification<TDomain, TElement> : Quantification<TDomain, TElement>
-        where TDomain : IEnumerable<TElement>
+    public class UniversalQuantification : Quantification
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UniversalQuantification{TDomain,TModel}"/> class.
+        /// Initializes a new instance of the <see cref="UniversalQuantification"/> class.
         /// </summary>
         /// <param name="variable">The variable declared by this quantification.</param>
         /// <param name="sentence">The sentence that this quantification applies to.</param>
-        public UniversalQuantification(VariableDeclaration<TDomain, TElement> variable, Sentence<TDomain, TElement> sentence)
+        public UniversalQuantification(VariableDeclaration variable, Sentence sentence)
             : base(variable, sentence)
         {
         }

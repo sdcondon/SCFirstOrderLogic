@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
@@ -9,32 +8,29 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// In LinqToKB, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
     /// <code>{expression} {|| or |} {expression}</code>
     /// </summary>
-    /// <typeparam name="TDomain">The type of the domain.</typeparam>
-    /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
-    public class Disjunction<TDomain, TElement> : Sentence<TDomain, TElement>
-        where TDomain : IEnumerable<TElement>
+    public class Disjunction : Sentence
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Disjunction{TDomain, TElement}"/> class.
+        /// Initializes a new instance of the <see cref="Disjunction"/> class.
         /// </summary>
         /// <param name="left">The left side of the disjunction.</param>
         /// <param name="right">The right side of the disjunction.</param>
-        public Disjunction(Sentence<TDomain, TElement> left, Sentence<TDomain, TElement> right) => (Left, Right) = (left, right);
+        public Disjunction(Sentence left, Sentence right) => (Left, Right) = (left, right);
 
         /// <summary>
         /// Gets the left side of the disjunction.
         /// </summary>
-        public Sentence<TDomain, TElement> Left { get; }
+        public Sentence Left { get; }
 
         /// <summary>
         /// Gets the right side of the disjunction.
         /// </summary>
-        public Sentence<TDomain, TElement> Right { get; }
+        public Sentence Right { get; }
 
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (!(obj is Disjunction<TDomain, TElement> otherDisjunction))
+            if (!(obj is Disjunction otherDisjunction))
             {
                 return false;
             }

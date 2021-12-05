@@ -18,22 +18,22 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             bool Knows(IPerson other);
         }
 
-        private static MemberFunction<IPeople, IPerson> Mother(Term<IPeople, IPerson> child)
+        private static MemberFunction Mother(Term child)
         {
-            return new MemberFunction<IPeople, IPerson>(typeof(IPerson).GetProperty(nameof(IPerson.Mother)), new[] { child });
+            return new MemberFunction(typeof(IPerson).GetProperty(nameof(IPerson.Mother)), new[] { child });
         }
 
-        private static Predicate<IPeople, IPerson> Knows(Term<IPeople, IPerson> knower, Term<IPeople, IPerson> known)
+        private static Predicate Knows(Term knower, Term known)
         {
-            return new MemberPredicate<IPeople, IPerson>(typeof(IPerson).GetMethod(nameof(IPerson.Knows)), new Term<IPeople, IPerson>[] { knower, known });
+            return new MemberPredicate(typeof(IPerson).GetMethod(nameof(IPerson.Knows)), new Term[] { knower, known });
         }
 
-        private static readonly Constant<IPeople, IPerson> john = new Constant<IPeople, IPerson>(typeof(IPeople).GetProperty(nameof(IPeople.John)));
-        private static readonly Constant<IPeople, IPerson> jane = new Constant<IPeople, IPerson>(typeof(IPeople).GetProperty(nameof(IPeople.Jane)));
-        private static readonly Variable<IPeople, IPerson> x = new Variable<IPeople, IPerson>(new VariableDeclaration<IPeople, IPerson>("x"));
-        private static readonly Variable<IPeople, IPerson> y = new Variable<IPeople, IPerson>(new VariableDeclaration<IPeople, IPerson>("y"));
+        private static readonly Constant john = new Constant(typeof(IPeople).GetProperty(nameof(IPeople.John)));
+        private static readonly Constant jane = new Constant(typeof(IPeople).GetProperty(nameof(IPeople.Jane)));
+        private static readonly Variable x = new Variable(new VariableDeclaration("x"));
+        private static readonly Variable y = new Variable(new VariableDeclaration("y"));
 
-        private record TestCase(Sentence<IPeople, IPerson> Sentence1, Sentence<IPeople, IPerson> Sentence2, Dictionary<Variable<IPeople, IPerson>, Term<IPeople, IPerson>> ExpectedUnifier = null);
+        private record TestCase(Sentence Sentence1, Sentence Sentence2, Dictionary<Variable, Term> ExpectedUnifier = null);
 
         public static Test TryUnifyPositive => TestThat
             .GivenEachOf(() => new[]
@@ -41,7 +41,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                 new TestCase(
                     Sentence1: Knows(john, x),
                     Sentence2: Knows(john, jane),
-                    ExpectedUnifier: new Dictionary<Variable<IPeople, IPerson>, Term<IPeople, IPerson>>()
+                    ExpectedUnifier: new Dictionary<Variable, Term>()
                     {
                         [x] = jane,
                     }),
@@ -49,7 +49,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                 new TestCase(
                     Sentence1: Knows(john, x),
                     Sentence2: Knows(y, jane),
-                    ExpectedUnifier: new Dictionary<Variable<IPeople, IPerson>, Term<IPeople, IPerson>>()
+                    ExpectedUnifier: new Dictionary<Variable, Term>()
                     {
                         [x] = jane,
                         [y] = john,
@@ -58,7 +58,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                 new TestCase(
                     Sentence1: Knows(john, x),
                     Sentence2: Knows(y, Mother(y)),
-                    ExpectedUnifier: new Dictionary<Variable<IPeople, IPerson>, Term<IPeople, IPerson>>()
+                    ExpectedUnifier: new Dictionary<Variable, Term>()
                     {
                         // Book says that x should be Mother(john), but that's not what the algorithm they give
                         // produces. Easy enough to resolve, but waiting and seeing how it pans out through usage..
@@ -68,8 +68,8 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             })
             .When(tc =>
             {
-                (bool returnValue, IDictionary<Variable<IPeople, IPerson>, Term<IPeople, IPerson>> unifier) result;
-                result.returnValue = new SentenceUnifier<IPeople, IPerson>().TryUnify(tc.Sentence1, tc.Sentence2, out result.unifier);
+                (bool returnValue, IDictionary<Variable, Term> unifier) result;
+                result.returnValue = new SentenceUnifier().TryUnify(tc.Sentence1, tc.Sentence2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue(), "Return value")
@@ -84,8 +84,8 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             })
             .When(tc =>
             {
-                (bool returnValue, IDictionary<Variable<IPeople, IPerson>, Term<IPeople, IPerson>> unifier) result;
-                result.returnValue = new SentenceUnifier<IPeople, IPerson>().TryUnify(tc.Sentence1, tc.Sentence2, out result.unifier);
+                (bool returnValue, IDictionary<Variable, Term> unifier) result;
+                result.returnValue = new SentenceUnifier().TryUnify(tc.Sentence1, tc.Sentence2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse(), "Return value")

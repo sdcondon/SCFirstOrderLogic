@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
@@ -10,24 +9,21 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <code>!{expression}</code>
     /// We also interpret <c>!=</c> as a negation of an equality.
     /// </summary>
-    /// <typeparam name="TDomain">The type of the domain.</typeparam>
-    /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
-    public class Negation<TDomain, TElement> : Sentence<TDomain, TElement>
-        where TDomain : IEnumerable<TElement>
+    public class Negation : Sentence
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Negation{TDomain,TModel}"/> class.
+        /// Initializes a new instance of the <see cref="Negation"/> class.
         /// </summary>
         /// <param name="sentence">The sentence that is negated.</param>
-        public Negation(Sentence<TDomain, TElement> sentence) => Sentence = sentence;
+        public Negation(Sentence sentence) => Sentence = sentence;
 
         /// <summary>
         /// Gets the sentence that is negated.
         /// </summary>
-        public Sentence<TDomain, TElement> Sentence { get; }
+        public Sentence Sentence { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is Negation<TDomain, TElement> negation && Sentence.Equals(negation.Sentence);
+        public override bool Equals(object obj) => obj is Negation negation && Sentence.Equals(negation.Sentence);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Sentence);

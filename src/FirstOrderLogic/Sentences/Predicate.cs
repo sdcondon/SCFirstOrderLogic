@@ -7,24 +7,21 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// Representation of an predicate sentence of first order logic, In typical FOL syntax, this is written as:
     /// <code>Predicate({term}, ..)</code>
     /// </summary>
-    /// <typeparam name="TDomain">The type of the domain.</typeparam>
-    /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
-    public abstract class Predicate<TDomain, TElement> : Sentence<TDomain, TElement>
-        where TDomain : IEnumerable<TElement>
+    public abstract class Predicate : Sentence
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Predicate{TDomain, TElement}"/> class.
+        /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
         /// <param name="arguments">The arguments of this predicate.</param>
-        public Predicate(IList<Term<TDomain, TElement>> arguments)
+        public Predicate(IList<Term> arguments)
         {
-            Arguments = new ReadOnlyCollection<Term<TDomain, TElement>>(arguments);
+            Arguments = new ReadOnlyCollection<Term>(arguments);
         }
 
         /// <summary>
         /// Gets the arguments of this predicate.
         /// </summary>
-        public ReadOnlyCollection<Term<TDomain, TElement>> Arguments { get; }
+        public ReadOnlyCollection<Term> Arguments { get; }
 
         /// <summary>
         /// Determines if another predicate has the same symbol as this one.
@@ -36,6 +33,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Because that could be used in hash code calculations, which would let us define equality and
         /// hash code in this base class.. Possible (probable..) follow-up commit to do that..
         /// </remarks>
-        public abstract bool SymbolEquals(Predicate<TDomain, TElement> other);
+        public abstract bool SymbolEquals(Predicate other);
     }
 }

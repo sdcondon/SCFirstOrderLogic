@@ -10,32 +10,29 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <code>Operators.Iff({expression}, {expression})</code>
     /// (Consumers are encouraged to include <c>using static LinqToKB.FirstOrderLogic.Operators;</c> to make this a little shorter)
     /// </summary>
-    /// <typeparam name="TDomain">The type of the domain.</typeparam>
-    /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
-    public class Equivalence<TDomain, TElement> : Sentence<TDomain, TElement>
-        where TDomain : IEnumerable<TElement>
+    public class Equivalence : Sentence
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Implication{TDomain,TModel}"/> class.
+        /// Initializes a new instance of the <see cref="Implication"/> class.
         /// </summary>
         /// <param name="equivalent1">The first equivalent sentence.</param>
         /// <param name="equivalent2">The second equivalent sentence.</param>
-        public Equivalence(Sentence<TDomain, TElement> equivalent1, Sentence<TDomain, TElement> equivalent2) => (Equivalent1, Equivalent2) = (equivalent1, equivalent2);
+        public Equivalence(Sentence equivalent1, Sentence equivalent2) => (Equivalent1, Equivalent2) = (equivalent1, equivalent2);
 
         /// <summary>
         /// Gets the first equivalent sentence.
         /// </summary>
-        public Sentence<TDomain, TElement> Equivalent1 { get; }
+        public Sentence Equivalent1 { get; }
 
         /// <summary>
         /// Gets the second equivalent sentence.
         /// </summary>
-        public Sentence<TDomain, TElement> Equivalent2 { get; }
+        public Sentence Equivalent2 { get; }
 
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (!(obj is Equivalence<TDomain, TElement> otherEquivalence))
+            if (!(obj is Equivalence otherEquivalence))
             {
                 return false;
             }

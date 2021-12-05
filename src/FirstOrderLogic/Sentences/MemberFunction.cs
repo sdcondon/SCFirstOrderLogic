@@ -10,17 +10,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// represents a function that refers to a particular element-valued method or property of elements of
     /// the domain.
     /// </summary>
-    /// <typeparam name="TDomain">The type of the domain.</typeparam>
-    /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
-    public class MemberFunction<TDomain, TElement> : Function<TDomain, TElement>
-        where TDomain : IEnumerable<TElement>
+    public class MemberFunction : Function
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MemberFunction{TDomain, TElement}"/> class.
+        /// Initializes a new instance of the <see cref="MemberFunction"/> class.
         /// </summary>
         /// <param name="memberInfo"></param>
         /// <param name="arguments">The arguments of this function.</param>
-        public MemberFunction(MemberInfo memberInfo, IList<Term<TDomain, TElement>> arguments)
+        public MemberFunction(MemberInfo memberInfo, IList<Term> arguments)
             : base(arguments)
         {
             Member = memberInfo;
@@ -34,7 +31,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (!(obj is MemberFunction<TDomain, TElement> otherFunction)
+            if (!(obj is MemberFunction otherFunction)
                 || !MemberInfoEqualityComparer.Instance.Equals(otherFunction.Member, Member)
                 || otherFunction.Arguments.Count != Arguments.Count)
             {

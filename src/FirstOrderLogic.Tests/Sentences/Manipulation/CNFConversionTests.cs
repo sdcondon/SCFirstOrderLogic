@@ -20,46 +20,46 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             bool Loves(IElement other);
         }
 
-        private static Predicate<IDomain, IElement> IsAnimal(Term<IDomain, IElement> term)
+        private static Predicate IsAnimal(Term term)
         {
-            return new MemberPredicate<IDomain, IElement>(
+            return new MemberPredicate(
                 typeof(IElement).GetProperty(nameof(IElement.IsAnimal)).GetMethod,
                 new[] { term });
         }
 
-        private static Predicate<IDomain, IElement> Loves(Term<IDomain, IElement> term1, Term<IDomain, IElement> term2)
+        private static Predicate Loves(Term term1, Term term2)
         {
-            return new MemberPredicate<IDomain, IElement>(
+            return new MemberPredicate(
                 typeof(IElement).GetMethod(nameof(IElement.Loves)),
                 new[] { term1, term2 });
         }
 
-        private static SkolemFunction<IDomain, IElement> F(Term<IDomain, IElement> term)
+        private static SkolemFunction F(Term term)
         {
-            return new SkolemFunction<IDomain, IElement>("F", new[] { term });
+            return new SkolemFunction("F", new[] { term });
         }
 
-        private static SkolemFunction<IDomain, IElement> G(Term<IDomain, IElement> term)
+        private static SkolemFunction G(Term term)
         {
-            return new SkolemFunction<IDomain, IElement>("G", new[] { term });
+            return new SkolemFunction("G", new[] { term });
         }
 
-        private static Variable<IDomain, IElement> X => new Variable<IDomain, IElement>("x");
+        private static Variable X => new Variable("x");
 
-        private static Variable<IDomain, IElement> Y => new Variable<IDomain, IElement>("y");
+        private static Variable Y => new Variable("y");
 
-        private static Negation<IDomain, IElement> Not(Sentence<IDomain, IElement> sentence) => new Negation<IDomain, IElement>(sentence);
+        private static Negation Not(Sentence sentence) => new Negation(sentence);
 
         public static Test BasicBehaviour => TestThat
             // Given ∀x [∀y Animal(y) ⇒ Loves(x, y)] ⇒ [∃y Loves(y, x)]
             .Given(() => Sentence.Create<IDomain, IElement>(d => d.All(x => If(d.All(y => If(y.IsAnimal, x.Loves(y))), d.Any(y => y.Loves(x))))))
 
             // When converted to CNF..
-            .When(sentence => new CNFConversion<IDomain, IElement>().ApplyTo(sentence))
+            .When(sentence => new CNFConversion().ApplyTo(sentence))
 
             // Then gives [Animal(F(x)) ∨ Loves(G(z), x)] ∧ [¬Loves(x, F(x)) ∨ Loves(G(z), x)] 
-            .Then((_, sentence) => sentence.Should().BeEquivalentTo(new Conjunction<IDomain, IElement>(
-                new Disjunction<IDomain, IElement>(IsAnimal(F(X)), Loves(X, Y)),
-                new Disjunction<IDomain, IElement>(Not(Loves(X, F(X))), Loves(G(X), X)))), "CNF is as expected");
+            .Then((_, sentence) => sentence.Should().BeEquivalentTo(new Conjunction(
+                new Disjunction(IsAnimal(F(X)), Loves(X, Y)),
+                new Disjunction(Not(Loves(X, F(X))), Loves(G(X), X)))), "CNF is as expected");
     }
 }

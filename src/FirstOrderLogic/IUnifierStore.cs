@@ -13,21 +13,18 @@ namespace LinqToKB.FirstOrderLogic
     /// <para/>
     /// TBD: given the potential for secondary stroage here, should these methods be async?
     /// </summary>
-    /// <typeparam name="TDomain">The type of the domain of the known sentences and queries.</typeparam>
-    /// <typeparam name="TElement">the type of the elements of the known sentences and queries.</typeparam>
-    public interface IUnifierStore<TDomain, TElement>
-        where TDomain : IEnumerable<TElement>
+    public interface IUnifierStore
     {
         /// <summary>
         /// Registers a sentence with the store.
         /// </summary>
         /// <param name="sentence">The sentence to store.</param>
-        void Store(Sentence<TDomain, TElement> sentence);
+        void Store(Sentence sentence);
 
         /// <summary>
         /// Returns all unifiers such that the query q unifies with some sentence in the store.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<IDictionary<Variable<TDomain, TElement>, Constant<TDomain, TElement>>> Fetch(Sentence<TDomain, TElement> sentence);
+        IEnumerable<IDictionary<Variable, Constant>> Fetch(Sentence sentence);
     }
 }

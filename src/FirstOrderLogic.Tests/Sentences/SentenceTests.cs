@@ -27,63 +27,63 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         private static readonly MemberInfo groundPredicate2 = typeof(IDomain).GetProperty(nameof(IDomain.GroundPredicate2));
         private static readonly MemberInfo constant1 = typeof(IDomain).GetProperty(nameof(IDomain.Constant1));
         private static readonly MemberInfo parent = typeof(IElement).GetProperty(nameof(IElement.Parent));
-        private static readonly IList<Term<IDomain, IElement>> emptyArgList = Array.Empty<Term<IDomain, IElement>>();
+        private static readonly IList<Term> emptyArgList = Array.Empty<Term>();
 
-        private record TestCase(Expression<Predicate<IDomain>> Expression, Sentence<IDomain, IElement> ExpectedSentence);
+        private record TestCase(Expression<Predicate<IDomain>> Expression, Sentence ExpectedSentence);
 
         public static Test Creation => TestThat
             .GivenEachOf(() => new[]
             {
                 new TestCase(
                     Expression: d => d.GroundPredicate1 && d.GroundPredicate2,
-                    ExpectedSentence: new Conjunction<IDomain, IElement>(
-                        new MemberPredicate<IDomain, IElement>(groundPredicate1, emptyArgList),
-                        new MemberPredicate<IDomain, IElement>(groundPredicate2, emptyArgList))),
+                    ExpectedSentence: new Conjunction(
+                        new MemberPredicate(groundPredicate1, emptyArgList),
+                        new MemberPredicate(groundPredicate2, emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.GroundPredicate1 || d.GroundPredicate2,
-                    ExpectedSentence: new Disjunction<IDomain, IElement>(
-                        new MemberPredicate<IDomain, IElement>(groundPredicate1, emptyArgList),
-                        new MemberPredicate<IDomain, IElement>(groundPredicate2, emptyArgList))),
+                    ExpectedSentence: new Disjunction(
+                        new MemberPredicate(groundPredicate1, emptyArgList),
+                        new MemberPredicate(groundPredicate2, emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.Constant1.Parent == d.Constant1,
-                    ExpectedSentence: new Equality<IDomain, IElement>(
-                        new MemberFunction<IDomain, IElement>(parent, new[] { new Constant<IDomain, IElement>(constant1) }),
-                        new Constant<IDomain, IElement>(constant1))),
+                    ExpectedSentence: new Equality(
+                        new MemberFunction(parent, new[] { new Constant(constant1) }),
+                        new Constant(constant1))),
 
                 new TestCase(
                     Expression: d => Iff(d.GroundPredicate1, d.GroundPredicate2),
-                    ExpectedSentence: new Equivalence<IDomain, IElement>(
-                        new MemberPredicate<IDomain, IElement>(groundPredicate1, emptyArgList),
-                        new MemberPredicate<IDomain, IElement>(groundPredicate2, emptyArgList))),
+                    ExpectedSentence: new Equivalence(
+                        new MemberPredicate(groundPredicate1, emptyArgList),
+                        new MemberPredicate(groundPredicate2, emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.Any(x => x.Parent == d.Constant1),
-                    ExpectedSentence: new ExistentialQuantification<IDomain, IElement>(
-                        new VariableDeclaration<IDomain, IElement>("x"),
-                        new Equality<IDomain, IElement>(
-                            new MemberFunction<IDomain, IElement>(parent, new[] { new Variable<IDomain, IElement>(new VariableDeclaration<IDomain, IElement>("x")) }),
-                            new Constant<IDomain, IElement>(constant1)))),
+                    ExpectedSentence: new ExistentialQuantification(
+                        new VariableDeclaration("x"),
+                        new Equality(
+                            new MemberFunction(parent, new[] { new Variable(new VariableDeclaration("x")) }),
+                            new Constant(constant1)))),
 
                 new TestCase(
                     Expression: d => If(d.GroundPredicate1, d.GroundPredicate2),
-                    ExpectedSentence: new Implication<IDomain, IElement>(
-                        new MemberPredicate<IDomain, IElement>(groundPredicate1, emptyArgList),
-                        new MemberPredicate<IDomain, IElement>(groundPredicate2, emptyArgList))),
+                    ExpectedSentence: new Implication(
+                        new MemberPredicate(groundPredicate1, emptyArgList),
+                        new MemberPredicate(groundPredicate2, emptyArgList))),
 
                 new TestCase(
                     Expression: d => !d.GroundPredicate1,
-                    ExpectedSentence: new Negation<IDomain, IElement>(
-                        new MemberPredicate<IDomain, IElement>(groundPredicate1, emptyArgList))),
+                    ExpectedSentence: new Negation(
+                        new MemberPredicate(groundPredicate1, emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.All(x => x.Parent == d.Constant1),
-                    ExpectedSentence: new UniversalQuantification<IDomain, IElement>(
-                        new VariableDeclaration<IDomain, IElement>("x"),
-                        new Equality<IDomain, IElement>(
-                            new MemberFunction<IDomain, IElement>(parent, new[] { new Variable<IDomain, IElement>(new VariableDeclaration<IDomain, IElement>("x")) }),
-                            new Constant<IDomain, IElement>(constant1)))),
+                    ExpectedSentence: new UniversalQuantification(
+                        new VariableDeclaration("x"),
+                        new Equality(
+                            new MemberFunction(parent, new[] { new Variable(new VariableDeclaration("x")) }),
+                            new Constant(constant1)))),
             })
             .When(tc => Sentence.Create<IDomain, IElement>(tc.Expression))
             .ThenReturns((tc, sentence) =>

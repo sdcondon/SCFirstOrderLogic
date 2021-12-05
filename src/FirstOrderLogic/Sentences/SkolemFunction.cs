@@ -7,17 +7,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// Representation of a function term within a sentence of first order logic. Specifically,
     /// represents a so-called "Skolem" function, created on-the-fly by the normalisation process.
     /// </summary>
-    /// <typeparam name="TDomain">The type of the domain.</typeparam>
-    /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
-    public class SkolemFunction<TDomain, TElement> : Function<TDomain, TElement>
-        where TDomain : IEnumerable<TElement>
+    public class SkolemFunction : Function
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SkolemFunction{TDomain, TElement}"/> class.
+        /// Initializes a new instance of the <see cref="SkolemFunction"/> class.
         /// </summary>
         /// <param name="label"></param>
         /// <param name="arguments">The arguments of this function.</param>
-        public SkolemFunction(string label, IList<Term<TDomain, TElement>> arguments)
+        public SkolemFunction(string label, IList<Term> arguments)
             : base(arguments)
         {
             Label = label;
@@ -31,7 +28,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (!(obj is SkolemFunction<TDomain, TElement> otherFunction)
+            if (!(obj is SkolemFunction otherFunction)
                 || !otherFunction.Label.Equals(Label)
                 || otherFunction.Arguments.Count != Arguments.Count)
             {
