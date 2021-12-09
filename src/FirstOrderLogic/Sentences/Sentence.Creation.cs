@@ -67,23 +67,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         }
 
         /// <summary>
-        /// Creates and returns the <see cref="Sentence"/> instance that is logically equivalent to
-        /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
-        /// </summary>
-        /// <param name="lambda">The lambda expression.</param>
-        /// <returns>The created sentence.</returns>
-        public static Sentence Create<TDomain, TElement>(Expression<Predicate<TDomain>> lambda)
-            where TDomain : IEnumerable<TElement>
-        {
-            if (!TryCreate<TDomain, TElement>(lambda, out var sentence))
-            {
-                throw new ArgumentException("Expression is not convertible to a sentence of first order logic", nameof(sentence));
-            }
-
-            return sentence;
-        }
-
-        /// <summary>
         /// Creates and returns the <see cref="Sentence{TDomain, TElement}"/> instance that is logically equivalent to
         /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
         /// </summary>
@@ -101,17 +84,20 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         }
 
         /// <summary>
-        /// Tries to create the <see cref="Sentence{TDomain, TElement}"/> instance that is logically equivalent to
+        /// Creates and returns the <see cref="Sentence"/> instance that is logically equivalent to
         /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
         /// </summary>
-        ///  <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
         /// <param name="lambda">The lambda expression.</param>
-        /// <param name="sentence">The created sentence, or <see langword="null"/> on failure.</param>
-        /// <returns>A value indicating whether or not creation was successful.</returns>
-        public static bool TryCreate<TDomain, TElement>(Expression<Predicate<TDomain>> lambda, out Sentence sentence)
+        /// <returns>The created sentence.</returns>
+        public static Sentence Create<TDomain, TElement>(Expression<Predicate<TDomain>> lambda)
             where TDomain : IEnumerable<TElement>
         {
-            return TryCreateSentence<TDomain, TElement>(lambda, out sentence);
+            if (!TryCreate<TDomain, TElement>(lambda, out var sentence))
+            {
+                throw new ArgumentException("Expression is not convertible to a sentence of first order logic", nameof(sentence));
+            }
+
+            return sentence;
         }
 
         /// <summary>
@@ -129,12 +115,24 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// </remarks>
         public static bool TryCreate<TElement>(Expression<Predicate<IEnumerable<TElement>>> lambda, out Sentence sentence)
         {
-            return TryCreateSentence<IEnumerable<TElement>, TElement>(lambda, out sentence);
+            return TryCreateSentence<IEnumerable<TElement>, TElement>(lambda.Body, out sentence);
         }
 
-        // Internally (i.e. for sub-sentences), lambda is not necessarily a single-arg predicate expression since we may have additional parameters
-        // that are the variables defined by quantifiers. Hence this is separate to Sentence's public method.
-        private static bool TryCreateSentence<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        /// <summary>
+        /// Tries to create the <see cref="Sentence{TDomain, TElement}"/> instance that is logically equivalent to
+        /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
+        /// </summary>
+        ///  <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
+        /// <param name="lambda">The lambda expression.</param>
+        /// <param name="sentence">The created sentence, or <see langword="null"/> on failure.</param>
+        /// <returns>A value indicating whether or not creation was successful.</returns>
+        public static bool TryCreate<TDomain, TElement>(Expression<Predicate<TDomain>> lambda, out Sentence sentence)
+            where TDomain : IEnumerable<TElement>
+        {
+            return TryCreateSentence<TDomain, TElement>(lambda.Body, out sentence);
+        }
+
+        private static bool TryCreateSentence<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
             // NB: A different formulation might have created abstract ComplexSentence and AtomicSentence subclasses of sentence
@@ -144,23 +142,23 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             // TODO-USABILITY: might be nice to return more info than just "false" - but can't rely on exceptions due to the way this works.
             return
                 // Complex sentences:
-                TryCreateNegation<TDomain, TElement>(lambda, out sentence)
-                || TryCreateConjunction<TDomain, TElement>(lambda, out sentence)
-                || TryCreateDisjunction<TDomain, TElement>(lambda, out sentence)
-                || TryCreateEquivalence<TDomain, TElement>(lambda, out sentence)
-                || TryCreateImplication<TDomain, TElement>(lambda, out sentence)
-                || TryCreateQuantification<TDomain, TElement>(lambda, out sentence)
+                TryCreateNegation<TDomain, TElement>(expression, out sentence)
+                || TryCreateConjunction<TDomain, TElement>(expression, out sentence)
+                || TryCreateDisjunction<TDomain, TElement>(expression, out sentence)
+                || TryCreateEquivalence<TDomain, TElement>(expression, out sentence)
+                || TryCreateImplication<TDomain, TElement>(expression, out sentence)
+                || TryCreateQuantification<TDomain, TElement>(expression, out sentence)
                 // Atomic sentences:
-                || TryCreateEquality<TDomain, TElement>(lambda, out sentence)
-                || TryCreatePredicate<TDomain, TElement>(lambda, out sentence);
+                || TryCreateEquality<TDomain, TElement>(expression, out sentence)
+                || TryCreatePredicate<TDomain, TElement>(expression, out sentence);
         }
 
-        private static bool TryCreateConjunction<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        private static bool TryCreateConjunction<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
-            if (lambda.Body is BinaryExpression binaryExpr && (binaryExpr.NodeType == ExpressionType.AndAlso || binaryExpr.NodeType == ExpressionType.And)
-                && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, binaryExpr.Left), out var left)
-                && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, binaryExpr.Right), out var right))
+            if (expression is BinaryExpression binaryExpr && (binaryExpr.NodeType == ExpressionType.AndAlso || binaryExpr.NodeType == ExpressionType.And)
+                && TryCreateSentence<TDomain, TElement>(binaryExpr.Left, out var left)
+                && TryCreateSentence<TDomain, TElement>(binaryExpr.Right, out var right))
             {
                 sentence = new Conjunction(left, right);
                 return true;
@@ -170,19 +168,19 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateConstant<TDomain, TElement>(LambdaExpression lambda, out Term term)
+        private static bool TryCreateConstant<TDomain, TElement>(Expression expression, out Term term)
             where TDomain : IEnumerable<TElement>
         {
-            if (typeof(TElement).IsAssignableFrom(lambda.Body.Type)) // Constants must be elements of the domain
+            if (typeof(TElement).IsAssignableFrom(expression.Type)) // Constants must be elements of the domain
             {
-                if (lambda.Body is MemberExpression memberExpr
+                if (expression is MemberExpression memberExpr
                     && typeof(TDomain).IsAssignableFrom(memberExpr.Expression.Type)) // TODO-ROBUSTNESS: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                 {
                     // TElement-valued property access of the domain is interpreted as a constant.
                     term = new Constant(memberExpr.Member);
                     return true;
                 }
-                else if (lambda.Body is MethodCallExpression methodCallExpr
+                else if (expression is MethodCallExpression methodCallExpr
                     && typeof(TDomain).IsAssignableFrom(methodCallExpr.Object.Type) // TODO-ROBUSTNESS: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                     && methodCallExpr.Arguments.Count == 0)
                 {
@@ -201,12 +199,12 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateDisjunction<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        private static bool TryCreateDisjunction<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
-            if (lambda.Body is BinaryExpression binaryExpr && (binaryExpr.NodeType == ExpressionType.OrElse || binaryExpr.NodeType == ExpressionType.Or)
-                && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, binaryExpr.Left), out var left)
-                && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, binaryExpr.Right), out var right))
+            if (expression is BinaryExpression binaryExpr && (binaryExpr.NodeType == ExpressionType.OrElse || binaryExpr.NodeType == ExpressionType.Or)
+                && TryCreateSentence<TDomain, TElement>(binaryExpr.Left, out var left)
+                && TryCreateSentence<TDomain, TElement>(binaryExpr.Right, out var right))
             {
                 sentence = new Disjunction(left, right);
                 return true;
@@ -216,13 +214,13 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateEquality<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        private static bool TryCreateEquality<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
             // TODO-ROBUSTNESS: ..and Object.Equals invocation? And others? How to think about map of different types of .NET equality to FOL "equals"?
-            if (lambda.Body is BinaryExpression binaryExpr && binaryExpr.NodeType == ExpressionType.Equal
-                && TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, binaryExpr.Left), out var left)
-                && TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, binaryExpr.Right), out var right))
+            if (expression is BinaryExpression binaryExpr && binaryExpr.NodeType == ExpressionType.Equal
+                && TryCreateTerm<TDomain, TElement>(binaryExpr.Left, out var left)
+                && TryCreateTerm<TDomain, TElement>(binaryExpr.Right, out var right))
             {
                 sentence = new Equality(left, right);
                 return true;
@@ -232,14 +230,14 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateEquivalence<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        private static bool TryCreateEquivalence<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
             // TODO-FEATURE: Would it be reasonable to also accept {sentence} == {sentence} here?
 
-            if (lambda.Body is MethodCallExpression methodCallExpr && MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, IffMethod)
-                && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, methodCallExpr.Arguments[0]), out var equivalent1)
-                && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, methodCallExpr.Arguments[1]), out var equivalent2))
+            if (expression is MethodCallExpression methodCallExpr && MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, IffMethod)
+                && TryCreateSentence<TDomain, TElement>(methodCallExpr.Arguments[0], out var equivalent1)
+                && TryCreateSentence<TDomain, TElement>(methodCallExpr.Arguments[1], out var equivalent2))
             {
                 sentence = new Equivalence(equivalent1, equivalent2);
                 return true;
@@ -249,26 +247,26 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateExistentialQuantification<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        private static bool TryCreateExistentialQuantification<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
             // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse to make it more graceful without losing any more perf than we need to?
 
-            if (lambda.Body is MethodCallExpression methodCallExpr)
+            if (expression is MethodCallExpression methodCallExpr)
             {
                 if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AnyMethod)
                     && methodCallExpr.Arguments[1] is LambdaExpression anyLambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
-                    && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, anyLambda), out var subSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, anyLambda.Parameters[0]), out VariableDeclaration declaration))
+                    && TryCreateSentence<TDomain, TElement>(anyLambda.Body, out var subSentence)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(anyLambda.Parameters[0], out VariableDeclaration declaration))
                 {
                     sentence = new ExistentialQuantification(declaration, subSentence);
                     return true;
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAnyMethod2)
                     && methodCallExpr.Arguments[1] is LambdaExpression any2Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
-                    && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, any2Lambda), out var all2SubSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, any2Lambda.Parameters[0]), out VariableDeclaration declaration1Of2)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, any2Lambda.Parameters[1]), out VariableDeclaration declaration2Of2))
+                    && TryCreateSentence<TDomain, TElement>(any2Lambda.Body, out var all2SubSentence)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(any2Lambda.Parameters[0], out VariableDeclaration declaration1Of2)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(any2Lambda.Parameters[1], out VariableDeclaration declaration2Of2))
                 {
                     sentence = new ExistentialQuantification(
                         declaration1Of2,
@@ -277,10 +275,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAnyMethod3)
                     && methodCallExpr.Arguments[1] is LambdaExpression any3Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
-                    && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, any3Lambda), out var all3SubSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, any3Lambda.Parameters[0]), out VariableDeclaration declaration1Of3)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, any3Lambda.Parameters[1]), out VariableDeclaration declaration2Of3)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, any3Lambda.Parameters[2]), out VariableDeclaration declaration3Of3))
+                    && TryCreateSentence<TDomain, TElement>(any3Lambda.Body, out var all3SubSentence)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[0], out VariableDeclaration declaration1Of3)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[1], out VariableDeclaration declaration2Of3)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[2], out VariableDeclaration declaration3Of3))
                 {
                     sentence = new UniversalQuantification(
                         declaration1Of3,
@@ -295,20 +293,20 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateFunction<TDomain, TElement>(LambdaExpression lambda, out Term term)
+        private static bool TryCreateFunction<TDomain, TElement>(Expression expression, out Term term)
             where TDomain : IEnumerable<TElement>
         {
             // NB: Here we verify that the value of the function is a domain element..
-            if (typeof(TElement).IsAssignableFrom(lambda.Body.Type))
+            if (typeof(TElement).IsAssignableFrom(expression.Type))
             {
-                if (lambda.Body is MemberExpression memberExpr
-                    && TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, memberExpr.Expression), out var argument))
+                if (expression is MemberExpression memberExpr
+                    && TryCreateTerm<TDomain, TElement>(memberExpr.Expression, out var argument))
                 {
                     // TElement-valued property access is interpreted as a unary function.
                     term = new MemberFunction(memberExpr.Member, new[] { argument });
                     return true;
                 }
-                else if (lambda.Body is MethodCallExpression methodCallExpr
+                else if (expression is MethodCallExpression methodCallExpr
                     && (methodCallExpr.Object != null || methodCallExpr.Arguments.Count > 0)) // NB: There must be at least one arg - otherwise its a constant, not a function..
                 {
                     var arguments = new List<Term>();
@@ -316,7 +314,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                     // If the method is non-static, the instance it is operating on is the first arg of the predicate:
                     if (methodCallExpr.Object != null)
                     {
-                        if (!TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, methodCallExpr.Object), out var arg))
+                        if (!TryCreateTerm<TDomain, TElement>(methodCallExpr.Object, out var arg))
                         {
                             term = null;
                             return false;
@@ -327,7 +325,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
 
                     foreach (var argExpr in methodCallExpr.Arguments)
                     {
-                        if (!TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, argExpr), out var arg))
+                        if (!TryCreateTerm<TDomain, TElement>(argExpr, out var arg))
                         {
                             term = null;
                             return false;
@@ -345,12 +343,12 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateImplication<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        private static bool TryCreateImplication<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
-            if (lambda.Body is MethodCallExpression methodCallExpr && MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, IfMethod)
-                && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, methodCallExpr.Arguments[0]), out var antecedent)
-                && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, methodCallExpr.Arguments[1]), out var consequent))
+            if (expression is MethodCallExpression methodCallExpr && MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, IfMethod)
+                && TryCreateSentence<TDomain, TElement>(methodCallExpr.Arguments[0], out var antecedent)
+                && TryCreateSentence<TDomain, TElement>(methodCallExpr.Arguments[1], out var consequent))
             {
                 sentence = new Implication(antecedent, consequent);
                 return true;
@@ -360,18 +358,18 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateNegation<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        private static bool TryCreateNegation<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
-            if (lambda.Body is UnaryExpression unaryExpr && unaryExpr.NodeType == ExpressionType.Not
-                && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, unaryExpr.Operand), out var operand))
+            if (expression is UnaryExpression unaryExpr && unaryExpr.NodeType == ExpressionType.Not
+                && TryCreateSentence<TDomain, TElement>(unaryExpr.Operand, out var operand))
             {
                 sentence = new Negation(operand);
                 return true;
             }
-            else if (lambda.Body is BinaryExpression binaryExpr && binaryExpr.NodeType == ExpressionType.NotEqual
-                && TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, binaryExpr.Left), out var left)
-                && TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, binaryExpr.Right), out var right))
+            else if (expression is BinaryExpression binaryExpr && binaryExpr.NodeType == ExpressionType.NotEqual
+                && TryCreateTerm<TDomain, TElement>(binaryExpr.Left, out var left)
+                && TryCreateTerm<TDomain, TElement>(binaryExpr.Right, out var right))
             {
                 sentence = new Negation(new Equality(left, right));
                 return true;
@@ -381,38 +379,38 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreatePredicate<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        private static bool TryCreatePredicate<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
-            if (lambda.Body.Type != typeof(bool))
+            if (expression.Type != typeof(bool))
             {
                 sentence = null;
                 return false;
             }
 
-            if (lambda.Body is MemberExpression memberExpr && memberExpr.Expression != null) // Non-static field or property access
+            if (expression is MemberExpression memberExpr && memberExpr.Expression != null) // Non-static field or property access
             {
-                if (memberExpr.Expression == lambda.Parameters[0]) // i.e. is the domain parameter. Should try to find a cleaner way of doing this..
+                if (memberExpr.Expression.Type == typeof(TDomain)) // todo: no guarantee that this is the domain param of the original lambda... Make me robust! requires passing domain param down through the whole process..
                 {
                     // Boolean-valued property access on the domain parameter is interpreted as a ground predicate
                     sentence = new MemberPredicate(memberExpr.Member, Array.Empty<Term>());
                     return true;
                 }
-                else if (TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, memberExpr.Expression), out var argument))
+                else if (TryCreateTerm<TDomain, TElement>(memberExpr.Expression, out var argument))
                 {
                     // Boolean-valued property access on a term is interpreted as a unary predicate.
                     sentence = new MemberPredicate(memberExpr.Member, new[] { argument });
                     return true;
                 }
             }
-            else if (lambda.Body is MethodCallExpression methodCallExpr && methodCallExpr.Object != null) // Non-static mmethod call
+            else if (expression is MethodCallExpression methodCallExpr && methodCallExpr.Object != null) // Non-static mmethod call
             {
                 var arguments = new List<Term>();
 
-                // If the method is not against on the domain, the instance it is operating on is the first arg of the predicate:
-                if (methodCallExpr.Object != lambda.Parameters[0]) // i.e. is the domain parameter. Should try to find a cleaner way of doing this..
+                // If the method is not against the domain, the instance it is operating on is the first arg of the predicate:
+                if (methodCallExpr.Object.Type != typeof(TDomain)) // todo: in theory objs of that type might also not be "the" domain param. requires passing domain param down through the whole process..
                 {
-                    if (!TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, methodCallExpr.Object), out var arg))
+                    if (!TryCreateTerm<TDomain, TElement>(methodCallExpr.Object, out var arg))
                     {
                         sentence = null;
                         return false;
@@ -424,7 +422,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 // Each of the method's args should be interpretable as a term.
                 foreach (var argExpr in methodCallExpr.Arguments)
                 {
-                    if (!TryCreateTerm<TDomain, TElement>(MakeSubLambda(lambda, argExpr), out var arg))
+                    if (!TryCreateTerm<TDomain, TElement>(argExpr, out var arg))
                     {
                         sentence = null;
                         return false;
@@ -444,41 +442,41 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateQuantification<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        private static bool TryCreateQuantification<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
-            return TryCreateUniversalQuantification<TDomain, TElement>(lambda, out sentence)
-                || TryCreateExistentialQuantification<TDomain, TElement>(lambda, out sentence);
+            return TryCreateUniversalQuantification<TDomain, TElement>(expression, out sentence)
+                || TryCreateExistentialQuantification<TDomain, TElement>(expression, out sentence);
         }
 
-        private static bool TryCreateTerm<TDomain, TElement>(LambdaExpression lambda, out Term sentence)
+        private static bool TryCreateTerm<TDomain, TElement>(Expression expression, out Term sentence)
             where TDomain : IEnumerable<TElement>
         {
-            return TryCreateFunction<TDomain, TElement>(lambda, out sentence)
-                || TryCreateConstant<TDomain, TElement>(lambda, out sentence)
-                || TryCreateVariable<TDomain, TElement>(lambda, out sentence);
+            return TryCreateFunction<TDomain, TElement>(expression, out sentence)
+                || TryCreateConstant<TDomain, TElement>(expression, out sentence)
+                || TryCreateVariable<TDomain, TElement>(expression, out sentence);
         }
 
-        private static bool TryCreateUniversalQuantification<TDomain, TElement>(LambdaExpression lambda, out Sentence sentence)
+        private static bool TryCreateUniversalQuantification<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
             // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse or something to make it more graceful without losing any more perf than we need to?
 
-            if (lambda.Body is MethodCallExpression methodCallExpr)
+            if (expression is MethodCallExpression methodCallExpr)
             {
                 if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AllMethod)
                     && methodCallExpr.Arguments[1] is LambdaExpression allLambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
-                    && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, allLambda), out var allSubSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, allLambda.Parameters[0]), out VariableDeclaration declaration))
+                    && TryCreateSentence<TDomain, TElement>(allLambda.Body, out var allSubSentence)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(allLambda.Parameters[0], out VariableDeclaration declaration))
                 {
                     sentence = new UniversalQuantification(declaration, allSubSentence);
                     return true;
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAllMethod2)
                     && methodCallExpr.Arguments[1] is LambdaExpression all2Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
-                    && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, all2Lambda), out var all2SubSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, all2Lambda.Parameters[0]), out VariableDeclaration declaration1Of2)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, all2Lambda.Parameters[1]), out VariableDeclaration declaration2Of2))
+                    && TryCreateSentence<TDomain, TElement>(all2Lambda.Body, out var all2SubSentence)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(all2Lambda.Parameters[0], out VariableDeclaration declaration1Of2)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(all2Lambda.Parameters[1], out VariableDeclaration declaration2Of2))
                 {
                     sentence = new UniversalQuantification(
                         declaration1Of2,
@@ -487,10 +485,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAllMethod3)
                     && methodCallExpr.Arguments[1] is LambdaExpression all3Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
-                    && TryCreateSentence<TDomain, TElement>(MakeSubLambda(lambda, all3Lambda), out var all3SubSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, all3Lambda.Parameters[0]), out VariableDeclaration declaration1Of3)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, all3Lambda.Parameters[1]), out VariableDeclaration declaration2Of3)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(MakeSubLambda(lambda, all3Lambda.Parameters[2]), out VariableDeclaration declaration3Of3))
+                    && TryCreateSentence<TDomain, TElement>(all3Lambda.Body, out var all3SubSentence)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[0], out VariableDeclaration declaration1Of3)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[1], out VariableDeclaration declaration2Of3)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[2], out VariableDeclaration declaration3Of3))
                 {
                     sentence = new UniversalQuantification(
                         declaration1Of3,
@@ -505,10 +503,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateVariableDeclaration<TDomain, TElement>(LambdaExpression expression, out VariableDeclaration variableDeclaration)
+        private static bool TryCreateVariableDeclaration<TDomain, TElement>(Expression expression, out VariableDeclaration variableDeclaration)
             where TDomain : IEnumerable<TElement>
         {
-            if (expression.Body is ParameterExpression parameterExpr
+            if (expression is ParameterExpression parameterExpr
                 && typeof(TElement).IsAssignableFrom(parameterExpr.Type))
             {
                 variableDeclaration = new VariableDeclaration(parameterExpr.Name);
@@ -519,10 +517,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        private static bool TryCreateVariable<TDomain, TElement>(LambdaExpression expression, out Term term)
+        private static bool TryCreateVariable<TDomain, TElement>(Expression expression, out Term term)
             where TDomain : IEnumerable<TElement>
         {
-            if (expression.Body is ParameterExpression parameterExpr
+            if (expression is ParameterExpression parameterExpr
                 && typeof(TElement).IsAssignableFrom(parameterExpr.Type))
             {
                 // NB: doesn't refer to a singular variable declaration object - but since equality is correctly implemented, not a huge deal. Maybe revisit later?
@@ -532,30 +530,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
 
             term = null;
             return false;
-        }
-
-        /// <remarks>
-        /// TODO-MAINTAINABILITY: This was written when I was thinking about each sentence type
-        /// exposing a lambda directly. If we're not going to do that then this does more work 
-        /// than needed - don't need a sub-lambda..
-        /// <para/>
-        /// TODO-USABILITY: One way to introduce stronger type-safety here would be to add a (possibly
-        /// empty) variable container - e.g. Expression<Predicate<TDomain, VariableContainer<TElement>>>.
-        /// Or perhaps Expresison<Predicate<FOLScope<TDomain, TElement>>>. Something for v2...
-        /// Would need to decide if the extra complexity (& perf hit with variable access?) is worth it.
-        /// </remarks>
-        private static LambdaExpression MakeSubLambda(LambdaExpression lambda, Expression body)
-        {
-            // TODO-ROBUSTNESS: Debug check that lambda contains body?
-            // 
-
-            // Flatten body that is a lamba (happens in quantifiers)
-            if (body is LambdaExpression bodyLambda)
-            {
-                return Expression.Lambda(bodyLambda.Body, lambda.Parameters.Concat(bodyLambda.Parameters));
-            }
-
-            return Expression.Lambda(body, lambda.Parameters);
         }
     }
 }
