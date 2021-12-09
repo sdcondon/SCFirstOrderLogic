@@ -18,6 +18,16 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// </summary>
         /// <param name="memberInfo"></param>
         /// <param name="arguments">The arguments of this predicate.</param>
+        public MemberPredicate(MemberInfo memberInfo, params Term[] arguments)
+            : this(memberInfo, (IList<Term>)arguments)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MemberPredicate"/> class.
+        /// </summary>
+        /// <param name="memberInfo"></param>
+        /// <param name="arguments">The arguments of this predicate.</param>
         public MemberPredicate(MemberInfo memberInfo, IList<Term> arguments)
             : base(arguments)
         {

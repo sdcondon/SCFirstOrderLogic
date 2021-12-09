@@ -14,6 +14,16 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// </summary>
         /// <param name="label"></param>
         /// <param name="arguments">The arguments of this function.</param>
+        public SkolemFunction(string label, params Term[] arguments)
+            : this(label, (IList<Term>)arguments)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SkolemFunction"/> class.
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="arguments">The arguments of this function.</param>
         public SkolemFunction(string label, IList<Term> arguments)
             : base(arguments)
         {

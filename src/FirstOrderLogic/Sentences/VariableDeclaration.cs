@@ -5,7 +5,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <summary>
     /// Representation of a variable declaration term within a sentence of first order logic. These occur in quantifier sentences.
     /// </summary>
-    public class VariableDeclaration : Term
+    public class VariableDeclaration
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableDeclaration"/> class.
@@ -17,9 +17,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// Gets the name of the variable.
         /// </summary>
         public string Name { get; }
-
-        /// <inheritdoc />
-        public override bool IsGroundTerm => false;
 
         /// <inheritdoc />
         public override bool Equals(object obj)

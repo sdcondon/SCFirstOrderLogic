@@ -7,12 +7,15 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <summary>
     /// Representation of a constant term within a sentence of first order logic.
     /// </summary>
+    /// <remarks>
+    /// TODO: Should be called MemberConstant - Constant should be an abstract base class.
+    /// </remarks>
     public class Constant : Term
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Constant"/> class.
         /// </summary>
-        /// <param name="valueExpr">An expression for obtaining the value of the constant.</param>
+        /// <param name="memberInfo">An expression for obtaining the value of the constant.</param>
         public Constant(MemberInfo memberInfo) => Member = memberInfo;
 
         /// <summary>

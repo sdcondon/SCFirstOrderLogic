@@ -20,29 +20,17 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             bool Loves(IElement other);
         }
 
-        private static Predicate IsAnimal(Term term)
-        {
-            return new MemberPredicate(
-                typeof(IElement).GetProperty(nameof(IElement.IsAnimal)).GetMethod,
-                new[] { term });
-        }
+        private static Predicate IsAnimal(Term term) => new MemberPredicate(
+            typeof(IElement).GetProperty(nameof(IElement.IsAnimal)).GetMethod,
+            new[] { term });
 
-        private static Predicate Loves(Term term1, Term term2)
-        {
-            return new MemberPredicate(
-                typeof(IElement).GetMethod(nameof(IElement.Loves)),
-                new[] { term1, term2 });
-        }
+        private static Predicate Loves(Term term1, Term term2) => new MemberPredicate(
+            typeof(IElement).GetMethod(nameof(IElement.Loves)),
+            new[] { term1, term2 });
 
-        private static SkolemFunction F(Term term)
-        {
-            return new SkolemFunction("F", new[] { term });
-        }
+        private static SkolemFunction F(Term term) => new SkolemFunction("F", term);
 
-        private static SkolemFunction G(Term term)
-        {
-            return new SkolemFunction("G", new[] { term });
-        }
+        private static SkolemFunction G(Term term) => new SkolemFunction("G", term);
 
         private static Variable X => new Variable("x");
 

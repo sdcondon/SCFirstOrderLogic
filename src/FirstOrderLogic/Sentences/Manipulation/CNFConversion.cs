@@ -14,6 +14,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         private readonly UniversalQuantifierElimination universalQuantifierElimination = new UniversalQuantifierElimination();
         private readonly DisjunctionDistribution disjunctionDistribution = new DisjunctionDistribution();
 
+        /// <inheritdoc />
         public override Sentence ApplyTo(Sentence sentence)
         {
             // Might be possible to do some of these conversions at the same time, but for now
@@ -28,8 +29,12 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             return sentence;
         }
 
+        /// <summary>
+        /// Transformation that eliminates implications by replacing P ⇒ Q with ¬P ∨ Q.
+        /// </summary>
         private class ImplicationElimination : SentenceTransformation
         {
+            /// <inheritdoc />
             public override Sentence ApplyTo(Implication implication)
             {
                 return ApplyTo(new Disjunction(
@@ -38,8 +43,12 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             }
         }
 
+        /// <summary>
+        /// Transformation that converts to Negation Normal Form by moving negations as far down as possible in the sentence tree.
+        /// </summary>
         private class NNFConversion : SentenceTransformation
         {
+            /// <inheritdoc />
             public override Sentence ApplyTo(Negation negation)
             {
                 Sentence sentence;
@@ -88,6 +97,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         private class VariableStandardisation : SentenceTransformation
         {
+            /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
             {
                 var variableScopeFinder = new VariableScopeFinder();
@@ -153,7 +163,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         }
 
         /// <summary>
-        /// Sentence trnasformation that recursively distributes disjunctions over conjunctions.
+        /// Transformation that recursively distributes disjunctions over conjunctions.
         /// </summary>
         private class DisjunctionDistribution : SentenceTransformation
         {

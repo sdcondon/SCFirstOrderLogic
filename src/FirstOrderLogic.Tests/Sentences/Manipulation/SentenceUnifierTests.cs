@@ -20,12 +20,12 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         private static MemberFunction Mother(Term child)
         {
-            return new MemberFunction(typeof(IPerson).GetProperty(nameof(IPerson.Mother)), new[] { child });
+            return new MemberFunction(typeof(IPerson).GetProperty(nameof(IPerson.Mother)), child);
         }
 
         private static Predicate Knows(Term knower, Term known)
         {
-            return new MemberPredicate(typeof(IPerson).GetMethod(nameof(IPerson.Knows)), new Term[] { knower, known });
+            return new MemberPredicate(typeof(IPerson).GetMethod(nameof(IPerson.Knows)), knower, known);
         }
 
         private static readonly Constant john = new Constant(typeof(IPeople).GetProperty(nameof(IPeople.John)));
