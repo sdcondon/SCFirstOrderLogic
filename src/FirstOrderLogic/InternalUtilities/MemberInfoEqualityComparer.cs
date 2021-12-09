@@ -14,10 +14,15 @@ namespace LinqToKB.FirstOrderLogic.InternalUtilities
     /// </remarks>
     internal class MemberInfoEqualityComparer : IEqualityComparer<MemberInfo>
     {
+        /// <summary>
+        /// Gets a singleton instance of the <see cref="MemberInfoEqualityComparer"/> class.
+        /// </summary>
         public static MemberInfoEqualityComparer Instance { get; } = new MemberInfoEqualityComparer();
 
+        /// <inheritdoc />
         public bool Equals(MemberInfo x, MemberInfo y) => x.Module == y.Module && x.MetadataToken == y.MetadataToken;
 
+        /// <inheritdoc />
         public int GetHashCode(MemberInfo obj) => HashCode.Combine(obj.Module, obj.MetadataToken);
     }
 }

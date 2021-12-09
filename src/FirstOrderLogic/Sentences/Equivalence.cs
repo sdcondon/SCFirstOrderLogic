@@ -6,9 +6,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <summary>
     /// Representation of a material equivalence sentence of first order logic. In typical FOL syntax, this is written as:
     /// <code>{sentence} ⇔ {sentence}</code>
-    /// In LinqToKB, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
-    /// <code>Operators.Iff({expression}, {expression})</code>
-    /// (Consumers are encouraged to include <c>using static LinqToKB.FirstOrderLogic.Operators;</c> to make this a little shorter)
     /// </summary>
     public class Equivalence : Sentence
     {

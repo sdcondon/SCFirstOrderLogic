@@ -5,9 +5,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <summary>
     /// Representation of an negation sentence of first order logic. In typical FOL syntax, this is written as:
     /// <code>¬{sentence}</code>
-    /// In LinqToKB, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
-    /// <code>!{expression}</code>
-    /// We also interpret <c>!=</c> as a negation of an equality.
     /// </summary>
     public class Negation : Sentence
     {

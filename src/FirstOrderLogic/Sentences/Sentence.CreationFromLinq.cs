@@ -153,6 +153,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 || TryCreatePredicate<TDomain, TElement>(expression, out sentence);
         }
 
+        /// <remarks>
+        /// Tries to create a <see cref="Conjunction"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+        /// <code>{expression} {&amp;&amp; or &amp;} {expression}</code>
+        /// </remarks>
         private static bool TryCreateConjunction<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -199,6 +203,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
+        /// <remarks>
+        /// Tries to create a <see cref="Disjunction"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+        /// <code>{expression} {|| or |} {expression}</code>
+        /// </remarks>
         private static bool TryCreateDisjunction<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -214,6 +222,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
+        /// <remarks>
+        /// Tries to create an <see cref="Equality"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+        /// <code>{expression} == {expression}</code>
+        /// </remarks>
         private static bool TryCreateEquality<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -230,6 +242,11 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
+        /// <remarks>
+        /// Tries to create a <see cref="Equivalence"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+        /// <code>Operators.Iff({expression}, {expression})</code>
+        /// (Consumers are encouraged to include <c>using static LinqToKB.FirstOrderLogic.Operators;</c> to make this a little shorter)
+        /// </remarks>
         private static bool TryCreateEquivalence<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -247,6 +264,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
+        /// <summary>
+        /// Tries to create a <see cref="ExistentialQuantification"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+        /// <code>{domain}.Any({variable} => {expression})</code>
+        /// </summary>
         private static bool TryCreateExistentialQuantification<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -343,6 +364,11 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
+        /// <summary>
+        /// Tries to create a <see cref="Implication"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+        /// <code>Operators.If({expression}, {expression})</code>
+        /// (Consumers are encouraged to include <c>using static LinqToKB.FirstOrderLogic.Symbols;</c> to make this a little shorter)
+        /// </summary>
         private static bool TryCreateImplication<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -358,6 +384,11 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
+        /// <summary>
+        /// Tries to create a <see cref="Negation"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+        /// <code>!{expression}</code>
+        /// We also interpret <c>!=</c> as a negation of an equality.
+        /// </summary>
         private static bool TryCreateNegation<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -457,6 +488,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 || TryCreateVariable<TDomain, TElement>(expression, out sentence);
         }
 
+        /// <summary>
+        /// Tries to create a <see cref="UniversalQuantification"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+        /// <code>{domain}.All({variable} => {expression})</code>
+        /// </summary>
         private static bool TryCreateUniversalQuantification<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {

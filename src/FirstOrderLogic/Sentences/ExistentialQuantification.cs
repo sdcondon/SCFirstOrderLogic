@@ -3,8 +3,6 @@
     /// <summary>
     /// Representation of a existential quantification sentence of first order logic. In typical FOL syntax, this is written as:
     /// <code>∃ {variable}, {sentence}</code>
-    /// In LinqToKB, the equivalent expression acting on the domain (as well as any relevant variables and constants) is:
-    /// <code>{domain}.Any({variable} => {expression})</code>
     /// </summary>
     public class ExistentialQuantification : Quantification
     {
