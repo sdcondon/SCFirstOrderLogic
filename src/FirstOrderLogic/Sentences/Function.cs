@@ -5,7 +5,8 @@ using System.Linq;
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
-    /// Representation of a function term within a sentence of first order logic.
+    /// Representation of a function term within a sentence of first order logic. In typical FOL syntax, this is written as:
+    /// <code>{function symbol}({term}, ..)</code>
     /// </summary>
     public abstract class Function : Term
     {

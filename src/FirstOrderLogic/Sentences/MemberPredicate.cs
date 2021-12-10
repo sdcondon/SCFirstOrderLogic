@@ -8,9 +8,11 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// <summary>
     /// Representation of an predicate sentence of first order logic, In typical FOL syntax, this is written as:
     /// <code>Predicate({term}, ..)</code>
-    /// In LinqToKB, the equivalent expression acting on the domain (as well as any relevant variables and constants) is a boolean-valued property
-    /// or method call on an element object, or a boolean-valued property or method call on a domain object.
     /// </summary>
+    /// <remarks>
+    /// TODO-FUNCTIONALITY: Might ultimately be useful to make the Member.. classes generic in the same way as KnowledgeBase - for
+    /// validation, as well as potential manipulation power.
+    /// </remarks>
     public class MemberPredicate : Predicate
     {
         /// <summary>
@@ -31,7 +33,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         public MemberPredicate(MemberInfo memberInfo, IList<Term> arguments)
             : base(arguments)
         {
-            Member = memberInfo; // TODO: This is public - so should probably validate that its boolean valued and that the arguments match it..
+            Member = memberInfo; // TODO-ROBUSTNESS: This is public - so should probably validate that its boolean valued and that the arguments match it..
         }
 
         /// <summary>

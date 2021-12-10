@@ -95,9 +95,9 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
         public virtual Sentence ApplyTo(Equivalence equivalence)
         {
-            var equivalent1 = ApplyTo(equivalence.Equivalent1);
-            var equivalent2 = ApplyTo(equivalence.Equivalent2);
-            if (equivalent1 != equivalence.Equivalent1 || equivalent2 != equivalence.Equivalent2)
+            var equivalent1 = ApplyTo(equivalence.Left);
+            var equivalent2 = ApplyTo(equivalence.Right);
+            if (equivalent1 != equivalence.Left || equivalent2 != equivalence.Right)
             {
                 return new Equivalence(equivalent1, equivalent2);
             }

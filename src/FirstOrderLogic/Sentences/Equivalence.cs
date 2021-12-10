@@ -9,21 +9,21 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     public class Equivalence : Sentence
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Implication"/> class.
+        /// Initializes a new instance of the <see cref="Equivalence"/> class.
         /// </summary>
-        /// <param name="equivalent1">The first equivalent sentence.</param>
-        /// <param name="equivalent2">The second equivalent sentence.</param>
-        public Equivalence(Sentence equivalent1, Sentence equivalent2) => (Equivalent1, Equivalent2) = (equivalent1, equivalent2);
+        /// <param name="left">The left side of the equivalence.</param>
+        /// <param name="right">The right side of the equivalence.</param>
+        public Equivalence(Sentence left, Sentence right) => (Left, Right) = (left, right);
 
         /// <summary>
-        /// Gets the first equivalent sentence.
+        /// Gets the left side of the equivalence.
         /// </summary>
-        public Sentence Equivalent1 { get; }
+        public Sentence Left { get; }
 
         /// <summary>
-        /// Gets the second equivalent sentence.
+        /// Gets the right side of the equivalence.
         /// </summary>
-        public Sentence Equivalent2 { get; }
+        public Sentence Right { get; }
 
         /// <inheritdoc />
         public override bool Equals(object obj)
@@ -33,8 +33,8 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 return false;
             }
 
-            (var low, var high) = Equivalent1.GetHashCode() < Equivalent2.GetHashCode() ? (Equivalent1, Equivalent2) : (Equivalent2, Equivalent1);
-            (var otherLow, var otherHigh) = otherEquivalence.Equivalent1.GetHashCode() < otherEquivalence.Equivalent2.GetHashCode() ? (otherEquivalence.Equivalent1, otherEquivalence.Equivalent2) : (otherEquivalence.Equivalent2, otherEquivalence.Equivalent1);
+            (var low, var high) = Left.GetHashCode() < Right.GetHashCode() ? (Left, Right) : (Right, Left);
+            (var otherLow, var otherHigh) = otherEquivalence.Left.GetHashCode() < otherEquivalence.Right.GetHashCode() ? (otherEquivalence.Left, otherEquivalence.Right) : (otherEquivalence.Right, otherEquivalence.Left);
 
             return low.Equals(otherLow) && high.Equals(otherHigh);
         }
@@ -42,7 +42,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            (var low, var high) = Equivalent1.GetHashCode() < Equivalent2.GetHashCode() ? (Equivalent1, Equivalent2) : (Equivalent2, Equivalent1);
+            (var low, var high) = Left.GetHashCode() < Right.GetHashCode() ? (Left, Right) : (Right, Left);
 
             return HashCode.Combine(low, high);
         }

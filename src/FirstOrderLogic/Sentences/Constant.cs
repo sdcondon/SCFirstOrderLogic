@@ -1,7 +1,4 @@
-﻿using LinqToKB.FirstOrderLogic.InternalUtilities;
-using System;
-
-namespace LinqToKB.FirstOrderLogic.Sentences
+﻿namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
     /// Representation of a constant term within a sentence of first order logic.

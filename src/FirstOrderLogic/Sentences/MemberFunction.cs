@@ -10,6 +10,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
     /// represents a function that refers to a particular element-valued method or property of elements of
     /// the domain.
     /// </summary>
+    /// <remarks>
+    /// TODO-FUNCTIONALITY: Might ultimately be useful to make the Member.. classes generic in the same way as KnowledgeBase - for
+    /// validation, as well as potential manipulation power.
+    /// </remarks>
     public class MemberFunction : Function
     {
         /// <summary>

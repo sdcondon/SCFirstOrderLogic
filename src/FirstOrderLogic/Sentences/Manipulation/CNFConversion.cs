@@ -41,6 +41,8 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                     new Negation(implication.Antecedent),
                     implication.Consequent));
             }
+
+            // TODO: presumably need to replace Equivalence too?
         }
 
         /// <summary>

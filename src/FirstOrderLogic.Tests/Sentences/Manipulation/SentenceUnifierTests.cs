@@ -28,8 +28,8 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             return new MemberPredicate(typeof(IPerson).GetMethod(nameof(IPerson.Knows)), knower, known);
         }
 
-        private static readonly Constant john = new Constant(typeof(IPeople).GetProperty(nameof(IPeople.John)));
-        private static readonly Constant jane = new Constant(typeof(IPeople).GetProperty(nameof(IPeople.Jane)));
+        private static readonly Constant john = new MemberConstant(typeof(IPeople).GetProperty(nameof(IPeople.John)));
+        private static readonly Constant jane = new MemberConstant(typeof(IPeople).GetProperty(nameof(IPeople.Jane)));
         private static readonly Variable x = new Variable(new VariableDeclaration("x"));
         private static readonly Variable y = new Variable(new VariableDeclaration("y"));
 

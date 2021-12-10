@@ -5,8 +5,14 @@ using System.Reflection;
 namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
-    /// Representation of a constant term within a sentence of first order logic.
+    /// Representation of a constant term within a sentence of first order logic. Specifically,
+    /// represents a constant that refers to a particular element-valued method or property or parameterless method
+    /// call on a class representing the domain.
     /// </summary>
+    /// <remarks>
+    /// TODO-FUNCTIONALITY: Might ultimately be useful to make the Member.. classes generic in the same way as KnowledgeBase - for
+    /// validation, as well as potential manipulation power.
+    /// </remarks>
     public class MemberConstant : Constant
     {
         /// <summary>

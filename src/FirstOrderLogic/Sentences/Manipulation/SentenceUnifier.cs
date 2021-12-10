@@ -81,7 +81,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         {
             // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
             // perhaps Low and High (internal) props in conjunction?
-            return TryUnify(x.Equivalent1, y.Equivalent1, unifier) && TryUnify(x.Equivalent2, y.Equivalent2, unifier);
+            return TryUnify(x.Left, y.Left, unifier) && TryUnify(x.Right, y.Right, unifier);
         }
 
         ////public virtual Sentence TryUnify(

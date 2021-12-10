@@ -147,7 +147,8 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 || TryCreateDisjunction<TDomain, TElement>(expression, out sentence)
                 || TryCreateEquivalence<TDomain, TElement>(expression, out sentence)
                 || TryCreateImplication<TDomain, TElement>(expression, out sentence)
-                || TryCreateQuantification<TDomain, TElement>(expression, out sentence)
+                || TryCreateUniversalQuantification<TDomain, TElement>(expression, out sentence)
+                || TryCreateExistentialQuantification<TDomain, TElement>(expression, out sentence)
                 // Atomic sentences:
                 || TryCreateEquality<TDomain, TElement>(expression, out sentence)
                 || TryCreatePredicate<TDomain, TElement>(expression, out sentence);
@@ -410,6 +411,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
+        /// <summary>
+        /// Tries to create a <see cref="MemberPredicate"/> from an expression acting on the domain (and any relevant variables and constants) that
+        /// is a boolean-valued property or method call on an element object, or a boolean-valued property or method call on a domain object.
+        /// </summary>
         private static bool TryCreatePredicate<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -471,13 +476,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences
 
             sentence = null;
             return false;
-        }
-
-        private static bool TryCreateQuantification<TDomain, TElement>(Expression expression, out Sentence sentence)
-            where TDomain : IEnumerable<TElement>
-        {
-            return TryCreateUniversalQuantification<TDomain, TElement>(expression, out sentence)
-                || TryCreateExistentialQuantification<TDomain, TElement>(expression, out sentence);
         }
 
         private static bool TryCreateTerm<TDomain, TElement>(Expression expression, out Term sentence)

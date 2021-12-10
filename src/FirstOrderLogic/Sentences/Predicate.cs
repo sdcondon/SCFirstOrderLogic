@@ -5,7 +5,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
     /// Representation of an predicate sentence of first order logic, In typical FOL syntax, this is written as:
-    /// <code>Predicate({term}, ..)</code>
+    /// <code>{predicate symbol}({term}, ..)</code>
     /// </summary>
     public abstract class Predicate : Sentence
     {

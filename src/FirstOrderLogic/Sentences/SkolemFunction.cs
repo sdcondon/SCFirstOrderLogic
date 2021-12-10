@@ -5,7 +5,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
 {
     /// <summary>
     /// Representation of a function term within a sentence of first order logic. Specifically,
-    /// represents a so-called "Skolem" function, created on-the-fly by the normalisation process.
+    /// represents a "Skolem" function, created on-the-fly by the normalisation process.
     /// </summary>
     public class SkolemFunction : Function
     {

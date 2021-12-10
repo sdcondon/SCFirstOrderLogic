@@ -49,8 +49,8 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 new TestCase(
                     Expression: d => d.Constant1.Parent == d.Constant1,
                     ExpectedSentence: new Equality(
-                        new MemberFunction(parent, new[] { new Constant(constant1) }),
-                        new Constant(constant1))),
+                        new MemberFunction(parent, new[] { new MemberConstant(constant1) }),
+                        new MemberConstant(constant1))),
 
                 new TestCase(
                     Expression: d => Iff(d.GroundPredicate1, d.GroundPredicate2),
@@ -64,7 +64,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                         new VariableDeclaration("x"),
                         new Equality(
                             new MemberFunction(parent, new[] { new Variable(new VariableDeclaration("x")) }),
-                            new Constant(constant1)))),
+                            new MemberConstant(constant1)))),
 
                 new TestCase(
                     Expression: d => If(d.GroundPredicate1, d.GroundPredicate2),
@@ -83,7 +83,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                         new VariableDeclaration("x"),
                         new Equality(
                             new MemberFunction(parent, new[] { new Variable(new VariableDeclaration("x")) }),
-                            new Constant(constant1)))),
+                            new MemberConstant(constant1)))),
             })
             .When(tc => Sentence.Create<IDomain, IElement>(tc.Expression))
             .ThenReturns((tc, sentence) =>
