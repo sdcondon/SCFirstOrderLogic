@@ -48,7 +48,13 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                     implication.Consequent));
             }
 
-            // TODO: presumably need to replace Equivalence too?
+            /// <inheritdoc />
+            public override Sentence ApplyTo(Equivalence equivalence)
+            {
+                return ApplyTo(new Conjunction(
+                    new Disjunction(new Negation(equivalence.Left), equivalence.Right),
+                    new Disjunction(new Negation(equivalence.Right), equivalence.Left)));
+            }
         }
 
         /// <summary>
@@ -116,8 +122,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                 return new VariableRenamer(variableScopeFinder.Quantifications).ApplyTo(sentence);
             }
 
-            // Ick: Double-nested class.
-            // Ick: A "Transformation" that doesn't transform. More evidence to suggest introduction of visitor pattern at some point.
+            // NB: A "Transformation" that doesn't transform and has to use a property to expose its output. More evidence to suggest introduction of visitor pattern at some point.
             private class QuantificationFinder : SentenceTransformation
             {
                 public List<Quantification> Quantifications { get; } = new List<Quantification>();
@@ -129,7 +134,6 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                 }
             }
 
-            // Ick: Double-nested class.
             private class VariableRenamer : SentenceTransformation
             {
                 Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
@@ -149,8 +153,13 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             }
         }
 
+        /// <summary>
+        /// Transformation that eliminate existential quantification via the process of "Skolemisation". Replaces all existentially declared variables
+        /// with a generated "Skolem" function that acts on all universally declared variables in scope when the existential variable was declared.
+        /// </summary>
         private class Skolemisation : SentenceTransformation
         {
+            /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
             {
                 return new ScopedSkolemisation(Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, SkolemFunction>()).ApplyTo(sentence);
@@ -189,6 +198,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                         return skolemFunction;
                     }
 
+                    // NB: leave universally declared variables alone
                     return base.ApplyTo(variable);
                 }
             }
