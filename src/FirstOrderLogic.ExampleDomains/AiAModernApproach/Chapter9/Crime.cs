@@ -41,6 +41,7 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Cri
             d => d.All((seller, item, buyer) => If(seller.IsAmerican && item.IsWeapon && seller.Sells(item, buyer) && buyer.IsHostile, seller.IsCriminal)),
 
             // "Nono... has some missiles."
+            // (NB: could also be specified as d => d.Any(m => m.IsMissile && d.Nono.Owns(m)), but the book does Existential Instantiation for us, so we do the same here..)
             d => d.Nono.Owns(d.M1),
             d => d.M1.IsMissile,
 

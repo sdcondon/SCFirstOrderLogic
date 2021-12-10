@@ -6,7 +6,7 @@ using static LinqToKB.FirstOrderLogic.Operators;
 
 namespace LinqToKB.FirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCat
 {
-    //// The curiousity and the cat example from section 9.6 of
+    //// The curiousity and the cat example from section 9.5 of
     //// Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
 
     public interface IDomain : IEnumerable<IElement>
