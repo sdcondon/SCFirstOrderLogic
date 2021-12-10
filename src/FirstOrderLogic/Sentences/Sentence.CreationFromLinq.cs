@@ -181,7 +181,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                     && typeof(TDomain).IsAssignableFrom(memberExpr.Expression.Type)) // TODO-ROBUSTNESS: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                 {
                     // TElement-valued property access of the domain is interpreted as a constant.
-                    term = new Constant(memberExpr.Member);
+                    term = new MemberConstant(memberExpr.Member);
                     return true;
                 }
                 else if (expression is MethodCallExpression methodCallExpr
@@ -189,7 +189,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                     && methodCallExpr.Arguments.Count == 0)
                 {
                     // TElement-valued parameterless method call of the domain is interpreted as a constant.
-                    term = new Constant(methodCallExpr.Method);
+                    term = new MemberConstant(methodCallExpr.Method);
                     return true;
                 }
             }

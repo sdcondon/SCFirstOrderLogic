@@ -11,7 +11,7 @@ namespace LinqToKB.FirstOrderLogic
     /// stores of different sizes and natures will have different requirements for how the known sentences are stored
     /// (w.r.t. indexing approach, primary vs secondary storage, and so on) in order to be acceptably performant.
     /// <para/>
-    /// TBD: given the potential for secondary stroage here, should these methods be async?
+    /// TBD: given the potential for secondary storage here, should these methods be async?
     /// </summary>
     public interface IUnifierStore
     {

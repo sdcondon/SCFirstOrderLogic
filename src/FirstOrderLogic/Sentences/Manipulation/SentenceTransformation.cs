@@ -16,8 +16,8 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
         public virtual Sentence ApplyTo(Sentence sentence)
         {
-            // TODO-PERFORMANCE: Using "proper" visitor pattern will be (ever so slightly) faster than this -
-            // decide if its worth the extra complexity.
+            // TODO-PERFORMANCE: Using "proper" visitor pattern will be (ever so slightly) faster than this,
+            // as well as adhering better to the OCP - decide if its worth the extra complexity.
             return sentence switch
             {
                 Conjunction conjunction => ApplyTo(conjunction),
@@ -230,11 +230,26 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="Constant"/> instance.
-        /// The default implementation simply returns the constant unchanged.
+        /// The default implementation simply invokes the <see cref="ApplyTo"/> method appropriate to the type of the constant.
         /// </summary>
         /// <param name="term">The constant to visit.</param>
         /// <returns>The transformed term.</returns>
         public virtual Term ApplyTo(Constant constant)
+        {
+            return constant switch
+            {
+                MemberConstant memberConstant => ApplyTo(memberConstant),
+                _ => throw new ArgumentException()
+            };
+        }
+
+        /// <summary>
+        /// Applies this transformation to a <see cref="MemberConstant"/> instance.
+        /// The default implementation simply returns the constant unchanged.
+        /// </summary>
+        /// <param name="term">The constant to visit.</param>
+        /// <returns>The transformed term.</returns>
+        public virtual Term ApplyTo(MemberConstant constant)
         {
             return constant;
         }

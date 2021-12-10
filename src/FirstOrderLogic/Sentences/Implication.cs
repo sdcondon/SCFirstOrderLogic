@@ -26,7 +26,9 @@ namespace LinqToKB.FirstOrderLogic.Sentences
         public Sentence Consequent { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is Implication otherImplication && Antecedent.Equals(otherImplication.Antecedent);
+        public override bool Equals(object obj) => obj is Implication otherImplication
+            && Antecedent.Equals(otherImplication.Antecedent)
+            && Consequent.Equals(otherImplication.Consequent);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Antecedent, Consequent);
