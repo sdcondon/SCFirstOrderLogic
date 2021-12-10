@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 {
@@ -7,18 +8,23 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
     /// </summary>
     public class CNFConversion : SentenceTransformation
     {
-        private readonly ImplicationElimination implicationElimination = new ImplicationElimination();
-        private readonly NNFConversion nnfConversion = new NNFConversion();
-        private readonly VariableStandardisation variableStandardisation = new VariableStandardisation();
-        private readonly Skolemisation skolemisation = new Skolemisation();
-        private readonly UniversalQuantifierElimination universalQuantifierElimination = new UniversalQuantifierElimination();
-        private readonly DisjunctionDistribution disjunctionDistribution = new DisjunctionDistribution();
+        private static readonly ImplicationElimination implicationElimination = new ImplicationElimination();
+        private static readonly NNFConversion nnfConversion = new NNFConversion();
+        private static readonly VariableStandardisation variableStandardisation = new VariableStandardisation();
+        private static readonly Skolemisation skolemisation = new Skolemisation();
+        private static readonly UniversalQuantifierElimination universalQuantifierElimination = new UniversalQuantifierElimination();
+        private static readonly DisjunctionDistribution disjunctionDistribution = new DisjunctionDistribution();
+
+        /// <summary>
+        /// Gets a singleton instance of the <see cref="CNFConversion"/> class.
+        /// </summary>
+        public static CNFConversion Instance => new CNFConversion();
 
         /// <inheritdoc />
         public override Sentence ApplyTo(Sentence sentence)
         {
             // Might be possible to do some of these conversions at the same time, but for now
-            // at least, do them sequentially.
+            // at least, do them sequentially - favour maintainability over performance for the mo.
             sentence = implicationElimination.ApplyTo(sentence);
             sentence = nnfConversion.ApplyTo(sentence);
             sentence = variableStandardisation.ApplyTo(sentence);
@@ -97,63 +103,95 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             }
         }
 
+        /// <summary>
+        /// Tranformation that "standardises" variables - essentially ensuring that variable names are unique.
+        /// </summary>
         private class VariableStandardisation : SentenceTransformation
         {
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
             {
-                var variableScopeFinder = new VariableScopeFinder();
+                var variableScopeFinder = new QuantificationFinder();
                 variableScopeFinder.ApplyTo(sentence);
-                return new VariableRenamer(variableScopeFinder.VariableScopes).ApplyTo(sentence);
+                return new VariableRenamer(variableScopeFinder.Quantifications).ApplyTo(sentence);
             }
 
             // Ick: Double-nested class.
             // Ick: A "Transformation" that doesn't transform. More evidence to suggest introduction of visitor pattern at some point.
-            private class VariableScopeFinder : SentenceTransformation
+            private class QuantificationFinder : SentenceTransformation
             {
-                public List<Sentence> VariableScopes { get; } = new List<Sentence>();
+                public List<Quantification> Quantifications { get; } = new List<Quantification>();
 
-                public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
+                public override Sentence ApplyTo(Quantification quantification)
                 {
-                    VariableScopes.Add(existentialQuantification);
-                    return base.ApplyTo(existentialQuantification);
-                }
-
-                public override Sentence ApplyTo(UniversalQuantification universalQuantification)
-                {
-                    VariableScopes.Add(universalQuantification);
-                    return base.ApplyTo(universalQuantification);
+                    Quantifications.Add(quantification);
+                    return base.ApplyTo(quantification);
                 }
             }
 
             // Ick: Double-nested class.
             private class VariableRenamer : SentenceTransformation
             {
-                Dictionary<VariableDeclaration, VariableDeclaration> mapping;
+                Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
 
-                public VariableRenamer(IEnumerable<Sentence> variableScopes)
+                public VariableRenamer(List<Quantification> quantifications)
                 {
-                    foreach (var scope in variableScopes)
+                    for (int i = 0; i < quantifications.Count; i++)
                     {
-
+                        // While a more complex approach that leaves variable names alone where it can has its benefits, here
+                        // we just take a simple, even-handed approach and prepend the index of the variable (i.e. the order of
+                        // discovery by the DFS done by QuantificationFinder).
+                        mapping[quantifications[i].Variable] = new VariableDeclaration($"{i}:{quantifications[i].Variable.Name}");
                     }
                 }
 
-                public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
-                {
-                    if (mapping.TryGetValue(variableDeclaration, out var newDeclaration))
-                    {
-                        return newDeclaration;
-                    }
-
-                    return variableDeclaration;
-                }
+                public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration) => mapping[variableDeclaration];
             }
         }
 
         private class Skolemisation : SentenceTransformation
         {
-            // TODO!
+            public override Sentence ApplyTo(Sentence sentence)
+            {
+                return new ScopedSkolemisation(Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, SkolemFunction>()).ApplyTo(sentence);
+            }
+
+            private class ScopedSkolemisation : SentenceTransformation
+            {
+                private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
+                private readonly Dictionary<VariableDeclaration, SkolemFunction> existentialVariableMap;
+
+                public ScopedSkolemisation(IEnumerable<VariableDeclaration> universalVariablesInScope, Dictionary<VariableDeclaration, SkolemFunction> existentialVariableMap)
+                {
+                    this.universalVariablesInScope = universalVariablesInScope;
+                    this.existentialVariableMap = existentialVariableMap;
+                }
+
+                public override Sentence ApplyTo(UniversalQuantification universalQuantification)
+                {
+                    return new UniversalQuantification(
+                        universalQuantification.Variable,
+                        new ScopedSkolemisation(universalVariablesInScope.Append(universalQuantification.Variable), existentialVariableMap).ApplyTo(universalQuantification.Sentence));
+                }
+
+                public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
+                {
+                    existentialVariableMap[existentialQuantification.Variable] = new SkolemFunction(
+                        $"Skolem{existentialVariableMap.Count + 1}",
+                        universalVariablesInScope.Select(a => new Variable(a)).ToList<Term>());
+                    return base.ApplyTo(existentialQuantification.Sentence);
+                }
+
+                public override Term ApplyTo(Variable variable)
+                {
+                    if (existentialVariableMap.TryGetValue(variable.Declaration, out var skolemFunction))
+                    {
+                        return skolemFunction;
+                    }
+
+                    return base.ApplyTo(variable);
+                }
+            }
         }
 
         private class UniversalQuantifierElimination : SentenceTransformation

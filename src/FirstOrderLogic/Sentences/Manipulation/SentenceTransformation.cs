@@ -24,11 +24,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
                 Disjunction disjunction => ApplyTo(disjunction),
                 Equality equality => ApplyTo(equality),
                 Equivalence equivalence => ApplyTo(equivalence),
-                ExistentialQuantification existentialQuantification => ApplyTo(existentialQuantification),
                 Implication implication => ApplyTo(implication),
                 Negation negation => ApplyTo(negation),
                 Predicate predicate => ApplyTo(predicate),
-                UniversalQuantification universalQuantification => ApplyTo(universalQuantification),
+                Quantification quantification => ApplyTo(quantification),
                 _ => throw new ArgumentException("Unsupported sentence type")
             };
         }
@@ -143,6 +142,24 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         }
 
         /// <summary>
+        /// Applies this transformation to a <see cref="MemberPredicate"/> instance. 
+        /// The default implementation returns a <see cref="MemberPredicate"/> pointed at the same <see cref="MemberInfo"/> and with an argument list that is the result of calling <see cref="ApplyTo"/> on both of the existing arguments.
+        /// </summary>
+        /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
+        /// <returns>The transformed <see cref="Sentence"/>.</returns>
+        public virtual Sentence ApplyTo(MemberPredicate predicate)
+        {
+            var arguments = predicate.Arguments.Select(a => ApplyTo(a)).ToList();
+
+            if (arguments.Zip(predicate.Arguments, (x, y) => (x, y)).Any(t => t.x != t.y))
+            {
+                return new MemberPredicate(predicate.Member, arguments);
+            }
+
+            return predicate;
+        }
+
+        /// <summary>
         /// Applies this transformation to a <see cref="Negation"/> instance. 
         /// The default implementation returns a <see cref="Negation"/> of the result of calling <see cref="ApplyTo"/> on the current sub-sentence.
         /// </summary>
@@ -176,21 +193,19 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         }
 
         /// <summary>
-        /// Applies this transformation to a <see cref="MemberPredicate"/> instance. 
-        /// The default implementation returns a <see cref="MemberPredicate"/> pointed at the same <see cref="MemberInfo"/> and with an argument list that is the result of calling <see cref="ApplyTo"/> on both of the existing arguments.
+        /// Applies this transformation to a <see cref="Quantification"/> instance. 
+        /// The default implementation simply invokes the <see cref="ApplyTo"/> method appropriate to the type of the quantification.
         /// </summary>
-        /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
+        /// <param name="quantification">The <see cref="Quantification"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(MemberPredicate predicate)
+        public virtual Sentence ApplyTo(Quantification quantification)
         {
-            var arguments = predicate.Arguments.Select(a => ApplyTo(a)).ToList();
-
-            if (arguments.Zip(predicate.Arguments, (x, y) => (x, y)).Any(t => t.x != t.y))
+            return quantification switch
             {
-                return new MemberPredicate(predicate.Member, arguments);
-            }
-
-            return predicate;
+                ExistentialQuantification existentialQuantification => ApplyTo(existentialQuantification),
+                UniversalQuantification universalQuantification => ApplyTo(universalQuantification),
+                _ => throw new ArgumentException()
+            };
         }
 
         /// <summary>
