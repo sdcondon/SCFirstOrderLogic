@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using static LinqToKB.FirstOrderLogic.Operators;
 
-namespace LinqToKB.FirstOrderLogic.ExampleDomains.NaturalNumbers
+namespace LinqToKB.FirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.NaturalNumbers
 {
     public interface INaturalNumbers : IEnumerable<INaturalNumber>
     {

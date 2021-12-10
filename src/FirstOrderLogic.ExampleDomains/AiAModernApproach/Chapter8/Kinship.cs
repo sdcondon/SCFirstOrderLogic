@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using static LinqToKB.FirstOrderLogic.Operators;
 
-namespace LinqToKB.FirstOrderLogic.ExampleDomains.Kinship
+namespace LinqToKB.FirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Kinship
 {
     public interface IPerson
     {
