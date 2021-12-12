@@ -7,7 +7,8 @@ using System.Reflection;
 namespace LinqToKB.FirstOrderLogic.LanguageIntegration
 {
     /// <summary>
-    /// Static factory methods for creating <see cref="Sentence"/> instances from LINQ expressions.
+    /// Static factory methods for creating <see cref="Sentence"/> instances from LINQ expressions operating on an (<see cref="IEnumerable{T}"/>) object representing the domain.
+    /// The conventions used can be found in library documentation.
     /// </summary>
     public static class SentenceFactory
     {
@@ -69,7 +70,7 @@ namespace LinqToKB.FirstOrderLogic.LanguageIntegration
         /// Creates and returns the <see cref="Sentence{TDomain, TElement}"/> instance that is logically equivalent to
         /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
         /// </summary>
-        ///  <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
+        /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
         /// <param name="lambda">The lambda expression.</param>
         /// <returns>The created sentence.</returns>
         public static Sentence Create<TElement>(Expression<Predicate<IEnumerable<TElement>>> lambda)

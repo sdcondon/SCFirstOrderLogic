@@ -36,7 +36,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         }
 
         /// <summary>
-        /// Transformation that eliminates implications by replacing P ⇒ Q with ¬P ∨ Q.
+        /// Transformation that eliminates implications by replacing P ⇒ Q with ¬P ∨ Q and P ⇔ Q with (¬P ∨ Q) ∧ (P ∨ ¬Q)
         /// </summary>
         private class ImplicationElimination : SentenceTransformation
         {
@@ -53,7 +53,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             {
                 return ApplyTo(new Conjunction(
                     new Disjunction(new Negation(equivalence.Left), equivalence.Right),
-                    new Disjunction(new Negation(equivalence.Right), equivalence.Left)));
+                    new Disjunction(equivalence.Left, new Negation(equivalence.Right))));
             }
         }
 
@@ -117,9 +117,9 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
             {
-                var variableScopeFinder = new QuantificationFinder();
-                variableScopeFinder.ApplyTo(sentence);
-                return new VariableRenamer(variableScopeFinder.Quantifications).ApplyTo(sentence);
+                var quantificationFinder = new QuantificationFinder();
+                quantificationFinder.ApplyTo(sentence);
+                return new VariableRenamer(quantificationFinder.Quantifications).ApplyTo(sentence);
             }
 
             // NB: A "Transformation" that doesn't transform and has to use a property to expose its output. More evidence to suggest introduction of visitor pattern at some point.
