@@ -56,7 +56,7 @@ namespace LinqToKB.FirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Cri
             // Enemy(x, America) ⇒ Hostile(x)
             d => d.All(x => If(x.IsEnemyOf(d.America), x.IsHostile)),
 
-            // "West, who is American..":  merican(West)
+            // "West, who is American..": American(West)
             d => d.West.IsAmerican,
 
             // "The country Nono, an enemy of America..": Enemy(Nono, America).

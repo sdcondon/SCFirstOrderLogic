@@ -154,10 +154,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
                 || TryCreatePredicate<TDomain, TElement>(expression, out sentence);
         }
 
-        /// <remarks>
+        /// <summary>
         /// Tries to create a <see cref="Conjunction"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>{expression} {&amp;&amp; or &amp;} {expression}</code>
-        /// </remarks>
+        /// </summary>
         private static bool TryCreateConjunction<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -204,10 +204,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        /// <remarks>
+        /// <summary>
         /// Tries to create a <see cref="Disjunction"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>{expression} {|| or |} {expression}</code>
-        /// </remarks>
+        /// </summary>
         private static bool TryCreateDisjunction<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -223,10 +223,10 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        /// <remarks>
+        /// <summary>
         /// Tries to create an <see cref="Equality"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>{expression} == {expression}</code>
-        /// </remarks>
+        /// </summary>
         private static bool TryCreateEquality<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {
@@ -243,11 +243,11 @@ namespace LinqToKB.FirstOrderLogic.Sentences
             return false;
         }
 
-        /// <remarks>
+        /// <summary>
         /// Tries to create a <see cref="Equivalence"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>Operators.Iff({expression}, {expression})</code>
         /// (Consumers are encouraged to include <c>using static LinqToKB.FirstOrderLogic.Operators;</c> to make this a little shorter)
-        /// </remarks>
+        /// </summary>
         private static bool TryCreateEquivalence<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
         {

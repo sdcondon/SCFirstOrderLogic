@@ -6,10 +6,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
 {
     public class SentenceUnifier
     {
-        public bool TryUnify(
-            Sentence x,
-            Sentence y,
-            out IDictionary<Variable, Term> unifier)
+        public bool TryUnify(Sentence x, Sentence y, out IDictionary<Variable, Term> unifier)
         {
             unifier = new Dictionary<Variable, Term>();
 
@@ -22,10 +19,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             return true;
         }
 
-        private bool TryUnify(
-            Sentence x,
-            Sentence y,
-            IDictionary<Variable, Term> unifier)
+        private bool TryUnify(Sentence x, Sentence y, IDictionary<Variable, Term> unifier)
         {
             // TODO-PERFORMANCE: Given the fundamentality of unification and the number of times that this could be called during inference,
             // it might be worth optimising it a little via a visitor-style design instead of this type switch..
@@ -44,50 +38,35 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             };
         }
 
-        private bool TryUnify(
-            Conjunction x,
-            Conjunction y,
-            IDictionary<Variable, Term> unifier)
+        private bool TryUnify(Conjunction x, Conjunction y, IDictionary<Variable, Term> unifier)
         {
             // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
             // perhaps Low and High (internal) props in conjunction?
             return TryUnify(x.Left, y.Left, unifier) && TryUnify(x.Right, y.Right, unifier);
         }
 
-        public bool TryUnify(
-            Disjunction x,
-            Disjunction y,
-            IDictionary<Variable, Term> unifier)
+        public bool TryUnify(Disjunction x, Disjunction y, IDictionary<Variable, Term> unifier)
         {
             // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
             // perhaps Low and High (internal) props in conjunction?
             return TryUnify(x.Left, y.Left, unifier) && TryUnify(x.Right, y.Right, unifier);
         }
 
-        public bool TryUnify(
-            Equality x,
-            Equality y,
-            IDictionary<Variable, Term> unifier)
+        public bool TryUnify(Equality x, Equality y, IDictionary<Variable, Term> unifier)
         {
             // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
             // perhaps Low and High (internal) props in conjunction?
             return TryUnify(x.Left, y.Left, unifier) && TryUnify(x.Right, y.Right, unifier);
         }
 
-        public bool TryUnify(
-            Equivalence x,
-            Equivalence y,
-            IDictionary<Variable, Term> unifier)
+        public bool TryUnify(Equivalence x, Equivalence y, IDictionary<Variable, Term> unifier)
         {
             // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
             // perhaps Low and High (internal) props in conjunction?
             return TryUnify(x.Left, y.Left, unifier) && TryUnify(x.Right, y.Right, unifier);
         }
 
-        ////public virtual Sentence TryUnify(
-        ////    ExistentialQuantification x,
-        ////    ExistentialQuantification y,
-        ////    IDictionary<Variable, Term> unifier)
+        ////public virtual Sentence TryUnify(ExistentialQuantification x, ExistentialQuantification y, IDictionary<Variable, Term> unifier)
         ////{
         ////    var variable = ApplyToVariableDeclaration(existentialQuantification.Variable);
         ////    var sentence = ApplyToSentence(existentialQuantification.Sentence);
@@ -99,26 +78,17 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         ////    return existentialQuantification;
         ////}
 
-        public bool TryUnify(
-            Implication x,
-            Implication y,
-            IDictionary<Variable, Term> unifier)
+        public bool TryUnify(Implication x, Implication y, IDictionary<Variable, Term> unifier)
         {
             return TryUnify(x.Antecedent, y.Antecedent, unifier) && TryUnify(x.Consequent, y.Consequent, unifier);
         }
 
-        public bool TryUnify(
-            Negation x,
-            Negation y,
-            IDictionary<Variable, Term> unifier)
+        public bool TryUnify(Negation x, Negation y, IDictionary<Variable, Term> unifier)
         {
             return TryUnify(x.Sentence, y.Sentence, unifier);
         }
 
-        public bool TryUnify(
-            Predicate x,
-            Predicate y,
-            IDictionary<Variable, Term> unifier)
+        public bool TryUnify(Predicate x, Predicate y, IDictionary<Variable, Term> unifier)
         {
             if (!x.SymbolEquals(y))
             {
@@ -136,10 +106,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             return true;
         }
 
-        ////public bool TryUnify(
-        ////    UniversalQuantification x,
-        ////    UniversalQuantification y,
-        ////    IDictionary<Variable, Term> unifier)
+        ////public bool TryUnify(UniversalQuantification x, UniversalQuantification y, IDictionary<Variable, Term> unifier)
         ////{
         ////    var variable = ApplyToVariableDeclaration(universalQuantification.Variable);
         ////    var sentence = ApplyToSentence(universalQuantification.Sentence);
@@ -151,10 +118,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
         ////    return universalQuantification;
         ////}
 
-        public bool TryUnify(
-            Term x,
-            Term y,
-            IDictionary<Variable, Term> unifier)
+        public bool TryUnify(Term x, Term y, IDictionary<Variable, Term> unifier)
         {
             return (x, y) switch
             {
@@ -165,10 +129,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             };
         }
 
-        public bool TryUnify(
-            Variable variable,
-            Term other,
-            IDictionary<Variable, Term> unifier)
+        public bool TryUnify(Variable variable,Term other, IDictionary<Variable, Term> unifier)
         {
             if (unifier.TryGetValue(variable, out var value))
             {
@@ -189,10 +150,7 @@ namespace LinqToKB.FirstOrderLogic.Sentences.Manipulation
             }
         }
 
-        public bool TryUnify(
-            Function x,
-            Function y,
-            IDictionary<Variable, Term> unifier)
+        public bool TryUnify(Function x, Function y, IDictionary<Variable, Term> unifier)
         {
             // Dunno if this is the right way to unify (i.e. skolems can't unify with non-skolems?).. More reading and time will tell, but wouldn't be surprised if this needs to change..
             if ((x is MemberFunction domainX && y is MemberFunction domainY && !MemberInfoEqualityComparer.Instance.Equals(domainX.Member, domainY.Member))
