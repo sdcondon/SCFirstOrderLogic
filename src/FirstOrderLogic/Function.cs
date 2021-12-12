@@ -12,6 +12,16 @@ namespace LinqToKB.FirstOrderLogic
     public class Function : Term
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="MemberFunction"/> class.
+        /// </summary>
+        /// <param name="symbol">An object representing the symbol of the function. Symbol equality should indicate that it is the "same" function in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.</param>
+        /// <param name="arguments">The arguments of this function.</param>
+        public Function(object symbol, params Term[] arguments)
+            : this(symbol, (IList<Term>)arguments)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
         /// <param name="symbol">An object representing the symbol of the function.</param>
@@ -34,7 +44,7 @@ namespace LinqToKB.FirstOrderLogic
         /// Gets an object representing the symbol of the function.
         /// </summary>
         /// <remarks>
-        /// Symbol equality indicates that it is the "same" function in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// Symbol equality should indicate that it is the "same" function in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
         /// </remarks>
         public object Symbol { get; }
 

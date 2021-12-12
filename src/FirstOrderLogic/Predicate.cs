@@ -13,6 +13,16 @@ namespace LinqToKB.FirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
+        /// <param name="symbol">An object representing the symbol of the predicate. Symbol equality should indicate that it is the "same" predicate in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.</param>
+        /// <param name="arguments">The arguments of this predicate.</param>
+        public Predicate(object symbol, params Term[] arguments)
+            : this(symbol, (IList<Term>)arguments)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Predicate"/> class.
+        /// </summary>
         /// <param name="symbol">An object representing the symbol of the predicate.</param>
         /// <param name="arguments">The arguments of this predicate.</param>
         public Predicate(object symbol, IList<Term> arguments)
@@ -30,7 +40,7 @@ namespace LinqToKB.FirstOrderLogic
         /// Gets an object representing the symbol of the predicate.
         /// </summary>
         /// <remarks>
-        /// Symbol equality indicates that it is the "same" predicate in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// Symbol equality should indicate that it is the "same" predicate in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
         /// </remarks>
         public object Symbol { get; }
 
