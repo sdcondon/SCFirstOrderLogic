@@ -1,5 +1,4 @@
-﻿using LinqToKB.FirstOrderLogic.LanguageIntegration;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace LinqToKB.FirstOrderLogic.SentenceManipulation
@@ -42,17 +41,11 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         public static string Print(Implication implication) =>
             $"({Print(implication.Antecedent)} ⇒ {Print(implication.Consequent)})";
 
-        public static string Print(MemberPredicate predicate) =>
-            $"{predicate.Member.Name}({string.Join(", ", predicate.Arguments.Select(a => Print(a)))})";
-
         public static string Print(Negation negation) =>
             $"¬{Print(negation.Sentence)}";
 
-        public static string Print(Predicate predicate) => predicate switch
-        {
-            MemberPredicate memberPredicate => Print(memberPredicate),
-            _ => throw new ArgumentException()
-        };
+        public static string Print(Predicate predicate) =>
+            $"{predicate.Symbol}({string.Join(", ", predicate.Arguments.Select(a => Print(a)))})";
 
         public static string Print(Quantification quantification) => quantification switch
         {
@@ -72,30 +65,14 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
             _ => throw new ArgumentException()
         };
 
-        public static string Print(Constant constant) => constant switch
-        {
-            MemberConstant memberConstant => Print(memberConstant),
-            _ => throw new ArgumentException()
-        };
-
-        public static string Print(MemberConstant constant) =>
-            constant.Member.Name;
+        public static string Print(Constant constant) =>
+            constant.Symbol.ToString();
 
         public static string Print(Variable variable) =>
             Print(variable.Declaration);
 
-        public static string Print(Function function) => function switch
-        {
-            MemberFunction domainFunction => Print(domainFunction),
-            SkolemFunction skolemFunction => Print(skolemFunction),
-            _ => throw new ArgumentException()
-        };
-
-        public static string Print(MemberFunction domainFunction) =>
-            $"{domainFunction.Member.Name}({string.Join(", ", domainFunction.Arguments.Select(a => Print(a)))})";
-
-        public static string Print(SkolemFunction skolemFunction) =>
-            $"{skolemFunction.Label}({string.Join(", ", skolemFunction.Arguments.Select(a => Print(a)))})";
+        public static string Print(Function function) =>
+            $"{function.Symbol}({string.Join(", ", function.Arguments.Select(a => Print(a)))})";
 
         public static string Print(VariableDeclaration variableDeclaration) =>
             variableDeclaration.Name;

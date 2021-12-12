@@ -12,63 +12,21 @@ namespace LinqToKB.FirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="SkolemFunction"/> class.
         /// </summary>
-        /// <param name="label"></param>
+        /// <param name="symbol">The symbol of the function.</param>
         /// <param name="arguments">The arguments of this function.</param>
-        public SkolemFunction(string label, params Term[] arguments)
-            : this(label, (IList<Term>)arguments)
+        public SkolemFunction(string symbol, params Term[] arguments)
+            : base(symbol, arguments)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SkolemFunction"/> class.
         /// </summary>
-        /// <param name="label"></param>
+        /// <param name="symbol">The symbol of the function.</param>
         /// <param name="arguments">The arguments of this function.</param>
-        public SkolemFunction(string label, IList<Term> arguments)
-            : base(arguments)
+        public SkolemFunction(string symbol, IList<Term> arguments)
+            : base(symbol, arguments)
         {
-            Label = label;
-        }
-
-        /// <summary>
-        /// Gets the label for this function. NB: string labels probably not the right call here (uniqueness is what matters - GUID?) - but will do for now.
-        /// </summary>
-        public string Label { get; }
-
-        /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            if (!(obj is SkolemFunction otherFunction)
-                || !otherFunction.Label.Equals(Label)
-                || otherFunction.Arguments.Count != Arguments.Count)
-            {
-                return false;
-            }
-
-            // TODO: factor to base class..
-            for (int i = 0; i < Arguments.Count; i++)
-            {
-                if (!Arguments[i].Equals(otherFunction.Arguments[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            var hashCode = new HashCode();
-
-            hashCode.Add(Label.GetHashCode());
-            foreach (var argument in Arguments)
-            {
-                hashCode.Add(argument);
-            }
-
-            return hashCode.ToHashCode();
         }
     }
 }

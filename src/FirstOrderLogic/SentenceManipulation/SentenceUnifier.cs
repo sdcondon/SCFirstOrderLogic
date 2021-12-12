@@ -1,5 +1,4 @@
-﻿using LinqToKB.FirstOrderLogic.LanguageIntegration; // TODO: Ideally not needed..
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace LinqToKB.FirstOrderLogic.SentenceManipulation
@@ -90,7 +89,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
 
         public bool TryUnify(Predicate x, Predicate y, IDictionary<Variable, Term> unifier)
         {
-            if (!x.SymbolEquals(y))
+            if (!x.Symbol.Equals(y.Symbol))
             {
                 return false;
             }
@@ -152,22 +151,20 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
 
         public bool TryUnify(Function x, Function y, IDictionary<Variable, Term> unifier)
         {
-            // Dunno if this is the right way to unify (i.e. skolems can't unify with non-skolems?).. More reading and time will tell, but wouldn't be surprised if this needs to change..
-            if ((x is MemberFunction domainX && y is MemberFunction domainY && !MemberInfoEqualityComparer.Instance.Equals(domainX.Member, domainY.Member))
-                || (x is SkolemFunction skolemX && y is SkolemFunction skolemY && skolemX.Label.Equals(skolemY.Label)))
+            if (!x.Symbol.Equals(y.Symbol))
             {
-                foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
-                {
-                    if (!TryUnify(args.x, args.y, unifier))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+                return false;
             }
 
-            return false;
+            foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
+            {
+                if (!TryUnify(args.x, args.y, unifier))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

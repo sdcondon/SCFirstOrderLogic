@@ -10,7 +10,7 @@ namespace LinqToKB.FirstOrderLogic.LanguageIntegration
     /// </summary>
     /// <remarks>
     /// TODO-FUNCTIONALITY: Might ultimately be useful to make the Member.. classes generic in the same way as KnowledgeBase - for
-    /// validation, as well as potential manipulation power.
+    /// validation, as well as potential manipulation power. OR simply delete this class as it adds no real value.
     /// </remarks>
     public class MemberConstant : Constant
     {
@@ -18,20 +18,9 @@ namespace LinqToKB.FirstOrderLogic.LanguageIntegration
         /// Initializes a new instance of the <see cref="Constant"/> class.
         /// </summary>
         /// <param name="memberInfo">An expression for obtaining the value of the constant.</param>
-        public MemberConstant(MemberInfo memberInfo) => Member = memberInfo;
-
-        /// <summary>
-        /// Gets the <see cref="MemberInfo"/> instance for the logic behind this constant.
-        /// </summary>
-        public MemberInfo Member { get; }
-
-        /// <inheritdoc />
-        public override bool Equals(object obj)
+        public MemberConstant(MemberInfo memberInfo)
+            : base(new MemberSymbol(memberInfo))
         {
-            return obj is MemberConstant otherMemberConstant && MemberInfoEqualityComparer.Instance.Equals(otherMemberConstant.Member, Member);
         }
-
-        /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(MemberInfoEqualityComparer.Instance.GetHashCode(Member));
     }
 }

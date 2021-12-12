@@ -1,5 +1,4 @@
-﻿using LinqToKB.FirstOrderLogic.LanguageIntegration;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace LinqToKB.FirstOrderLogic.SentenceManipulation
@@ -143,18 +142,18 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
-        /// Applies this transformation to a <see cref="MemberPredicate"/> instance. 
-        /// The default implementation returns a <see cref="MemberPredicate"/> pointed at the same <see cref="MemberInfo"/> and with an argument list that is the result of calling <see cref="ApplyTo"/> on both of the existing arguments.
+        /// Applies this transformation to a <see cref="Predicate"/> instance. 
+        /// The default implementation returns a <see cref="Predicate"/> with the same Symbol and with an argument list that is the result of calling <see cref="ApplyTo"/> on all of the existing arguments.
         /// </summary>
         /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(MemberPredicate predicate)
+        public virtual Sentence ApplyTo(Predicate predicate)
         {
             var arguments = predicate.Arguments.Select(a => ApplyTo(a)).ToList();
 
             if (arguments.Zip(predicate.Arguments, (x, y) => (x, y)).Any(t => t.x != t.y))
             {
-                return new MemberPredicate(predicate.Member, arguments);
+                return new Predicate(predicate.Symbol, arguments);
             }
 
             return predicate;
@@ -176,21 +175,6 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
             }
 
             return negation;
-        }
-
-        /// <summary>
-        /// Applies this transformation to a <see cref="Predicate"/> instance. 
-        /// The default implementation simply invokes the <see cref="ApplyTo"/> method appropriate to the type of the predicate.
-        /// </summary>
-        /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
-        /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Predicate predicate)
-        {
-            return predicate switch
-            {
-                MemberPredicate memberPredicate => ApplyTo(memberPredicate),
-                _ => throw new ArgumentException()
-            };
         }
 
         /// <summary>
@@ -246,26 +230,11 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="Constant"/> instance.
-        /// The default implementation simply invokes the <see cref="ApplyTo"/> method appropriate to the type of the constant.
-        /// </summary>
-        /// <param name="term">The constant to visit.</param>
-        /// <returns>The transformed term.</returns>
-        public virtual Term ApplyTo(Constant constant)
-        {
-            return constant switch
-            {
-                MemberConstant memberConstant => ApplyTo(memberConstant),
-                _ => throw new ArgumentException()
-            };
-        }
-
-        /// <summary>
-        /// Applies this transformation to a <see cref="MemberConstant"/> instance.
         /// The default implementation simply returns the constant unchanged.
         /// </summary>
         /// <param name="term">The constant to visit.</param>
         /// <returns>The transformed term.</returns>
-        public virtual Term ApplyTo(MemberConstant constant)
+        public virtual Term ApplyTo(Constant constant)
         {
             return constant;
         }
@@ -289,54 +258,20 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="Function"/> instance.
-        /// The default implementation simply invokes the <see cref="ApplyTo"/> method appropriate to the type of the function.
-        /// </summary>
-        /// <param name="function">The function to visit.</param>
-        /// <returns>The transformed function.</returns>
-        public virtual Term ApplyTo(Function function)
-        {
-            return function switch
-            {
-                MemberFunction domainFunction => ApplyTo(domainFunction),
-                SkolemFunction skolemFunction => ApplyTo(skolemFunction),
-                _ => throw new ArgumentException()
-            };
-        }
-
-        /// <summary>
-        /// Applies this transformation to a <see cref="MemberFunction"/> instance.
-        /// The default implementation returns a <see cref="MemberFunction"/> pointed at the same <see cref="MemberInfo"/> and with an argument list that is the result of calling <see cref="ApplyTo"/> on each of the existing arguments.
+        /// The default implementation returns a <see cref="Function"/> with the same Symbol and with an argument list that is the result of calling <see cref="ApplyTo"/> on each of the existing arguments.
         /// </summary>
         /// <param name="domainFunction">The function to visit.</param>
         /// <returns>The transformed term.</returns>
-        public virtual Term ApplyTo(MemberFunction domainFunction)
+        public virtual Term ApplyTo(Function function)
         {
-            var arguments = domainFunction.Arguments.Select(a => ApplyTo(a)).ToList();
+            var arguments = function.Arguments.Select(a => ApplyTo(a)).ToList();
 
-            if (arguments.Zip(domainFunction.Arguments, (x, y) => (x, y)).Any(t => t.x != t.y))
+            if (arguments.Zip(function.Arguments, (x, y) => (x, y)).Any(t => t.x != t.y))
             {
-                return new MemberFunction(domainFunction.Member, arguments);
+                return new Function(function.Symbol, arguments);
             }
 
-            return domainFunction;
-        }
-
-        /// <summary>
-        /// Applies this transformation to a <see cref="SkolemFunction"/> instance.
-        /// The default implementation returns an <see cref="SkolemFunction"/> with the same label, and with an argument list that is the result of calling <see cref="ApplyTo"/> on each of the existing arguments.
-        /// </summary>
-        /// <param name="skolemFunction">The function to visit.</param>
-        /// <returns>The transformed term.</returns>
-        public virtual Term ApplyTo(SkolemFunction skolemFunction)
-        {
-            var arguments = skolemFunction.Arguments.Select(a => ApplyTo(a)).ToList();
-
-            if (arguments.Zip(skolemFunction.Arguments, (x, y) => (x, y)).Any(t => t.x != t.y))
-            {
-                return new SkolemFunction(skolemFunction.Label, arguments);
-            }
-
-            return skolemFunction;
+            return function;
         }
 
         /// <summary>

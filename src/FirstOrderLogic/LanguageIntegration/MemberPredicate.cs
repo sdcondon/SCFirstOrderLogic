@@ -10,7 +10,7 @@ namespace LinqToKB.FirstOrderLogic.LanguageIntegration
     /// </summary>
     /// <remarks>
     /// TODO-FUNCTIONALITY: Might ultimately be useful to make the Member.. classes generic in the same way as KnowledgeBase - for
-    /// validation, as well as potential manipulation power.
+    /// validation, as well as potential manipulation power. OR simply delete this class as it adds no real value.
     /// </remarks>
     public class MemberPredicate : Predicate
     {
@@ -20,7 +20,7 @@ namespace LinqToKB.FirstOrderLogic.LanguageIntegration
         /// <param name="memberInfo"></param>
         /// <param name="arguments">The arguments of this predicate.</param>
         public MemberPredicate(MemberInfo memberInfo, params Term[] arguments)
-            : this(memberInfo, (IList<Term>)arguments)
+            : base(new MemberSymbol(memberInfo), arguments)
         {
         }
 
@@ -30,56 +30,9 @@ namespace LinqToKB.FirstOrderLogic.LanguageIntegration
         /// <param name="memberInfo"></param>
         /// <param name="arguments">The arguments of this predicate.</param>
         public MemberPredicate(MemberInfo memberInfo, IList<Term> arguments)
-            : base(arguments)
+            : base(new MemberSymbol(memberInfo), arguments)
         {
-            Member = memberInfo; // TODO-ROBUSTNESS: This is public - so should probably validate that its boolean valued and that the arguments match it..
-        }
-
-        /// <summary>
-        /// Gets the <see cref="MemberInfo"/> instance for the logic behind this predicate.
-        /// </summary>
-        public MemberInfo Member { get; }
-
-        /// <inheritdoc />
-        public override bool SymbolEquals(Predicate other)
-        {
-            return other is MemberPredicate otherMemberPredicate
-                && MemberInfoEqualityComparer.Instance.Equals(Member, otherMemberPredicate.Member);
-        }
-
-        /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            if (!(obj is MemberPredicate otherPredicate)
-                || !MemberInfoEqualityComparer.Instance.Equals(Member, otherPredicate.Member)
-                || otherPredicate.Arguments.Count != Arguments.Count)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < Arguments.Count; i++)
-            {
-                if (!Arguments[i].Equals(otherPredicate.Arguments[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            var hashCode = new HashCode();
-
-            hashCode.Add(MemberInfoEqualityComparer.Instance.GetHashCode(Member));
-            foreach (var argument in Arguments)
-            {
-                hashCode.Add(argument);
-            }
-
-            return hashCode.ToHashCode();
+            // TODO-ROBUSTNESS: This is public - so should probably validate that its boolean valued and that the arguments match it..
         }
     }
 }

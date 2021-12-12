@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace LinqToKB.FirstOrderLogic
@@ -7,14 +8,16 @@ namespace LinqToKB.FirstOrderLogic
     /// Representation of an predicate sentence of first order logic, In typical FOL syntax, this is written as:
     /// <code>{predicate symbol}({term}, ..)</code>
     /// </summary>
-    public abstract class Predicate : Sentence
+    public class Predicate : Sentence
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
+        /// <param name="symbol">An object representing the symbol of the predicate.</param>
         /// <param name="arguments">The arguments of this predicate.</param>
-        public Predicate(IList<Term> arguments)
+        public Predicate(object symbol, IList<Term> arguments)
         {
+            Symbol = symbol;
             Arguments = new ReadOnlyCollection<Term>(arguments);
         }
 
@@ -24,15 +27,46 @@ namespace LinqToKB.FirstOrderLogic
         public ReadOnlyCollection<Term> Arguments { get; }
 
         /// <summary>
-        /// Determines if another predicate has the same symbol as this one.
+        /// Gets an object representing the symbol of the predicate.
         /// </summary>
-        /// <param name="other">The other predicate.</param>
-        /// <returns>True if and only if the other predicate has the same symmbol as this one.</returns>
         /// <remarks>
-        /// Utimately might be better to do this as an object-valued Symbol property?
-        /// Because that could be used in hash code calculations, which would let us define equality and
-        /// hash code in this base class.. Possible (probable..) follow-up commit to do that..
+        /// Symbol equality indicates that it is the "same" predicate in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
         /// </remarks>
-        public abstract bool SymbolEquals(Predicate other);
+        public object Symbol { get; }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Predicate otherPredicate)
+                || !otherPredicate.Symbol.Equals(Symbol)
+                || otherPredicate.Arguments.Count != Arguments.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < Arguments.Count; i++)
+            {
+                if (!Arguments[i].Equals(otherPredicate.Arguments[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+
+            hashCode.Add(Symbol);
+            foreach (var argument in Arguments)
+            {
+                hashCode.Add(argument);
+            }
+
+            return hashCode.ToHashCode();
+        }
     }
 }

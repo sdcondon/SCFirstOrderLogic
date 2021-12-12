@@ -19,7 +19,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
             bool Knows(IPerson other);
         }
 
-        private static MemberFunction Mother(Term child)
+        private static Function Mother(Term child)
         {
             return new MemberFunction(typeof(IPerson).GetProperty(nameof(IPerson.Mother)), child);
         }
