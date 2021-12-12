@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using static LinqToKB.FirstOrderLogic.Operators;
+using static LinqToKB.FirstOrderLogic.LanguageIntegration.Operators;
 
 namespace LinqToKB.FirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCat
 {
