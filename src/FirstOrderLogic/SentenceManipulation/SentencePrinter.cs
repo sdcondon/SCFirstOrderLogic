@@ -16,10 +16,11 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
             Disjunction disjunction => Print(disjunction),
             Equality equality => Print(equality),
             Equivalence equivalence => Print(equivalence),
+            ExistentialQuantification existentialQuantification => Print(existentialQuantification),
             Implication implication => Print(implication),
             Negation negation => Print(negation),
             Predicate predicate => Print(predicate),
-            Quantification quantification => Print(quantification),
+            UniversalQuantification universalQuantification => Print(universalQuantification),
             _ => throw new ArgumentException("Unsupported sentence type")
         };
 
@@ -46,13 +47,6 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
 
         public static string Print(Predicate predicate) =>
             $"{predicate.Symbol}({string.Join(", ", predicate.Arguments.Select(a => Print(a)))})";
-
-        public static string Print(Quantification quantification) => quantification switch
-        {
-            ExistentialQuantification existentialQuantification => Print(existentialQuantification),
-            UniversalQuantification universalQuantification => Print(universalQuantification),
-            _ => throw new ArgumentException()
-        };
 
         public static string Print(UniversalQuantification universalQuantification) =>
             $"∀ {Print(universalQuantification.Variable)}, {Print(universalQuantification.Sentence)}";
