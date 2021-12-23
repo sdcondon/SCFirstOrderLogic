@@ -1,13 +1,19 @@
-﻿![LinqToKB Icon](src/LinqToKBIcon.png)
+﻿# SCFirstOrderLogic
 
-# LinqToKB.FirstOrderLogic
-
-Experimental [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) knowledge base implementations that use LINQ expressions for knowledge representation and queries.
-That is, rather than directly giving the knowledge base sentences of first order logic (which obviously can't be done in C#), we (represent domains as IEnumerable&lt;TElement&gt; and) `Tell` an `IKnowledgeBase` bool-valued expressions that are guaranteed to be true for all models that it will be `Ask`ed about - which the knowledge base then converts into the entailed sentences of first order logic.
+Very simple [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) knowledge base implementations.
 
 Created just for fun while reading _Artificial Intelligence: A Modern Approach_ (3rd Edition - [ISBN 978-1292153964](https://www.google.com/search?q=isbn+978-1292153964)) - so may prove interesting to the .NET-inclined reading the same book.
-The language integration aspect of this (admittedly the raison d'être of the library) may or may not turn out to be useful - but if it doesn't, it can still be a learning resource for first-order logic. As such, care has been taken to include decent XML documentation and explanatory inline comments where helpful.
-For real-world scenarios, there are other better inference engines out there (that don't lumber themselves with potentially useless language integration).
+The main goal here is for it to be a learning resource - as such, care has been taken to include decent XML documentation and explanatory inline comments where appropriate.
+For real-world scenarios, there are other better inference engines out there - that use more powerful logics than first-order (Bayesian logic - see infer.net, Fuzzy logic, ..).
+
+## Usage
+
+See the tests and the [example domains](./src/FirstOrderLogic.ExampleDomains) project.
+
+## Language Integration
+
+No doubt there are countless first-order logic libraries out there for .NET. The only perhaps non-obvious part of this is the classes in the LanguageIntegration namespace, which allow for specifying FoL sentences as LINQ expressions.
+That is, rather than directly giving the knowledge base sentences of first order logic as instances of the Sentence class, we (represent domains as IEnumerable&lt;TElement&gt; and) `Tell` an `IKnowledgeBase` bool-valued expressions that are guaranteed to be true for all models that it will be `Ask`ed about - which the knowledge base then converts into the entailed sentences of first order logic.
 
 Benefits of using LINQ expressions:
 * Your sentences of propositional logic can be expressed in the familiar, plain-old C#, with the operators you would expect (e.g. `&&`, `||` and `!`).
@@ -28,9 +34,7 @@ That is, while it may be intuitive to map the C# `||` operator to a disjunction 
 Compared to uses of LINQ such as LINQ to SQL (where the system being mapped to is very obviously distinct), it is perhaps less obvious that there IS still a different system (first order logic) being mapped to here. This is important to bear in mind while working with this library.
 * Simple FoL sentences are nice and simple to represent in C#, but more complex ones get a little gnarly. An example from the source text book, `∀x [∀y Animal(y) ⇒ Loves(x, y)] ⇒ [∃y Loves(y, x)]` ("everyone who loves all animals is loved by something"), is the following in C#: `d => d.All(x => If(d.All(y => If(y.IsAnimal, x.Loves(y))), d.Any(y => y.Loves(x))))`.
 
-## Usage
-
-Library usage is best learned via [examples](./src/FirstOrderLogic.ExampleDomains), but the three important things to note about the library are as follows:
+Before we dive into the details, a few things to note about this:
 
 * As mentioned above, the general approach is to have domain types (can be - in fact is recommended to be - just an interface) that implement IEnumerable&lt;TElement&gt;, where TElement is a type for **all** (more on this in the third bullet) elements of the domain. This approach provides a few useful qualities:
   * Using IEnumerable&lt;T&gt; gives us an obvious choice for representing quantifiers - the `All` extension method for universal quantification, and `Any` for existential quantification.
