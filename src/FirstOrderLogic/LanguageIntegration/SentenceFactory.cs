@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace LinqToKB.FirstOrderLogic.LanguageIntegration
+namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// Static factory methods for creating <see cref="Sentence"/> instances from LINQ expressions operating on an (<see cref="IEnumerable{T}"/>) object representing the domain.
@@ -246,7 +246,7 @@ namespace LinqToKB.FirstOrderLogic.LanguageIntegration
         /// <summary>
         /// Tries to create a <see cref="Equivalence"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>Operators.Iff({expression}, {expression})</code>
-        /// (Consumers are encouraged to include <c>using static LinqToKB.FirstOrderLogic.Operators;</c> to make this a little shorter)
+        /// (Consumers are encouraged to include <c>using static SCFirstOrderLogic.Operators;</c> to make this a little shorter)
         /// </summary>
         private static bool TryCreateEquivalence<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>
@@ -368,7 +368,7 @@ namespace LinqToKB.FirstOrderLogic.LanguageIntegration
         /// <summary>
         /// Tries to create a <see cref="Implication"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>Operators.If({expression}, {expression})</code>
-        /// (Consumers are encouraged to include <c>using static LinqToKB.FirstOrderLogic.Symbols;</c> to make this a little shorter)
+        /// (Consumers are encouraged to include <c>using static SCFirstOrderLogic.Symbols;</c> to make this a little shorter)
         /// </summary>
         private static bool TryCreateImplication<TDomain, TElement>(Expression expression, out Sentence sentence)
             where TDomain : IEnumerable<TElement>

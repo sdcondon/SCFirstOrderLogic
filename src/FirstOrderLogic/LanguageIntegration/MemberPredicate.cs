@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 
-namespace LinqToKB.FirstOrderLogic.LanguageIntegration
+namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// Representation of an predicate sentence of first order logic, In typical FOL syntax, this is written as:

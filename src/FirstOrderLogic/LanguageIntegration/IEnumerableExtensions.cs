@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.FirstOrderLogic
+namespace SCFirstOrderLogic
 {
     public static class IEnumerableExtensions
     {

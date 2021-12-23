@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>SCFirstOrderLogic</AssemblyName>
+    <RootNamespace>SCFirstOrderLogic</RootNamespace>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <!--<PackageIcon>SCFirstOrderLogicIcon.png</PackageIcon>-->
+    <Description>First-order logic inference engine. Includes some language integration features.</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageTags>inference-engine first-order-logic knowledge-base linq</PackageTags>
+    <Product>SCFirstOrderLogic</Product>
+    <PackageId>SCFirstOrderLogic</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<!--<None Include="$(SolutionDir)\SCFirstOrderLogicIcon.png" Link="SCFirstOrderLogicIcon.png" Pack="true" PackagePath="" />-->
+  </ItemGroup>
+
+</Project>

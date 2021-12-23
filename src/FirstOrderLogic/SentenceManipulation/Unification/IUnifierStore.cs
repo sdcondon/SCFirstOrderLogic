@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LinqToKB.FirstOrderLogic.UnifierStorage
+namespace SCFirstOrderLogic.UnifierStorage
 {
     /// <summary>
     /// Interface for types that facilitate lookup of all of the unifiers (i.e. sets of variable assignments) such

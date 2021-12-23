@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.FirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     public class SentenceUnifier
     {

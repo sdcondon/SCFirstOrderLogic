@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LinqToKB.FirstOrderLogic.UnifierStorage
+namespace SCFirstOrderLogic.UnifierStorage
 {
     /// <summary>
     /// Basic implementation of <see cref="IUnifierStore"/> that just maintains all known sentences in a <see cref="List{T}"./>

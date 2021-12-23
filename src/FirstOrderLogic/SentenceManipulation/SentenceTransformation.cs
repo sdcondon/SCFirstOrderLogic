@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 
-namespace LinqToKB.FirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Base class for transformations of <see cref="Sentence"/> instances.
@@ -38,7 +39,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="conjunction">The conjunction instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Conjunction conjunction)
+        protected virtual Sentence ApplyTo(Conjunction conjunction)
         {
             var left = ApplyTo(conjunction.Left);
             var right = ApplyTo(conjunction.Right);
@@ -56,7 +57,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="conjunction">The <see cref="Disjunction"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Disjunction disjunction)
+        protected virtual Sentence ApplyTo(Disjunction disjunction)
         {
             var left = ApplyTo(disjunction.Left);
             var right = ApplyTo(disjunction.Right);
@@ -74,7 +75,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="equality">The <see cref="Equality"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Equality equality)
+        protected virtual Sentence ApplyTo(Equality equality)
         {
             var left = ApplyTo(equality.Left);
             var right = ApplyTo(equality.Right);
@@ -92,7 +93,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Equivalence equivalence)
+        protected virtual Sentence ApplyTo(Equivalence equivalence)
         {
             var equivalent1 = ApplyTo(equivalence.Left);
             var equivalent2 = ApplyTo(equivalence.Right);
@@ -110,7 +111,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(ExistentialQuantification existentialQuantification)
+        protected virtual Sentence ApplyTo(ExistentialQuantification existentialQuantification)
         {
             var variable = ApplyTo(existentialQuantification.Variable);
             var sentence = ApplyTo(existentialQuantification.Sentence);
@@ -128,7 +129,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Implication implication)
+        protected virtual Sentence ApplyTo(Implication implication)
         {
             var antecedent = ApplyTo(implication.Antecedent);
             var consequent = ApplyTo(implication.Consequent);
@@ -147,7 +148,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Predicate predicate)
+        protected virtual Sentence ApplyTo(Predicate predicate)
         {
             var arguments = predicate.Arguments.Select(a => ApplyTo(a)).ToList();
 
@@ -165,7 +166,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Negation negation)
+        protected virtual Sentence ApplyTo(Negation negation)
         {
             var sentence = ApplyTo(negation.Sentence);
 
@@ -183,7 +184,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="quantification">The <see cref="Quantification"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(Quantification quantification)
+        protected virtual Sentence ApplyTo(Quantification quantification)
         {
             return quantification switch
             {
@@ -199,7 +200,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual Sentence ApplyTo(UniversalQuantification universalQuantification)
+        protected virtual Sentence ApplyTo(UniversalQuantification universalQuantification)
         {
             var variable = ApplyTo(universalQuantification.Variable);
             var sentence = ApplyTo(universalQuantification.Sentence);
@@ -217,7 +218,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="term">The term to visit.</param>
         /// <returns>The transformed term.</returns>
-        public virtual Term ApplyTo(Term term)
+        protected virtual Term ApplyTo(Term term)
         {
             return term switch
             {
@@ -234,7 +235,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="term">The constant to visit.</param>
         /// <returns>The transformed term.</returns>
-        public virtual Term ApplyTo(Constant constant)
+        protected virtual Term ApplyTo(Constant constant)
         {
             return constant;
         }
@@ -245,7 +246,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="term">The variable to visit.</param>
         /// <returns>The transformed term.</returns>
-        public virtual Term ApplyTo(Variable variable)
+        protected virtual Term ApplyTo(Variable variable)
         {
             var variableDeclaration = ApplyTo(variable.Declaration);
             if (variableDeclaration != variable.Declaration)
@@ -262,7 +263,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="domainFunction">The function to visit.</param>
         /// <returns>The transformed term.</returns>
-        public virtual Term ApplyTo(Function function)
+        protected virtual Term ApplyTo(Function function)
         {
             var arguments = function.Arguments.Select(a => ApplyTo(a)).ToList();
 
@@ -280,7 +281,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="variableDeclaration">The <see cref="VariableDeclaration"/> instance to transform.</param>
         /// <returns>The transformed <see cref="Variable"/> declaration.</returns>
-        public virtual VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
+        protected virtual VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
         {
             return variableDeclaration;
         }

@@ -1,4 +1,4 @@
-﻿namespace LinqToKB.FirstOrderLogic.LanguageIntegration
+﻿namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// Static methods for logical operators that don't exist in C#.

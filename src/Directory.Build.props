@@ -2,10 +2,10 @@
   <PropertyGroup>
     <Authors>Simon Condon</Authors>
     <Company />
-    <Product>LinqToKnowledgeBase</Product>
+    <Product>SCFirstOrderLogic</Product>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/sdcondon/LinqToKnowledgeBase.FirstOrderLogic.git</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/sdcondon/LinqToKnowledgeBase.FirstOrderLogic</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/sdcondon/SCFirstOrderLogic.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/sdcondon/SCFirstOrderLogic</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>2021 Simon Condon</Copyright>
     <IncludeSymbols>true</IncludeSymbols>

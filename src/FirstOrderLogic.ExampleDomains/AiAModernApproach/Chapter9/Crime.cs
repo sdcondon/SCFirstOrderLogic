@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using static LinqToKB.FirstOrderLogic.LanguageIntegration.Operators;
+using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
-namespace LinqToKB.FirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Crime
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Crime
 {
     //// The Crime example from section 9.3 of 
     //// Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.

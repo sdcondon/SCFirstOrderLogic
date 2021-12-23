@@ -2,12 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
-
-    <RootNamespace>LinqToKB.FirstOrderLogic</RootNamespace>
-
-    <AssemblyName>LinqToKB.FirstOrderLogic.Tests</AssemblyName>
+    <RootNamespace>SCFirstOrderLogic</RootNamespace>
+    <AssemblyName>SCFirstOrderLogic.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FirstOrderLogic\FirstOrderLogic.csproj" />
+    <ProjectReference Include="..\FirstOrderLogic\SCFirstOrderLogic.csproj" />
   </ItemGroup>
 
 </Project>

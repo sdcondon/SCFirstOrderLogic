@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace LinqToKB.FirstOrderLogic.LanguageIntegration
+namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// A store of knowledge expressed as statements of propositional logic (in turn expressed as LINQ expressions).
     /// </summary>
     /// <typeparam name="TDomain"></typeparam>
     /// <typeparam name="TElement">The type that the sentences passed to this class refer to.</typeparam>
-    public interface IKnowledgeBase<TDomain, TElement>
+    public interface ILinqKnowledgeBase<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
     /// Representation of an atomic sentence of first-order logic - a predicate (or equality).

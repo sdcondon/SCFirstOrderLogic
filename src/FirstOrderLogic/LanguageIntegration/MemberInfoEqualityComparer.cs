@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace LinqToKB.FirstOrderLogic.LanguageIntegration
+namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// Equality comparer for <see cref="MemberInfo"/>.

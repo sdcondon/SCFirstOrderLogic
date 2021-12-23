@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace LinqToKB.FirstOrderLogic
+namespace SCFirstOrderLogic
 {
     /// <summary>
     /// Representation of a function term within a sentence of first order logic. In typical FOL syntax, this is written as:

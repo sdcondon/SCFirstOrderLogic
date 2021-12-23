@@ -1,14 +1,13 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using LinqToKB.FirstOrderLogic.LanguageIntegration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using static LinqToKB.FirstOrderLogic.LanguageIntegration.Operators;
+using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
-namespace LinqToKB.FirstOrderLogic.Sentences
+namespace SCFirstOrderLogic.LanguageIntegration
 {
     public class SentenceFactoryTests
     {

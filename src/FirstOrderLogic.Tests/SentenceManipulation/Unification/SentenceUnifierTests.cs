@@ -1,36 +1,18 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using LinqToKB.FirstOrderLogic.LanguageIntegration;
+using SCFirstOrderLogic.LanguageIntegration;
 using System.Collections.Generic;
 
-namespace LinqToKB.FirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     public class SentenceUnifierTests
     {
-        private interface IPeople : IEnumerable<IPerson>
-        {
-            IPerson John { get; }
-            IPerson Jane { get; }
-        }
+        private static Function Mother(Term child) => new Function("Mother", child);
 
-        private interface IPerson
-        {
-            IPerson Mother { get; }
-            bool Knows(IPerson other);
-        }
+        private static Predicate Knows(Term knower, Term known) => new Predicate("Knows", knower, known);
 
-        private static Function Mother(Term child)
-        {
-            return new MemberFunction(typeof(IPerson).GetProperty(nameof(IPerson.Mother)), child);
-        }
-
-        private static Predicate Knows(Term knower, Term known)
-        {
-            return new MemberPredicate(typeof(IPerson).GetMethod(nameof(IPerson.Knows)), knower, known);
-        }
-
-        private static readonly Constant john = new MemberConstant(typeof(IPeople).GetProperty(nameof(IPeople.John)));
-        private static readonly Constant jane = new MemberConstant(typeof(IPeople).GetProperty(nameof(IPeople.Jane)));
+        private static readonly Constant john = new Constant("John");
+        private static readonly Constant jane = new Constant("Jane");
         private static readonly Variable x = new Variable(new VariableDeclaration("x"));
         private static readonly Variable y = new Variable(new VariableDeclaration("y"));
 
@@ -62,7 +44,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation
                     ExpectedUnifier: new Dictionary<Variable, Term>()
                     {
                         // Book says that x should be Mother(john), but that's not what the algorithm they give
-                        // produces. Easy enough to resolve, but waiting and seeing how it pans out through usage..
+                        // produces. Easy enough to resolve (after all, y is john), but waiting and seeing how it pans out through usage..
                         [x] = Mother(y),
                         [y] = john,
                     }),

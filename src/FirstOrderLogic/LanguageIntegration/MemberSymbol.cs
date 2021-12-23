@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace LinqToKB.FirstOrderLogic.LanguageIntegration
+namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// Representation of a <see cref="Predicate"/>, <see cref="Function"/> or <see cref="Constant"/> symbol that refers to a particular class member.

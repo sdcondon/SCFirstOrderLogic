@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using static LinqToKB.FirstOrderLogic.LanguageIntegration.Operators;
+using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
-namespace LinqToKB.FirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Kinship
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Kinship
 {
     public interface IPerson
     {

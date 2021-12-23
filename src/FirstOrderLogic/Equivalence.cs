@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LinqToKB.FirstOrderLogic
+namespace SCFirstOrderLogic
 {
     /// <summary>
     /// Representation of a material equivalence sentence of first order logic. In typical FOL syntax, this is written as:

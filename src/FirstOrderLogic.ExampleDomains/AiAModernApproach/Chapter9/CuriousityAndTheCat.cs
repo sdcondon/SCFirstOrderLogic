@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using static LinqToKB.FirstOrderLogic.LanguageIntegration.Operators;
+using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
-namespace LinqToKB.FirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCat
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCat
 {
     //// The curiousity and the cat example from section 9.5 of
     //// Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.

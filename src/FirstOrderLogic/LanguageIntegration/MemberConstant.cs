@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace LinqToKB.FirstOrderLogic.LanguageIntegration
+namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// Representation of a constant term within a sentence of first order logic. Specifically,

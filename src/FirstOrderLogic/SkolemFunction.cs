@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace LinqToKB.FirstOrderLogic
+namespace SCFirstOrderLogic
 {
     /// <summary>
     /// Representation of a function term within a sentence of first order logic. Specifically,

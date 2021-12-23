@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LinqToKB.FirstOrderLogic
+namespace SCFirstOrderLogic
 {
     /// <summary>
     /// Representation of a constant term within a sentence of first order logic.

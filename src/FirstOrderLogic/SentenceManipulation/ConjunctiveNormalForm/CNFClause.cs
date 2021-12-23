@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
     /// Representation of an individual clause of a first-order logic sentence in conjunctive normal form - that is, a disjunction of literals (<see cref="CNFLiteral"/>s).
@@ -43,7 +43,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             if (Literals.Count == 0)
             {
                 // It is an important maxim of first-order logic that empty clauses evaluate to false
-                // TODO: LinqToKB.PredicateLogic offered conversion back to Lambdas so needed this - we don't, so perhaps don't.. Time will tell..
+                // TODO: SCPropositionalLogic offered conversion back to Lambdas so needed this - we don't, so perhaps don't.. Time will tell..
                 ////Sentence = Expression.Lambda<Predicate<TModel>>(Expression.Constant(false), Expression.Parameter(typeof(TModel)));
             }
             else

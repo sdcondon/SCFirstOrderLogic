@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LinqToKB.FirstOrderLogic.LanguageIntegration
+namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// A store of knowledge expressed as statements of propositional logic (in turn expressed as LINQ expressions).
@@ -12,7 +12,7 @@ namespace LinqToKB.FirstOrderLogic.LanguageIntegration
     /// This interface is just a shorthand for <c>IKnowledgeBase&lt;IEnumerable&lt;TElement&gt;, TElement&gt;</c>. It is explicitly included
     /// because a particular type for TDomain is only needed when there are constants or ground predicates - which is by no means all cases.
     /// </remarks>
-    public interface IKnowledgeBase<TElement> : IKnowledgeBase<IEnumerable<TElement>, TElement>
+    public interface ILinqKnowledgeBase<TElement> : ILinqKnowledgeBase<IEnumerable<TElement>, TElement>
     {
     }
 }

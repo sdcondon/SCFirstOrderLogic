@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
     /// Representation of a literal of first-order logic. That is, an atomic sentence or a negated atomic sentence.

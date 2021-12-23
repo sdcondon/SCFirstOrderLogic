@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 
-namespace LinqToKB.FirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Temporary..
     /// Will do while I figure out what I need (formatprovider, ToString implementations in inidividual classes, ...?).
     /// Will ultimately want something that is more intelligent with brackets (i.e. drops them where not needed), too.
     /// </summary>
-    internal static class SentencePrinter
+    internal static class SentenceFormatter
     {
         public static string Print(this Sentence sentence) => sentence switch
         {

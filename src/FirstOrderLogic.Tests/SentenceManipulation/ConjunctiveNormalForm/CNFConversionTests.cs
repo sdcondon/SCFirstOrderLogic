@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static LinqToKB.FirstOrderLogic.Sentence;
+using static SCFirstOrderLogic.Sentence;
 
-namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     public static class CNFConversionTests
     {

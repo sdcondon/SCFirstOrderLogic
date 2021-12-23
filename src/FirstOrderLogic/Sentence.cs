@@ -1,6 +1,6 @@
-﻿using LinqToKB.FirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.SentenceManipulation;
 
-namespace LinqToKB.FirstOrderLogic
+namespace SCFirstOrderLogic
 {
     /// <summary>
     /// Representation of a sentence of first order logic.
@@ -16,7 +16,7 @@ namespace LinqToKB.FirstOrderLogic
         public static Sentence ForAll(Variable variable, Sentence sentence) => new UniversalQuantification(variable.Declaration, sentence);
         public static Sentence ThereExists(VariableDeclaration variableDeclaration, Sentence sentence) => new ExistentialQuantification(variableDeclaration, sentence);
         public static Sentence ThereExists(Variable variable, Sentence sentence) => new ExistentialQuantification(variable.Declaration, sentence);
-        public static Sentence And(Sentence left, Sentence right) => new Conjunction(left, right); // I don't really like using "And", but its short..
+        public static Sentence And(Sentence left, Sentence right) => new Conjunction(left, right);
         public static Sentence Or(Sentence left, Sentence right) => new Disjunction(left, right);
         public static Sentence If(Sentence antecedent, Sentence consequent) => new Implication(antecedent, consequent);
         public static Sentence Iff(Sentence left, Sentence right) => new Equivalence(left, right);
@@ -24,6 +24,6 @@ namespace LinqToKB.FirstOrderLogic
         public static Sentence Equals(Term left, Term right) => new Equality(left, right);
 
         /// <inheritdoc />
-        public override string ToString() => SentencePrinter.Print(this); // Just for now..
+        public override string ToString() => SentenceFormatter.Print(this); // Just for now..
     }
 }

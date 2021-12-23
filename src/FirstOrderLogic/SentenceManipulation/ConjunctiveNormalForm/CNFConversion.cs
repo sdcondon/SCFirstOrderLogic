@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
     /// Implementation of <see cref="SentenceTransformation"/> that converts sentences to conjunctive normal form.
@@ -41,7 +41,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         private class ImplicationElimination : SentenceTransformation
         {
             /// <inheritdoc />
-            public override Sentence ApplyTo(Implication implication)
+            protected override Sentence ApplyTo(Implication implication)
             {
                 return ApplyTo(new Disjunction(
                     new Negation(implication.Antecedent),
@@ -49,7 +49,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             }
 
             /// <inheritdoc />
-            public override Sentence ApplyTo(Equivalence equivalence)
+            protected override Sentence ApplyTo(Equivalence equivalence)
             {
                 return ApplyTo(new Conjunction(
                     new Disjunction(new Negation(equivalence.Left), equivalence.Right),
@@ -63,7 +63,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         private class NNFConversion : SentenceTransformation
         {
             /// <inheritdoc />
-            public override Sentence ApplyTo(Negation negation)
+            protected override Sentence ApplyTo(Negation negation)
             {
                 Sentence sentence;
 
@@ -127,7 +127,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             {
                 public List<Quantification> Quantifications { get; } = new List<Quantification>();
 
-                public override Sentence ApplyTo(Quantification quantification)
+                protected override Sentence ApplyTo(Quantification quantification)
                 {
                     Quantifications.Add(quantification);
                     return base.ApplyTo(quantification);
@@ -149,7 +149,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     }
                 }
 
-                public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration) => mapping[variableDeclaration];
+                protected override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration) => mapping[variableDeclaration];
             }
         }
 
@@ -176,14 +176,14 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     this.existentialVariableMap = existentialVariableMap;
                 }
 
-                public override Sentence ApplyTo(UniversalQuantification universalQuantification)
+                protected override Sentence ApplyTo(UniversalQuantification universalQuantification)
                 {
                     return new UniversalQuantification(
                         universalQuantification.Variable,
                         new ScopedSkolemisation(universalVariablesInScope.Append(universalQuantification.Variable), existentialVariableMap).ApplyTo(universalQuantification.Sentence));
                 }
 
-                public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
+                protected override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
                 {
                     existentialVariableMap[existentialQuantification.Variable] = new SkolemFunction(
                         $"Skolem{existentialVariableMap.Count + 1}",
@@ -191,7 +191,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     return base.ApplyTo(existentialQuantification.Sentence);
                 }
 
-                public override Term ApplyTo(Variable variable)
+                protected override Term ApplyTo(Variable variable)
                 {
                     if (existentialVariableMap.TryGetValue(variable.Declaration, out var skolemFunction))
                     {
@@ -206,7 +206,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
         private class UniversalQuantifierElimination : SentenceTransformation
         {
-            public override Sentence ApplyTo(UniversalQuantification universalQuantification)
+            protected override Sentence ApplyTo(UniversalQuantification universalQuantification)
             {
                 return ApplyTo(universalQuantification.Sentence);
             }
@@ -217,7 +217,7 @@ namespace LinqToKB.FirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// </summary>
         private class DisjunctionDistribution : SentenceTransformation
         {
-            public override Sentence ApplyTo(Disjunction disjunction)
+            protected override Sentence ApplyTo(Disjunction disjunction)
             {
                 Sentence sentence;
 
