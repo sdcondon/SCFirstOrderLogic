@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic
     {
         public static Test IsGroundTermValue => TestThat
             .When(() => new Variable("X").IsGroundTerm)
-            .ThenReturns(isGroundTerm => isGroundTerm.Should().Be(true));
+            .ThenReturns(isGroundTerm => isGroundTerm.Should().Be(false));
 
         public static Test CloneComparison => TestThat
             .When(() => new

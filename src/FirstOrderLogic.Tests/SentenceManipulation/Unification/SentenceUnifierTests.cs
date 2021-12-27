@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.LanguageIntegration;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     public class SentenceUnifierTests
     {
