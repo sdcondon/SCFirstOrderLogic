@@ -33,6 +33,10 @@ namespace SCFirstOrderLogic
                 return false;
             }
 
+            // Disjunctions are commutative - the following code ensures that A ∧ B is considered equal to B ∧ A
+            // NB: Disjunction sentences with different associativity - e.g. (A ∧ B) ∧ C versus A ∧ (B ∧ C) - will still be considered unequal
+            // Use normalisation to CNF to account for such situations.
+            // TODO: Is it really worth accounting for commutativity
             (var low, var high) = Left.GetHashCode() < Right.GetHashCode() ? (Left, Right) : (Right, Left);
             (var otherLow, var otherHigh) = otherConjunction.Left.GetHashCode() < otherConjunction.Right.GetHashCode() ? (otherConjunction.Left, otherConjunction.Right) : (otherConjunction.Right, otherConjunction.Left);
             

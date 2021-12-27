@@ -32,6 +32,10 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             sentence = universalQuantifierElimination.ApplyTo(sentence);
             sentence = disjunctionDistribution.ApplyTo(sentence);
 
+            // TODO?: Strictly-speaking its not needed for the normalisation process, but I wonder if we should also
+            // ensure left- (or right-) associativity so that the Sentence propoerties of CNFSentence and CNFClause evaluate as equal
+            // for sentences that normalise to (effectively) the same thing.
+
             return sentence;
         }
 

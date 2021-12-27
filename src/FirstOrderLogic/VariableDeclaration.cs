@@ -3,7 +3,7 @@
 namespace SCFirstOrderLogic
 {
     /// <summary>
-    /// Representation of a variable declaration term within a sentence of first order logic. These occur in quantifier sentences.
+    /// Representation of a variable declaration within a sentence of first order logic. These occur in quantifier sentences.
     /// </summary>
     public class VariableDeclaration
     {

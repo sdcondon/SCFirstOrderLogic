@@ -3,10 +3,10 @@
 namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
-    /// Representation of a literal of first-order logic. That is, an atomic sentence or a negated atomic sentence.
+    /// Representation of a literal (i.e. an atomic sentence or a negated atomic sentence) of first-order logic within a sentence in conjunctive normal form.
     /// </summary>
     /// <remarks>
-    /// Yes, literals are a meaningful notion regardless of CNF, but we only use THIS type within our CNF representation. For now then, its called CNFLiteral and resides in this namespace.
+    /// NB: Yes, literals are a meaningful notion regardless of CNF, but we only use THIS type within our CNF representation. Hence this type being called CNFLiteral and residing in this namespace.
     /// </remarks>
     public class CNFLiteral
     {
@@ -14,11 +14,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// Initialises a new instance of the <see cref="CNFLiteral"/> class.
         /// </summary>
         /// <param name="lambda">The literal, represented as a lambda expression.</param>
-        /// <remarks>
-        /// NB: Internal because it makes the assumption that the lambda is a literal. If it were public we'd need to verify that.
-        /// TODO-FEATURE: Perhaps could add this in future.
-        /// </remarks>
-        internal CNFLiteral(Sentence sentence)
+        public CNFLiteral(Sentence sentence)
         {
             Sentence = sentence;
 
@@ -28,7 +24,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 sentence = negation.Sentence;
             }
 
-            // NB: Will throw its not actually an atomic sentence.
+            // NB: this Will throw its not actually an atomic sentence.
             AtomicSentence = new CNFAtomicSentence(sentence);
         }
 
@@ -37,12 +33,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// </summary>
         /// <param name="atomicSentence">The atomic sentence to which this literal refers.</param>
         /// <param name="isNegated">A value indicating whether the atomic sentence is negated.</param>
-        /// <remarks>
-        /// While there is nothing stopping this being public from a robustness perspective, there is as yet
-        /// no easy way for consumers to instantiate an atomic sentence on its own - making it pointless for the
-        /// moment.
-        /// </remarks>
-        internal CNFLiteral(CNFAtomicSentence atomicSentence, bool isNegated)
+        public CNFLiteral(CNFAtomicSentence atomicSentence, bool isNegated)
         {
             AtomicSentence = atomicSentence;
             IsNegated = isNegated;
@@ -58,7 +49,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         }
 
         /// <summary>
-        /// Gets the actual <see cref="Sentence"/> that underlies this representation.
+        /// Gets the <see cref="Sentence"/> instance that is equivalent to this object.
         /// </summary>
         public Sentence Sentence { get; }
 

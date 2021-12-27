@@ -3,10 +3,10 @@
 namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
-    /// Representation of an atomic sentence of first-order logic - a predicate (or equality).
+    /// Representation of an atomic sentence (i.e. a predicate) of first-order logic within a sentence in conjunctive normal form.
     /// </summary>
     /// <remarks>
-    /// Yes, atomic sentences are a meaningful notion regardless of CNF, but we only use THIS type within our CNF representation. For now then, its called CNFLiteral and resides in this namespace.
+    /// NB: Yes, atomic sentences are a meaningful notion regardless of CNF, but we only use THIS type within our CNF representation. Hence this type being called CNFAtomicSentence and residing in this namespace.
     /// </remarks>
     public class CNFAtomicSentence
     {
@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// Initializes a new instance of the <see cref="CNFAtomicSentence"/> class.
         /// </summary>
         /// <param name="sentence">The atomic sentence.</param>
-        internal CNFAtomicSentence(Sentence sentence)
+        public CNFAtomicSentence(Sentence sentence)
         {
             Sentence = sentence switch
             {
@@ -25,9 +25,12 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         }
 
         /// <summary>
-        /// Gets the actual <see cref="Sentence"/> that underlies this representation.
+        /// Gets the <see cref="Sentence"/> instance that is equivalent to this object.
         /// </summary>
         public Sentence Sentence { get; }
+
+        /// <inheritdoc />
+        public override string ToString() => Sentence.ToString();
 
         /// <inheritdoc />
         public override bool Equals(object obj)

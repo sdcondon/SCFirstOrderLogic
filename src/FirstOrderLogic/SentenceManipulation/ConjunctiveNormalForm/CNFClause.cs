@@ -5,7 +5,7 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
-    /// Representation of an individual clause of a first-order logic sentence in conjunctive normal form - that is, a disjunction of literals (<see cref="CNFLiteral"/>s).
+    /// Representation of an individual clause (i.e. a disjunction of <see cref="CNFLiteral"/>s) of a first-order logic sentence in conjunctive normal form.
     /// </summary>
     public class CNFClause
     {
@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             Sentence = sentence; // Assumed to be a disjunction of literals
             var literals = new SortedSet<CNFLiteral>(new LiteralComparer());
-            new ClauseConstructor(this, literals).ApplyTo(sentence);
+            new ClauseConstructor(literals).ApplyTo(sentence);
             Literals = literals; // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
         }
 
@@ -40,22 +40,13 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
             Literals = new SortedSet<CNFLiteral>(literals, literalComparer);
 
-            if (Literals.Count == 0)
+            var sentence = Literals.FirstOrDefault()?.Sentence;
+            foreach (var literal in Literals.Skip(1))
             {
-                // It is an important maxim of first-order logic that empty clauses evaluate to false
-                // TODO: SCPropositionalLogic offered conversion back to Lambdas so needed this - we don't, so perhaps don't.. Time will tell..
-                ////Sentence = Expression.Lambda<Predicate<TModel>>(Expression.Constant(false), Expression.Parameter(typeof(TModel)));
+                sentence = new Disjunction(sentence, literal.Sentence);
             }
-            else
-            {
-                var sentence = Literals.First().Sentence;
-                foreach (var literal in Literals.Skip(1))
-                {
-                    sentence = new Disjunction(sentence, literal.Sentence);
-                }
 
-                Sentence = sentence;
-            }
+            Sentence = sentence;
         }
 
         /// <summary>
@@ -64,13 +55,16 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         public static CNFClause Empty { get; } = new CNFClause(Array.Empty<CNFLiteral>());
 
         /// <summary>
-        /// Gets the actual <see cref="Sentence"/> that underlies this representation.
+        /// Gets the <see cref="Sentence"/> instance that is equivalent to this object - or <see langword="null"/> for empty clauses.
         /// </summary>
         public Sentence Sentence { get; }
 
         /// <summary>
         /// Gets the collection of literals that comprise this clause.
         /// </summary>
+        /// <remarks>
+        /// NB: Literals are ordered first by underlying atomic sentence (hash code), then by whether they are positive or not. This makes resolution easier.
+        /// </remarks>
         public IReadOnlyCollection<CNFLiteral> Literals { get; }
 
         /// <summary>
@@ -91,12 +85,12 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <summary>
         /// Gets a value indicating whether this is a unit clause - that is, whether it contains exactly one literal.
         /// </summary>
-        public bool IsUnitClause => Literals.Count() == 1;
+        public bool IsUnitClause => Literals.Count == 1;
 
         /// <summary>
         /// Gets a value indicating whether this is an empty clause (that implicitly evaluates to false). Can occur as a result of resolution.
         /// </summary>
-        public bool IsEmpty => Literals.Count() == 0;
+        public bool IsEmpty => Literals.Count == 0;
 
         /// <summary>
         /// Resolves two clauses to potentially create some new clauses.
@@ -218,7 +212,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         ////}
 
         /// <inheritdoc />
-        public override string ToString() => string.Join(" ∨ ", Literals);
+        public override string ToString() => string.Join(" ∨ ", Literals); // no brackets - wouldn't be needed if SentenceFormatter was cleverer..
 
         /// <inheritdoc />
         /// <remarks>
@@ -256,16 +250,15 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
         private class ClauseConstructor : SentenceTransformation
         {
-            private readonly CNFClause owner;
             private readonly ISet<CNFLiteral> literals;
 
-            public ClauseConstructor(CNFClause owner, ISet<CNFLiteral> literals) => (this.owner, this.literals) = (owner, literals);
+            public ClauseConstructor(ISet<CNFLiteral> literals) => this.literals = literals;
 
             public override Sentence ApplyTo(Sentence sentence)
             {
                 if (sentence is Disjunction)
                 {
-                    // The sentence is guaranteed to be a disjunction of literals - so the root down until the individual clauses will all be OrElse - we just skip past those.
+                    // The sentence is guaranteed to be a disjunction of literals - so the root down to the individual clauses will all be OrElse - we just skip past those.
                     return base.ApplyTo(sentence);
                 }
                 else

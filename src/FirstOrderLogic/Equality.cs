@@ -6,6 +6,9 @@ namespace SCFirstOrderLogic
     /// Representation of an equality sentence of first order logic, In typical FOL syntax, this is written as:
     /// <code>{term} = {term}</code>
     /// </summary>
+    /// <remarks>
+    /// TODO: Equality is really just a particular kind of predicate with particular properties (commutativity, transitivity, reflexivity..). It should thus perhaps be a subclass of <see cref="Predicate"/>?
+    /// </remarks>
     public class Equality : Sentence
     {
         /// <summary>

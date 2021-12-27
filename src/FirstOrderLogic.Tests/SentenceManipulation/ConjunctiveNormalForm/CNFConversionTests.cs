@@ -1,35 +1,29 @@
 ﻿using FluentAssertions;
 using FlUnit;
+using System;
 using static SCFirstOrderLogic.Sentence;
 
 namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
-    public static class CNFConversionTests
+    public static partial class CNFConversionTests
     {
-        private static Predicate IsAnimal(Term term) => new Predicate("IsAnimal", term);
-        private static Predicate Loves(Term term1, Term term2) => new Predicate("Loves", term1, term2);
-        private static Variable X => new Variable("x");
-        private static Variable Y => new Variable("y");
+        private static Predicate A => new(nameof(A));
+        private static Predicate B => new(nameof(B));
+        private static Predicate C => new(nameof(C));
 
-        // NB: bad dependencies here on naming of skolem functions and standardised variables used by implementation.
-        // Possible to get rid of by configuring equivalence options. A challenge for another day..
-        private static SkolemFunction F(Term term) => new SkolemFunction("Skolem1", term);
-        private static SkolemFunction G(Term term) => new SkolemFunction("Skolem2", term);
-        private static Variable StdX => new Variable("0:x");
-
-        // Incidentally, its really annoying when the principal example given in textbooks is wrong..
-        public static Test BasicBehaviour => TestThat
-            // Given ∀x [∀y Animal(y) ⇒ Loves(x, y)] ⇒ [∃y Loves(y, x)]
-            .Given(() => ForAll(X, If(
-                ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
-                ThereExists(Y, Loves(Y, X)))))
-
-            // When converted to CNF..
-            .When(sentence => new CNFConversion().ApplyTo(sentence))
-
-            // Then gives [Animal(F(x)) ∨ Loves(G(x), x)] ∧ [¬Loves(x, F(x)) ∨ Loves(G(x), x)]
-            .ThenReturns((_, sentence) => sentence.Should().Be(And(
-                Or(IsAnimal(F(StdX)), Loves(G(StdX), StdX)),
-                Or(Not(Loves(StdX, F(StdX))), Loves(G(StdX), StdX)))));
+        // This behaviour would probably be nice, but we don't do it for now at least:
+        ////public static Test NormaliseOrderOfOperationsInSentenceProperty => TestThat
+        ////    .Given(() => new
+        ////    {
+        ////        Sentence1 = Or(Or(A, B), C),
+        ////        Sentence2 = Or(A, Or(B, C))
+        ////    })
+        ////    .When(g => new
+        ////    {
+        ////        CNFSentence1 = new CNFConversion().ApplyTo(g.Sentence1),
+        ////        CNFSentence2 = new CNFConversion().ApplyTo(g.Sentence2)
+        ////    })
+        ////    .ThenReturns()
+        ////    .And((_, retVal) => retVal.CNFSentence1.Should().Be(retVal.CNFSentence2));
     }
 }
