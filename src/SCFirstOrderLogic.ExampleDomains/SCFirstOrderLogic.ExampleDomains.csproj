@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>SCFirstOrderLogic.ExampleDomains</RootNamespace>
+    <AssemblyName>SCFirstOrderLogic.ExampleDomains</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SCFirstOrderLogic\SCFirstOrderLogic.csproj" />
+  </ItemGroup>
+
+</Project>
