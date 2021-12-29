@@ -16,8 +16,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <param name="sentence">The literal, represented as a <see cref="Sentence"/> object.</param>
         public CNFLiteral(Sentence sentence)
         {
-            Sentence = sentence;
-
             if (sentence is Negation negation)
             {
                 IsNegated = true;
@@ -43,21 +41,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             Predicate = predicate;
             IsNegated = isNegated;
-
-            if (isNegated)
-            {
-                Sentence = new Negation(predicate);
-            }
-            else
-            {
-                Sentence = predicate;
-            }
         }
-
-        /// <summary>
-        /// Gets the <see cref="Sentence"/> instance that is equivalent to this object.
-        /// </summary>
-        public Sentence Sentence { get; }
 
         /// <summary>
         /// Gets a value indicating whether this literal is a negation of the underlying atomic sentence.
@@ -81,12 +65,17 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         public CNFLiteral Negate() => new CNFLiteral(Predicate, !IsNegated);
 
         /// <inheritdoc />
-        public override string ToString() => Sentence.ToString();
+        public override string ToString() => $"{(IsNegated ? "¬" : "")}{Predicate}";
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is CNFLiteral literal && literal.Sentence.Equals(Sentence); // TODO: Think about if its better to use the predicate and isnegated here?
+        public override bool Equals(object obj)
+        {
+            return obj is CNFLiteral literal
+                && literal.Predicate.Equals(Predicate)
+                && literal.IsNegated.Equals(IsNegated);
+        }
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Sentence); // TODO: Think about if its better to use the predicate and isnegated here?
+        public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
     }
 }

@@ -14,16 +14,11 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <param name="sentence">The sentence to (convert and) represent.</param>
         public CNFSentence(Sentence sentence)
         {
-            Sentence = new CNFConversion().ApplyTo(sentence);
+            var cnfSentence = new CNFConversion().ApplyTo(sentence);
             var clauses = new List<CNFClause>();
-            new ExpressionConstructor(clauses).ApplyTo(Sentence);
+            new ExpressionConstructor(clauses).ApplyTo(cnfSentence);
             Clauses = clauses.AsReadOnly();
         }
-
-        /// <summary>
-        /// Gets the actual <see cref="Sentence"/> that underlies this representation.
-        /// </summary>
-        public Sentence Sentence { get; }
 
         /// <summary>
         /// Gets the collection of clauses that comprise this CNF sentence.

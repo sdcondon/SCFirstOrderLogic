@@ -20,7 +20,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// </remarks>
         internal CNFClause(Sentence sentence)
         {
-            Sentence = sentence; // Assumed to be a disjunction of literals
             var literals = new SortedSet<CNFLiteral>(new LiteralComparer());
             new ClauseConstructor(literals).ApplyTo(sentence);
             Literals = literals; // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
@@ -39,25 +38,12 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
             Literals = new SortedSet<CNFLiteral>(literals, literalComparer);
-
-            var sentence = Literals.FirstOrDefault()?.Sentence;
-            foreach (var literal in Literals.Skip(1))
-            {
-                sentence = new Disjunction(sentence, literal.Sentence);
-            }
-
-            Sentence = sentence;
         }
 
         /// <summary>
         /// Returns an instance of the empty clause.
         /// </summary>
         public static CNFClause Empty { get; } = new CNFClause(Array.Empty<CNFLiteral>());
-
-        /// <summary>
-        /// Gets the <see cref="Sentence"/> instance that is equivalent to this object - or <see langword="null"/> for empty clauses.
-        /// </summary>
-        public Sentence Sentence { get; }
 
         /// <summary>
         /// Gets the collection of literals that comprise this clause.
