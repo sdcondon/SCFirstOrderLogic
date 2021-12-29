@@ -14,7 +14,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             Conjunction conjunction => Print(conjunction),
             Disjunction disjunction => Print(disjunction),
-            Equality equality => Print(equality),
             Equivalence equivalence => Print(equivalence),
             ExistentialQuantification existentialQuantification => Print(existentialQuantification),
             Implication implication => Print(implication),
@@ -29,9 +28,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         public static string Print(Disjunction disjunction) =>
             $"({Print(disjunction.Left)} ∨ {Print(disjunction.Right)})";
-
-        public static string Print(Equality equality) =>
-            $"({Print(equality.Left)} = {Print(equality.Right)})";
 
         public static string Print(Equivalence equivalence) =>
             $"({Print(equivalence.Left)} ⇔ {Print(equivalence.Right)})";

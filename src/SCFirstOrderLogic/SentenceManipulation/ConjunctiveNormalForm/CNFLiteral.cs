@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFLiteral"/> class.
         /// </summary>
-        /// <param name="lambda">The literal, represented as a lambda expression.</param>
+        /// <param name="sentence">The literal, represented as a <see cref="Sentence"/> object.</param>
         public CNFLiteral(Sentence sentence)
         {
             Sentence = sentence;
@@ -24,27 +24,33 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 sentence = negation.Sentence;
             }
 
-            // NB: this Will throw its not actually an atomic sentence.
-            AtomicSentence = new CNFAtomicSentence(sentence);
+            if (sentence is Predicate predicate)
+            {
+                Predicate = predicate;
+            }
+            else
+            {
+                throw new ArgumentException($"Provided sentence must be either a predicate or a negated predicate. {sentence} is neither.");
+            }
         }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFLiteral"/> class.
         /// </summary>
-        /// <param name="atomicSentence">The atomic sentence to which this literal refers.</param>
+        /// <param name="predicate">The atomic sentence to which this literal refers.</param>
         /// <param name="isNegated">A value indicating whether the atomic sentence is negated.</param>
-        public CNFLiteral(CNFAtomicSentence atomicSentence, bool isNegated)
+        public CNFLiteral(Predicate predicate, bool isNegated)
         {
-            AtomicSentence = atomicSentence;
+            Predicate = predicate;
             IsNegated = isNegated;
 
             if (isNegated)
             {
-                Sentence = new Negation(atomicSentence.Sentence);
+                Sentence = new Negation(predicate);
             }
             else
             {
-                Sentence = atomicSentence.Sentence;
+                Sentence = predicate;
             }
         }
 
@@ -66,21 +72,21 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <summary>
         /// Gets the underlying atomic sentence of this literal.
         /// </summary>
-        public CNFAtomicSentence AtomicSentence { get; }
+        public Predicate Predicate { get; }
 
         /// <summary>
         /// Constructs and returns a literal that is the negation of this one.
         /// </summary>
         /// <returns>A literal that is the negation of this one.</returns>
-        public CNFLiteral Negate() => new CNFLiteral(AtomicSentence, !IsNegated);
+        public CNFLiteral Negate() => new CNFLiteral(Predicate, !IsNegated);
 
         /// <inheritdoc />
         public override string ToString() => Sentence.ToString();
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is CNFLiteral literal && literal.Sentence.Equals(Sentence);
+        public override bool Equals(object obj) => obj is CNFLiteral literal && literal.Sentence.Equals(Sentence); // TODO: Think about if its better to use the predicate and isnegated here?
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Sentence);
+        public override int GetHashCode() => HashCode.Combine(Sentence); // TODO: Think about if its better to use the predicate and isnegated here?
     }
 }

@@ -277,7 +277,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             public int Compare(CNFLiteral x, CNFLiteral y)
             {
-                var hashComparison = x.AtomicSentence.GetHashCode().CompareTo(y.AtomicSentence.GetHashCode());
+                var hashComparison = x.Predicate.GetHashCode().CompareTo(y.Predicate.GetHashCode());
                 if (hashComparison != 0)
                 {
                     return hashComparison;

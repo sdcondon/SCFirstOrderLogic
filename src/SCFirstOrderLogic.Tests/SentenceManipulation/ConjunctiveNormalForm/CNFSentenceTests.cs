@@ -28,7 +28,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                                 IsUnitClause = true,
                                 Literals = new[]
                                 {
-                                    new { AtomicSentence = new { Sentence = P }, IsNegated = false },
+                                    new { Predicate = P, IsNegated = false },
                                 }
                             }
                         }
@@ -49,7 +49,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                                 IsUnitClause = true,
                                 Literals = new[]
                                 {
-                                    new { AtomicSentence = new { Sentence = P }, IsNegated = true },
+                                    new { Predicate = P, IsNegated = true },
                                 }
                             }
                         }
@@ -70,9 +70,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                                 IsUnitClause = false,
                                 Literals = new[]
                                 {
-                                    new { AtomicSentence = new { Sentence = P }, IsNegated = true },
-                                    new { AtomicSentence = new { Sentence = Q }, IsNegated = false },
-                                    new { AtomicSentence = new { Sentence = R }, IsNegated = false },
+                                    new { Predicate = P, IsNegated = true },
+                                    new { Predicate = Q, IsNegated = false },
+                                    new { Predicate = R, IsNegated = false },
                                 }
                             },
                             new
@@ -83,8 +83,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                                 IsUnitClause = false,
                                 Literals = new[]
                                 {
-                                    new { AtomicSentence = new { Sentence = P }, IsNegated = false },
-                                    new { AtomicSentence = new { Sentence = Q }, IsNegated = true }
+                                    new { Predicate = P, IsNegated = false },
+                                    new { Predicate = Q, IsNegated = true }
                                 }
                             },
                             new
@@ -95,8 +95,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                                 IsUnitClause = false,
                                 Literals = new[]
                                 {
-                                    new { AtomicSentence = new { Sentence = P }, IsNegated = false },
-                                    new { AtomicSentence = new { Sentence = R }, IsNegated = true }
+                                    new { Predicate = P, IsNegated = false },
+                                    new { Predicate = R, IsNegated = true }
                                 }
                             }
                         }
@@ -119,8 +119,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                                 IsUnitClause = false,
                                 Literals = new[]
                                 {
-                                    new { AtomicSentence = new { Sentence = P }, IsNegated = false },
-                                    new { AtomicSentence = new { Sentence = P }, IsNegated = true },
+                                    new { Predicate = P, IsNegated = false },
+                                    new { Predicate = P, IsNegated = true },
                                 }
                             },
                             new
@@ -131,8 +131,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                                 IsUnitClause = false,
                                 Literals = new[]
                                 {
-                                    new { AtomicSentence = new { Sentence = P }, IsNegated = false },
-                                    new { AtomicSentence = new { Sentence = Q }, IsNegated = true },
+                                    new { Predicate = P, IsNegated = false },
+                                    new { Predicate = Q, IsNegated = true },
                                 }
                             },
                             new
@@ -143,8 +143,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                                 IsUnitClause = false,
                                 Literals = new[]
                                 {
-                                    new { AtomicSentence = new { Sentence = Q }, IsNegated = false },
-                                    new { AtomicSentence = new { Sentence = P }, IsNegated = true }
+                                    new { Predicate = Q, IsNegated = false },
+                                    new { Predicate = P, IsNegated = true }
                                 }
                             },
                             new
@@ -155,8 +155,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                                 IsUnitClause = false,
                                 Literals = new[]
                                 {
-                                    new { AtomicSentence = new { Sentence = Q }, IsNegated = false },
-                                    new { AtomicSentence = new { Sentence = Q }, IsNegated = true }
+                                    new { Predicate = Q, IsNegated = false },
+                                    new { Predicate = Q, IsNegated = true }
                                 }
                             }
                         }
