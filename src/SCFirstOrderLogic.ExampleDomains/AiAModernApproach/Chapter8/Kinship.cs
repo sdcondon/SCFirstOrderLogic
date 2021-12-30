@@ -1,37 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using static SCFirstOrderLogic.LanguageIntegration.Operators;
+﻿using System.Collections.Generic;
+using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Kinship.Domain;
+using static SCFirstOrderLogic.Sentence;
 
 namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Kinship
 {
-    public interface IPerson
+    public static class Domain
     {
         //// Unary predicates:
-        bool IsMale { get; }
-        bool IsFemale { get; }
+        public static Predicate IsMale(Term subject) => new Predicate(nameof(IsMale), subject);
+        public static Predicate IsFemale(Term subject) => new Predicate(nameof(IsMale), subject);
 
         //// Binary predicates:
-        bool IsParent(IPerson person);
-        bool IsSibling(IPerson person);
-        bool IsBrother(IPerson person);
-        bool IsSister(IPerson person);
-        bool IsChild(IPerson person);
-        bool IsDaughter(IPerson person);
-        bool IsSon(IPerson person);
-        bool IsSpouse(IPerson person);
-        bool IsWife(IPerson person);
-        bool IsHusband(IPerson person);
-        bool IsGrandparent(IPerson person);
-        bool IsGrandchild(IPerson person);
-        bool IsCousin(IPerson person);
-        bool IsAunt(IPerson person);
-        bool IsUncle(IPerson person);
+        public static Predicate IsParent(Term subject, Term @object) => new Predicate(nameof(IsParent), subject, @object);
+        public static Predicate IsSibling(Term subject, Term @object) => new Predicate(nameof(IsSibling), subject, @object);
+        public static Predicate IsBrother(Term subject, Term @object) => new Predicate(nameof(IsBrother), subject, @object);
+        public static Predicate IsSister(Term subject, Term @object) => new Predicate(nameof(IsSister), subject, @object);
+        public static Predicate IsChild(Term subject, Term @object) => new Predicate(nameof(IsChild), subject, @object);
+        public static Predicate IsDaughter(Term subject, Term @object) => new Predicate(nameof(IsDaughter), subject, @object);
+        public static Predicate IsSon(Term subject, Term @object) => new Predicate(nameof(IsSon), subject, @object);
+        public static Predicate IsSpouse(Term subject, Term @object) => new Predicate(nameof(IsSpouse), subject, @object);
+        public static Predicate IsWife(Term subject, Term @object) => new Predicate(nameof(IsWife), subject, @object);
+        public static Predicate IsHusband(Term subject, Term @object) => new Predicate(nameof(IsHusband), subject, @object);
+        public static Predicate IsGrandparent(Term subject, Term @object) => new Predicate(nameof(IsGrandparent), subject, @object);
+        public static Predicate IsGrandchild(Term subject, Term @object) => new Predicate(nameof(IsGrandchild), subject, @object);
+        public static Predicate IsCousin(Term subject, Term @object) => new Predicate(nameof(IsCousin), subject, @object);
+        public static Predicate IsAunt(Term subject, Term @object) => new Predicate(nameof(IsAunt), subject, @object);
+        public static Predicate IsUncle(Term subject, Term @object) => new Predicate(nameof(IsUncle), subject, @object);
 
         //// Unary functions:
-        IPerson Mother { get; }
-        IPerson Father { get; }
+        public static Function Mother(Term t) => new Function(nameof(Mother), t);
+        public static Function Father(Term t) => new Function(nameof(Father), t);
     }
 
     /// <summary>
@@ -41,38 +39,37 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Kinship
     {
         // Usage (note the separation of concerns for knowledge base implementation and the domain):
         //
-        // var kb = new ResolutionKnowledgeBase<IPerson>(); // ..or a different KB implementation - none implemented yet
+        // var kb = new ResolutionKnowledgeBase(); // ..or a different KB implementation - none implemented yet
         // kb.Tell(KinshipKnowledge.Axioms);
         // kb.Tell(..facts about the specific problem..);
-        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter, opts), where domainAdapter is an IEnumerable<IPerson>.. 
         // kb.Ask(..my query..);
-        public static IReadOnlyCollection<Expression<Predicate<IEnumerable<IPerson>>>> Axioms { get; } = new List<Expression<Predicate<IEnumerable<IPerson>>>>()
+        public static IReadOnlyCollection<Sentence> Axioms { get; } = new List<Sentence>()
         {
             // One's mother is one's female parent:
-            d => d.All((m, c) => Iff(c.Mother == m, m.IsFemale && m.IsParent(c))),
+            ForAll(M, C, Iff(AreEqual(Mother(C), M), And(IsFemale(M), IsParent(M, C)))),
 
             // Ones' husband is one's male spouse:
-            d => d.All((w, h) => Iff(h.IsHusband(w), h.IsMale && h.IsSpouse(w))),
+            ForAll(W, H, Iff(IsHusband(H, W), And(IsMale(H), IsSpouse(H, W)))),
 
             // Male and female are disjoint categories:
-            d => d.All(x => Iff(x.IsMale, !x.IsFemale)),
+            ForAll(X, Iff(IsMale(X), Not(IsFemale(X)))),
 
             // Parent and child are inverse relations:
-            d => d.All((p, c) => Iff(p.IsParent(c), c.IsChild(p))),
+            ForAll(P, C, Iff(IsParent(P, C), IsChild(C, P))),
 
             // A grandparent is a parent of one's parent:
-            d => d.All((g, c) => Iff(g.IsGrandparent(c), d.Any(p => g.IsParent(p) && p.IsParent(c)))),
+            ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, And(IsParent(G, P), IsParent(P, C))))),
 
             // A sibling is another child of one's parents:
-            d => d.All((x, y) => Iff(x.IsSibling(y), x != y && d.Any(p => p.IsParent(x) && p.IsParent(y)))),
+            ForAll(X, Y, Iff(IsSibling(X, Y), And(Not(AreEqual(X, Y)), ThereExists(P, And(IsParent(P, X), IsParent(P, Y)))))),
 
         }.AsReadOnly();
 
         // Theorems are derivable from axioms, but might be useful for performance...
-        public static IReadOnlyCollection<Expression<Predicate<IEnumerable<IPerson>>>> Theorems { get; } = new List<Expression<Predicate<IEnumerable<IPerson>>>>()
+        public static IReadOnlyCollection<Sentence> Theorems { get; } = new List<Sentence>()
         {
             // Siblinghood is commutative:
-            d => d.All((x, y) => Iff(x.IsSibling(y), y.IsSibling(x))),
+            ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X))),
 
         }.AsReadOnly();
     }

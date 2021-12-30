@@ -88,9 +88,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         public static explicit operator CNFLiteral(Sentence sentence) => new CNFLiteral(sentence);
 
         /// <summary>
-        /// Defines the (implicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFLiteral"/>.
+        /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="CNFLiteral"/>.
         /// </summary>
-        /// <param name="sentence">The sentence to convert.</param>
+        /// <param name="sentence">The predicate to convert.</param>
         /// <remarks>
         /// NB: This conversion is implicit because it is always valid.
         /// </remarks>

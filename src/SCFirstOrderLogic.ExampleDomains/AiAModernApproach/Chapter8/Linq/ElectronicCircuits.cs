@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.ElectronicCircuits
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.ElectronicCircuits.Linq
 {
     /// <summary>
     /// First order logic domain for electronic circuit elements.
@@ -54,7 +54,8 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Electronic
         // var kb = new ResolutionKnowledgeBase<ICircuitElements, ICircuitElement>(); // ..or a different KB implementation - none implemented yet
         // kb.Tell(ElectronicCircuitKnowledge.Axioms);
         // kb.Tell(..facts about the specific problem..);
-        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter, opts), where domainAdapter is an ICircuitElements.. 
+        // .. though the real value of lanaguage integration would be in allowing something like kb.Bind(domainAdapter, opts),
+        //    where domainAdapter is an ICircuitElements, to specify known constants in a way that is easily integrable with other code
         // kb.Ask(..my query..);
         public static IReadOnlyCollection<Expression<Predicate<ICircuitElements>>> Axioms { get; } = new List<Expression<Predicate<ICircuitElements>>>()
         {

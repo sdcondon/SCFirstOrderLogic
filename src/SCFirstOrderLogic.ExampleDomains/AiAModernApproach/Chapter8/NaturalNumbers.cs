@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using static SCFirstOrderLogic.LanguageIntegration.Operators;
+﻿using System.Collections.Generic;
+using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.NaturalNumbers.Domain;
+using static SCFirstOrderLogic.Sentence;
 
 namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.NaturalNumbers
 {
-    public interface INaturalNumbers : IEnumerable<INaturalNumber>
+    public static class Domain
     {
-        INaturalNumber Zero { get; }
-    }
+        public static Constant Zero { get; } = new Constant(nameof(Zero));
 
-    public interface INaturalNumber
-    {
-        INaturalNumber Successor { get; }
+        public static Function Successor(Term t) => new Function(nameof(Successor), t);
 
-        INaturalNumber Add(INaturalNumber x);
+        public static Function Add(Term t, Term other) => new Function(nameof(Add), t, other);
     }
 
     /// <summary>
@@ -25,17 +20,16 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.NaturalNum
     {
         // Usage (note the separation of concerns for knowledge base implementation and the domain):
         //
-        // var kb = new ResolutionKnowledgeBase<INaturalNumbers, INaturalNumber>(); // ..or a different KB implementation - none implemented yet
+        // var kb = new ResolutionKnowledgeBase(); // ..or a different KB implementation - none implemented yet
         // kb.Tell(NaturalNumberKnowledge.Axioms);
         // kb.Tell(..facts about the specific problem..);
-        // .. though the real value of LinqToKB would be in allowing something like kb.Bind(domainAdapter, opts), where domainAdapter is an INaturalNumbers.. 
         // kb.Ask(..my query..);
-        public static IReadOnlyCollection<Expression<Predicate<INaturalNumbers>>> Axioms { get; } = new List<Expression<Predicate<INaturalNumbers>>>()
+        public static IReadOnlyCollection<Sentence> Axioms { get; } = new List<Sentence>()
         {
-            d => d.All(x => x.Successor != d.Zero),
-            d => d.All((x, y) => If(x != y, x.Successor != y.Successor)),
-            d => d.All(x => d.Zero.Add(x) == x),
-            d => d.All((x, y) => x.Successor.Add(y) == x.Add(y).Successor),
+            ForAll(X, Not(AreEqual(Successor(X), Zero))),
+            ForAll(X, Y, If(Not(AreEqual(X, Y)), Not(AreEqual(Successor(X), Successor(Y))))),
+            ForAll(X, AreEqual(Add(Zero, X), X)),
+            ForAll(X, Y, AreEqual(Add(Successor(X), Y), Add(Successor(Y), X))),
 
         }.AsReadOnly();
     }

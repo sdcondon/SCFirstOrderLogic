@@ -32,9 +32,11 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             sentence = universalQuantifierElimination.ApplyTo(sentence);
             sentence = disjunctionDistribution.ApplyTo(sentence);
 
-            // TODO?: Strictly-speaking its not needed for the normalisation process, but I wonder if we should also
-            // ensure left- (or right-) associativity so that the Sentence properties of CNFSentence and CNFClause evaluate as equal
-            // for sentences that normalise to (effectively) the same thing.
+            // TODO-USABILITY: Strictly speaking its not needed for the normalisation process, but I wonder if we should also
+            // ensure left- (or right-) first ordering of conjunctions and disjunctions so that the the output Sentences are equal for
+            // two inputs if they would ultimately create two CNFSentences that are considered equal. Then again, its extra work if we
+            // don't need this. Perhaps only when we're actually interested in the output sentence (as opposed to situations where 
+            // we're immediately going to turn it into a CNFSentence). There's probably a useful refactoring here.. TODO!
 
             return sentence;
         }
@@ -114,7 +116,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         }
 
         /// <summary>
-        /// Tranformation that "standardises" variables - essentially ensuring that variable names are unique.
+        /// Tranformation that "standardises apart" variables - essentially ensuring that variable names are unique.
         /// </summary>
         private class VariableStandardisation : SentenceTransformation
         {
@@ -208,6 +210,10 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             }
         }
 
+        /// <summary>
+        /// Transformation that simply removes all universal quantifications.
+        /// All variables in CNF sentences are assumed to be universally quantified.
+        /// </summary>
         private class UniversalQuantifierElimination : SentenceTransformation
         {
             protected override Sentence ApplyTo(UniversalQuantification universalQuantification)

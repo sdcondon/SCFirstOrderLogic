@@ -1,66 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using static SCFirstOrderLogic.LanguageIntegration.Operators;
+﻿using System.Collections.Generic;
+using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Crime.Domain;
+using static SCFirstOrderLogic.Sentence;
 
 namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Crime
 {
     //// The Crime example from section 9.3 of 
     //// Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
 
-    public interface IDomain : IEnumerable<IElement>
+    public static class Domain
     {
-        IElement America { get; }
-        IElement Nono { get; }
-        IElement M1 { get; }
-        IElement West { get; }
-    }
+        public static Constant America { get; } = new Constant(nameof(America));
+        public static Constant Nono { get; } = new Constant(nameof(Nono));
+        public static Constant West { get; } = new Constant(nameof(West));
 
-    public interface IElement
-    {
-        bool IsAmerican { get; }
-        bool IsHostile { get; }
-        bool IsCriminal { get; }
-        bool IsWeapon { get; }
-        bool IsMissile { get; }
-        bool Owns(IElement item);
-        bool Sells(IElement item, IElement buyer);
-        bool IsEnemyOf(IElement other);
+        public static Predicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
+        public static Predicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
+        public static Predicate IsCriminal(Term t) => new Predicate(nameof(IsCriminal), t);
+        public static Predicate IsWeapon(Term t) => new Predicate(nameof(IsWeapon), t);
+        public static Predicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
+        public static Predicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
+        public static Predicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
+        public static Predicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
     }
 
     /// <summary>
     /// Container for fundamental knowledge about the kinship domain.
     /// </summary>
     public static class CrimeKnowledge
-    {
-        public static IReadOnlyCollection<Expression<Predicate<IDomain>>> Axioms { get; } = new List<Expression<Predicate<IDomain>>>()
+    { 
+        public static IReadOnlyCollection<Sentence> Axioms { get; } = new List<Sentence>()
         {
             // "... it is a crime for an American to sell weapons to hostile nations":
             // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x).
-            d => d.All((seller, item, buyer) => If(seller.IsAmerican && item.IsWeapon && seller.Sells(item, buyer) && buyer.IsHostile, seller.IsCriminal)),
+            ForAll(X, Y, Z, If(And(IsAmerican(X), IsWeapon(Y), Sells(X, Y, Z), IsHostile(Z)), IsCriminal(X))),
 
             // "Nono... has some missiles."
-            // (NB: could also be specified as d => d.Any(m => m.IsMissile && d.Nono.Owns(m)), but the book does Existential Instantiation for us, so we do the same here..)
-            d => d.Nono.Owns(d.M1),
-            d => d.M1.IsMissile,
+            // ∃x IsMissile(x) ∧ Owns(Nono, x)
+            ThereExists(X, And(IsMissile(X), Owns(Nono, X))),
 
             // "All of its missiles were sold to it by Colonel West":
             // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
-            d => d.All(x => If(x.IsMissile && d.Nono.Owns(x), d.West.Sells(x, d.Nono))),
+            ForAll(X, If(And(IsMissile(X), Owns(Nono, X)), Sells(West, X, Nono))),
 
             // We will also need to know that missiles are weapons: 
-            d => d.All(x => If(x.IsMissile, x.IsWeapon)),
+            ForAll(X, If(IsMissile(X), IsWeapon(X))),
 
             // And we must know that an enemy of America counts as “hostile”:
             // Enemy(x, America) ⇒ Hostile(x)
-            d => d.All(x => If(x.IsEnemyOf(d.America), x.IsHostile)),
+            ForAll(X, If(IsEnemyOf(X, America), IsHostile(X))),
 
             // "West, who is American..": American(West)
-            d => d.West.IsAmerican,
+            IsAmerican(West),
 
             // "The country Nono, an enemy of America..": Enemy(Nono, America).
-            d => d.Nono.IsEnemyOf(d.America)
+            IsEnemyOf(Nono, America),
 
         }.AsReadOnly();
     }

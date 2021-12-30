@@ -27,5 +27,8 @@ namespace SCFirstOrderLogic
             : base(symbol, arguments)
         {
         }
+
+        // TODO-ROBUSTNESS: Create a symbol class here - to eliminate the possibility of skolem functions
+        // clashing with unfortunately named other functions..
     }
 }

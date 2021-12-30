@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic
     public class Constant : Term
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Contant"/> class.
+        /// Initializes a new instance of the <see cref="Constant"/> class.
         /// </summary>
         /// <param name="symbol">An object representing the symbol of the constant.</param>
         public Constant(object symbol)
