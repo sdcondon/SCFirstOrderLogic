@@ -2,9 +2,9 @@
 using FlUnit;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Unification
+namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
-    public class SentenceUnifierTests
+    public class CNFLiteralUnifierTests
     {
         private static Function Mother(Term child) => new Function("Mother", child);
 
@@ -15,22 +15,22 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         private static readonly VariableReference x = new VariableReference(new VariableDeclaration("x"));
         private static readonly VariableReference y = new VariableReference(new VariableDeclaration("y"));
 
-        private record TestCase(Sentence Sentence1, Sentence Sentence2, Dictionary<VariableReference, Term> ExpectedUnifier = null);
+        private record TestCase(CNFLiteral Literal1, CNFLiteral Literal2, Dictionary<VariableReference, Term> ExpectedUnifier = null);
 
         public static Test TryUnifyPositive => TestThat
             .GivenEachOf(() => new[]
             {
                 new TestCase(
-                    Sentence1: Knows(john, x),
-                    Sentence2: Knows(john, jane),
+                    Literal1: Knows(john, x),
+                    Literal2: Knows(john, jane),
                     ExpectedUnifier: new Dictionary<VariableReference, Term>()
                     {
                         [x] = jane,
                     }),
 
                 new TestCase(
-                    Sentence1: Knows(john, x),
-                    Sentence2: Knows(y, jane),
+                    Literal1: Knows(john, x),
+                    Literal2: Knows(y, jane),
                     ExpectedUnifier: new Dictionary<VariableReference, Term>()
                     {
                         [x] = jane,
@@ -38,8 +38,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                     }),
 
                 new TestCase(
-                    Sentence1: Knows(john, x),
-                    Sentence2: Knows(y, Mother(y)),
+                    Literal1: Knows(john, x),
+                    Literal2: Knows(y, Mother(y)),
                     ExpectedUnifier: new Dictionary<VariableReference, Term>()
                     {
                         // Book says that x should be Mother(john), but that's not what the algorithm they give
@@ -51,7 +51,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             .When(tc =>
             {
                 (bool returnValue, IDictionary<VariableReference, Term> unifier) result;
-                result.returnValue = new SentenceUnifier().TryUnify(tc.Sentence1, tc.Sentence2, out result.unifier);
+                result.returnValue = new CNFLiteralUnifier().TryUnify(tc.Literal1, tc.Literal2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
@@ -61,13 +61,13 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             .GivenEachOf(() => new[]
             {
                 new TestCase(
-                    Sentence1: Knows(john, x),
-                    Sentence2: Knows(x, jane)),
+                    Literal1: Knows(john, x),
+                    Literal2: Knows(x, jane)),
             })
             .When(tc =>
             {
                 (bool returnValue, IDictionary<VariableReference, Term> unifier) result;
-                result.returnValue = new SentenceUnifier().TryUnify(tc.Sentence1, tc.Sentence2, out result.unifier);
+                result.returnValue = new CNFLiteralUnifier().TryUnify(tc.Literal1, tc.Literal2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())

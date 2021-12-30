@@ -198,7 +198,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         ////}
 
         /// <inheritdoc />
-        public override string ToString() => string.Join(" ∨ ", Literals); // no brackets - wouldn't be needed if SentenceFormatter was cleverer..
+        public override string ToString() => string.Join(" ∨ ", Literals);
 
         /// <inheritdoc />
         /// <remarks>

@@ -217,7 +217,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="term">The term to visit.</param>
         /// <returns>The transformed term.</returns>
-        protected virtual Term ApplyTo(Term term)
+        public virtual Term ApplyTo(Term term)
         {
             return term switch
             {

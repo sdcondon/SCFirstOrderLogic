@@ -77,5 +77,23 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
+
+        /// <summary>
+        /// Defines the (implicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFLiteral"/>.
+        /// </summary>
+        /// <param name="sentence">The sentence to convert.</param>
+        /// <remarks>
+        /// NB: This conversion is explicit because it can fail (if the sentence isn't actually a literal).
+        /// </remarks>
+        public static explicit operator CNFLiteral(Sentence sentence) => new CNFLiteral(sentence);
+
+        /// <summary>
+        /// Defines the (implicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFLiteral"/>.
+        /// </summary>
+        /// <param name="sentence">The sentence to convert.</param>
+        /// <remarks>
+        /// NB: This conversion is implicit because it is always valid.
+        /// </remarks>
+        public static implicit operator CNFLiteral(Predicate predicate) => new CNFLiteral(predicate);
     }
 }
