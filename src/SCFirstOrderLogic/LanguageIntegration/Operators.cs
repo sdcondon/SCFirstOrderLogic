@@ -19,6 +19,9 @@
         /// <param name="equivalent1">The first equivalent.</param>
         /// <param name="equivalent2">The second equivalent.</param>
         /// <returns>True if both equivalents are true or both are false; otherwise false.</returns>
+        /// <remarks>
+        /// NB: The name of this method is a common abbreviation for "if and only if".
+        /// </remarks>
         public static bool Iff(bool equivalent1, bool equivalent2) => equivalent1 == equivalent2;
     }
 }

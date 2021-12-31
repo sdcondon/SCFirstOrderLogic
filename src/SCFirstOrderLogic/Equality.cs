@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic
     /// <para/>
     /// This does of course mean that the way we render these in FoL syntax ("Equals(x, y)") doesn't match the usual FoL syntax for equality
     /// ("x = y"). Easy enough to resolve, either specifically (with a ToString overload) or in general (an IsRenderedInfix property?). Haven't done
-    /// that yet because its not a big deal, is not worth the complexity, and I'm not sure how I want to deal with rendering in FoL syntax going forwards.
+    /// that yet because its not a big deal, is not worth the complexity, and I'm not yet sure how I want to deal with rendering in FoL syntax going forwards.
     /// </remarks>
     public class Equality : Predicate
     {

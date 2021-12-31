@@ -57,7 +57,6 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Crime.Linq
 
             // "West, who is American.."
             // IsAmerican(West)
-            
             d => d.West.IsAmerican,
 
             // "The country Nono, an enemy of America.."
