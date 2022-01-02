@@ -9,25 +9,23 @@ namespace SCFirstOrderLogic.KnowledgeBases
     public static partial class ResolutionKnowledgeBaseTests
     {
         public static Test BookExample1 => TestThat
-            .Given(() =>
+            .When(() =>
             {
                 var kb = new ResolutionKnowledgeBase();
                 kb.Tell(CrimeDomain.Axioms);
-                return kb;
+                return kb.Ask(IsCriminal(West));
             })
-            .When(kb => kb.Ask(IsCriminal(West)))
             .ThenReturns()
-            .And((_, retVal) => retVal.Should().Be(true));
+            .And(retVal => retVal.Should().Be(true));
 
         public static Test BookExample2 => TestThat
-            .Given(() =>
+            .When(() =>
             {
                 var kb = new ResolutionKnowledgeBase();
                 kb.Tell(CuriousityAndTheCatDomain.Axioms);
-                return kb;
+                return Kills(Curiousity, Tuna);
             })
-            .When(kb => kb.Ask(Kills(Curiousity, Tuna)))
             .ThenReturns()
-            .And((_, retVal) => retVal.Should().Be(true));
+            .And(retVal => retVal.Should().Be(true));
     }
 }
