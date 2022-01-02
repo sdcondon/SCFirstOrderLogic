@@ -1,22 +1,9 @@
 ﻿using System.Collections.Generic;
-using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.NaturalNumbers.Domain;
 using static SCFirstOrderLogic.Sentence;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.NaturalNumbers
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8
 {
-    public static class Domain
-    {
-        public static Constant Zero { get; } = new Constant(nameof(Zero));
-
-        public static Function Successor(Term t) => new Function(nameof(Successor), t);
-
-        public static Function Add(Term t, Term other) => new Function(nameof(Add), t, other);
-    }
-
-    /// <summary>
-    /// Container for fundamental knowledge about the <see cref="INaturalNumbers"/> domain.
-    /// </summary>
-    public static class NaturalNumberKnowledge
+    public static class NaturalNumbersDomain
     {
         // Usage (note the separation of concerns for knowledge base implementation and the domain):
         //
@@ -32,5 +19,11 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.NaturalNum
             ForAll(X, Y, AreEqual(Add(Successor(X), Y), Add(Successor(Y), X))),
 
         }.AsReadOnly();
+
+        public static Constant Zero { get; } = new Constant(nameof(Zero));
+
+        public static Function Successor(Term t) => new Function(nameof(Successor), t);
+
+        public static Function Add(Term t, Term other) => new Function(nameof(Add), t, other);
     }
 }

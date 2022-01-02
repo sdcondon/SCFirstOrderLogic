@@ -84,118 +84,114 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <param name="clause1">The first of the clauses to resolve.</param>
         /// <param name="clause2">The second of the clauses to resolve.</param>
         /// <returns>A new clause.</returns>
-        /// <remarks>
-        /// NB: IMO, at the time of writing, http://logic.stanford.edu/intrologic/notes/chapter_05.html is a far better resource 
-        /// on propositional resolution than the book mentioned in the readme.
-        /// </remarks>
-        ////public static IEnumerable<CNFClause<TModel>> Resolve(CNFClause<TModel> clause1, CNFClause<TModel> clause2)
-        ////{
-        ////    //// Q1: Should we be discarding trivially true output clauses (that contain another complementary literal)?
-        ////    //// Q2: does any clause pair that contains more than one complementary literal pair necessarily only yield trivially true clauses? Seems like it must?
-        ////    //// This method could be simplified and made more performant depending on the answers to those questions, but the source material doesn't make
-        ////    //// this clear so I have erred on the side of caution..
+        public static IEnumerable<CNFClause> Resolve(CNFClause clause1, CNFClause clause2)
+        {
+            //// Q1: Should we be discarding trivially true output clauses (that contain another complementary literal)?
+            //// Q2: does any clause pair that contains more than one complementary literal pair necessarily only yield trivially true clauses? Seems like it must?
+            //// This method could be simplified and made more performant depending on the answers to those questions, but the source material doesn't make
+            //// this clear so I have erred on the side of caution..
 
-        ////    var resolvents = new List<SortedSet<PLLiteral<TModel>>>();
-        ////    var resolventPrototype = new SortedSet<PLLiteral<TModel>>(literalComparer);
-        ////    var literals1 = clause1.Literals.GetEnumerator();
-        ////    var literals2 = clause2.Literals.GetEnumerator();
-        ////    var moveNext1 = true;
-        ////    var moveNext2 = true;
+            var resolvents = new List<SortedSet<CNFLiteral>>();
+            var resolventPrototype = new SortedSet<CNFLiteral>(literalComparer);
+            var literals1 = clause1.Literals.GetEnumerator();
+            var literals2 = clause2.Literals.GetEnumerator();
+            var moveNext1 = true;
+            var moveNext2 = true;
 
-        ////    // Adds a literal to any existing resolvents & the resolvent prototype
-        ////    void AddToResolvents(PLLiteral<TModel> literal)
-        ////    {
-        ////        foreach (var resolvent in resolvents)
-        ////        {
-        ////            resolvent.Add(literal);
-        ////        }
+            // Adds a literal to any existing resolvents & the resolvent prototype
+            void AddToResolvents(CNFLiteral literal)
+            {
+                foreach (var resolvent in resolvents)
+                {
+                    resolvent.Add(literal);
+                }
 
-        ////        resolventPrototype.Add(literal);
-        ////    }
+                resolventPrototype.Add(literal);
+            }
 
-        ////    // Adds a new resolvent using the current resolvent prototype, as well as adding the two
-        ////    // complementary literals to any existing resolvents and the resolvent prototype.
-        ////    void AddResolvent(PLLiteral<TModel> literal, PLLiteral<TModel> complementaryLiteral)
-        ////    {
-        ////        foreach (var resolvent in resolvents)
-        ////        {
-        ////            resolvent.Add(literal);
-        ////            resolvent.Add(complementaryLiteral);
-        ////        }
+            // Adds a new resolvent using the current resolvent prototype, as well as adding the two
+            // complementary literals to any existing resolvents and the resolvent prototype.
+            void AddResolvent(CNFLiteral literal, CNFLiteral complementaryLiteral)
+            {
+                foreach (var resolvent in resolvents)
+                {
+                    resolvent.Add(literal);
+                    resolvent.Add(complementaryLiteral);
+                }
 
-        ////        resolvents.Add(new SortedSet<PLLiteral<TModel>>(resolventPrototype, literalComparer));
+                resolvents.Add(new SortedSet<CNFLiteral>(resolventPrototype, literalComparer));
 
-        ////        resolventPrototype.Add(literal);
-        ////        resolventPrototype.Add(complementaryLiteral);
-        ////    }
+                resolventPrototype.Add(literal);
+                resolventPrototype.Add(complementaryLiteral);
+            }
 
-        ////    // Attempts to move to the next literal in one or both input clauses - adding any remaining
-        ////    // literals in the other clause to the output if either of the clauses is exhausted
-        ////    bool MoveNext(bool moveNext1, bool moveNext2)
-        ////    {
-        ////        if (moveNext1 && !literals1.MoveNext())
-        ////        {
-        ////            if (!moveNext2)
-        ////            {
-        ////                foreach (var resolvent in resolvents)
-        ////                {
-        ////                    resolvent.Add(literals2.Current);
-        ////                }
-        ////            }
+            // Attempts to move to the next literal in one or both input clauses - adding any remaining
+            // literals in the other clause to the output if either of the clauses is exhausted
+            bool MoveNext(bool moveNext1, bool moveNext2)
+            {
+                if (moveNext1 && !literals1.MoveNext())
+                {
+                    if (!moveNext2)
+                    {
+                        foreach (var resolvent in resolvents)
+                        {
+                            resolvent.Add(literals2.Current);
+                        }
+                    }
 
-        ////            while (literals2.MoveNext())
-        ////            {
-        ////                foreach (var resolvent in resolvents)
-        ////                {
-        ////                    resolvent.Add(literals2.Current);
-        ////                }
-        ////            }
+                    while (literals2.MoveNext())
+                    {
+                        foreach (var resolvent in resolvents)
+                        {
+                            resolvent.Add(literals2.Current);
+                        }
+                    }
 
-        ////            return false;
-        ////        }
+                    return false;
+                }
 
-        ////        if (moveNext2 && !literals2.MoveNext())
-        ////        {
-        ////            foreach (var resolvent in resolvents)
-        ////            {
-        ////                resolvent.Add(literals1.Current);
-        ////            }
+                if (moveNext2 && !literals2.MoveNext())
+                {
+                    foreach (var resolvent in resolvents)
+                    {
+                        resolvent.Add(literals1.Current);
+                    }
 
-        ////            while (literals1.MoveNext())
-        ////            {
-        ////                foreach (var resolvent in resolvents)
-        ////                {
-        ////                    resolvent.Add(literals1.Current);
-        ////                }
-        ////            }
+                    while (literals1.MoveNext())
+                    {
+                        foreach (var resolvent in resolvents)
+                        {
+                            resolvent.Add(literals1.Current);
+                        }
+                    }
 
-        ////            return false;
-        ////        }
+                    return false;
+                }
 
-        ////        return true;
-        ////    }
+                return true;
+            }
 
-        ////    while (MoveNext(moveNext1, moveNext2))
-        ////    {
-        ////        var literal1 = literals1.Current;
-        ////        var literal2 = literals2.Current;
+            while (MoveNext(moveNext1, moveNext2))
+            {
+                var literal1 = literals1.Current;
+                var literal2 = literals2.Current;
 
-        ////        if (literal1.AtomicSentence.Equals(literal2.AtomicSentence) && literal1.IsNegated != literal2.IsNegated)
-        ////        {
-        ////            AddResolvent(literal1, literal2);
-        ////            moveNext1 = moveNext2 = true;
-        ////        }
-        ////        else
-        ////        {
-        ////            var comparison = literalComparer.Compare(literal1, literal2);
-        ////            AddToResolvents(comparison <= 0 ? literal1 : literal2);
-        ////            moveNext1 = comparison <= 0;
-        ////            moveNext2 = comparison >= 0;
-        ////        }
-        ////    }
+                if (new CNFLiteralUnifier().TryUnify(literal1, literal2.Negate(), out _))
+                {
+                    AddResolvent(literal1, literal2);
+                    moveNext1 = moveNext2 = true;
+                }
+                else
+                {
+                    var comparison = literalComparer.Compare(literal1, literal2);
+                    AddToResolvents(comparison <= 0 ? literal1 : literal2);
+                    moveNext1 = comparison <= 0;
+                    moveNext2 = comparison >= 0;
+                }
+            }
 
-        ////    return resolvents.Select(r => new CNFClause<TModel>(r));
-        ////}
+            return resolvents.Select(r => new CNFClause(r));
+        }
 
         /// <inheritdoc />
         public override string ToString() => string.Join(" ∨ ", Literals);

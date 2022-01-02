@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.NaturalNumbers.Linq
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Linq.NaturalNumbers
 {
     public interface INaturalNumbers : IEnumerable<INaturalNumber>
     {

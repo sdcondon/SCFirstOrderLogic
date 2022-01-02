@@ -1,33 +1,13 @@
 ﻿using System.Collections.Generic;
-using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Crime.Domain;
 using static SCFirstOrderLogic.Sentence;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Crime
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9
 {
     //// The Crime example from section 9.3 of 
     //// Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
 
-    public static class Domain
+    public static class CrimeDomain
     {
-        public static Constant America { get; } = new Constant(nameof(America));
-        public static Constant Nono { get; } = new Constant(nameof(Nono));
-        public static Constant West { get; } = new Constant(nameof(West));
-
-        public static Predicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
-        public static Predicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
-        public static Predicate IsCriminal(Term t) => new Predicate(nameof(IsCriminal), t);
-        public static Predicate IsWeapon(Term t) => new Predicate(nameof(IsWeapon), t);
-        public static Predicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
-        public static Predicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
-        public static Predicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
-        public static Predicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
-    }
-
-    /// <summary>
-    /// Container for fundamental knowledge about the kinship domain.
-    /// </summary>
-    public static class CrimeKnowledge
-    { 
         public static IReadOnlyCollection<Sentence> Axioms { get; } = new List<Sentence>()
         {
             // "... it is a crime for an American to sell weapons to hostile nations":
@@ -56,5 +36,18 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Crime
             IsEnemyOf(Nono, America),
 
         }.AsReadOnly();
+
+        public static Constant America { get; } = new Constant(nameof(America));
+        public static Constant Nono { get; } = new Constant(nameof(Nono));
+        public static Constant West { get; } = new Constant(nameof(West));
+
+        public static Predicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
+        public static Predicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
+        public static Predicate IsCriminal(Term t) => new Predicate(nameof(IsCriminal), t);
+        public static Predicate IsWeapon(Term t) => new Predicate(nameof(IsWeapon), t);
+        public static Predicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
+        public static Predicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
+        public static Predicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
+        public static Predicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
     }
 }

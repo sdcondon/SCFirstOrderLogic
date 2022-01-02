@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.ElectronicCircuits.Linq
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Linq.ElectronicCircuits
 {
     /// <summary>
     /// First order logic domain for electronic circuit elements.

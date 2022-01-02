@@ -1,28 +1,12 @@
 ﻿using System.Collections.Generic;
-using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCat.Domain;
 using static SCFirstOrderLogic.Sentence;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCat
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9
 {
     //// The curiousity and the cat example from section 9.5 of
     //// Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
 
-    public static class Domain
-    {
-        public static Constant Jack { get; } = new Constant(nameof(Jack));
-        public static Constant Tuna { get; } = new Constant(nameof(Jack));
-        public static Constant Curiousity { get; } = new Constant(nameof(Jack));
-
-        public static Predicate IsAnimal(Term subject) => new Predicate(nameof(IsAnimal), subject);
-        public static Predicate IsCat(Term subject) => new Predicate(nameof(IsCat), subject);
-        public static Predicate Loves(Term subject, Term @object) => new Predicate(nameof(Loves), subject, @object);
-        public static Predicate Kills(Term subject, Term @object) => new Predicate(nameof(Kills), subject, @object);
-    }
-
-    /// <summary>
-    /// Container for fundamental knowledge about the kinship domain.
-    /// </summary>
-    public static class CuriousityAndTheCatKnowledge
+    public static class CuriousityAndTheCatDomain
     {
         public static IReadOnlyCollection<Sentence> Axioms { get; } = new List<Sentence>()
         {
@@ -53,5 +37,14 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Curiousity
             ForAll(X, If(IsCat(X), IsAnimal(X))),
 
         }.AsReadOnly();
+
+        public static Constant Jack { get; } = new Constant(nameof(Jack));
+        public static Constant Tuna { get; } = new Constant(nameof(Jack));
+        public static Constant Curiousity { get; } = new Constant(nameof(Jack));
+
+        public static Predicate IsAnimal(Term subject) => new Predicate(nameof(IsAnimal), subject);
+        public static Predicate IsCat(Term subject) => new Predicate(nameof(IsCat), subject);
+        public static Predicate Loves(Term subject, Term @object) => new Predicate(nameof(Loves), subject, @object);
+        public static Predicate Kills(Term subject, Term @object) => new Predicate(nameof(Kills), subject, @object);
     }
 }

@@ -36,7 +36,11 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             // ensure left- (or right-) first ordering of conjunctions and disjunctions so that the the output Sentences are equal for
             // two inputs if they would ultimately create two CNFSentences that are considered equal. Then again, its extra work if we
             // don't need this. Perhaps only when we're actually interested in the output sentence (as opposed to situations where 
-            // we're immediately going to turn it into a CNFSentence). There's probably a useful refactoring here.. TODO!
+            // we're immediately going to turn it into a CNFSentence). There's probably a useful refactoring here.
+
+            // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
+            // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong. Should validate here..?
+            // Could perhaps even validate on construction (i.e. Predicate constructor)
 
             return sentence;
         }

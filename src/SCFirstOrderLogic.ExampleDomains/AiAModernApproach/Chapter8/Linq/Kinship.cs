@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Kinship.Linq
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Linq.Kinship
 {
     public interface IPerson
     {
