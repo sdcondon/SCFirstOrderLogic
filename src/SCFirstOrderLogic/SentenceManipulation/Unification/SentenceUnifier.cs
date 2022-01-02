@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     public class SentenceUnifier
     {
-        public bool TryUnify(Sentence x, Sentence y, out IDictionary<VariableReference, Term> unifier)
+        public bool TryUnify(Sentence x, Sentence y, [NotNullWhen(returnValue: true)] out IDictionary<VariableReference, Term>? unifier)
         {
             unifier = new Dictionary<VariableReference, Term>();
 

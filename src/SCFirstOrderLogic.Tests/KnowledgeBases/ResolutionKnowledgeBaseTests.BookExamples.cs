@@ -23,7 +23,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
             {
                 var kb = new ResolutionKnowledgeBase();
                 kb.Tell(CuriousityAndTheCatDomain.Axioms);
-                return Kills(Curiousity, Tuna);
+                return kb.Ask(Kills(Curiousity, Tuna));
             })
             .ThenReturns()
             .And(retVal => retVal.Should().Be(true));

@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
     <RootNamespace>SCFirstOrderLogic</RootNamespace>
     <AssemblyName>SCFirstOrderLogic.Tests</AssemblyName>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

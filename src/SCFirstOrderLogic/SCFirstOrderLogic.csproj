@@ -12,6 +12,7 @@
     <PackageTags>inference-engine first-order-logic knowledge-base linq</PackageTags>
     <Product>SCFirstOrderLogic</Product>
     <PackageId>SCFirstOrderLogic</PackageId>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

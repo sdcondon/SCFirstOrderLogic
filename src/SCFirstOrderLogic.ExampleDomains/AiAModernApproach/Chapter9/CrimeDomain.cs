@@ -8,34 +8,39 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9
 
     public static class CrimeDomain
     {
-        public static IReadOnlyCollection<Sentence> Axioms { get; } = new List<Sentence>()
+        static CrimeDomain()
         {
-            // "... it is a crime for an American to sell weapons to hostile nations":
-            // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x).
-            ForAll(X, Y, Z, If(And(IsAmerican(X), IsWeapon(Y), Sells(X, Y, Z), IsHostile(Z)), IsCriminal(X))),
+            Axioms = new List<Sentence>()
+            {
+                // "... it is a crime for an American to sell weapons to hostile nations":
+                // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x).
+                ForAll(X, Y, Z, If(And(IsAmerican(X), IsWeapon(Y), Sells(X, Y, Z), IsHostile(Z)), IsCriminal(X))),
 
-            // "Nono... has some missiles."
-            // ∃x IsMissile(x) ∧ Owns(Nono, x)
-            ThereExists(X, And(IsMissile(X), Owns(Nono, X))),
+                // "Nono... has some missiles."
+                // ∃x IsMissile(x) ∧ Owns(Nono, x)
+                ThereExists(X, And(IsMissile(X), Owns(Nono, X))),
 
-            // "All of its missiles were sold to it by Colonel West":
-            // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
-            ForAll(X, If(And(IsMissile(X), Owns(Nono, X)), Sells(West, X, Nono))),
+                // "All of its missiles were sold to it by Colonel West":
+                // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
+                ForAll(X, If(And(IsMissile(X), Owns(Nono, X)), Sells(West, X, Nono))),
 
-            // We will also need to know that missiles are weapons: 
-            ForAll(X, If(IsMissile(X), IsWeapon(X))),
+                // We will also need to know that missiles are weapons: 
+                ForAll(X, If(IsMissile(X), IsWeapon(X))),
 
-            // And we must know that an enemy of America counts as “hostile”:
-            // Enemy(x, America) ⇒ Hostile(x)
-            ForAll(X, If(IsEnemyOf(X, America), IsHostile(X))),
+                // And we must know that an enemy of America counts as “hostile”:
+                // Enemy(x, America) ⇒ Hostile(x)
+                ForAll(X, If(IsEnemyOf(X, America), IsHostile(X))),
 
-            // "West, who is American..": American(West)
-            IsAmerican(West),
+                // "West, who is American..": American(West)
+                IsAmerican(West),
 
-            // "The country Nono, an enemy of America..": Enemy(Nono, America).
-            IsEnemyOf(Nono, America),
+                // "The country Nono, an enemy of America..": Enemy(Nono, America).
+                IsEnemyOf(Nono, America),
 
-        }.AsReadOnly();
+            }.AsReadOnly();
+        }
+
+        public static IReadOnlyCollection<Sentence> Axioms { get; }
 
         public static Constant America { get; } = new Constant(nameof(America));
         public static Constant Nono { get; } = new Constant(nameof(Nono));

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -113,7 +114,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// just <see cref="IEnumerable{TElement}"/> - which suffices when the domain contains no constants or ground
         /// predicates.
         /// </remarks>
-        public static bool TryCreate<TElement>(Expression<Predicate<IEnumerable<TElement>>> lambda, out Sentence sentence)
+        public static bool TryCreate<TElement>(Expression<Predicate<IEnumerable<TElement>>> lambda, [NotNullWhen(returnValue: true)] out Sentence? sentence)
         {
             return TryCreateSentence<IEnumerable<TElement>, TElement>(lambda.Body, out sentence);
         }
@@ -126,13 +127,13 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// <param name="lambda">The lambda expression.</param>
         /// <param name="sentence">The created sentence, or <see langword="null"/> on failure.</param>
         /// <returns>A value indicating whether or not creation was successful.</returns>
-        public static bool TryCreate<TDomain, TElement>(Expression<Predicate<TDomain>> lambda, out Sentence sentence)
+        public static bool TryCreate<TDomain, TElement>(Expression<Predicate<TDomain>> lambda, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             return TryCreateSentence<TDomain, TElement>(lambda.Body, out sentence);
         }
 
-        private static bool TryCreateSentence<TDomain, TElement>(Expression expression, out Sentence sentence)
+        private static bool TryCreateSentence<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             // NB: A different formulation might have created abstract ComplexSentence and AtomicSentence subclasses of sentence
@@ -158,7 +159,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// Tries to create a <see cref="Conjunction"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>{expression} {&amp;&amp; or &amp;} {expression}</code>
         /// </summary>
-        private static bool TryCreateConjunction<TDomain, TElement>(Expression expression, out Sentence sentence)
+        private static bool TryCreateConjunction<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             if (expression is BinaryExpression binaryExpr && (binaryExpr.NodeType == ExpressionType.AndAlso || binaryExpr.NodeType == ExpressionType.And)
@@ -173,7 +174,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
             return false;
         }
 
-        private static bool TryCreateConstant<TDomain, TElement>(Expression expression, out Term term)
+        private static bool TryCreateConstant<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Term? term)
             where TDomain : IEnumerable<TElement>
         {
             if (typeof(TElement).IsAssignableFrom(expression.Type)) // Constants must be elements of the domain
@@ -208,7 +209,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// Tries to create a <see cref="Disjunction"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>{expression} {|| or |} {expression}</code>
         /// </summary>
-        private static bool TryCreateDisjunction<TDomain, TElement>(Expression expression, out Sentence sentence)
+        private static bool TryCreateDisjunction<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             if (expression is BinaryExpression binaryExpr && (binaryExpr.NodeType == ExpressionType.OrElse || binaryExpr.NodeType == ExpressionType.Or)
@@ -227,7 +228,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// Tries to create an <see cref="Equality"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>{expression} == {expression}</code>
         /// </summary>
-        private static bool TryCreateEquality<TDomain, TElement>(Expression expression, out Sentence sentence)
+        private static bool TryCreateEquality<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             // TODO-ROBUSTNESS: ..and Object.Equals invocation? And others? How to think about map of different types of .NET equality to FOL "equals"?
@@ -248,7 +249,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// <code>Operators.Iff({expression}, {expression})</code>
         /// (Consumers are encouraged to include <c>using static SCFirstOrderLogic.Operators;</c> to make this a little shorter)
         /// </summary>
-        private static bool TryCreateEquivalence<TDomain, TElement>(Expression expression, out Sentence sentence)
+        private static bool TryCreateEquivalence<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             // TODO-FEATURE: Would it be reasonable to also accept {sentence} == {sentence} here?
@@ -269,7 +270,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// Tries to create a <see cref="ExistentialQuantification"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>{domain}.Any({variable} => {expression})</code>
         /// </summary>
-        private static bool TryCreateExistentialQuantification<TDomain, TElement>(Expression expression, out Sentence sentence)
+        private static bool TryCreateExistentialQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse to make it more graceful without losing any more perf than we need to?
@@ -279,7 +280,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AnyMethod)
                     && methodCallExpr.Arguments[1] is LambdaExpression anyLambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(anyLambda.Body, out var subSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(anyLambda.Parameters[0], out VariableDeclaration declaration))
+                    && TryCreateVariableDeclaration<TDomain, TElement>(anyLambda.Parameters[0], out VariableDeclaration? declaration))
                 {
                     sentence = new ExistentialQuantification(declaration, subSentence);
                     return true;
@@ -287,8 +288,8 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAnyMethod2)
                     && methodCallExpr.Arguments[1] is LambdaExpression any2Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(any2Lambda.Body, out var all2SubSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(any2Lambda.Parameters[0], out VariableDeclaration declaration1Of2)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(any2Lambda.Parameters[1], out VariableDeclaration declaration2Of2))
+                    && TryCreateVariableDeclaration<TDomain, TElement>(any2Lambda.Parameters[0], out VariableDeclaration? declaration1Of2)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(any2Lambda.Parameters[1], out VariableDeclaration? declaration2Of2))
                 {
                     sentence = new ExistentialQuantification(
                         declaration1Of2,
@@ -298,9 +299,9 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAnyMethod3)
                     && methodCallExpr.Arguments[1] is LambdaExpression any3Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(any3Lambda.Body, out var all3SubSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[0], out VariableDeclaration declaration1Of3)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[1], out VariableDeclaration declaration2Of3)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[2], out VariableDeclaration declaration3Of3))
+                    && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[0], out VariableDeclaration? declaration1Of3)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[1], out VariableDeclaration? declaration2Of3)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[2], out VariableDeclaration? declaration3Of3))
                 {
                     sentence = new UniversalQuantification(
                         declaration1Of3,
@@ -315,7 +316,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
             return false;
         }
 
-        private static bool TryCreateFunction<TDomain, TElement>(Expression expression, out Term term)
+        private static bool TryCreateFunction<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Term? term)
             where TDomain : IEnumerable<TElement>
         {
             // NB: Here we verify that the value of the function is a domain element..
@@ -370,7 +371,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// <code>Operators.If({expression}, {expression})</code>
         /// (Consumers are encouraged to include <c>using static SCFirstOrderLogic.Symbols;</c> to make this a little shorter)
         /// </summary>
-        private static bool TryCreateImplication<TDomain, TElement>(Expression expression, out Sentence sentence)
+        private static bool TryCreateImplication<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             if (expression is MethodCallExpression methodCallExpr && MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, IfMethod)
@@ -390,7 +391,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// <code>!{expression}</code>
         /// We also interpret <c>!=</c> as a negation of an equality.
         /// </summary>
-        private static bool TryCreateNegation<TDomain, TElement>(Expression expression, out Sentence sentence)
+        private static bool TryCreateNegation<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             if (expression is UnaryExpression unaryExpr && unaryExpr.NodeType == ExpressionType.Not
@@ -415,7 +416,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// Tries to create a <see cref="MemberPredicate"/> from an expression acting on the domain (and any relevant variables and constants) that
         /// is a boolean-valued property or method call on an element object, or a boolean-valued property or method call on a domain object.
         /// </summary>
-        private static bool TryCreatePredicate<TDomain, TElement>(Expression expression, out Sentence sentence)
+        private static bool TryCreatePredicate<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             if (expression.Type != typeof(bool))
@@ -478,7 +479,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
             return false;
         }
 
-        private static bool TryCreateTerm<TDomain, TElement>(Expression expression, out Term sentence)
+        private static bool TryCreateTerm<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Term? sentence)
             where TDomain : IEnumerable<TElement>
         {
             return TryCreateFunction<TDomain, TElement>(expression, out sentence)
@@ -490,7 +491,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// Tries to create a <see cref="UniversalQuantification"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>{domain}.All({variable} => {expression})</code>
         /// </summary>
-        private static bool TryCreateUniversalQuantification<TDomain, TElement>(Expression expression, out Sentence sentence)
+        private static bool TryCreateUniversalQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
             // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse or something to make it more graceful without losing any more perf than we need to?
@@ -500,7 +501,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AllMethod)
                     && methodCallExpr.Arguments[1] is LambdaExpression allLambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(allLambda.Body, out var allSubSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(allLambda.Parameters[0], out VariableDeclaration declaration))
+                    && TryCreateVariableDeclaration<TDomain, TElement>(allLambda.Parameters[0], out VariableDeclaration? declaration))
                 {
                     sentence = new UniversalQuantification(declaration, allSubSentence);
                     return true;
@@ -508,8 +509,8 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAllMethod2)
                     && methodCallExpr.Arguments[1] is LambdaExpression all2Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(all2Lambda.Body, out var all2SubSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(all2Lambda.Parameters[0], out VariableDeclaration declaration1Of2)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(all2Lambda.Parameters[1], out VariableDeclaration declaration2Of2))
+                    && TryCreateVariableDeclaration<TDomain, TElement>(all2Lambda.Parameters[0], out VariableDeclaration? declaration1Of2)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(all2Lambda.Parameters[1], out VariableDeclaration? declaration2Of2))
                 {
                     sentence = new UniversalQuantification(
                         declaration1Of2,
@@ -519,9 +520,9 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAllMethod3)
                     && methodCallExpr.Arguments[1] is LambdaExpression all3Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
                     && TryCreateSentence<TDomain, TElement>(all3Lambda.Body, out var all3SubSentence)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[0], out VariableDeclaration declaration1Of3)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[1], out VariableDeclaration declaration2Of3)
-                    && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[2], out VariableDeclaration declaration3Of3))
+                    && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[0], out VariableDeclaration? declaration1Of3)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[1], out VariableDeclaration? declaration2Of3)
+                    && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[2], out VariableDeclaration? declaration3Of3))
                 {
                     sentence = new UniversalQuantification(
                         declaration1Of3,
@@ -536,7 +537,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
             return false;
         }
 
-        private static bool TryCreateVariableDeclaration<TDomain, TElement>(Expression expression, out VariableDeclaration variableDeclaration)
+        private static bool TryCreateVariableDeclaration<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out VariableDeclaration? variableDeclaration)
             where TDomain : IEnumerable<TElement>
         {
             if (expression is ParameterExpression parameterExpr
@@ -550,7 +551,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
             return false;
         }
 
-        private static bool TryCreateVariable<TDomain, TElement>(Expression expression, out Term term)
+        private static bool TryCreateVariable<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Term? term)
             where TDomain : IEnumerable<TElement>
         {
             if (expression is ParameterExpression parameterExpr
