@@ -1,4 +1,6 @@
-﻿namespace SCFirstOrderLogic
+﻿using System;
+
+namespace SCFirstOrderLogic
 {
     /// <summary>
     /// Representation of a universal quantification sentence of first order logic. In typical FOL syntax, this is written as:
@@ -15,5 +17,11 @@
             : base(variable, sentence)
         {
         }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj) => obj is UniversalQuantification universalQuantification && base.Equals(universalQuantification);
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(Variable, Sentence);
     }
 }

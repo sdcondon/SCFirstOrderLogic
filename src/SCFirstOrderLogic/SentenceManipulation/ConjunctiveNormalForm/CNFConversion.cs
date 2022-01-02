@@ -32,7 +32,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             sentence = universalQuantifierElimination.ApplyTo(sentence);
             sentence = disjunctionDistribution.ApplyTo(sentence);
 
-            // TODO-USABILITY: Strictly speaking its not needed for the normalisation process, but I wonder if we should also
+            // TODO*-USABILITY: Strictly speaking its not needed for the normalisation process, but I wonder if we should also
             // ensure left- (or right-) first ordering of conjunctions and disjunctions so that the the output Sentences are equal for
             // two inputs if they would ultimately create two CNFSentences that are considered equal. Then again, its extra work if we
             // don't need this. Perhaps only when we're actually interested in the output sentence (as opposed to situations where 

@@ -89,7 +89,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
         private bool Occurs(VariableReference variable, Term term)
         {
-            var finder = new VariableFinder(variable); // TODO-PERFORMANCE: GC impact when creating a bunch of these.. Mutability and pooling?
+            var finder = new VariableFinder(variable); // TODO*-PERFORMANCE: GC impact when creating a bunch of these.. Mutability and pooling?
             finder.ApplyTo(term);
             return finder.IsFound;
         }
@@ -102,7 +102,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
             public bool IsFound { get; private set; } = false;
 
-            // TODO-PERFORMANCE: For performance, should probably override everything and stop as soon as IsFound is true.
+            // TODO*-PERFORMANCE: For performance, should probably override everything and stop as soon as IsFound is true.
             // And/or establish visitor pattern to make this easier..
 
             protected override Term ApplyTo(VariableReference variable)

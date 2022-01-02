@@ -189,7 +189,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             {
                 ExistentialQuantification existentialQuantification => ApplyTo(existentialQuantification),
                 UniversalQuantification universalQuantification => ApplyTo(universalQuantification),
-                _ => throw new ArgumentException()
+                _ => throw new ArgumentException($"Unsupported Quantification type '{quantification.GetType()}'")
             };
         }
 
@@ -224,7 +224,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 Constant constant => ApplyTo(constant),
                 VariableReference variable => ApplyTo(variable),
                 Function function => ApplyTo(function),
-                _ => throw new ArgumentException()
+                _ => throw new ArgumentException($"Unsupported Term type '{term.GetType()}'")
             };
         }
 

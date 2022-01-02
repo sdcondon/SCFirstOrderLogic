@@ -16,9 +16,6 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// Inform the knowledge base that a given sentence about the domain is true for all models that it will be asked about.
         /// </summary>
         /// <param name="sentence">The sentence that is always true.</param>
-        /// <remarks>
-        /// TODO-USABILITY: Probably better to have knowledge bases accept Sentences (and make sentences implicitly convertible from expressions)? 
-        /// </remarks>
         public void Tell(Expression<Predicate<TDomain>> sentence);
 
         /// <summary>

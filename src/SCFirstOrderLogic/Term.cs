@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic
     /// </summary>
     public abstract class Term
     {
-        // TODO, perhaps..
+        // TODO: visitor pattern, perhaps..
         ////public abstract T Accept<T>(ISentenceVisitor<T> visitor);
         
         /// <summary>

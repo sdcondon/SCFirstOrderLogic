@@ -52,7 +52,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             Constant constant => Print(constant),
             VariableReference variable => Print(variable),
             Function function => Print(function),
-            _ => throw new ArgumentException()
+            _ => throw new ArgumentException($"Unsupported Term type '{term.GetType()}'")
         };
 
         public static string Print(Constant constant) =>

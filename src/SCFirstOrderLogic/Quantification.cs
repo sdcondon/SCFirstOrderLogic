@@ -22,7 +22,6 @@ namespace SCFirstOrderLogic
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            // TODO-BUG: universal and existential quantification of same var on same sentence considered equal...
             return obj is Quantification quantification
                 && Variable.Equals(quantification.Variable)
                 && Sentence.Equals(quantification.Sentence);

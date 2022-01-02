@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             var literals = new SortedSet<CNFLiteral>(new LiteralComparer());
             new ClauseConstructor(literals).ApplyTo(sentence);
-            Literals = literals; // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
+            Literals = literals; // TODO*-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
         }
 
         /// <summary>

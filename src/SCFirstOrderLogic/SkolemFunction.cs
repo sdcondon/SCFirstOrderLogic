@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SCFirstOrderLogic
 {
@@ -11,24 +12,34 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="SkolemFunction"/> class.
         /// </summary>
-        /// <param name="symbol">The symbol of the function.</param>
+        /// <param name="name">The name of the function.</param>
         /// <param name="arguments">The arguments of this function.</param>
-        public SkolemFunction(string symbol, params Term[] arguments)
-            : base(symbol, arguments)
+        public SkolemFunction(string name, params Term[] arguments)
+            : base(new Symbol(name), arguments)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SkolemFunction"/> class.
         /// </summary>
-        /// <param name="symbol">The symbol of the function.</param>
+        /// <param name="name">The name of the function.</param>
         /// <param name="arguments">The arguments of this function.</param>
-        public SkolemFunction(string symbol, IList<Term> arguments)
-            : base(symbol, arguments)
+        public SkolemFunction(string name, IList<Term> arguments)
+            : base(new Symbol(name), arguments)
         {
         }
 
-        // TODO-ROBUSTNESS: Create a symbol class here - to eliminate the possibility of skolem functions
-        // clashing with unfortunately named other functions..
+        // Use our own symbol class rather than just a string to eliminate the possibility
+        // of Skolem functions clashing with unfortunately-named user-provided functions.
+        private new class Symbol
+        {
+            private readonly string name;
+
+            public Symbol(string name) => this.name = name;
+
+            public override bool Equals(object obj) => obj is Symbol skolem && skolem.name.Equals(name);
+
+            public override int GetHashCode() => HashCode.Combine(name);
+        }
     }
 }

@@ -23,10 +23,10 @@ namespace SCFirstOrderLogic.LanguageIntegration
             IElement Parent { get; }
         }
 
-        private static readonly MemberInfo groundPredicate1 = typeof(IDomain).GetProperty(nameof(IDomain.GroundPredicate1));
-        private static readonly MemberInfo groundPredicate2 = typeof(IDomain).GetProperty(nameof(IDomain.GroundPredicate2));
-        private static readonly MemberInfo constant1 = typeof(IDomain).GetProperty(nameof(IDomain.Constant1));
-        private static readonly MemberInfo parent = typeof(IElement).GetProperty(nameof(IElement.Parent));
+        private static readonly MemberInfo groundPredicate1 = typeof(IDomain).GetProperty(nameof(IDomain.GroundPredicate1))!;
+        private static readonly MemberInfo groundPredicate2 = typeof(IDomain).GetProperty(nameof(IDomain.GroundPredicate2))!;
+        private static readonly MemberInfo constant1 = typeof(IDomain).GetProperty(nameof(IDomain.Constant1))!;
+        private static readonly MemberInfo parent = typeof(IElement).GetProperty(nameof(IElement.Parent))!;
         private static readonly IList<Term> emptyArgList = Array.Empty<Term>();
 
         private record TestCase(Expression<Predicate<IDomain>> Expression, Sentence ExpectedSentence);

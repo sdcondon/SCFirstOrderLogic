@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
     /// </summary>
     /// <remarks>
-    /// TODO: doesn't yet allow any specification of resolution strategy. Essentially just works through pairs
+    /// TODO-FUNCTIONALITY: doesn't yet allow any specification of resolution strategy. Essentially just works through pairs
     /// starting with the first sentences told to the knowledge base.
     /// </remarks>
     public class ResolutionKnowledgeBase : IKnowledgeBase
@@ -24,9 +24,9 @@ namespace SCFirstOrderLogic.KnowledgeBases
         /// <inheritdoc />
         public bool Ask(Sentence sentence)
         {
-            // BUG: Need to standardise variables apart across all sentences..
-            // BUG: Need to add factoring
-            // BUG: Need to account for equality (assuming we don't want to axiomise..)
+            // TODO-BUG: Need to standardise variables apart across all sentences..
+            // TODO-BUG: Need to add factoring
+            // TODO-BUG: Need to account for equality (assuming we don't want to axiomise..)
 
             var negationOfQueryAsCnf = new CNFSentence(new Negation(sentence));
             var clauses = sentences.Append(negationOfQueryAsCnf).SelectMany(s => s.Clauses).ToHashSet();

@@ -196,7 +196,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 }
             }
 
-            // TODO-USABILITY: Perhaps we should allow constants here too? For cases where the domain is of basic types, it seems
+            // TODO-USABILITY: Perhaps we should allow literals here too? For cases where the domain is of primitive types, it seems
             // silly to require d => d.Hello rather than d => "Hello". For user provided types is of less value because
             // it requires an instantiation of the constant (where otherwise just working with interfaces is fine), but
             // as far as I can see there's no reason (aside from equality et al - probably solvable) to actually forbid it..?
@@ -252,7 +252,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateEquivalence<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO-FEATURE: Would it be reasonable to also accept {sentence} == {sentence} here?
+            // TODO-FUNCTIONALITY: Would it be reasonable to also accept {sentence} == {sentence} here?
 
             if (expression is MethodCallExpression methodCallExpr && MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, IffMethod)
                 && TryCreateSentence<TDomain, TElement>(methodCallExpr.Arguments[0], out var equivalent1)
@@ -273,7 +273,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateExistentialQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse to make it more graceful without losing any more perf than we need to?
+            // TODO*-MAINTAINABILITY: Ick. This is horrible. Can we recurse to make it more graceful without losing any more perf than we need to?
 
             if (expression is MethodCallExpression methodCallExpr)
             {
@@ -494,7 +494,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateUniversalQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse or something to make it more graceful without losing any more perf than we need to?
+            // TODO*-MAINTAINABILITY: Ick. This is horrible. Can we recurse or something to make it more graceful without losing any more perf than we need to?
 
             if (expression is MethodCallExpression methodCallExpr)
             {
