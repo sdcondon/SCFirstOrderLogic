@@ -136,10 +136,6 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateSentence<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // NB: A different formulation might have created abstract ComplexSentence and AtomicSentence subclasses of sentence
-            // with their own internal TryCreate methods. Until there is a reason to make the distinction though, we don't bother
-            // adding that complexity here..
-
             // TODO-USABILITY: might be nice to return more info than just "false" - but can't rely on exceptions due to the way this works.
             return
                 // Complex sentences:

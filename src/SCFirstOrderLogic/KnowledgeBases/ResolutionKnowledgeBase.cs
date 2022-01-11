@@ -18,13 +18,13 @@ namespace SCFirstOrderLogic.KnowledgeBases
         /// <inheritdoc />
         public void Tell(Sentence sentence)
         {
+            // TODO-BUG: Need to standardise variables apart across all sentences..
             sentences.Add(new CNFSentence(sentence));
         }
 
         /// <inheritdoc />
         public bool Ask(Sentence sentence)
         {
-            // TODO-BUG: Need to standardise variables apart across all sentences..
             // TODO-BUG: Need to add factoring
             // TODO-BUG: Need to account for equality (assuming we don't want to axiomise..)
 

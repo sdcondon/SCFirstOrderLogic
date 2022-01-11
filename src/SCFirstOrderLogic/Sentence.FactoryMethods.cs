@@ -5,8 +5,9 @@
     /// </summary>
     public abstract partial class Sentence
     {
-        //// Shorthand factory methods. Not sure if I like these here or not. Separating them into their own class would make it easier to include guidance
-        //// (notably, how best to create your own properties for variables and constants and methods for functions and predicates).
+        //// Shorthand factory methods. Not sure if I like having these in the sentence class itself or not.
+        //// Separating them into their own class would make it easier to include guidance (notably, how best
+        //// to create your own properties for variables and constants and methods for functions and predicates).
         
         public static Sentence ForAll(VariableDeclaration variableDeclaration, Sentence sentence) =>
             new UniversalQuantification(variableDeclaration, sentence);

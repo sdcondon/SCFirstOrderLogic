@@ -45,6 +45,9 @@ namespace SCFirstOrderLogic
         /// </summary>
         /// <remarks>
         /// Symbol equality should indicate that it is the "same" function in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
+        /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
         /// </remarks>
         public object Symbol { get; }
 

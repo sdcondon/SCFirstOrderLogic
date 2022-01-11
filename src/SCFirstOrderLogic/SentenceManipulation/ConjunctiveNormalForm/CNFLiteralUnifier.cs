@@ -4,8 +4,18 @@ using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
+    /// <summary>
+    /// Utility class for unifying literals.
+    /// </summary>
     public class CNFLiteralUnifier
     {
+        /// <summary>
+        /// Attempts to unify two literals.
+        /// </summary>
+        /// <param name="x">One of the two literals to attempt to unify.</param>
+        /// <param name="y">One of the two literals to attempt to unify.</param>
+        /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier.</param>
+        /// <returns>True if the two literals can be unified, otherwise false.</returns>
         public bool TryUnify(CNFLiteral x, CNFLiteral y, [NotNullWhen(returnValue: true)] out IDictionary<VariableReference, Term>? unifier)
         {
             unifier = new Dictionary<VariableReference, Term>();

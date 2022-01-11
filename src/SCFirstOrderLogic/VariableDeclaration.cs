@@ -22,25 +22,26 @@ namespace SCFirstOrderLogic
         public VariableDeclaration(object symbol) => Symbol = symbol;
 
         /// <summary>
-        /// Gets the symbol of the variable. Equality of symbols should indicate that it is the same variable in the domain, and ToString of the symbol should be appropriate for rendering in FoL syntax.
+        /// Gets an object representing the symbol of the variable.
         /// </summary>
+        /// <remarks>
+        /// Symbol equality should indicate that it is the same variable in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
+        /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
+        /// </remarks>
         public object Symbol { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
-        {
-            return obj is VariableDeclaration otherVariableDeclaration && Symbol.Equals(otherVariableDeclaration.Symbol); 
-        }
+        public override bool Equals(object obj) => obj is VariableDeclaration otherVariableDeclaration && Symbol.Equals(otherVariableDeclaration.Symbol);
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Symbol);
-        }
+        public override int GetHashCode() => HashCode.Combine(Symbol);
 
         /// <summary>
         /// Defines the implicit conversion operator from a variable reference to its declaration (which I think is always a safe thing to do,
-        /// and makes invocation of e.g. factory methods for ForAll and ThereExist easier).
+        /// and makes invocation of e.g. factory methods for ForAll and ThereExist easier). TODO: I do wonder if it should be the other way around..
+        /// (implicitly converting a declaration to a reference to it makes more intuitive sense..)
         /// </summary>
         /// <param name="declaration">The declaration to convert.</param>
         public static implicit operator VariableDeclaration(VariableReference reference) => reference.Declaration;
