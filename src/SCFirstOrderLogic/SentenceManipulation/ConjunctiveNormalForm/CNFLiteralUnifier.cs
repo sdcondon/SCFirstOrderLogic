@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -9,6 +10,19 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
     /// </summary>
     public class CNFLiteralUnifier
     {
+        private CNFLiteralUnifier(Dictionary<VariableReference, Term> substitutions)
+        {
+            Substitutions = substitutions;
+        }
+
+        /// <summary>
+        /// Gets the substitions made by this unifier.
+        /// </summary>
+        /// <remarks>
+        /// TODO - Just returns a dictionary - should probably actually return an immmutable type..
+        /// </remarks>
+        public IReadOnlyDictionary<VariableReference, Term> Substitutions { get; }
+
         /// <summary>
         /// Attempts to unify two literals.
         /// </summary>
@@ -16,20 +30,41 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <param name="y">One of the two literals to attempt to unify.</param>
         /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public bool TryUnify(CNFLiteral x, CNFLiteral y, [NotNullWhen(returnValue: true)] out IDictionary<VariableReference, Term>? unifier)
+        public static bool TryCreate(CNFLiteral x, CNFLiteral y, [NotNullWhen(returnValue: true)] out CNFLiteralUnifier? unifier)
         {
-            unifier = new Dictionary<VariableReference, Term>();
+            var substitions = new Dictionary<VariableReference, Term>();
 
-            if (!TryUnify(x, y, unifier))
+            if (!TryUnify(x, y, substitions))
             {
                 unifier = null;
                 return false;
             }
 
+            unifier = new CNFLiteralUnifier(substitions);
             return true;
         }
 
-        private bool TryUnify(CNFLiteral x, CNFLiteral y, IDictionary<VariableReference, Term> unifier)
+        public static bool TryUnify(CNFLiteral x, CNFLiteral y, [NotNullWhen(returnValue: true)] out CNFLiteral? unified)
+        {
+            if (!TryCreate(x, y, out var unifier))
+            {
+                unified = null;
+                return false;
+            }
+
+            unified = unifier.ApplyTo(x);
+            return true;
+        }
+
+        public CNFLiteral ApplyTo(CNFLiteral literal)
+        {
+            // should this complain if its not being applied to one of the literals it was created against?
+            // or am I thinking about this wrong and we should always just be returning the unified literal?
+            // wait and see..
+            throw new NotImplementedException("Not yet implemented");
+        }
+
+        private static bool TryUnify(CNFLiteral x, CNFLiteral y, IDictionary<VariableReference, Term> unifier)
         {
             if (x.IsNegated != y.IsNegated || !x.Predicate.Symbol.Equals(y.Predicate.Symbol))
             {
@@ -47,7 +82,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             return true;
         }
 
-        private bool TryUnify(Term x, Term y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Term x, Term y, IDictionary<VariableReference, Term> unifier)
         {
             return (x, y) switch
             {
@@ -58,7 +93,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             };
         }
 
-        private bool TryUnify(VariableReference variable, Term other, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(VariableReference variable, Term other, IDictionary<VariableReference, Term> unifier)
         {
             if (unifier.TryGetValue(variable, out var value))
             {
@@ -79,7 +114,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             }
         }
 
-        private bool TryUnify(Function x, Function y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Function x, Function y, IDictionary<VariableReference, Term> unifier)
         {
             if (!x.Symbol.Equals(y.Symbol))
             {
@@ -97,9 +132,10 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             return true;
         }
 
-        private bool Occurs(VariableReference variable, Term term)
+        private static bool Occurs(VariableReference variable, Term term)
         {
-            var finder = new VariableFinder(variable); // TODO*-PERFORMANCE: GC impact when creating a bunch of these.. Mutability and pooling?
+            // TODO*-PERFORMANCE: GC impact when creating a bunch of these.. Mutability and pooling?
+            var finder = new VariableFinder(variable); 
             finder.ApplyTo(term);
             return finder.IsFound;
         }
@@ -112,7 +148,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
             public bool IsFound { get; private set; } = false;
 
-            // TODO*-PERFORMANCE: For performance, should probably override everything and stop as soon as IsFound is true.
+            // TODO-PERFORMANCE: For performance, should probably override everything and stop as soon as IsFound is true.
             // And/or establish visitor pattern to make this easier..
 
             protected override Term ApplyTo(VariableReference variable)

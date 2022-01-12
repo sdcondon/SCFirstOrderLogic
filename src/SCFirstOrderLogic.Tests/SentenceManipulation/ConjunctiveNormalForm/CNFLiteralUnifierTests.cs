@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         private static readonly VariableReference x = new VariableReference(new VariableDeclaration("x"));
         private static readonly VariableReference y = new VariableReference(new VariableDeclaration("y"));
 
-        private record TestCase(CNFLiteral Literal1, CNFLiteral Literal2, Dictionary<VariableReference, Term> ExpectedUnifier = null);
+        private record TestCase(CNFLiteral Literal1, CNFLiteral Literal2, Dictionary<VariableReference, Term>? ExpectedSubstitutions = null);
 
         public static Test TryUnifyPositive => TestThat
             .GivenEachOf(() => new[]
@@ -23,7 +23,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 new TestCase(
                     Literal1: Knows(john, x),
                     Literal2: Knows(john, jane),
-                    ExpectedUnifier: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
                     {
                         [x] = jane,
                     }),
@@ -31,7 +31,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 new TestCase(
                     Literal1: Knows(john, x),
                     Literal2: Knows(y, jane),
-                    ExpectedUnifier: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
                     {
                         [x] = jane,
                         [y] = john,
@@ -40,7 +40,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 new TestCase(
                     Literal1: Knows(john, x),
                     Literal2: Knows(y, Mother(y)),
-                    ExpectedUnifier: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
                     {
                         // Book says that x should be Mother(john), but that's not what the algorithm they give
                         // produces. Easy enough to resolve (after all, y is john), but waiting and seeing how it pans out through usage..
@@ -50,12 +50,12 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             })
             .When(tc =>
             {
-                (bool returnValue, IDictionary<VariableReference, Term> unifier) result;
-                result.returnValue = new CNFLiteralUnifier().TryUnify(tc.Literal1, tc.Literal2, out result.unifier);
+                (bool returnValue, CNFLiteralUnifier? unifier) result;
+                result.returnValue = CNFLiteralUnifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-            .And((tc, r) => r.unifier.Should().Equal(tc.ExpectedUnifier));
+            .And((tc, r) => r.unifier!.Substitutions.Should().Equal(tc.ExpectedSubstitutions));
 
         public static Test TryUnifyNegative => TestThat
             .GivenEachOf(() => new[]
@@ -66,8 +66,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             })
             .When(tc =>
             {
-                (bool returnValue, IDictionary<VariableReference, Term> unifier) result;
-                result.returnValue = new CNFLiteralUnifier().TryUnify(tc.Literal1, tc.Literal2, out result.unifier);
+                (bool returnValue, CNFLiteralUnifier? unifier) result;
+                result.returnValue = CNFLiteralUnifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())

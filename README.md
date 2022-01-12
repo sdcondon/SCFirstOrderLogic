@@ -6,9 +6,20 @@ Created just for fun while reading _Artificial Intelligence: A Modern Approach_ 
 The main goal here is for it to be a learning resource - as such, care has been taken to include decent XML documentation and explanatory inline comments where appropriate.
 For real-world scenarios, there are other better inference engines out there - that use more powerful logics than first-order (Bayesian logic - see infer.net, Fuzzy logic, ..).
 
-## Usage
+## Usage Guidance
 
-See the [tests](./src/SCFirstOrderLogic.Tests) and the [example domains](./src/SCFirstOrderLogic.ExampleDomains) project.
+For initial usage examples, see the [tests](./src/SCFirstOrderLogic.Tests) and the [example domains](./src/SCFirstOrderLogic.ExampleDomains) project.
+
+## Library Overview
+
+There follows a quick overview of the namespaces found within this library:
+
+* **SCFirstOrderLogic:** the root namespace contains classes representing individual elements of first order logic sentences. Together, these form a tree structure to represent sentences. Of particular note is the `Sentence` base class, which includes a number of shorthand static helper methods for instantiating sentences.
+  * **KnowledgeBases:** Interface for knowledge bases - stores of knowledge that can callers can `Tell` and `Ask` things.
+  * **LanguageIntegration:** Classes to create FoL sentences from LINQ expressions (i.e. allowing sentences to be provided as lambda expressions). For details see the [Language integration](#Language-Integration) section, below.
+  * **SentenceManipulation:** Utility classes for manipulating sentences. 
+    * **ConjunctiveNormalForm:** Utility classes for conversion to and representation of sentences in conjunctive normal form.
+    * **Unification:** Utility classes for determining the unifier for pairs of sentences, and for finding pairs of sentences that unify.
 
 ## Language Integration
 
@@ -51,7 +62,7 @@ The mapping between bool-valued C# expressions (that act on the TDomain) and FoL
 
 | **FoL** | **FoL Syntax** | **C# Expression** |
 | --- | --- | --- |
-| Conjunction | `{sentence} ∧ {sentence}` | `{expression} {&& or &} {expression}` |
+|Conjunction|`{sentence} ∧ {sentence}`|`{expression} {&& or &} {expression}`|
 |Disjunction|`{sentence} ∨ {sentence}`|`{expression} {\|\| or \|} {expression}`|
 |Material equivalence|`{sentence} ⇔ {sentence}`|`Operators.Iff({expression}, {expression})` *|
 |Material implication|`{sentence} ⇒ {sentence}`|`Operators.If({expression}, {expression})` *|

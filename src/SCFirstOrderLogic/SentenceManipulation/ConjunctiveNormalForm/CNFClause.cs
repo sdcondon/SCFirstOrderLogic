@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             var literals = new SortedSet<CNFLiteral>(new LiteralComparer());
             new ClauseConstructor(literals).ApplyTo(sentence);
-            Literals = literals; // TODO*-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
+            Literals = literals; // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 var literal1 = literals1.Current;
                 var literal2 = literals2.Current;
 
-                if (new CNFLiteralUnifier().TryUnify(literal1, literal2.Negate(), out _))
+                if (CNFLiteralUnifier.TryCreate(literal1, literal2.Negate(), out _))
                 {
                     AddResolvent(literal1, literal2);
                     moveNext1 = moveNext2 = true;

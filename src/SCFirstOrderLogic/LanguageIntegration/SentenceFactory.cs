@@ -490,7 +490,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateUniversalQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO*-MAINTAINABILITY: Ick. This is horrible. Can we recurse or something to make it more graceful without losing any more perf than we need to?
+            // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse or something to make it more graceful without losing any more perf than we need to?
 
             if (expression is MethodCallExpression methodCallExpr)
             {
