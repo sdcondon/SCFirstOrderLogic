@@ -115,211 +115,211 @@
             new Equality(left, right);
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "A".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "A".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference A => new VariableReference(nameof(A));
+        public static VariableDeclaration A => new VariableDeclaration(nameof(A));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "B".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "B".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference B => new VariableReference(nameof(B));
+        public static VariableDeclaration B => new VariableDeclaration(nameof(B));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "C".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "C".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference C => new VariableReference(nameof(C));
+        public static VariableDeclaration C => new VariableDeclaration(nameof(C));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "D".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "D".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference D => new VariableReference(nameof(D));
+        public static VariableDeclaration D => new VariableDeclaration(nameof(D));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "E".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "E".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference E => new VariableReference(nameof(E));
+        public static VariableDeclaration E => new VariableDeclaration(nameof(E));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "F".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "F".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference F => new VariableReference(nameof(F));
+        public static VariableDeclaration F => new VariableDeclaration(nameof(F));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "G".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "G".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference G => new VariableReference(nameof(G));
+        public static VariableDeclaration G => new VariableDeclaration(nameof(G));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "H".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "H".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference H => new VariableReference(nameof(H));
+        public static VariableDeclaration H => new VariableDeclaration(nameof(H));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "I".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "I".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference I => new VariableReference(nameof(I));
+        public static VariableDeclaration I => new VariableDeclaration(nameof(I));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "J".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "J".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference J => new VariableReference(nameof(J));
+        public static VariableDeclaration J => new VariableDeclaration(nameof(J));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "K".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "K".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference K => new VariableReference(nameof(K));
+        public static VariableDeclaration K => new VariableDeclaration(nameof(K));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "L".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "L".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference L => new VariableReference(nameof(L));
+        public static VariableDeclaration L => new VariableDeclaration(nameof(L));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "M".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "M".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference M => new VariableReference(nameof(M));
+        public static VariableDeclaration M => new VariableDeclaration(nameof(M));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "N".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "N".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference N => new VariableReference(nameof(N));
+        public static VariableDeclaration N => new VariableDeclaration(nameof(N));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "O".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "O".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference O => new VariableReference(nameof(O));
+        public static VariableDeclaration O => new VariableDeclaration(nameof(O));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "P".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "P".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference P => new VariableReference(nameof(P));
+        public static VariableDeclaration P => new VariableDeclaration(nameof(P));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "Q".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "Q".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference Q => new VariableReference(nameof(Q));
+        public static VariableDeclaration Q => new VariableDeclaration(nameof(Q));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "R".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "R".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference R => new VariableReference(nameof(R));
+        public static VariableDeclaration R => new VariableDeclaration(nameof(R));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "S".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "S".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference S => new VariableReference(nameof(S));
+        public static VariableDeclaration S => new VariableDeclaration(nameof(S));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "T".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "T".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference T => new VariableReference(nameof(T));
+        public static VariableDeclaration T => new VariableDeclaration(nameof(T));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "U".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "U".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference U => new VariableReference(nameof(U));
+        public static VariableDeclaration U => new VariableDeclaration(nameof(U));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "V".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "V".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference V => new VariableReference(nameof(V));
+        public static VariableDeclaration V => new VariableDeclaration(nameof(V));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "W".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "W".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference W => new VariableReference(nameof(W));
+        public static VariableDeclaration W => new VariableDeclaration(nameof(W));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "X".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "X".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference X => new VariableReference(nameof(X));
+        public static VariableDeclaration X => new VariableDeclaration(nameof(X));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "Y".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "Y".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference Y => new VariableReference(nameof(Y));
+        public static VariableDeclaration Y => new VariableDeclaration(nameof(Y));
 
         /// <summary>
-        /// Gets a new <see cref="VariableReference"/> for a variable with the symbol "Z".
+        /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "Z".
         /// </summary>
         /// <remarks>
         /// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         /// </remarks>
-        public static VariableReference Z => new VariableReference(nameof(Z));
+        public static VariableDeclaration Z => new VariableDeclaration(nameof(Z));
     }
 }

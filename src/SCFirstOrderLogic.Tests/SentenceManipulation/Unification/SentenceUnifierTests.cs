@@ -6,14 +6,14 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     public class SentenceUnifierTests
     {
-        private static Function Mother(Term child) => new Function("Mother", child);
+        private static Function Mother(Term child) => new("Mother", child);
 
-        private static Predicate Knows(Term knower, Term known) => new Predicate("Knows", knower, known);
+        private static Predicate Knows(Term knower, Term known) => new("Knows", knower, known);
 
-        private static readonly Constant john = new Constant("John");
-        private static readonly Constant jane = new Constant("Jane");
-        private static readonly VariableReference x = new VariableReference(new VariableDeclaration("x"));
-        private static readonly VariableReference y = new VariableReference(new VariableDeclaration("y"));
+        private static readonly Constant john = new("John");
+        private static readonly Constant jane = new("Jane");
+        private static readonly VariableDeclaration x = new("x");
+        private static readonly VariableDeclaration y = new("y");
 
         private record TestCase(Sentence Sentence1, Sentence Sentence2, Dictionary<VariableReference, Term> ExpectedUnifier = null);
 
