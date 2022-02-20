@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         private static readonly VariableDeclaration x = new("x");
         private static readonly VariableDeclaration y = new("y");
 
-        private record TestCase(Sentence Sentence1, Sentence Sentence2, Dictionary<VariableReference, Term> ExpectedUnifier = null);
+        private record TestCase(Sentence Sentence1, Sentence Sentence2, Dictionary<VariableReference, Term>? ExpectedUnifier = null);
 
         public static Test TryUnifyPositive => TestThat
             .GivenEachOf(() => new[]
@@ -50,7 +50,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             })
             .When(tc =>
             {
-                (bool returnValue, IDictionary<VariableReference, Term> unifier) result;
+                (bool returnValue, IDictionary<VariableReference, Term>? unifier) result;
                 result.returnValue = new SentenceUnifier().TryUnify(tc.Sentence1, tc.Sentence2, out result.unifier);
                 return result;
             })
@@ -66,7 +66,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             })
             .When(tc =>
             {
-                (bool returnValue, IDictionary<VariableReference, Term> unifier) result;
+                (bool returnValue, IDictionary<VariableReference, Term>? unifier) result;
                 result.returnValue = new SentenceUnifier().TryUnify(tc.Sentence1, tc.Sentence2, out result.unifier);
                 return result;
             })

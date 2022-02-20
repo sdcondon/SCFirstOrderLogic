@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic
 {
     public static class EqualityTests
     {
-        private static Constant A => new (nameof(A));
+        private static Constant A => new(nameof(A));
         private static Constant B => new(nameof(B));
 
         public static Test CloneComparison => TestThat

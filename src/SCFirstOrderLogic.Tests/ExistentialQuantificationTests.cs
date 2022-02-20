@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic
     public static class ExistentialQuantificationTests
     {
         private static VariableDeclaration X => new(nameof(X));
-        private static Predicate F(Term t) => new (nameof(F), t);
+        private static Predicate F(Term t) => new(nameof(F), t);
 
         public static Test CloneComparison => TestThat
             .When(() => new

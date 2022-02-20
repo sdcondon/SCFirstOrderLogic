@@ -5,8 +5,8 @@ namespace SCFirstOrderLogic
 {
     public static class UniversalQuantificationTests
     {
-        private static VariableDeclaration X => new (nameof(X));
-        private static Predicate F(Term t) => new (nameof(F), t);
+        private static VariableDeclaration X => new(nameof(X));
+        private static Predicate F(Term t) => new(nameof(F), t);
 
         public static Test CloneComparison => TestThat
             .When(() => new

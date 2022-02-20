@@ -13,21 +13,21 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Linq.Kinsh
         bool IsFemale { get; }
 
         //// Binary predicates:
-        bool IsParent(IPerson person);
-        bool IsSibling(IPerson person);
-        bool IsBrother(IPerson person);
-        bool IsSister(IPerson person);
-        bool IsChild(IPerson person);
-        bool IsDaughter(IPerson person);
-        bool IsSon(IPerson person);
-        bool IsSpouse(IPerson person);
-        bool IsWife(IPerson person);
-        bool IsHusband(IPerson person);
-        bool IsGrandparent(IPerson person);
-        bool IsGrandchild(IPerson person);
-        bool IsCousin(IPerson person);
-        bool IsAunt(IPerson person);
-        bool IsUncle(IPerson person);
+        bool IsParentOf(IPerson person);
+        bool IsSiblingOf(IPerson person);
+        bool IsBrotherOf(IPerson person);
+        bool IsSisterOf(IPerson person);
+        bool IsChildOf(IPerson person);
+        bool IsDaughterOf(IPerson person);
+        bool IsSonOf(IPerson person);
+        bool IsSpouseOf(IPerson person);
+        bool IsWifeOf(IPerson person);
+        bool IsHusbandOf(IPerson person);
+        bool IsGrandparentOf(IPerson person);
+        bool IsGrandchildOf(IPerson person);
+        bool IsCousinOf(IPerson person);
+        bool IsAuntOf(IPerson person);
+        bool IsUncleOf(IPerson person);
 
         //// Unary functions:
         IPerson Mother { get; }
@@ -50,22 +50,22 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Linq.Kinsh
         public static IReadOnlyCollection<Expression<Predicate<IEnumerable<IPerson>>>> Axioms { get; } = new List<Expression<Predicate<IEnumerable<IPerson>>>>()
         {
             // One's mother is one's female parent:
-            d => d.All((m, c) => Iff(c.Mother == m, m.IsFemale && m.IsParent(c))),
+            d => d.All((m, c) => Iff(c.Mother == m, m.IsFemale && m.IsParentOf(c))),
 
             // Ones' husband is one's male spouse:
-            d => d.All((w, h) => Iff(h.IsHusband(w), h.IsMale && h.IsSpouse(w))),
+            d => d.All((w, h) => Iff(h.IsHusbandOf(w), h.IsMale && h.IsSpouseOf(w))),
 
             // Male and female are disjoint categories:
             d => d.All(x => Iff(x.IsMale, !x.IsFemale)),
 
             // Parent and child are inverse relations:
-            d => d.All((p, c) => Iff(p.IsParent(c), c.IsChild(p))),
+            d => d.All((p, c) => Iff(p.IsParentOf(c), c.IsChildOf(p))),
 
             // A grandparent is a parent of one's parent:
-            d => d.All((g, c) => Iff(g.IsGrandparent(c), d.Any(p => g.IsParent(p) && p.IsParent(c)))),
+            d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))),
 
             // A sibling is another child of one's parents:
-            d => d.All((x, y) => Iff(x.IsSibling(y), x != y && d.Any(p => p.IsParent(x) && p.IsParent(y)))),
+            d => d.All((x, y) => Iff(x.IsSiblingOf(y), x != y && d.Any(p => p.IsParentOf(x) && p.IsParentOf(y)))),
 
         }.AsReadOnly();
 
@@ -73,7 +73,7 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Linq.Kinsh
         public static IReadOnlyCollection<Expression<Predicate<IEnumerable<IPerson>>>> Theorems { get; } = new List<Expression<Predicate<IEnumerable<IPerson>>>>()
         {
             // Siblinghood is commutative:
-            d => d.All((x, y) => Iff(x.IsSibling(y), y.IsSibling(x))),
+            d => d.All((x, y) => Iff(x.IsSiblingOf(y), y.IsSiblingOf(x))),
 
         }.AsReadOnly();
     }

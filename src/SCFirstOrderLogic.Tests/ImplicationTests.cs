@@ -5,8 +5,8 @@ namespace SCFirstOrderLogic
 {
     public static class ImplicationTests
     {
-        private static Predicate A => new (nameof(A));
-        private static Predicate B => new (nameof(B));
+        private static Predicate A => new(nameof(A));
+        private static Predicate B => new(nameof(B));
 
         public static Test CloneComparison => TestThat
             .When(() => new

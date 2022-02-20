@@ -17,6 +17,10 @@ namespace SCFirstOrderLogic
         // Perhaps better implemented as a visitor..
         ////public virtual bool Validate()
 
+        //// NB: No operator overloads (&& for conjunctions, || for disjunctions etc) here to keep
+        //// the core sentence classes as lean and mean as possible. C# / FoL syntax mapping
+        //// better achieved with LINQ - see LanguageIntegration namespace.
+
         /// <inheritdoc />
         public override string ToString() => SentenceFormatter.Print(this); // Just for now..
     }

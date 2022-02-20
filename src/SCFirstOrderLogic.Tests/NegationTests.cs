@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic
 {
     public static class NegationTests
     {
-        private static Predicate A => new (nameof(A));
+        private static Predicate A => new(nameof(A));
 
         public static Test CloneComparison => TestThat
             .When(() => new

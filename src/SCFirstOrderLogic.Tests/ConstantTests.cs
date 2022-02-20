@@ -8,9 +8,8 @@ namespace SCFirstOrderLogic
         private static Constant A => new(nameof(A));
 
         public static Test IsGroundTermValue => TestThat
-            .When(() => A)
-            .ThenReturns()
-            .And(g => g.IsGroundTerm.Should().BeTrue());
+            .When(() => A.IsGroundTerm)
+            .ThenReturns(isGroundTerm => isGroundTerm.Should().BeTrue());
 
         public static Test CloneComparison => TestThat
             .When(() => new
