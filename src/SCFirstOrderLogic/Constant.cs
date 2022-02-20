@@ -10,7 +10,12 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="Constant"/> class.
         /// </summary>
-        /// <param name="symbol">An object representing the symbol of the constant.</param>
+        /// <param name="symbol">
+        /// An object representing the symbol of the constant.
+        /// <para/>
+        /// Symbol equality should indicate that it is the same constant in the domain.
+        /// <see cref="object.ToString"/> of the Symbol should be appropriate for rendering in FoL syntax.
+        /// </param>
         public Constant(object symbol)
         {
             Symbol = symbol;
@@ -21,11 +26,10 @@ namespace SCFirstOrderLogic
 
         /// <summary>
         /// Gets an object representing the symbol of the constant.
-        /// </summary>
-        /// <remarks>
+        /// <para/>
         /// Symbol equality should indicate that it is the same constant in the domain.
-        /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
-        /// </remarks>
+        /// <see cref="object.ToString"/> of the Symbol should be appropriate for rendering in FoL syntax.
+        /// </summary>
         public object Symbol { get; }
 
         /// <inheritdoc />

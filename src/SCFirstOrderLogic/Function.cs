@@ -14,7 +14,15 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberFunction"/> class.
         /// </summary>
-        /// <param name="symbol">An object representing the symbol of the function. Symbol equality should indicate that it is the "same" function in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.</param>
+        /// <param name="symbol">
+        /// An object representing the symbol of the function.
+        /// <para/>
+        /// Symbol equality should indicate that it is the "same" function in the domain.
+        /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
+        /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
+        /// </param>
         /// <param name="arguments">The arguments of this function.</param>
         public Function(object symbol, params Term[] arguments)
             : this(symbol, (IList<Term>)arguments)
@@ -24,7 +32,15 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
-        /// <param name="symbol">An object representing the symbol of the function.</param>
+        /// <param name="symbol">
+        /// An object representing the symbol of the function.
+        /// <para/>
+        /// Symbol equality should indicate that it is the "same" function in the domain.
+        /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
+        /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
+        /// </param>
         /// <param name="arguments">The arguments of this function.</param>
         public Function(object symbol, IList<Term> arguments)
         {
@@ -42,13 +58,13 @@ namespace SCFirstOrderLogic
 
         /// <summary>
         /// Gets an object representing the symbol of the function.
-        /// </summary>
-        /// <remarks>
-        /// Symbol equality should indicate that it is the "same" function in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// Symbol equality should indicate that it is the "same" function in the domain.
+        /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
         /// <para/>
         /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
-        /// </remarks>
+        /// </summary>
         public object Symbol { get; }
 
         /// <inheritdoc />

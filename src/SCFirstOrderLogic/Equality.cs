@@ -5,8 +5,7 @@ namespace SCFirstOrderLogic
     /// <summary>
     /// Representation of an equality sentence of first order logic, In typical FOL syntax, this is written as:
     /// <code>{term} = {term}</code>
-    /// </summary>
-    /// <remarks>
+    /// <para/>
     /// NB: Equality is really just a predicate with particular properties (commutativity, transitivity, reflexivity).
     /// Making it a subtype of <see cref="Predicate"/> thus makes sense - and in fact makes a bunch of stuff to do with normalisation easier
     /// because it means there's a singular <see cref="Sentence"/> subtype for atomic sentences.
@@ -14,7 +13,7 @@ namespace SCFirstOrderLogic
     /// This does of course mean that the way we render these in FoL syntax ("Equals(x, y)") doesn't match the usual FoL syntax for equality
     /// ("x = y"). Easy enough to resolve, either specifically (with a ToString overload) or in general (an IsRenderedInfix property?). Haven't done
     /// that yet because its not a big deal, is not worth the complexity, and I'm not yet sure how I want to deal with rendering in FoL syntax going forwards.
-    /// </remarks>
+    /// </summary>
     public class Equality : Predicate
     {
         /// <summary>

@@ -35,7 +35,7 @@
         /// <param name="otherOperands">Any additional operands.</param>
         /// <returns>A new <see cref="Conjunction"/> instance.</returns>
         /// <remarks>
-        /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly non-verbose.
+        /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly succinct.
         /// Alternatively, see the <see cref="LanguageIntegration.SentenceFactory"/> class for another shorthand method of creating sentences.
         /// </remarks>
         public static Sentence And(Sentence operand1, Sentence operand2, params Sentence[] otherOperands)
@@ -58,7 +58,7 @@
         /// <param name="otherOperands">Any additional operands.</param>
         /// <returns>A new <see cref="Disjunction"/> instance.</returns>
         /// <remarks>
-        /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly non-verbose.
+        /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly succinct.
         /// Alternatively, see the <see cref="LanguageIntegration.SentenceFactory"/> class for another shorthand method of creating sentences.
         /// </remarks>
         public static Sentence Or(Sentence operand1, Sentence operand2, params Sentence[] otherOperands)
@@ -80,7 +80,7 @@
         /// <param name="consequent">The consequent sentence of the implication.</param>
         /// <returns>A new <see cref="Implication"/> instance.</returns>
         /// <remarks>
-        /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly non-verbose.
+        /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly succinct.
         /// Alternatively, see the <see cref="LanguageIntegration.SentenceFactory"/> class for another shorthand method of creating sentences.
         /// </remarks>
         public static Sentence If(Sentence antecedent, Sentence consequent) => 
@@ -93,7 +93,7 @@
         /// <param name="right">The right-hand operand of the equivalence.</param>
         /// <returns>A new <see cref="Equivalence"/> instance.</returns>
         /// <remarks>
-        /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly non-verbose.
+        /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly succinct.
         /// Alternatively, see the <see cref="LanguageIntegration.SentenceFactory"/> class for another shorthand method of creating sentences.
         /// </remarks>
         public static Sentence Iff(Sentence left, Sentence right) => 
@@ -105,7 +105,7 @@
         /// <param name="sentence">The negated sentence.</param>
         /// <returns>A new <see cref="Negation"/> instance.</returns>
         /// <remarks>
-        /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly non-verbose.
+        /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly succinct.
         /// Alternatively, see the <see cref="LanguageIntegration.SentenceFactory"/> class for another shorthand method of creating sentences.
         /// </remarks>
         public static Sentence Not(Sentence sentence) => 

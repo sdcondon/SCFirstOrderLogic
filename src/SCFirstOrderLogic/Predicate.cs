@@ -13,7 +13,15 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
-        /// <param name="symbol">An object representing the symbol of the predicate. Symbol equality should indicate that it is the same predicate in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.</param>
+        /// <param name="symbol">
+        /// An object representing the symbol of the predicate.
+        /// <para/>
+        /// Symbol equality should indicate that it is the same predicate in the domain.
+        /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
+        /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
+        /// </param>
         /// <param name="arguments">The arguments of this predicate.</param>
         public Predicate(object symbol, params Term[] arguments)
             : this(symbol, (IList<Term>)arguments)
@@ -23,7 +31,15 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
-        /// <param name="symbol">An object representing the symbol of the predicate.</param>
+        /// <param name="symbol">
+        /// An object representing the symbol of the predicate.
+        /// <para/>
+        /// Symbol equality should indicate that it is the same predicate in the domain.
+        /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
+        /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
+        /// </param>
         /// <param name="arguments">The arguments of this predicate.</param>
         public Predicate(object symbol, IList<Term> arguments)
         {
@@ -38,13 +54,13 @@ namespace SCFirstOrderLogic
 
         /// <summary>
         /// Gets an object representing the symbol of the predicate.
-        /// </summary>
-        /// <remarks>
-        /// Symbol equality should indicate that it is the same predicate in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// Symbol equality should indicate that it is the same predicate in the domain.
+        /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
         /// <para/>
         /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
-        /// </remarks>
+        /// </summary>
         public object Symbol { get; }
 
         /// <inheritdoc />
