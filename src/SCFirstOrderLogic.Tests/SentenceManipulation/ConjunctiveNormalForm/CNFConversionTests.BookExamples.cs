@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Equivalency;
 using FlUnit;
 using static SCFirstOrderLogic.Sentence;
 
@@ -6,16 +7,14 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     public static partial class CNFConversionTests
     {
-        private static Predicate IsAnimal(Term term) => new("IsAnimal", term);
-        private static Predicate Loves(Term term1, Term term2) => new("Loves", term1, term2);
-        private static VariableDeclaration X => new("x");
-        private static VariableDeclaration Y => new("y");
+        private static Predicate IsAnimal(Term term) => new(nameof(IsAnimal), term);
+        private static Predicate Loves(Term term1, Term term2) => new(nameof(Loves), term1, term2);
+        private static VariableDeclaration X => new(nameof(X));
+        private static VariableDeclaration Y => new(nameof(Y));
 
-        // NB: bad dependencies here on naming of skolem functions and standardised variables used by implementation.
-        // Possible to get rid of by configuring equivalence options. A challenge for another day..
-        private static SkolemFunction F(Term term) => new("Skolem1", term);
-        private static SkolemFunction G(Term term) => new("Skolem2", term);
-        private static VariableReference StdX => new("0:x");
+        private static Function F(Term term) => new("Skm:F", term);
+        private static Function G(Term term) => new("Skm:G", term);
+        private static VariableReference StdX => new("Std:X");
 
         // Incidentally, its really annoying when the principal example given in textbooks is wrong..
         public static Test BookExample => TestThat
@@ -26,8 +25,54 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             // When converted to CNF..
             .When(sentence => new CNFConversion().ApplyTo(sentence))
             // Then gives [Animal(F(x)) ∨ Loves(G(x), x)] ∧ [¬Loves(x, F(x)) ∨ Loves(G(x), x)]
-            .ThenReturns((_, sentence) => sentence.Should().Be(And(
+            .ThenReturns((_, sentence) => sentence.Should().BeEquivalentTo(And(
                 Or(IsAnimal(F(StdX)), Loves(G(StdX), StdX)),
-                Or(Not(Loves(StdX, F(StdX))), Loves(G(StdX), StdX)))));
+                Or(Not(Loves(StdX, F(StdX))), Loves(G(StdX), StdX))), CNFEquivalencyOpts));
+
+        private static EquivalencyAssertionOptions<Sentence> CNFEquivalencyOpts(EquivalencyAssertionOptions<Sentence> opts)
+        {
+            // We don't particularly care about the details (i.e. symbols) of the
+            // actual skolem functions and standardised variables, but they should
+            // be the "same" everywhere we expect them to be
+            // (and distinct from everything else - but we don't test that, yet anyway).
+            Function? fActual = null;
+            Function? gActual = null;
+            VariableReference? stdXActual = null;
+
+            static void ShouldBeConsistentWith<T>(IAssertionContext<T> ctx, ref T? actual)
+            {
+                if (actual != null)
+                {
+                    ctx.Subject.Should().Be(actual);
+                }
+                else
+                {
+                    actual = ctx.Subject;
+                }
+            }
+
+            return opts
+                .RespectingRuntimeTypes()
+                .ComparingByMembers<Sentence>()
+                .Using<Function>(ctx =>
+                {
+                    if (ctx.Expectation.Symbol.Equals("Skm:F"))
+                        ShouldBeConsistentWith(ctx, ref fActual);
+                    else if (ctx.Expectation.Symbol.Equals("Skm:G"))
+                        ShouldBeConsistentWith(ctx, ref gActual);
+                    else
+                        ctx.Subject.Should().BeEquivalentTo(ctx.Expectation);
+                })
+                .WhenTypeIs<Function>()
+                .Using<VariableReference>(ctx =>
+                {
+                    if (ctx.Expectation.Declaration.Symbol.Equals("Std:X"))
+                        ShouldBeConsistentWith(ctx, ref stdXActual);
+                    else
+                        ctx.Subject.Should().BeEquivalentTo(ctx.Expectation);
+                })
+                .WhenTypeIs<VariableReference>()
+                .WithTracing();
+        }
     }
 }

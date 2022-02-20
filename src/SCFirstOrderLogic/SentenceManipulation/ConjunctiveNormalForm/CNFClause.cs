@@ -41,7 +41,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         }
 
         /// <summary>
-        /// Returns an instance of the empty clause.
+        /// Gets an instance of the empty clause.
         /// </summary>
         public static CNFClause Empty { get; } = new CNFClause(Array.Empty<CNFLiteral>());
 

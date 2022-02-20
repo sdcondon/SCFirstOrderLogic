@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
         /// <summary>
         /// Inform a knowledge base that a given enumerable of sentences can all be assumed to hold true when answering queries.
         /// </summary>
-        /// <param name="sentences">The sentences that are always true.</param>
+        /// <param name="sentences">The sentences that can be assumed to hold true when ansering queries.</param>
         public static void Tell(this IKnowledgeBase knowledgeBase, IEnumerable<Sentence> sentences)
         {
             foreach (var sentence in sentences)

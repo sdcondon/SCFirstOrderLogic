@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
@@ -23,8 +24,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <inheritdoc />
         public override Sentence ApplyTo(Sentence sentence)
         {
-            // Might be possible to do some of these conversions at the same time, but for now
-            // at least, do them sequentially - favour maintainability over performance for the mo.
+            // It might be possible to do some of these conversions at the same time, but for now
+            // at least we do them sequentially - and in so doing favour maintainability over performance.
             sentence = implicationElimination.ApplyTo(sentence);
             sentence = nnfConversion.ApplyTo(sentence);
             sentence = variableStandardisation.ApplyTo(sentence);
@@ -32,7 +33,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             sentence = universalQuantifierElimination.ApplyTo(sentence);
             sentence = disjunctionDistribution.ApplyTo(sentence);
 
-            // TODO*-USABILITY: Strictly speaking its not needed for the normalisation process, but I wonder if we should also
+            // TODO-USABILITY: Strictly speaking its not needed for the normalisation process, but I wonder if we should also
             // ensure left- (or right-) first ordering of conjunctions and disjunctions so that the the output Sentences are equal for
             // two inputs if they would ultimately create two CNFSentences that are considered equal. Then again, its extra work if we
             // don't need this. Perhaps only when we're actually interested in the output sentence (as opposed to situations where 
@@ -40,7 +41,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
             // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
             // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong. Should validate here..?
-            // Could perhaps even validate on construction (i.e. Predicate constructor)
+            // Or handle on the assumption that they are universally quantified?
 
             return sentence;
         }
@@ -53,6 +54,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             /// <inheritdoc />
             protected override Sentence ApplyTo(Implication implication)
             {
+                // Convert  P ⇒ Q to ¬P ∨ Q 
                 return ApplyTo(new Disjunction(
                     new Negation(implication.Antecedent),
                     implication.Consequent));
@@ -61,6 +63,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             /// <inheritdoc />
             protected override Sentence ApplyTo(Equivalence equivalence)
             {
+                // Convert P ⇔ Q to (¬P ∨ Q) ∧ (P ∨ ¬Q)
                 return ApplyTo(new Conjunction(
                     new Disjunction(new Negation(equivalence.Left), equivalence.Right),
                     new Disjunction(equivalence.Left, new Negation(equivalence.Right))));
@@ -68,59 +71,56 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         }
 
         /// <summary>
-        /// Transformation that converts to Negation Normal Form by moving negations as far down as possible in the sentence tree.
+        /// Transformation that converts to Negation Normal Form by moving negations as far as possible from the root of the sentence tree.
+        /// That is, directly applied to predicates.
         /// </summary>
         private class NNFConversion : SentenceTransformation
         {
             /// <inheritdoc />
             protected override Sentence ApplyTo(Negation negation)
             {
-                Sentence sentence;
-
                 if (negation.Sentence is Negation n)
                 {
                     // Eliminate double negative: ¬(¬P) ≡ P
-                    sentence = n.Sentence;
+                    return ApplyTo(n.Sentence);
                 }
                 else if (negation.Sentence is Conjunction c)
                 {
                     // Apply de Morgan: ¬(P ∧ Q) ≡ (¬P ∨ ¬Q)
-                    sentence = new Disjunction(
+                    return ApplyTo(new Disjunction(
                         new Negation(c.Left),
-                        new Negation(c.Right));
+                        new Negation(c.Right)));
                 }
                 else if (negation.Sentence is Disjunction d)
                 {
                     // Apply de Morgan: ¬(P ∨ Q) ≡ (¬P ∧ ¬Q)
-                    sentence = new Conjunction(
+                    return ApplyTo(new Conjunction(
                         new Negation(d.Left),
-                        new Negation(d.Right));
+                        new Negation(d.Right)));
                 }
                 else if (negation.Sentence is UniversalQuantification u)
                 {
                     // Apply ¬∀x, p ≡ ∃x, ¬p
-                    sentence = new ExistentialQuantification(
+                    return ApplyTo(new ExistentialQuantification(
                         u.Variable,
-                        new Negation(u.Sentence));
+                        new Negation(u.Sentence)));
                 }
                 else if (negation.Sentence is ExistentialQuantification e)
                 {
                     // Apply ¬∃x, p ≡ ∀x, ¬p
-                    sentence = new UniversalQuantification(
+                    return ApplyTo(new UniversalQuantification(
                         e.Variable,
-                        new Negation(e.Sentence));
+                        new Negation(e.Sentence)));
                 }
                 else
                 {
                     return base.ApplyTo(negation);
                 }
-
-                return ApplyTo(sentence);
             }
         }
 
         /// <summary>
-        /// Tranformation that "standardises apart" variables - essentially ensuring that variable names are unique.
+        /// Tranformation that "standardises apart" variables - essentially ensuring that variable symbols are unique.
         /// </summary>
         private class VariableStandardisation : SentenceTransformation
         {
@@ -129,7 +129,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             {
                 var quantificationFinder = new QuantificationFinder();
                 quantificationFinder.ApplyTo(sentence);
-                return new VariableRenamer(quantificationFinder.Quantifications).ApplyTo(sentence);
+                return new VariableStandardiser(quantificationFinder.Quantifications).ApplyTo(sentence);
             }
 
             // NB: A "Transformation" that doesn't transform and has to use a property to expose its output. More evidence to suggest introduction of visitor pattern at some point.
@@ -144,22 +144,34 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 }
             }
 
-            private class VariableRenamer : SentenceTransformation
+            // TODO: I don't think we need two separate internal transforms any more - can probably just have a single ScopedVariableStandardisation one..
+            private class VariableStandardiser : SentenceTransformation
             {
-                Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
+                private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
 
-                public VariableRenamer(List<Quantification> quantifications)
+                public VariableStandardiser(List<Quantification> quantifications)
                 {
-                    for (int i = 0; i < quantifications.Count; i++)
+                    foreach (var quantification in quantifications)
                     {
-                        // While a more complex approach that leaves variable names alone where it can has its benefits, here
-                        // we just take a simple, even-handed approach and prepend the index of the variable (i.e. the order of
-                        // discovery by the DFS done by QuantificationFinder).
-                        mapping[quantifications[i].Variable] = new VariableDeclaration($"{i}:{quantifications[i].Variable.Symbol}");
+                        mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification.Variable.Symbol));
                     }
                 }
 
                 protected override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration) => mapping[variableDeclaration];
+            }
+
+            private class StandardisedVariableSymbol
+            {
+                private readonly object underlyingSymbol;
+
+                public StandardisedVariableSymbol(object underlyingSymbol) => this.underlyingSymbol = underlyingSymbol;
+
+                public override string ToString() => underlyingSymbol.ToString(); // Should we do.. something to indicate that its standardised?
+
+                //// NB: Doesn't override equality or hash code, so uses reference equality -
+                //// and we create exactly one instance per variable scope - thus achieving standardisation
+                //// without having to muck about with trying to ensure names that are unique strings.
+                //// TODO-TESTABILITY: Difficult to test.. Can we do better? Standardisation of same variable in same scope is the same?
             }
         }
 
@@ -172,15 +184,15 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
             {
-                return new ScopedSkolemisation(Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, SkolemFunction>()).ApplyTo(sentence);
+                return new ScopedSkolemisation(Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>()).ApplyTo(sentence);
             }
 
             private class ScopedSkolemisation : SentenceTransformation
             {
                 private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
-                private readonly Dictionary<VariableDeclaration, SkolemFunction> existentialVariableMap;
+                private readonly Dictionary<VariableDeclaration, Function> existentialVariableMap;
 
-                public ScopedSkolemisation(IEnumerable<VariableDeclaration> universalVariablesInScope, Dictionary<VariableDeclaration, SkolemFunction> existentialVariableMap)
+                public ScopedSkolemisation(IEnumerable<VariableDeclaration> universalVariablesInScope, Dictionary<VariableDeclaration, Function> existentialVariableMap)
                 {
                     this.universalVariablesInScope = universalVariablesInScope;
                     this.existentialVariableMap = existentialVariableMap;
@@ -195,8 +207,11 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
                 protected override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
                 {
-                    existentialVariableMap[existentialQuantification.Variable] = new SkolemFunction(
-                        $"Skolem{existentialVariableMap.Count + 1}",
+                    // TODO-MAINTAINABILITY: Skolem function equality shouldn't be on name.
+                    // Skolem function equality should be based on being the same function (at the same location)
+                    // in the same original sentence (note "original" - else equality would be circular)
+                    existentialVariableMap[existentialQuantification.Variable] = new Function(
+                        new SkolemFunctionSymbol($"Skolem{existentialVariableMap.Count + 1}"),
                         universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
                     return base.ApplyTo(existentialQuantification.Sentence);
                 }
@@ -208,9 +223,24 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                         return skolemFunction;
                     }
 
-                    // NB: leave universally declared variables alone
+                    // NB: if we didn't find it in the map, its a universally quantified variable - and we leave it alone:
                     return base.ApplyTo(variable);
                 }
+            }
+
+            // Use our own symbol class rather than just a string for Skolem function symbols to eliminate
+            // the possibility of Skolem functions clashing with unfortunately-named user-provided functions.
+            private class SkolemFunctionSymbol
+            {
+                private readonly string name;
+
+                public SkolemFunctionSymbol(string name) => this.name = name;
+
+                public override string ToString() => name;
+
+                public override bool Equals(object obj) => obj is SkolemFunctionSymbol skolem && skolem.name.Equals(name);
+
+                public override int GetHashCode() => HashCode.Combine(name);
             }
         }
 
