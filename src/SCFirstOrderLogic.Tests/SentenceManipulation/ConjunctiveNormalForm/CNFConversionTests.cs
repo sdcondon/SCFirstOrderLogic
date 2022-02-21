@@ -11,12 +11,35 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         private static Predicate B => new(nameof(B));
         private static Predicate C => new(nameof(C));
 
-        // This behaviour would probably be nice, but we don't do it for now at least:
-        ////public static Test NormaliseOrderOfOperationsInSentenceProperty => TestThat
-        ////    .Given(() => new
+        private static Predicate D(Term d) => new(nameof(D), d);
+        private static Predicate E(Term e) => new(nameof(E), e);
+
+        public static Test VariablesStandardisedAcrossSentences => TestThat
+            .Given(() => new
+            {
+                // NB these normalise to just D(X) and E(X) respectively
+                CNFSentence1 = new CNFConversion().ApplyTo(ForAll(X, D(X))),
+                CNFSentence2 = new CNFConversion().ApplyTo(ForAll(X, E(X)))
+            })
+            .When(g => ((Predicate)g.CNFSentence1).Arguments[0].Equals(((Predicate)g.CNFSentence2).Arguments[0]))
+            .ThenReturns((_, retVal) => retVal.Should().BeTrue("standardised variables from different sentences shouldn't be equal, even if the underlying symbol is the same"));
+
+        // These behaviours might be nice, but we don't do them for now at least:
+        ////public static Test NormalisationOfEquivalentSentences => TestThat
+        ////    .GivenEachOf(() => new[]
         ////    {
-        ////        Sentence1 = Or(Or(A, B), C),
-        ////        Sentence2 = Or(A, Or(B, C))
+        ////        new
+        ////        {
+        ////            // Order of operation for disjunctions doesn't matter
+        ////            Sentence1 = Or(Or(A, B), C),
+        ////            Sentence2 = Or(A, Or(B, C))
+        ////        },
+        ////        new
+        ////        {
+        ////            // More difficult - variable naming doesn't matter
+        ////            Sentence1 = ForAll(X, D(X)),
+        ////            Sentence2 = ForAll(Y, D(Y))
+        ////        }
         ////    })
         ////    .When(g => new
         ////    {
