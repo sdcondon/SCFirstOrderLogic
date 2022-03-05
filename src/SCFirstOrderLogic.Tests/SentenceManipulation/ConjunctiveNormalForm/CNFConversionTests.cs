@@ -36,7 +36,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         ////        },
         ////        new
         ////        {
-        ////            // More difficult - variable naming doesn't matter
+        ////            // More difficult, but MAYBE still useful - variable naming doesn't matter
         ////            Sentence1 = ForAll(X, D(X)),
         ////            Sentence2 = ForAll(Y, D(Y))
         ////        }

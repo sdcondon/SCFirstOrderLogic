@@ -3,9 +3,18 @@ using static SCFirstOrderLogic.Sentence;
 
 namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9
 {
-    //// The Crime example from section 9.3 of 
-    //// Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
-
+    /// <summary>
+    /// The "crime" example from section 9.3 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
+    /// <para/>
+    /// Example usage:
+    /// <code>
+    /// using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
+    /// ..
+    /// IKnowledgeBase kb = .. // a knowledge base implementation
+    /// kb.Tell(Axioms);
+    /// var answer = kb.Ask(IsCriminal(West));
+    /// </code>
+    /// </summary>
     public static class CrimeDomain
     {
         static CrimeDomain()
@@ -40,6 +49,9 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9
             }.AsReadOnly();
         }
 
+        /// <summary>
+        /// Gets the fundamental axioms of the crime domain.
+        /// </summary>
         public static IReadOnlyCollection<Sentence> Axioms { get; }
 
         public static Constant America { get; } = new Constant(nameof(America));

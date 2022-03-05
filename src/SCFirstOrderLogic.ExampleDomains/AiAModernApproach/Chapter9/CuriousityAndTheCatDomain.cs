@@ -3,9 +3,18 @@ using static SCFirstOrderLogic.Sentence;
 
 namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9
 {
-    //// The curiousity and the cat example from section 9.5 of
-    //// Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
-
+    /// <summary>
+    /// The "curiousity and the cat" example from section 9.5 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
+    /// <para/>
+    /// Example usage:
+    /// <code>
+    /// using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCatDomain;
+    /// ..
+    /// IKnowledgeBase kb = .. // a knowledge base implementation
+    /// kb.Tell(Axioms);
+    /// var answer = kb.Ask(Kills(Curiousity, Tuna));
+    /// </code>
+    /// </summary>
     public static class CuriousityAndTheCatDomain
     {
         static CuriousityAndTheCatDomain()
@@ -41,11 +50,14 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9
             }.AsReadOnly();
         }
 
+        /// <summary>
+        /// Gets the fundamental axioms of the domain.
+        /// </summary>
         public static IReadOnlyCollection<Sentence> Axioms { get; }
 
         public static Constant Jack { get; } = new Constant(nameof(Jack));
-        public static Constant Tuna { get; } = new Constant(nameof(Jack));
-        public static Constant Curiousity { get; } = new Constant(nameof(Jack));
+        public static Constant Tuna { get; } = new Constant(nameof(Tuna));
+        public static Constant Curiousity { get; } = new Constant(nameof(Curiousity));
 
         public static Predicate IsAnimal(Term subject) => new Predicate(nameof(IsAnimal), subject);
         public static Predicate IsCat(Term subject) => new Predicate(nameof(IsCat), subject);

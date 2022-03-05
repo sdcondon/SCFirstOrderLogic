@@ -19,7 +19,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// Gets the substitions made by this unifier.
         /// </summary>
         /// <remarks>
-        /// TODO - Just returns a dictionary - should probably actually return an immmutable type..
+        /// TODO - Just returns a dictionary - should probably actually return an immutable type..
         /// </remarks>
         public IReadOnlyDictionary<VariableReference, Term> Substitutions { get; }
 

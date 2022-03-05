@@ -4,34 +4,19 @@ using System.Linq;
 using System.Linq.Expressions;
 using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Linq.Crime
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Linq
 {
-    //// The Crime example from section 9.3 of 
-    //// Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
-
-    public interface IDomain : IEnumerable<IElement>
-    {
-        IElement America { get; }
-        IElement Nono { get; }
-        IElement West { get; }
-    }
-
-    public interface IElement
-    {
-        bool IsAmerican { get; }
-        bool IsHostile { get; }
-        bool IsCriminal { get; }
-        bool IsWeapon { get; }
-        bool IsMissile { get; }
-        bool Owns(IElement item);
-        bool Sells(IElement item, IElement buyer);
-        bool IsEnemyOf(IElement other);
-    }
-
     /// <summary>
-    /// Container for fundamental knowledge about the kinship domain.
+    /// The "crime" example from section 9.3 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
+    /// <para/>
+    /// Example usage:
+    /// <code>
+    /// ILinqKnowledgeBase&lt;CrimeDomain.IDomain, CrimeDomain.IElement&gt; kb = .. // a knowledge base implementation
+    /// kb.Tell(CrimeDomain.Axioms);
+    /// var answer = kb.Ask(d => d.IsCriminal(d.West));
+    /// </code>
     /// </summary>
-    public static class CrimeKnowledge
+    public static class CrimeDomain
     {
         public static IReadOnlyCollection<Expression<Predicate<IDomain>>> Axioms { get; } = new List<Expression<Predicate<IDomain>>>()
         {
@@ -64,5 +49,24 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Linq.Crime
             d => d.Nono.IsEnemyOf(d.America)
 
         }.AsReadOnly();
+
+        public interface IDomain : IEnumerable<IElement>
+        {
+            IElement America { get; }
+            IElement Nono { get; }
+            IElement West { get; }
+        }
+
+        public interface IElement
+        {
+            bool IsAmerican { get; }
+            bool IsHostile { get; }
+            bool IsCriminal { get; }
+            bool IsWeapon { get; }
+            bool IsMissile { get; }
+            bool Owns(IElement item);
+            bool Sells(IElement item, IElement buyer);
+            bool IsEnemyOf(IElement other);
+        }
     }
 }

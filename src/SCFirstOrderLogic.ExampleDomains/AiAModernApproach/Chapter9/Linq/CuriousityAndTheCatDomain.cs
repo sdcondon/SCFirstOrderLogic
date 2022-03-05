@@ -4,31 +4,23 @@ using System.Linq;
 using System.Linq.Expressions;
 using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Linq.CuriousityAndTheCat
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Linq
 {
-    //// The curiousity and the cat example from section 9.5 of
-    //// Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
-
-    public interface IDomain : IEnumerable<IElement>
-    {
-        IElement Jack { get; }
-        IElement Tuna { get; }
-        IElement Curiousity { get; }
-    }
-
-    public interface IElement
-    {
-        bool IsAnimal { get; }
-        bool IsCat { get; }
-        bool Loves(IElement other);
-        bool Kills(IElement other);
-    }
-
     /// <summary>
-    /// Container for fundamental knowledge about the kinship domain.
+    /// The "curiousity and the cat" example from section 9.5 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
+    /// <para/>
+    /// Example usage:
+    /// <code>
+    /// ILinqKnowledgeBase&lt;CuriousityAndTheCatDomain.IDomain, CuriousityAndTheCatDomain.IElement&gt; kb = .. // a knowledge base implementation
+    /// kb.Tell(CuriousityAndTheCatDomain.Axioms);
+    /// var answer = kb.Ask(d => d.Kills(d.Curiousity, d.Tuna));
+    /// </code>
     /// </summary>
-    public static class CuriousityAndTheCatKnowledge
+    public static class CuriousityAndTheCatDomain
     {
+        /// <summary>
+        /// Gets the fundamental axioms of the domain.
+        /// </summary>
         public static IReadOnlyCollection<Expression<Predicate<IDomain>>> Axioms { get; } = new List<Expression<Predicate<IDomain>>>()
         {
             // Everyone who loves all animals is loved by someone.
@@ -58,5 +50,20 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Linq.Curio
             d => d.All(x => If(x.IsCat, x.IsAnimal))
 
         }.AsReadOnly();
+
+        public interface IDomain : IEnumerable<IElement>
+        {
+            IElement Jack { get; }
+            IElement Tuna { get; }
+            IElement Curiousity { get; }
+        }
+
+        public interface IElement
+        {
+            bool IsAnimal { get; }
+            bool IsCat { get; }
+            bool Loves(IElement other);
+            bool Kills(IElement other);
+        }
     }
 }

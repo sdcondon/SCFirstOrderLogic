@@ -79,7 +79,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
 
         /// <summary>
-        /// Defines the (implicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFLiteral"/>.
+        /// Defines the (explicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFLiteral"/>.
         /// </summary>
         /// <param name="sentence">The sentence to convert.</param>
         /// <remarks>

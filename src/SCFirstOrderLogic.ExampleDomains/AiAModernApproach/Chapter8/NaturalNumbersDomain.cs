@@ -3,6 +3,17 @@ using static SCFirstOrderLogic.Sentence;
 
 namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8
 {
+    /// <summary>
+    /// The natural numbers example domain from chapter 8 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
+    /// <para/>
+    /// Example usage:
+    /// <code>
+    /// IKnowledgeBase kb = .. // a knowledge base implementation
+    /// kb.Tell(NaturalNumbersDomain.Axioms);
+    /// kb.Tell(..facts about the specific problem..);
+    /// var answer = kb.Ask(..my query..);
+    /// </code>
+    /// </summary>
     public static class NaturalNumbersDomain
     {
         static NaturalNumbersDomain()
@@ -10,20 +21,20 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8
             Axioms = new List<Sentence>()
             {
                 ForAll(X, Not(AreEqual(Successor(X), Zero))),
+
                 ForAll(X, Y, If(Not(AreEqual(X, Y)), Not(AreEqual(Successor(X), Successor(Y))))),
+
                 ForAll(X, AreEqual(Add(Zero, X), X)),
+
                 ForAll(X, Y, AreEqual(Add(Successor(X), Y), Add(Successor(Y), X))),
 
             }.AsReadOnly();
         }
 
-        // Usage (note the separation of concerns for knowledge base implementation and the domain):
-        //
-        // var kb = new ResolutionKnowledgeBase(); // ..or a different KB implementation - none implemented yet
-        // kb.Tell(NaturalNumberKnowledge.Axioms);
-        // kb.Tell(..facts about the specific problem..);
-        // kb.Ask(..my query..);
-        public static IReadOnlyCollection<Sentence> Axioms { get; }
+        /// <summary>
+        /// Gets the fundamental axioms of the natural numbers domain.
+        /// </summary>
+        public static IReadOnlyCollection<Sentence> Axioms { get; } 
 
         public static Constant Zero { get; } = new Constant(nameof(Zero));
 

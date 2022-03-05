@@ -3,14 +3,21 @@ using static SCFirstOrderLogic.Sentence;
 
 namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8
 {
+    /// <summary>
+    /// The kinship example domain from chapter 8 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
+    /// Example usage:
+    /// <code>
+    /// IKnowledgeBase kb = .. // a knowledge base implementation
+    /// kb.Tell(KinshipDomain.Axioms);
+    /// kb.Tell(..facts about the specific problem..);
+    /// var answer = kb.Ask(..my query..);
+    /// </code>
+    /// </summary>
     public static class KinshipDomain
     {
-        // Usage (note the separation of concerns for knowledge base implementation and the domain):
-        //
-        // var kb = new ResolutionKnowledgeBase(); // ..or a different KB implementation - none implemented yet
-        // kb.Tell(KinshipKnowledge.Axioms);
-        // kb.Tell(..facts about the specific problem..);
-        // kb.Ask(..my query..);
+        /// <summary>
+        /// Gets the fundamental axioms of the kinship domain.
+        /// </summary>
         public static IReadOnlyCollection<Sentence> Axioms { get; } = new List<Sentence>()
         {
             // One's mother is one's female parent:
@@ -33,7 +40,10 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8
 
         }.AsReadOnly();
 
-        // Theorems are derivable from axioms, but might be useful for performance...
+        /// <summary>
+        /// Gets some useful theorems of the kinship domain.
+        /// Theorems are derivable from axioms, but might be useful for performance.
+        /// </summary>
         public static IReadOnlyCollection<Sentence> Theorems { get; } = new List<Sentence>()
         {
             // Siblinghood is commutative:

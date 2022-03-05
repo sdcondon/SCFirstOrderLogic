@@ -18,7 +18,6 @@ namespace SCFirstOrderLogic.KnowledgeBases
         /// <inheritdoc />
         public void Tell(Sentence sentence)
         {
-            // TODO-BUG: Need to standardise variables apart across all sentences..
             sentences.Add(new CNFSentence(sentence));
         }
 

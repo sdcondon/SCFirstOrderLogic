@@ -248,8 +248,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     // Assume we've hit a literal. NB will throw if its not actually a literal.
                     literals.Add(new CNFLiteral(sentence));
 
-                    // We don't need to look any further down the tree for the purposes of this class (though the PLLiteral ctor, above,
-                    // does so to figure out the details of the literal). So we can just return node rather than invoking base.Visit. 
+                    // We don't need to look any further down the tree for the purposes of this class (though the CNFLiteral ctor, above,
+                    // does so to figure out the details of the literal). So we can just return node rather than invoking base.ApplyTo. 
                     return sentence;
                 }
             }

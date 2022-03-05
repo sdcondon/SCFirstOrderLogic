@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace SCFirstOrderLogic
 {
+    /// <summary>
+    /// Extension methods for <see cref="IEnumerable{T}"/>, primarily to allow for succinctly declaring quantifications with LINQ expressions.
+    /// </summary>
     public static class IEnumerableExtensions
     {
         /// <summary>

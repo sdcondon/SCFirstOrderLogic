@@ -7,19 +7,19 @@ namespace SCFirstOrderLogic.LanguageIntegration
     /// <summary>
     /// A store of knowledge expressed as statements of propositional logic (in turn expressed as LINQ expressions).
     /// </summary>
-    /// <typeparam name="TDomain"></typeparam>
+    /// <typeparam name="TDomain">The type of the domain. The domain must be modelled as an <see cref="IEnumerable{T}"/> of <see cref="TElement"/>.</typeparam>
     /// <typeparam name="TElement">The type that the sentences passed to this class refer to.</typeparam>
     public interface ILinqKnowledgeBase<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {
         /// <summary>
-        /// Inform the knowledge base that a given sentence about the domain is true for all models that it will be asked about.
+        /// Inform the knowledge base that a given expression acting on the domain can be assumed to evaluate to true when answering queries.
         /// </summary>
-        /// <param name="sentence">The sentence that is always true.</param>
+        /// <param name="sentence">The expression that can be assumed to evaluate to true when answering queries.</param>
         public void Tell(Expression<Predicate<TDomain>> sentence);
 
         /// <summary>
-        /// Ask the knowledge base if a given sentence about the model must be true, given what it knows.
+        /// Ask the knowledge base whether a given expression acting on the domain must be true, given what it knows.
         /// </summary>
         /// <param name="query">The sentence to ask about.</param>
         /// <returns>True if the sentence is known to be true, false if it is known to be false or cannot be determined.</returns>
