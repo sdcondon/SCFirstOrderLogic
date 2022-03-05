@@ -5,10 +5,10 @@ namespace SCFirstOrderLogic
     /// <summary>
     /// Representation of a variable declaration within a sentence of first order logic. These occur in quantifier sentences.
     /// <para/>
-    /// The existence of this type (as distinct to <see cref="VariableReference"/>) is for robust sentence transformations. When transforming a
+    /// The existence of this type (as distinct from <see cref="VariableReference"/>) is for robust sentence transformations. When transforming a
     /// <see cref="VariableReference"/> (which is a <see cref="Term"/> - it can occur anywhere in a sentence where a <see cref="Term"/>
     /// is valid), it will always be valid to transform it into a different kind of <see cref="Term"/>. <see cref="VariableDeclaration"/>s
-    /// however (which are NOT <see cref="Term"/>s), occur only in <see cref="VariableReference"/> and <see cref="Quantification"/> instances,
+    /// however (which are NOT <see cref="Term"/>s), occur only in <see cref="Quantification"/> (and <see cref="VariableReference"/>) instances,
     /// both of which require the <see cref="VariableDeclaration"/> type exactly.
     /// <para/>
     /// <see cref="VariableDeclaration"/> instances are implicitly convertible to <see cref="VariableReference"/> instances referring to them,
