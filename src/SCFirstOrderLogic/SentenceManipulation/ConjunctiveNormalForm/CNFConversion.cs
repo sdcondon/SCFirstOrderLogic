@@ -6,6 +6,12 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
     /// <summary>
     /// Implementation of <see cref="SentenceTransformation"/> that converts sentences to conjunctive normal form.
+    /// <para/>
+    /// Well.. It's arguable whether the output could be considered *completely* normalised, since it *won't* normalise the
+    /// order of evaluation of the clauses (i.e. the conjunctions found at the root of the output sentence),
+    /// or the literals within those clauses (i.e. disjunctions found below those top-level conjunctions).
+    /// The <see cref="CNFSentence"/> class does that. It is because of this (and because the half-job done by this class is of limited
+    /// use on its own) that this class should probably be internal.
     /// </summary>
     public class CNFConversion : SentenceTransformation
     {
@@ -26,18 +32,13 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             // It might be possible to do some of these conversions at the same time, but for now
             // at least we do them sequentially - and in so doing favour maintainability over performance.
+            // Revisit this later.
             sentence = implicationElimination.ApplyTo(sentence);
             sentence = nnfConversion.ApplyTo(sentence);
             sentence = variableStandardisation.ApplyTo(sentence);
             sentence = skolemisation.ApplyTo(sentence);
             sentence = universalQuantifierElimination.ApplyTo(sentence);
             sentence = disjunctionDistribution.ApplyTo(sentence);
-
-            // TODO-USABILITY: Strictly speaking its not needed for the normalisation process, but I wonder if we should also
-            // ensure left- (or right-) first ordering of conjunctions and disjunctions so that the the output Sentences are equal for
-            // two inputs if they would ultimately create two CNFSentences that are considered equal. Then again, its extra work if we
-            // don't need this. Perhaps only when we're actually interested in the output sentence (as opposed to situations where 
-            // we're immediately going to turn it into a CNFSentence). There's probably a useful refactoring here.
 
             // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
             // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong. Should validate here..?
@@ -127,37 +128,24 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
             {
-                var quantificationFinder = new QuantificationFinder();
-                quantificationFinder.ApplyTo(sentence);
-                return new VariableStandardiser(quantificationFinder.Quantifications).ApplyTo(sentence);
+                return new ScopedVariableStandardisation().ApplyTo(sentence);
             }
 
             // NB: A "Transformation" that doesn't transform and has to use a property to expose its output. More evidence to suggest introduction of visitor pattern at some point.
-            private class QuantificationFinder : SentenceTransformation
-            {
-                public List<Quantification> Quantifications { get; } = new List<Quantification>();
-
-                protected override Sentence ApplyTo(Quantification quantification)
-                {
-                    Quantifications.Add(quantification);
-                    return base.ApplyTo(quantification);
-                }
-            }
-
-            // TODO: I don't think we need two separate internal transforms any more - can probably just have a single ScopedVariableStandardisation one..
-            private class VariableStandardiser : SentenceTransformation
+            private class ScopedVariableStandardisation : SentenceTransformation
             {
                 private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
 
-                public VariableStandardiser(List<Quantification> quantifications)
+                protected override Sentence ApplyTo(Quantification quantification)
                 {
-                    foreach (var quantification in quantifications)
-                    {
-                        mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification.Variable.Symbol));
-                    }
+                    mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification.Variable.Symbol));
+                    return base.ApplyTo(quantification);
                 }
 
-                protected override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration) => mapping[variableDeclaration];
+                protected override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
+                {
+                    return mapping[variableDeclaration];
+                }
             }
 
             private class StandardisedVariableSymbol
@@ -171,7 +159,11 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 //// NB: Doesn't override equality or hash code, so uses reference equality -
                 //// and we create exactly one instance per variable scope - thus achieving standardisation
                 //// without having to muck about with trying to ensure names that are unique strings.
-                //// TODO-TESTABILITY: Difficult to test.. Can we do better? Standardisation of same variable in same scope is the same?
+                //// TODO-TESTABILITY: Difficult to test. Would much rather implement value semantics for equality.
+                //// Same variable in same sentence is the same (inside the var store sentence tree re-arranged so that var is the root
+                //// equality would need to avoid infinite loop though. and couldn't work on output of this CNFConversion since this
+                //// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
+                //// are universally quantified)
             }
         }
 

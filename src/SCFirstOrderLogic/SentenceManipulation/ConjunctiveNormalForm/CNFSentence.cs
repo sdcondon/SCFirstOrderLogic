@@ -41,6 +41,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// </summary>
         private class CNFClausesTransformation : SentenceTransformation
         {
+            // TODO: should probably be sorted?
             private readonly List<CNFClause> clauses;
 
             public CNFClausesTransformation(List<CNFClause> clauses) => this.clauses = clauses;

@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 CNFSentence2 = new CNFConversion().ApplyTo(ForAll(X, E(X)))
             })
             .When(g => ((Predicate)g.CNFSentence1).Arguments[0].Equals(((Predicate)g.CNFSentence2).Arguments[0]))
-            .ThenReturns((_, retVal) => retVal.Should().BeTrue("standardised variables from different sentences shouldn't be equal, even if the underlying symbol is the same"));
+            .ThenReturns((_, retVal) => retVal.Should().BeFalse("standardised variables from different sentences shouldn't be equal, even if the underlying symbol is the same"));
 
         // These behaviours might be nice, but we don't do them for now at least:
         ////public static Test NormalisationOfEquivalentSentences => TestThat
