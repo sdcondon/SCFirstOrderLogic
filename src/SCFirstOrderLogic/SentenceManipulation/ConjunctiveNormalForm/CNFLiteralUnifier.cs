@@ -97,10 +97,14 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         {
             if (unifier.TryGetValue(variable, out var value))
             {
+                // The variable is already mapped to something - we need to make sure that the
+                // mapping is consistent with the "other" value.
                 return TryUnify(value, other, unifier);
             }
             else if (other is VariableReference otherVariable && unifier.TryGetValue(otherVariable, out value))
             {
+                // The other value is also a variable that is already mapped to something - we need to make sure that the
+                // mapping is consistent with the "other" value.
                 return TryUnify(variable, value, unifier);
             }
             else if (Occurs(variable, other))
@@ -109,6 +113,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             }
             else
             {
+                // This substitution is not in the book, but is so that e.g. Knows(John, X) and Knows(Y, Mother(Y)) will have x = Mother(John), not x = Mother(Y)
+                other = new VariableSubstituter(unifier).ApplyTo(other); 
                 unifier[variable] = other;
                 return true;
             }
@@ -156,6 +162,23 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 if (variable.Equals(variableReference))
                 {
                     IsFound = true;
+                }
+
+                return variable;
+            }
+        }
+
+        private class VariableSubstituter : SentenceTransformation
+        {
+            private readonly IDictionary<VariableReference, Term> variableSubstitutions;
+
+            public VariableSubstituter(IDictionary<VariableReference, Term> variableSubstitutions) => this.variableSubstitutions = variableSubstitutions;
+
+            protected override Term ApplyTo(VariableReference variable)
+            {
+                if (variableSubstitutions.TryGetValue(variable, out var substitutedTerm))
+                {
+                    return substitutedTerm;
                 }
 
                 return variable;

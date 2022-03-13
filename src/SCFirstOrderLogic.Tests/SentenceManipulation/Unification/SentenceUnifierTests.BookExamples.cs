@@ -18,9 +18,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         private record TestCase(Sentence Sentence1, Sentence Sentence2, Dictionary<VariableReference, Term>? ExpectedUnifier = null);
 
         public static Test TryUnifyPositive => TestThat
-            .GivenEachOf(() => new[]
+            .GivenEachOf(() => new TestCase[]
             {
-                new TestCase(
+                new(
                     Sentence1: Knows(john, x),
                     Sentence2: Knows(john, jane),
                     ExpectedUnifier: new Dictionary<VariableReference, Term>()
@@ -28,7 +28,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                         [x] = jane,
                     }),
 
-                new TestCase(
+                new(
                     Sentence1: Knows(john, x),
                     Sentence2: Knows(y, jane),
                     ExpectedUnifier: new Dictionary<VariableReference, Term>()
@@ -37,7 +37,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                         [y] = john,
                     }),
 
-                new TestCase(
+                new(
                     Sentence1: Knows(john, x),
                     Sentence2: Knows(y, Mother(y)),
                     ExpectedUnifier: new Dictionary<VariableReference, Term>()

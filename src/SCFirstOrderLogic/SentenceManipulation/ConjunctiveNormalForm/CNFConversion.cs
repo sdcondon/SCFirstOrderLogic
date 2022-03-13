@@ -228,7 +228,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
                 public SkolemFunctionSymbol(string name) => this.name = name;
 
-                public override string ToString() => name;
+                public override string ToString() => name; // TODO: Would be more intuitive if it were named for the underlying existentially defined variable
 
                 public override bool Equals(object obj) => obj is SkolemFunctionSymbol skolem && skolem.name.Equals(name);
 

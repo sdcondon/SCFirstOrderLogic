@@ -1,11 +1,14 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace SCFirstOrderLogic.KnowledgeBases
 {
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
+    /// Includes functionality for fine-grained execution and examination of individual steps of queries.
     /// </summary>
     /// <remarks>
     /// TODO-FUNCTIONALITY: doesn't yet allow any specification of resolution strategy. Essentially just works through pairs
@@ -13,34 +16,96 @@ namespace SCFirstOrderLogic.KnowledgeBases
     /// </remarks>
     public class ResolutionKnowledgeBase : IKnowledgeBase
     {
-        private readonly List<CNFSentence> sentences = new List<CNFSentence>();
+        private readonly List<CNFSentence> sentences = new List<CNFSentence>(); // Ultimately to be replaced with unifier store
 
         /// <inheritdoc />
-        public void Tell(Sentence sentence)
-        {
-            sentences.Add(new CNFSentence(sentence));
-        }
+        public void Tell(Sentence sentence) => sentences.Add(new CNFSentence(sentence));
 
         /// <inheritdoc />
-        public bool Ask(Sentence sentence)
+        public bool Ask(Sentence sentence) => CreateQuery(sentence).Complete();
+
+        /// <summary>
+        /// Creates a new <see cref="ResolutionQuery"/>, for fine-grained execution and examination of a query.
+        /// </summary>
+        /// <param name="sentence">The sentence to query the truth of.</param>
+        /// <returns>A new <see cref="ResolutionQuery"/> instance.</returns>
+        public ResolutionQuery CreateQuery(Sentence sentence) => new ResolutionQuery(this, sentence);
+
+        /// <summary>
+        /// book 9.5.2
+        /// TODO-BUG: Need to add factoring
+        /// TODO-BUG: Need to account for equality (assuming we don't want to axiomise..). could this be part of strategy..?
+        /// </summary>
+        public class ResolutionQuery
         {
-            // TODO-BUG: Need to add factoring
-            // TODO-BUG: Need to account for equality (assuming we don't want to axiomise..)
+            private readonly HashSet<CNFClause> clauses; // Ultimately to be replaced with strategy & unifier store
+            private readonly Queue<(CNFClause, CNFClause)> queue = new Queue<(CNFClause, CNFClause)>(); // Ultimately to be replaced with strategy & unifier store
+            private readonly Dictionary<CNFClause, (CNFClause, CNFClause)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause)>();
 
-            var negationOfQueryAsCnf = new CNFSentence(new Negation(sentence));
-            var clauses = sentences.Append(negationOfQueryAsCnf).SelectMany(s => s.Clauses).ToHashSet();
-            var queue = new Queue<(CNFClause, CNFClause)>();
+            private bool result;
 
-            foreach (var ci in clauses)
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ResolutionQuery"/> class.
+            /// </summary>
+            /// <param name="knowledgeBase"></param>
+            /// <param name="sentence"></param>
+            public ResolutionQuery(ResolutionKnowledgeBase knowledgeBase, Sentence sentence)
             {
-                foreach (var cj in clauses)
+                this.clauses = knowledgeBase.sentences
+                    .Append(new CNFSentence(new Negation(sentence)))
+                    .SelectMany(s => s.Clauses) // TODO: ... same unifier constraint across a sentence. This is all wrong.. Need a counter-test
+                    .ToHashSet();
+
+                foreach (var ci in clauses)
                 {
-                    queue.Enqueue((ci, cj));
+                    foreach (var cj in clauses)
+                    {
+                        queue.Enqueue((ci, cj));
+                    }
                 }
             }
 
-            while (queue.Count > 0)
+            /// <summary>
+            /// Gets a value indicating whether the query is complete.
+            /// The result of completed queries is available via the <see cref="Result"/> property.
+            /// Calling <see cref="NextStep"/> on a completed query will result in an <see cref="InvalidOperationException"/>.
+            /// </summary>
+            public bool IsComplete { get; private set; } = false;
+
+            /// <summary>
+            /// Gets a value indicating the result of the query.
+            /// True indicates that the query is known to be true.
+            /// False indicates that the query is known to be false or cannot be determined.
+            /// </summary>
+            /// <exception cref="InvalidOperationException">The query is not yet complete.</exception>
+            public bool Result
             {
+                get
+                {
+                    if (!IsComplete)
+                    {
+                        throw new InvalidOperationException("Query is not yet complete");
+                    }
+
+                    return result;
+                }
+            }
+
+            /// <summary>
+            /// Gets a mapping from a clause to the two clauses from which it was inferred.
+            /// </summary>
+            public IReadOnlyDictionary<CNFClause, (CNFClause, CNFClause)> Steps => steps;
+
+            /// <summary>
+            /// Executes the next step of the query.
+            /// </summary>
+            public void NextStep()
+            {
+                if (IsComplete)
+                {
+                    throw new InvalidOperationException("Query is complete");
+                }
+
                 var (ci, cj) = queue.Dequeue();
                 var resolvents = CNFClause.Resolve(ci, cj);
 
@@ -48,11 +113,16 @@ namespace SCFirstOrderLogic.KnowledgeBases
                 {
                     if (resolvent.Equals(CNFClause.Empty))
                     {
-                        return true;
+                        steps[CNFClause.Empty] = (ci, cj);
+                        result = true;
+                        IsComplete = true;
+                        return;
                     }
 
                     if (!clauses.Contains(resolvent))
                     {
+                        steps[resolvent] = (ci, cj);
+
                         foreach (var clause in clauses)
                         {
                             queue.Enqueue((clause, resolvent));
@@ -61,9 +131,74 @@ namespace SCFirstOrderLogic.KnowledgeBases
                         clauses.Add(resolvent);
                     }
                 }
+
+                if (queue.Count == 0)
+                {
+                    result = false;
+                    IsComplete = true;
+                }
             }
 
-            return false;
+            /// <summary>
+            /// Continuously 
+            /// </summary>
+            /// <returns></returns>
+            public bool Complete()
+            {
+                while (!IsComplete)
+                {
+                    NextStep();
+                }
+
+                return result;
+            }
+
+            /// <summary>
+            /// Produces a (quite raw) set of 
+            /// </summary>
+            /// <returns></returns>
+            public string Explain()
+            {
+                if (!IsComplete)
+                {
+                    throw new InvalidOperationException("Query is not yet complete");
+                }
+                else if (!Result)
+                {
+                    throw new NotSupportedException("Explanation of a negative result is not yet supported");
+                }
+
+                // walk back through the tree of steps (CNFClause.Empty will be the root), breadth-first
+                var orderedSteps = new List<CNFClause>();
+                var queue = new Queue<CNFClause>(new[] { CNFClause.Empty });
+                while (queue.Count > 0)
+                {
+                    var clause = queue.Dequeue();
+                    orderedSteps.Add(clause);
+
+                    if (steps.TryGetValue(clause, out var input))
+                    {
+                        queue.Enqueue(input.Item1);
+                        queue.Enqueue(input.Item2);
+                    }
+                }
+
+                orderedSteps.Reverse();
+                var explanation = new StringBuilder();
+                for (var i = 0; i < orderedSteps.Count; i++)
+                {
+                    if (steps.TryGetValue(orderedSteps[i], out var input))
+                    {
+                        explanation.AppendLine($"#{i}: {orderedSteps[i]} : From {input.Item1} (#{orderedSteps.IndexOf(input.Item1)}) and {input.Item2} (#{orderedSteps.IndexOf(input.Item2)})");
+                    }
+                    else
+                    {
+                        explanation.AppendLine($"#{i}: {orderedSteps[i]} : From known facts");
+                    }
+                }
+
+                return explanation.ToString();
+            }
         }
     }
 }

@@ -139,12 +139,14 @@ namespace SCFirstOrderLogic.SentenceManipulation
             {
                 return TryUnify(variable, value, unifier);
             }
-            ////else if (Occurs(variable, other))
-            ////{
-            ////    return false;
-            ////}
+            else if (Occurs(variable, other))
+            {
+                return false;
+            }
             else
             {
+                // This substitution is not in the book, but is so that e.g. Knows(John, X) and Knows(Y, Mother(Y)) will have x = Mother(John), not x = Mother(Y)
+                other = new VariableSubstituter(unifier).ApplyTo(other);
                 unifier[variable] = other;
                 return true;
             }
@@ -166,6 +168,53 @@ namespace SCFirstOrderLogic.SentenceManipulation
             }
 
             return true;
+        }
+
+        private static bool Occurs(VariableReference variable, Term term)
+        {
+            // TODO*-PERFORMANCE: GC impact when creating a bunch of these.. Mutability and pooling?
+            var finder = new VariableFinder(variable);
+            finder.ApplyTo(term);
+            return finder.IsFound;
+        }
+
+        private class VariableFinder : SentenceTransformation
+        {
+            private readonly VariableReference variableReference;
+
+            public VariableFinder(VariableReference variableReference) => this.variableReference = variableReference;
+
+            public bool IsFound { get; private set; } = false;
+
+            // TODO-PERFORMANCE: For performance, should probably override everything and stop as soon as IsFound is true.
+            // And/or establish visitor pattern to make this easier..
+
+            protected override Term ApplyTo(VariableReference variable)
+            {
+                if (variable.Equals(variableReference))
+                {
+                    IsFound = true;
+                }
+
+                return variable;
+            }
+        }
+
+        private class VariableSubstituter : SentenceTransformation
+        {
+            private readonly IDictionary<VariableReference, Term> variableSubstitutions;
+
+            public VariableSubstituter(IDictionary<VariableReference, Term> variableSubstitutions) => this.variableSubstitutions = variableSubstitutions;
+
+            protected override Term ApplyTo(VariableReference variable)
+            {
+                if (variableSubstitutions.TryGetValue(variable, out var substitutedTerm))
+                {
+                    return substitutedTerm;
+                }
+
+                return variable;
+            }
         }
     }
 }

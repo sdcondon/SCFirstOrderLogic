@@ -27,5 +27,18 @@ namespace SCFirstOrderLogic.KnowledgeBases
             })
             .ThenReturns()
             .And(retVal => retVal.Should().Be(true));
+
+        public static Test BookExample3 => TestThat
+            .When(() =>
+            {
+                var kb = new ResolutionKnowledgeBase();
+                kb.Tell(CuriousityAndTheCatDomain.Axioms);
+                var query = kb.CreateQuery(Kills(Curiousity, Tuna));
+                query.Complete();
+                return query;
+            })
+            .ThenReturns()
+            .And(retVal => retVal.Result.Should().Be(true))
+            .And(retVal => retVal.Explain().Should().BeNull());
     }
 }
