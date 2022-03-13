@@ -42,9 +42,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     Literal2: Knows(y, Mother(y)),
                     ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
                     {
-                        // Book says that x should be Mother(john), but that's not what the algorithm they give
-                        // produces. Easy enough to resolve (after all, y is john), but waiting and seeing how it pans out through usage..
-                        [x] = Mother(y),
+                        [x] = Mother(john),
                         [y] = john,
                     }),
             })
