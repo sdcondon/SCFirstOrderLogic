@@ -194,7 +194,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         }
 
         /// <inheritdoc />
-        public override string ToString() => string.Join(" ∨ ", Literals);
+        public override string ToString() => Literals.Count == 0 ? "<FALSE>" : string.Join(" ∨ ", Literals);
 
         /// <inheritdoc />
         /// <remarks>

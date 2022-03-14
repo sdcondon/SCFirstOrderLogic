@@ -185,11 +185,12 @@ namespace SCFirstOrderLogic.KnowledgeBases
 
                 orderedSteps.Reverse();
                 var explanation = new StringBuilder();
+                explanation.AppendLine($"Query is {Result}");
                 for (var i = 0; i < orderedSteps.Count; i++)
                 {
                     if (steps.TryGetValue(orderedSteps[i], out var input))
                     {
-                        explanation.AppendLine($"#{i}: {orderedSteps[i]} : From {input.Item1} (#{orderedSteps.IndexOf(input.Item1)}) and {input.Item2} (#{orderedSteps.IndexOf(input.Item2)})");
+                        explanation.AppendLine($"#{i}: #{orderedSteps.IndexOf(input.Item1)} + #{orderedSteps.IndexOf(input.Item2)} : {orderedSteps[i]} : From {input.Item1} (#{orderedSteps.IndexOf(input.Item1)}) and {input.Item2} (#{orderedSteps.IndexOf(input.Item2)})");
                     }
                     else
                     {
