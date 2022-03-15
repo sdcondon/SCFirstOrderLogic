@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFLiteral"/> class.
         /// </summary>
-        /// <param name="sentence">The literal, represented as a <see cref="Sentence"/> object.</param>
+        /// <param name="sentence">The literal, represented as a <see cref="Sentence"/> object. An exception will be thrown if it is neither a predicate or a negated predicate.</param>
         public CNFLiteral(Sentence sentence)
         {
             if (sentence is Negation negation)
@@ -28,7 +28,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             }
             else
             {
-                throw new ArgumentException($"Provided sentence must be either a predicate or a negated predicate. {sentence} is neither.");
+                throw new ArgumentException($"Provided sentence must be either a predicate or a negated predicate. {sentence} is neither.", nameof(sentence));
             }
         }
 

@@ -12,12 +12,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         private static readonly LiteralComparer literalComparer = new LiteralComparer();
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="CNFClause"/> class.
+        /// Initialises a new instance of the <see cref="CNFClause"/> class from a sentence.
         /// </summary>
-        /// <param name="sentence">The clause, represented as a <see cref="Sentence"/>.</param>
-        /// <remarks>
-        /// NB: Internal because it makes the assumption that the sentence is a disjunction of literals. If it were public we'd need to verify that.
-        /// </remarks>
+        /// <param name="sentence">The clause, represented as a <see cref="Sentence"/>. An exception will be thrown if it is not a disjunction of literals.</param>
         internal CNFClause(Sentence sentence)
         {
             var literals = new SortedSet<CNFLiteral>(new LiteralComparer());
@@ -47,10 +44,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
         /// <summary>
         /// Gets the collection of literals that comprise this clause.
+        /// <para/>
+        /// Literals are ordered first by the (hash code of the) underlying atomic sentence, then by whether they are positive or not. This makes resolution easier.
         /// </summary>
-        /// <remarks>
-        /// NB: Literals are ordered first by underlying atomic sentence (hash code), then by whether they are positive or not. This makes resolution easier.
-        /// </remarks>
         public IReadOnlyCollection<CNFLiteral> Literals { get; }
 
         /// <summary>
@@ -178,6 +174,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
                 if (CNFLiteralUnifier.TryCreate(literal1, literal2.Negate(), out _))
                 {
+                    // todo: apply unifier..
                     AddResolvent(literal1, literal2);
                     moveNext1 = moveNext2 = true;
                 }
@@ -238,10 +235,10 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
             public override Sentence ApplyTo(Sentence sentence)
             {
-                if (sentence is Disjunction)
+                if (sentence is Disjunction disjunction)
                 {
                     // The sentence is assumed to be a clause (i.e. a disjunction of literals) - so just skip past all the disjunctions at the root.
-                    return base.ApplyTo(sentence);
+                    return base.ApplyTo(disjunction);
                 }
                 else
                 {
