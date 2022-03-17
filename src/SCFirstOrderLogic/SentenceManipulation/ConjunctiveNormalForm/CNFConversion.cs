@@ -164,6 +164,10 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 //// equality would need to avoid infinite loop though. and couldn't work on output of this CNFConversion since this
                 //// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
                 //// are universally quantified)
+                ///
+
+                /// also: should we throw if the variable being standardised is already standardised? Or return it unchanged?
+                /// Just thinking about robustness in the face of weird usages potentially resulting in tuff being normalised twice?
             }
         }
 

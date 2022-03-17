@@ -19,8 +19,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             {
                 // Modus Ponens resolution with a constant
                 new(
-                    Sentence1: If(S(C), T(C)), // ¬S(C) T(C)
-                    Sentence2: S(C),
+                    Sentence1: If(S(C), T(C)), // ¬S(C) ∨ T(C)
+                    Sentence2: S(C), 
                     ExpectedResolvent: T(C)),
 
                 // Modus Ponens resolution on a globally quantified variable & a constant
