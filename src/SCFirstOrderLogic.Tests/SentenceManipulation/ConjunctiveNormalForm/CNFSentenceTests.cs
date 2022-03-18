@@ -5,7 +5,7 @@ using static SCFirstOrderLogic.Sentence;
 
 namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {
-    public static partial class CNFSentenceTests
+    public static class CNFSentenceTests
     {
         private static Sentence P => new Predicate("P");
         private static Sentence Q => new Predicate("Q");
