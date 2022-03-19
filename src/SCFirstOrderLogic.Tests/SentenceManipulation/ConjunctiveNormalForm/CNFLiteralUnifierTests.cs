@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         private static readonly VariableDeclaration x = new("x");
         private static readonly VariableDeclaration y = new("y");
 
-        private record TestCase(CNFLiteral Literal1, CNFLiteral Literal2, Dictionary<VariableReference, Term>? ExpectedSubstitutions = null);
+        private record TestCase(CNFLiteral Literal1, CNFLiteral Literal2, Dictionary<VariableReference, Term>? ExpectedSubstitutions = null, CNFLiteral? ExpectedUnified = null);
 
         public static Test TryUnifyPositive => TestThat
             .GivenEachOf(() => new[]
@@ -26,7 +26,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
                     {
                         [x] = jane,
-                    }),
+                    },
+                    ExpectedUnified: Knows(john, jane)),
 
                 new TestCase(
                     Literal1: Knows(john, x),
@@ -35,7 +36,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     {
                         [x] = jane,
                         [y] = john,
-                    }),
+                    },
+                    ExpectedUnified: Knows(john, jane)),
 
                 new TestCase(
                     Literal1: Knows(john, x),
@@ -44,7 +46,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     {
                         [x] = Mother(john),
                         [y] = john,
-                    }),
+                    },
+                    ExpectedUnified: Knows(john, Mother(john))),
             })
             .When(tc =>
             {
@@ -53,7 +56,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-            .And((tc, r) => r.unifier!.Substitutions.Should().Equal(tc.ExpectedSubstitutions));
+            .And((tc, r) => r.unifier!.Substitutions.Should().Equal(tc.ExpectedSubstitutions))
+            .And((tc, r) => r.unifier!.ApplyTo(tc.Literal1).Should().Be(tc.ExpectedUnified))
+            .And((tc, r) => r.unifier!.ApplyTo(tc.Literal2).Should().Be(tc.ExpectedUnified));
 
         public static Test TryUnifyNegative => TestThat
             .GivenEachOf(() => new[]

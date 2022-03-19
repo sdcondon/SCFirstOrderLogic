@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFLiteral"/> class.
         /// </summary>
-        /// <param name="sentence">The literal, represented as a <see cref="Sentence"/> object. An exception will be thrown if it is neither a predicate or a negated predicate.</param>
+        /// <param name="sentence">The literal, represented as a <see cref="Sentence"/> object. An exception will be thrown if it is neither a predicate nor a negated predicate.</param>
         public CNFLiteral(Sentence sentence)
         {
             if (sentence is Negation negation)
@@ -68,6 +68,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         public override string ToString() => $"{(IsNegated ? "¬" : "")}{Predicate}";
 
         /// <inheritdoc />
+        /// TODO: Explain this choice of equality (and hashcode) implementation.
         public override bool Equals(object obj)
         {
             return obj is CNFLiteral literal
@@ -79,21 +80,25 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
 
         /// <summary>
-        /// Defines the (explicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFLiteral"/>.
+        /// Defines the (explicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFLiteral"/>. NB: This conversion is explicit because it can fail (if the sentence isn't actually a literal).
         /// </summary>
         /// <param name="sentence">The sentence to convert.</param>
-        /// <remarks>
-        /// NB: This conversion is explicit because it can fail (if the sentence isn't actually a literal).
-        /// </remarks>
-        public static explicit operator CNFLiteral(Sentence sentence) => new CNFLiteral(sentence);
+        public static explicit operator CNFLiteral(Sentence sentence)
+        {
+            try
+            {
+                return new CNFLiteral(sentence);
+            }
+            catch (ArgumentException e)
+            {
+                throw new InvalidCastException($"To be converted to a literal, sentences must be either a predicate or a negated predicate. {sentence} is neither.", e);
+            }
+        }
 
         /// <summary>
-        /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="CNFLiteral"/>.
+        /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="CNFLiteral"/>. NB: This conversion is implicit because it is always valid.
         /// </summary>
         /// <param name="sentence">The predicate to convert.</param>
-        /// <remarks>
-        /// NB: This conversion is implicit because it is always valid.
-        /// </remarks>
         public static implicit operator CNFLiteral(Predicate predicate) => new CNFLiteral(predicate);
     }
 }
