@@ -27,19 +27,19 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 new(
                     Clause1: new CNFClause(Or(Not(S(X)), T(X))), // ∀X, S(X) => T(X)
                     Clause2: new CNFClause(S(C)),
-                    ExpectedResolvents: new CNFClause(T(C))),
+                    ExpectedResolvents: new CNFClause(T(C))), // {X/C}
 
                 // Modus Ponens resolution on a constant & a globally quantified variable
                 new(
                     Clause1: new CNFClause(Or(Not(S(C)), T(C))), // S(C) => T(C)
                     Clause2: new CNFClause(S(X)),
-                    ExpectedResolvents: new CNFClause(T(C))),
+                    ExpectedResolvents: new CNFClause(T(C))), // {X/C}
 
                 // Modus Ponens resolution on a globally quantified variable
                 new(
                     Clause1: new CNFClause(Or(Not(S(X)), T(X))), // ∀X, S(X) => T(X)
                     Clause2: new CNFClause(S(Y)),
-                    ExpectedResolvents: new CNFClause(T(X))),
+                    ExpectedResolvents: new CNFClause(T(X))), // {X/Y}
 
                 // More complicated - with a constant
                 new(
@@ -63,14 +63,18 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 // Multiply-resolvable clauses
                 // There's probably a better (more intuitive) human-language example, here
                 new(
-                    Clause1: new CNFClause(Or(Not(S(D)), Not(T(X)))), // S(D) => ¬T(X). In human, e.g.: "If SnowShoeHater is wearing snowshoes, no-one is wearing a T-shirt"
-                    Clause2: new CNFClause(Or(T(C), S(X))), // ¬T(C) => S(X). In humanm e.g.: "If TShirtLover is not wearing a T-shirt, everyone is wearing a snowshoes"
+                    // S(D) ⇒ ¬T(X). In human, e.g.: "If SnowShoeHater is wearing snowshoes, no-one is wearing a T-shirt"
+                    Clause1: new CNFClause(Or(Not(S(D)), Not(T(X)))), 
+                    // ¬T(C) ⇒ S(Y). In human e.g.: "If TShirtLover is not wearing a T-shirt, everyone is wearing a snowshoes"
+                    Clause2: new CNFClause(Or(T(C), S(Y))), 
                     ExpectedResolvents: new[]
                     {
-                        // NB: becomes obvious by forward chaining Sentence1 to Sentence2.
-                        new CNFClause(Or(T(C), Not(T(C)))), // {X1/C} gives ∀X, S(X2) ∨ ¬S(D) (that is, S(D) => S(X)). If D is S, everything is. (If snowshoehater is wearing snowshoes, everyone is)
-                        // NB: becomes obvious by forward chaining contrapositive of Sentence1 to contrapositive of Sentence2.
-                        new CNFClause(Or(S(D), Not(S(C)))), // {X2/D} gives ∀X, T(C) ∨ ¬T(X1) (that is, T(X) => T(C)). If anything is T, C is. (If anyone is wearing a t-shirt, TShirtLover is)
+                        // {X/C} gives ∀Y, S(Y) ∨ ¬S(D) (that is, S(D) ⇒ S(Y)). If D is S, everything is. (If snowshoehater is wearing snowshoes, everyone is)
+                        // NB: becomes obvious by forward chaining Clause1 to Clause2.
+                        new CNFClause(Or(S(Y), Not(S(D)))), 
+                        // {Y/D} gives ∀X, T(C) ∨ ¬T(X) (that is, T(X) ⇒ T(C)). If anything is T, C is. (If anyone is wearing a T-shirt, TShirtLover is)
+                        // NB: becomes obvious by forward chaining contrapositive of Clause1 to contrapositive of Clause2.
+                        new CNFClause(Or(T(C), Not(T(X)))), 
                     }),
 
                 // Multiple trivially true resolvents
