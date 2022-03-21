@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic
     /// Representation of an equality sentence of first order logic, In typical FOL syntax, this is written as:
     /// <code>{term} = {term}</code>
     /// <para/>
-    /// NB: Equality is really just a predicate with particular properties (commutativity, transitivity, reflexivity).
+    /// NB: Equality is just a predicate with particular properties (commutativity, transitivity, reflexivity).
     /// Making it a subtype of <see cref="Predicate"/> thus makes sense - and in fact makes a bunch of stuff to do with normalisation easier
     /// because it means there's a singular <see cref="Sentence"/> subtype for atomic sentences.
     /// <para/>

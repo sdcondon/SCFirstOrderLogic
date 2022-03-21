@@ -197,6 +197,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             {
                 if (bindings.TryGetValue(variable, out var substitutedTerm))
                 {
+                    // Don't need base.ApplyTo because we apply this as we add each substitution.
                     return substitutedTerm;
                 }
 
