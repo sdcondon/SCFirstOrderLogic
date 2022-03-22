@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
 using FlUnit;
+using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
 using static SCFirstOrderLogic.Sentence;
 
-namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.KnowledgeBases
 {
-    public static partial class CNFClauseTests
+    public static partial class ClauseResolverTests
     {
         private static Term C => new Constant(nameof(C));
         private static Term D => new Constant(nameof(D));
@@ -39,7 +40,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 new(
                     Clause1: new CNFClause(Or(Not(S(X)), T(X))), // ∀X, S(X) => T(X)
                     Clause2: new CNFClause(S(Y)),
-                    ExpectedResolvents: new CNFClause(T(X))), // {X/Y}
+                    ExpectedResolvents: new CNFClause(T(X))), // {X/Y} .. Or {Y/X}
 
                 // More complicated - with a constant
                 new(
@@ -88,7 +89,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                         new CNFClause(Or(T(C), Not(T(C))))
                     }),
             })
-            .When(g => CNFClause.Resolve(g.Clause1, g.Clause2))
+            .When(g => ClauseResolver.Resolve(g.Clause1, g.Clause2))
             .ThenReturns((g, r) => r.Should().BeEquivalentTo(g.ExpectedResolvents));
     }
 }

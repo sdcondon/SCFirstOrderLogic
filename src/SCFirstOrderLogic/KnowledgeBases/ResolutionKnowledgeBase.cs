@@ -108,7 +108,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
                 }
 
                 var (ci, cj) = queue.Dequeue();
-                var resolvents = CNFClause.Resolve(ci, cj);
+                var resolvents = ClauseResolver.Resolve(ci, cj);
 
                 foreach (var (resolvent, unifier) in resolvents)
                 {
