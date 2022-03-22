@@ -1,4 +1,5 @@
-﻿using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
+﻿using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
         {
             private readonly HashSet<CNFClause> clauses; // Ultimately to be replaced with strategy & unifier store
             private readonly Queue<(CNFClause, CNFClause)> queue = new Queue<(CNFClause, CNFClause)>(); // Ultimately to be replaced with strategy & unifier store
-            private readonly Dictionary<CNFClause, (CNFClause, CNFClause)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause)>();
+            private readonly Dictionary<CNFClause, (CNFClause, CNFClause, CNFLiteralUnifier)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause, CNFLiteralUnifier)>();
 
             private bool result;
 
@@ -53,7 +54,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
             {
                 this.clauses = knowledgeBase.sentences
                     .Append(new CNFSentence(new Negation(sentence)))
-                    .SelectMany(s => s.Clauses) // TODO: ... same unifier constraint across a sentence. This is all wrong.. Need a counter-test
+                    .SelectMany(s => s.Clauses)
                     .ToHashSet();
 
                 foreach (var ci in clauses)
@@ -94,7 +95,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
             /// <summary>
             /// Gets a mapping from a clause to the two clauses from which it was inferred.
             /// </summary>
-            public IReadOnlyDictionary<CNFClause, (CNFClause, CNFClause)> Steps => steps;
+            public IReadOnlyDictionary<CNFClause, (CNFClause, CNFClause, CNFLiteralUnifier)> Steps => steps;
 
             /// <summary>
             /// Executes the next step of the query.
@@ -109,11 +110,11 @@ namespace SCFirstOrderLogic.KnowledgeBases
                 var (ci, cj) = queue.Dequeue();
                 var resolvents = CNFClause.Resolve(ci, cj);
 
-                foreach (var resolvent in resolvents)
+                foreach (var (resolvent, unifier) in resolvents)
                 {
                     if (resolvent.Equals(CNFClause.Empty))
                     {
-                        steps[CNFClause.Empty] = (ci, cj);
+                        steps[CNFClause.Empty] = (ci, cj, unifier);
                         result = true;
                         IsComplete = true;
                         return;
@@ -121,7 +122,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
 
                     if (!clauses.Contains(resolvent))
                     {
-                        steps[resolvent] = (ci, cj);
+                        steps[resolvent] = (ci, cj, unifier);
 
                         foreach (var clause in clauses)
                         {
@@ -190,12 +191,23 @@ namespace SCFirstOrderLogic.KnowledgeBases
                 {
                     if (steps.TryGetValue(orderedSteps[i], out var input))
                     {
-                        explanation.AppendLine($"#{i}: #{orderedSteps.IndexOf(input.Item1)} + #{orderedSteps.IndexOf(input.Item2)} : {orderedSteps[i]} : From {input.Item1} (#{orderedSteps.IndexOf(input.Item1)}) and {input.Item2} (#{orderedSteps.IndexOf(input.Item2)})");
+                        explanation.AppendLine($"#{i}: {orderedSteps[i]}");
+                        explanation.AppendLine($"\tFrom #{orderedSteps.IndexOf(input.Item1)}: {input.Item1}");
+                        explanation.AppendLine($"\tAnd  #{orderedSteps.IndexOf(input.Item2)}: {input.Item2} ");
+                        explanation.Append("\tUsing  : {");
+                        foreach (var kvp in input.Item3.Substitutions)
+                        {
+                            explanation.Append($"{kvp.Key}/{kvp.Value}}}, ");
+                        }
+                        explanation.AppendLine("}");
                     }
                     else
                     {
-                        explanation.AppendLine($"#{i}: {orderedSteps[i]} : From known facts");
+                        explanation.AppendLine($"#{i}: {orderedSteps[i]}");
+                        explanation.AppendLine($"\tFrom known facts");
                     }
+
+                    explanation.AppendLine();
                 }
 
                 return explanation.ToString();

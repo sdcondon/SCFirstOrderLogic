@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation
@@ -10,6 +12,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// </summary>
     internal static class SentenceFormatter
     {
+        // 
+        private static readonly string[] StdVarNames = new[] { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
+        private static readonly Dictionary<CNFConversion.StandardisedVariableSymbol, string> StdVars = new Dictionary<CNFConversion.StandardisedVariableSymbol, string>();
+
+        // TODO: should really be scoped
+
         public static string Print(this Sentence sentence) => sentence switch
         {
             Conjunction conjunction => Print(conjunction),
@@ -64,7 +72,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public static string Print(Function function) =>
             $"{function.Symbol}({string.Join(", ", function.Arguments.Select(a => Print(a)))})";
 
-        public static string Print(VariableDeclaration variableDeclaration) =>
-            variableDeclaration.Symbol.ToString();
+        public static string Print(VariableDeclaration variableDeclaration) => variableDeclaration.Symbol switch
+        {
+            CNFConversion.StandardisedVariableSymbol std => StdVars.ContainsKey(std) ? StdVars[std] : StdVars[std] = StdVarNames[StdVars.Count],
+            _ => variableDeclaration.Symbol.ToString()
+        };
     }
 }

@@ -147,28 +147,28 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     return mapping[variableDeclaration];
                 }
             }
+        }
 
-            private class StandardisedVariableSymbol
-            {
-                private readonly object underlyingSymbol;
+        public class StandardisedVariableSymbol
+        {
+            private readonly object underlyingSymbol;
 
-                public StandardisedVariableSymbol(object underlyingSymbol) => this.underlyingSymbol = underlyingSymbol;
+            public StandardisedVariableSymbol(object underlyingSymbol) => this.underlyingSymbol = underlyingSymbol;
 
-                public override string ToString() => underlyingSymbol.ToString(); // Should we do.. something to indicate that its standardised?
+            public override string ToString() => underlyingSymbol.ToString(); // Should we do.. something to indicate that its standardised?
 
-                //// NB: Doesn't override equality or hash code, so uses reference equality -
-                //// and we create exactly one instance per variable scope - thus achieving standardisation
-                //// without having to muck about with trying to ensure names that are unique strings.
-                //// TODO-TESTABILITY: Difficult to test. Would much rather implement value semantics for equality.
-                //// Same variable in same sentence is the same (inside the var store sentence tree re-arranged so that var is the root
-                //// equality would need to avoid infinite loop though. and couldn't work on output of this CNFConversion since this
-                //// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
-                //// are universally quantified)
-                ///
+            //// NB: Doesn't override equality or hash code, so uses reference equality -
+            //// and we create exactly one instance per variable scope - thus achieving standardisation
+            //// without having to muck about with trying to ensure names that are unique strings.
+            //// TODO-TESTABILITY: Difficult to test. Would much rather implement value semantics for equality.
+            //// Same variable in same sentence is the same (inside the var store sentence tree re-arranged so that var is the root
+            //// equality would need to avoid infinite loop though. and couldn't work on output of this CNFConversion since this
+            //// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
+            //// are universally quantified)
+            ///
 
-                /// also: should we throw if the variable being standardised is already standardised? Or return it unchanged?
-                /// Just thinking about robustness in the face of weird usages potentially resulting in tuff being normalised twice?
-            }
+            /// also: should we throw if the variable being standardised is already standardised? Or return it unchanged?
+            /// Just thinking about robustness in the face of weird usages potentially resulting in tuff being normalised twice?
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     // Skolem function equality should be based on being the same function (at the same location)
                     // in the same original sentence (note "original" - else equality would be circular)
                     existentialVariableMap[existentialQuantification.Variable] = new Function(
-                        new SkolemFunctionSymbol($"Skolem{existentialVariableMap.Count + 1}"),
+                        new SkolemFunctionSymbol($"Sk:{existentialVariableMap.Count + 1}"),
                         universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
                     return base.ApplyTo(existentialQuantification.Sentence);
                 }
@@ -223,21 +223,21 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     return base.ApplyTo(variable);
                 }
             }
+        }
 
-            // Use our own symbol class rather than just a string for Skolem function symbols to eliminate
-            // the possibility of Skolem functions clashing with unfortunately-named user-provided functions.
-            private class SkolemFunctionSymbol
-            {
-                private readonly string name;
+        // Use our own symbol class rather than just a string for Skolem function symbols to eliminate
+        // the possibility of Skolem functions clashing with unfortunately-named user-provided functions.
+        public class SkolemFunctionSymbol
+        {
+            private readonly string name;
 
-                public SkolemFunctionSymbol(string name) => this.name = name;
+            public SkolemFunctionSymbol(string name) => this.name = name;
 
-                public override string ToString() => name; // TODO: Would be more intuitive if it were named for the underlying existentially defined variable
+            public override string ToString() => name; // TODO: Would be more intuitive if it were named for the underlying existentially defined variable
 
-                public override bool Equals(object obj) => obj is SkolemFunctionSymbol skolem && skolem.name.Equals(name);
+            public override bool Equals(object obj) => obj is SkolemFunctionSymbol skolem && skolem.name.Equals(name);
 
-                public override int GetHashCode() => HashCode.Combine(name);
-            }
+            public override int GetHashCode() => HashCode.Combine(name);
         }
 
         /// <summary>
