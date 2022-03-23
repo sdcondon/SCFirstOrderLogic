@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic
     /// ("x = y"). Easy enough to resolve, either specifically (with a ToString overload) or in general (an IsRenderedInfix property?). Haven't done
     /// that yet because its not a big deal, is not worth the complexity, and I'm not yet sure how I want to deal with rendering in FoL syntax going forwards.
     /// </summary>
-    public class Equality : Predicate
+    public sealed class Equality : Predicate
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Equality"/> class.

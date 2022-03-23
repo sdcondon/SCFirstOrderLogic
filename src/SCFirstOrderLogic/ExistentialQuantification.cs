@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic
     /// Representation of a existential quantification sentence of first order logic. In typical FOL syntax, this is written as:
     /// <code>∃ {variable}, {sentence}</code>
     /// </summary>
-    public class ExistentialQuantification : Quantification
+    public sealed class ExistentialQuantification : Quantification
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ExistentialQuantification"/> class.

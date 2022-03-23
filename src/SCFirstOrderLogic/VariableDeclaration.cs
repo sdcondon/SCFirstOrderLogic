@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic
     /// <see cref="VariableDeclaration"/> instances are implicitly convertible to <see cref="VariableReference"/> instances referring to them,
     /// to aid in the succinct creation of sentences.
     /// </summary>
-    public class VariableDeclaration
+    public sealed class VariableDeclaration
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableDeclaration"/> class.

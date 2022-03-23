@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic
     /// Representation of an negation sentence of first order logic. In typical FOL syntax, this is written as:
     /// <code>¬{sentence}</code>
     /// </summary>
-    public class Negation : Sentence
+    public sealed class Negation : Sentence
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Negation"/> class.

@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic
     /// Representation of a material implication sentence of first order logic. In typical FOL syntax, this is written as:
     /// <code>{sentence} ⇒ {sentence}</code>
     /// </summary>
-    public class Implication : Sentence
+    public sealed class Implication : Sentence
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Implication"/> class.

@@ -2,7 +2,7 @@
 using FlUnit;
 using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
 using System;
-using static SCFirstOrderLogic.Sentence;
+using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
 
 namespace SCFirstOrderLogic.KnowledgeBases.Resolution
 {

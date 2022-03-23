@@ -36,6 +36,6 @@ namespace SCFirstOrderLogic
         public override bool Equals(object obj) => obj is Constant otherConstant && otherConstant.Symbol.Equals(Symbol);
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Symbol.GetHashCode());
+        public override int GetHashCode() => HashCode.Combine(Symbol);
     }
 }

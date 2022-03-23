@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using static SCFirstOrderLogic.Sentence;
+using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
 
 namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9
 {
