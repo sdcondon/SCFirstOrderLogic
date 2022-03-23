@@ -12,11 +12,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// </summary>
     internal static class SentenceFormatter
     {
-        // 
-        private static readonly string[] StdVarNames = new[] { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
-        private static readonly Dictionary<CNFConversion.StandardisedVariableSymbol, string> StdVars = new Dictionary<CNFConversion.StandardisedVariableSymbol, string>();
-
-        // TODO: should really be scoped
+        // TODO: Name uniqueness should really be scoped (by formatter instance?) rather than global.
+        private static readonly string[] GreekAlphabet = new[] { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
+        private static readonly Dictionary<CNFConversion.StandardisedVariableSymbol, string> StandardisedVariableLabels = new Dictionary<CNFConversion.StandardisedVariableSymbol, string>();
 
         public static string Print(this Sentence sentence) => sentence switch
         {
@@ -74,7 +72,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         public static string Print(VariableDeclaration variableDeclaration) => variableDeclaration.Symbol switch
         {
-            CNFConversion.StandardisedVariableSymbol std => StdVars.ContainsKey(std) ? StdVars[std] : StdVars[std] = StdVarNames[StdVars.Count],
+            CNFConversion.StandardisedVariableSymbol std => StandardisedVariableLabels.ContainsKey(std) ? StandardisedVariableLabels[std] : StandardisedVariableLabels[std] = GreekAlphabet[StandardisedVariableLabels.Count],
             _ => variableDeclaration.Symbol.ToString()
         };
     }

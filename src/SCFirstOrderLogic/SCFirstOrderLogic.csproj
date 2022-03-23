@@ -19,8 +19,4 @@
     <InternalsVisibleTo Include="SCFirstOrderLogic.Tests" />
   </ItemGroup>
 
-  <ItemGroup>
-	<!--<None Include="$(SolutionDir)\SCFirstOrderLogicIcon.png" Link="SCFirstOrderLogicIcon.png" Pack="true" PackagePath="" />-->
-  </ItemGroup>
-
 </Project>

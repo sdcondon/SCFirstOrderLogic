@@ -193,7 +193,7 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.FromAiAModernA
                 return s;
             }
 
-            public static Substitution Failure = new Substitution();
+            public static Substitution Failure { get; } = new Substitution();
         }
 
         private class Operator
@@ -203,6 +203,8 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.FromAiAModernA
             public object Symbol { get; }
 
             public override bool Equals(object obj) => obj is Operator other && Symbol.Equals(other.Symbol);
+
+            public override int GetHashCode() => HashCode.Combine(Symbol);
         }
     }
 }

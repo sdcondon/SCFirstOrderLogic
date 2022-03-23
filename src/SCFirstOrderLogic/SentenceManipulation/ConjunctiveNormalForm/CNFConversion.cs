@@ -41,8 +41,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             sentence = disjunctionDistribution.ApplyTo(sentence);
 
             // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
-            // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong. Should validate here..?
-            // Or handle on the assumption that they are universally quantified?
+            // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong.
+            // Should we validate here..? Or handle on the assumption that they are universally quantified?
 
             return sentence;
         }
@@ -157,18 +157,18 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
             public override string ToString() => underlyingSymbol.ToString(); // Should we do.. something to indicate that its standardised?
 
-            //// NB: Doesn't override equality or hash code, so uses reference equality -
+            //// NB: Doesn't override equality or hash code, so uses reference equality;
             //// and we create exactly one instance per variable scope - thus achieving standardisation
             //// without having to muck about with trying to ensure names that are unique strings.
+            ////
             //// TODO-TESTABILITY: Difficult to test. Would much rather implement value semantics for equality.
             //// Same variable in same sentence is the same (inside the var store sentence tree re-arranged so that var is the root
             //// equality would need to avoid infinite loop though. and couldn't work on output of this CNFConversion since this
             //// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
-            //// are universally quantified)
-            ///
-
-            /// also: should we throw if the variable being standardised is already standardised? Or return it unchanged?
-            /// Just thinking about robustness in the face of weird usages potentially resulting in tuff being normalised twice?
+            //// are universally quantified).
+            ////
+            //// also: should we throw if the variable being standardised is already standardised? Or return it unchanged?
+            //// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
         }
 
         /// <summary>

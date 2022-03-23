@@ -4,7 +4,7 @@ using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCatDomain;
 
-namespace SCFirstOrderLogic.KnowledgeBases
+namespace SCFirstOrderLogic.KnowledgeBases.Resolution
 {
     public static partial class ResolutionKnowledgeBaseTests
     {

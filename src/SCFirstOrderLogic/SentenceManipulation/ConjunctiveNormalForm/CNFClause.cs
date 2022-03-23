@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
     /// Representation of an individual clause (i.e. a disjunction of <see cref="CNFLiteral"/>s) of a first-order logic sentence in conjunctive normal form.
     /// <para/>
     /// NB: for now at least contains no logic for ordering literals (sentences will be explored depth-frst and left to right) - and equality is based on there
-    /// being the same literals in the same order. This is because different algorithms may need different things.. May (probably should) be changed..
+    /// being the same literals in the same order. This is because different algorithms may need different things.. TODO: May (probably should) be changed..
     /// </summary>
     public class CNFClause
     {
@@ -73,7 +73,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         public bool IsEmpty => Literals.Count == 0;
 
         /// <inheritdoc />
-        public override string ToString() => Literals.Count == 0 ? "<FALSE>" : string.Join(" ∨ ", Literals);
+        public override string ToString() => Literals.Count == 0 ? "<EMPTY CLAUSE - IMPLICITLY FALSE>" : string.Join(" ∨ ", Literals);
 
         /// <inheritdoc />
         /// <remarks>

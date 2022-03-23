@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
+using System;
 using static SCFirstOrderLogic.Sentence;
 
-namespace SCFirstOrderLogic.KnowledgeBases
+namespace SCFirstOrderLogic.KnowledgeBases.Resolution
 {
     public static partial class ClauseResolverTests
     {
@@ -59,7 +60,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
                 new(
                     Clause1: new CNFClause(S(C)),
                     Clause2: new CNFClause(T(C)),
-                    ExpectedResolvents: new CNFClause[] { }),
+                    ExpectedResolvents: Array.Empty<CNFClause>()),
 
                 // Multiply-resolvable clauses
                 // There's probably a better (more intuitive) human-language example, here
@@ -67,7 +68,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
                     // S(D) ⇒ ¬T(X). In human, e.g.: "If SnowShoeHater is wearing snowshoes, no-one is wearing a T-shirt"
                     Clause1: new CNFClause(Or(Not(S(D)), Not(T(X)))), 
                     // ¬T(C) ⇒ S(Y). In human e.g.: "If TShirtLover is not wearing a T-shirt, everyone is wearing a snowshoes"
-                    Clause2: new CNFClause(Or(T(C), S(Y))), 
+                    Clause2: new CNFClause(Or(T(C), S(Y))),
                     ExpectedResolvents: new[]
                     {
                         // {X/C} gives ∀Y, S(Y) ∨ ¬S(D) (that is, S(D) ⇒ S(Y)). If D is S, everything is. (If snowshoehater is wearing snowshoes, everyone is)

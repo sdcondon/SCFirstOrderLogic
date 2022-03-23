@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.KnowledgeBases
+namespace SCFirstOrderLogic.KnowledgeBases.Resolution
 {
     public static class ClauseResolver
     {

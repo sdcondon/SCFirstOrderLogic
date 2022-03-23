@@ -1,11 +1,10 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
-using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
+﻿using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SCFirstOrderLogic.KnowledgeBases
+namespace SCFirstOrderLogic.KnowledgeBases.Resolution
 {
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
@@ -195,10 +194,7 @@ namespace SCFirstOrderLogic.KnowledgeBases
                         explanation.AppendLine($"\tFrom #{orderedSteps.IndexOf(input.Item1)}: {input.Item1}");
                         explanation.AppendLine($"\tAnd  #{orderedSteps.IndexOf(input.Item2)}: {input.Item2} ");
                         explanation.Append("\tUsing  : {");
-                        foreach (var kvp in input.Item3.Substitutions)
-                        {
-                            explanation.Append($"{kvp.Key}/{kvp.Value}}}, ");
-                        }
+                        explanation.Append(string.Join(", ", input.Item3.Substitutions.Select(s => $"{s.Key}/{s.Value}")));
                         explanation.AppendLine("}");
                     }
                     else
