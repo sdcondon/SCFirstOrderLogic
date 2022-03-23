@@ -1,12 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using SCFirstOrderLogic.SentenceManipulation;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Unification
 {
-    public class SentenceUnifier
+    /// <summary>
+    /// Most general unifier logic - optimised from the version presented in the source material,
+    /// but operating on entire sentences, as opposed to literals. More powerful, but slower.
+    /// </summary>
+    public static class SentenceUnifier
     {
-        public bool TryUnify(Sentence x, Sentence y, [NotNullWhen(returnValue: true)] out IDictionary<VariableReference, Term>? unifier)
+        public static bool TryUnify(Sentence x, Sentence y, [NotNullWhen(returnValue: true)] out IDictionary<VariableReference, Term>? unifier)
         {
             unifier = new Dictionary<VariableReference, Term>();
 
@@ -19,7 +24,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             return true;
         }
 
-        private bool TryUnify(Sentence x, Sentence y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Sentence x, Sentence y, IDictionary<VariableReference, Term> unifier)
         {
             // TODO-PERFORMANCE: Given the fundamentality of unification and the number of times that this could be called during inference,
             // it might be worth optimising it a little via a visitor-style design instead of this type switch..
@@ -38,28 +43,28 @@ namespace SCFirstOrderLogic.SentenceManipulation
             };
         }
 
-        private bool TryUnify(Conjunction x, Conjunction y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Conjunction x, Conjunction y, IDictionary<VariableReference, Term> unifier)
         {
             // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
             // perhaps Low and High (internal) props in conjunction?
             return TryUnify(x.Left, y.Left, unifier) && TryUnify(x.Right, y.Right, unifier);
         }
 
-        private bool TryUnify(Disjunction x, Disjunction y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Disjunction x, Disjunction y, IDictionary<VariableReference, Term> unifier)
         {
             // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
             // perhaps Low and High (internal) props in conjunction? Or assume normalised ordering (which at the time of writing WE DONT DO)
             return TryUnify(x.Left, y.Left, unifier) && TryUnify(x.Right, y.Right, unifier);
         }
 
-        private bool TryUnify(Equality x, Equality y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Equality x, Equality y, IDictionary<VariableReference, Term> unifier)
         {
             // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
             // perhaps Low and High (internal) props in conjunction? Or assume normalised ordering (which at the time of writing WE DONT DO)
             return TryUnify(x.Left, y.Left, unifier) && TryUnify(x.Right, y.Right, unifier);
         }
 
-        private bool TryUnify(Equivalence x, Equivalence y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Equivalence x, Equivalence y, IDictionary<VariableReference, Term> unifier)
         {
             // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
             // perhaps Low and High (internal) props in conjunction?
@@ -78,17 +83,17 @@ namespace SCFirstOrderLogic.SentenceManipulation
         ////    return existentialQuantification;
         ////}
 
-        private bool TryUnify(Implication x, Implication y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Implication x, Implication y, IDictionary<VariableReference, Term> unifier)
         {
             return TryUnify(x.Antecedent, y.Antecedent, unifier) && TryUnify(x.Consequent, y.Consequent, unifier);
         }
 
-        private bool TryUnify(Negation x, Negation y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Negation x, Negation y, IDictionary<VariableReference, Term> unifier)
         {
             return TryUnify(x.Sentence, y.Sentence, unifier);
         }
 
-        private bool TryUnify(Predicate x, Predicate y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Predicate x, Predicate y, IDictionary<VariableReference, Term> unifier)
         {
             if (!x.Symbol.Equals(y.Symbol))
             {
@@ -106,7 +111,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             return true;
         }
 
-        ////private bool TryUnify(UniversalQuantification x, UniversalQuantification y, IDictionary<Variable, Term> unifier)
+        ////private static bool TryUnify(UniversalQuantification x, UniversalQuantification y, IDictionary<Variable, Term> unifier)
         ////{
         ////    var variable = ApplyToVariableDeclaration(universalQuantification.Variable);
         ////    var sentence = ApplyToSentence(universalQuantification.Sentence);
@@ -118,7 +123,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         ////    return universalQuantification;
         ////}
 
-        private bool TryUnify(Term x, Term y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Term x, Term y, IDictionary<VariableReference, Term> unifier)
         {
             return (x, y) switch
             {
@@ -129,7 +134,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             };
         }
 
-        private bool TryUnify(VariableReference variable, Term other, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(VariableReference variable, Term other, IDictionary<VariableReference, Term> unifier)
         {
             if (unifier.TryGetValue(variable, out var value))
             {
@@ -152,7 +157,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             }
         }
 
-        private bool TryUnify(Function x, Function y, IDictionary<VariableReference, Term> unifier)
+        private static bool TryUnify(Function x, Function y, IDictionary<VariableReference, Term> unifier)
         {
             if (!x.Symbol.Equals(y.Symbol))
             {

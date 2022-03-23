@@ -33,7 +33,6 @@ namespace SCFirstOrderLogic.KnowledgeBases.Resolution
 
         /// <summary>
         /// book 9.5.2
-        /// TODO-BUG: Need to add factoring
         /// TODO-BUG: Need to account for equality (assuming we don't want to axiomise..). could this be part of strategy..?
         /// </summary>
         public class ResolutionQuery

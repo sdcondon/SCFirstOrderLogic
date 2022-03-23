@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if FALSE
+using System;
 using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.UnifierStorage
@@ -21,3 +22,4 @@ namespace SCFirstOrderLogic.UnifierStorage
         }
     }
 }
+#endif

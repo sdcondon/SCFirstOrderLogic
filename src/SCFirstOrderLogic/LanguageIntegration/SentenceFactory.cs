@@ -248,8 +248,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateEquivalence<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO-FUNCTIONALITY: Would it be reasonable to also accept {sentence} == {sentence} here?
-
+            // Would it be reasonable to also accept {sentence} == {sentence} here?
             if (expression is MethodCallExpression methodCallExpr && MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, IffMethod)
                 && TryCreateSentence<TDomain, TElement>(methodCallExpr.Arguments[0], out var equivalent1)
                 && TryCreateSentence<TDomain, TElement>(methodCallExpr.Arguments[1], out var equivalent2))

@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
     /// call on a class representing the domain.
     /// </summary>
     /// <remarks>
-    /// TODO-FUNCTIONALITY: Might ultimately be useful to make the Member.. classes generic in the same way as KnowledgeBase - for
+    /// TODO-FUNCTIONALITY: Might ultimately be useful to make the Member.. classes generic in the same way as ILinqKnowledgeBase - for
     /// validation, as well as potential manipulation power. OR simply delete this class as it adds no real value.
     /// </remarks>
     public class MemberConstant : Constant

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if FALSE
+using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.UnifierStorage
 {
@@ -27,3 +28,4 @@ namespace SCFirstOrderLogic.UnifierStorage
         IEnumerable<IDictionary<VariableReference, Constant>> Fetch(Sentence sentence);
     }
 }
+#endif

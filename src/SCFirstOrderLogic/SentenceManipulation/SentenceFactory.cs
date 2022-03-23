@@ -1,7 +1,7 @@
 ﻿namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Shorthand factory methods for <see cref="Sentence"/> instances. 
+    /// Shorthand static factory methods for <see cref="Sentence"/> instances. 
     /// <para/>
     /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly succinct.
     /// Alternatively, see the <see cref="LanguageIntegration.SentenceFactory"/> class for another shorthand method of creating sentences.

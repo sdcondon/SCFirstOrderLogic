@@ -6,12 +6,11 @@ namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// Equality comparer for <see cref="MemberInfo"/>.
-    /// </summary>
-    /// <remarks>
+    /// <para/>
     /// For reasons I haven't discovered but are presumably good (performance?), MemberInfo doesn't override
     /// equality (and MemberInfo instances aren't unified for the same member), so comparing two instances
     /// and expecting the same member to evaluate as equal doesn't work. Hence this class.
-    /// </remarks>
+    /// </summary>
     internal class MemberInfoEqualityComparer : IEqualityComparer<MemberInfo>
     {
         /// <summary>

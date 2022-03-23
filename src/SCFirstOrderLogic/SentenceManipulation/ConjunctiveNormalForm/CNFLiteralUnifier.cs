@@ -16,7 +16,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// Gets the substitions made by this unifier.
         /// </summary>
         /// <remarks>
-        /// TODO: Just returns a dictionary - should probably actually return an immutable type..
+        /// TODO: Just returns a dictionary - should probably actually return an immutable type.
         /// </remarks>
         public IReadOnlyDictionary<VariableReference, Term> Substitutions => variableSubstitution.Bindings;
 
@@ -72,8 +72,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             // wait and see..
 
             // TODO-PERFORMANCE / TODO-MAINTAINABILITY: Also, think about not using SentenceTransformation here - perhaps create CNFLiteralTransformation
-            // (or just making VariableSubstitution contain the logic itself - creating a base class when there's
-            // only one implementation is needless complexity)
+            // (or just making VariableSubstitution contain the logic itself - creating a base class when there's only one implementation is needless complexity)
             var literalAsSentence = variableSubstitution.ApplyTo(literal.IsNegated ? (Sentence)new Negation(literal.Predicate) : literal.Predicate);
             return new CNFLiteral(literalAsSentence);
         }
@@ -129,7 +128,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             }
             else
             {
-                // This substitution is not in the source book, but is so that e.g. unifying Knows(John, X) and Knows(Y, Mother(Y)) will give {X / Mother(John) }, not {X / Mother(Y) }
+                // This substitution is not in the source book, but is so that e.g. unifying Knows(John, X) and Knows(Y, Mother(Y)) will give { X / Mother(John) }, not { X / Mother(Y) }
                 // Might be duplicated effort in the broader scheme of things, but time will tell.
                 other = unifier.variableSubstitution.ApplyTo(other);
                 unifier.variableSubstitution.AddBinding(variable, other);

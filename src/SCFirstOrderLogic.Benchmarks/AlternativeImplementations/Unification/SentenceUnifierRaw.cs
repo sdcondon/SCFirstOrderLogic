@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.FromAiAModernApproach
+namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Unification
 {
     /// <summary>
-    /// Sentence unification logic implemented as close as possible to the way it
+    /// Most general unifier logic implemented as close as possible to the way it
     /// is stated in figure 9.1 of Artificial Intelligence: A Modern Approach.
     /// For learning outcomes only - obviously not a great way to implement this in C#.
     /// </summary>
-    public static class SentenceUnifier
+    public static class SentenceUnifierRaw
     {
         /*
          * function UNIFY(x, y, θ) returns a substitution to make x and y identical
