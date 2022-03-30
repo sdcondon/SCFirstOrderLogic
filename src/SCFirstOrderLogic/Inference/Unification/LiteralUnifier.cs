@@ -1,14 +1,15 @@
-﻿using System;
+﻿using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.Inference.Unification
 {
     /// <summary>
     /// Utility class for unifying literals.
     /// </summary>
-    public class CNFLiteralUnifier
+    public class LiteralUnifier
     {
         private readonly VariableSubstitution variableSubstitution = new VariableSubstitution();
 
@@ -16,20 +17,20 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// Gets the substitions made by this unifier.
         /// </summary>
         /// <remarks>
-        /// TODO: Just returns a dictionary - should probably actually return an immutable type.
+        /// TODO: Just returns a dictionary (so could be interfered with by casting) - should probably actually return an immutable type. But not a big deal.
         /// </remarks>
         public IReadOnlyDictionary<VariableReference, Term> Substitutions => variableSubstitution.Bindings;
 
         /// <summary>
-        /// Attempts to create a unifier for two literals.
+        /// Attempts to create the most general unifier for two literals.
         /// </summary>
         /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
-        /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier.</param>
+        /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier (which can then be applied with <see cref="ApplyTo"/>).</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryCreate(CNFLiteral x, CNFLiteral y, [NotNullWhen(returnValue: true)] out CNFLiteralUnifier? unifier)
+        public static bool TryCreate(CNFLiteral x, CNFLiteral y, [NotNullWhen(returnValue: true)] out LiteralUnifier? unifier)
         {
-            var unifierAttempt = new CNFLiteralUnifier();
+            var unifierAttempt = new LiteralUnifier();
 
             if (!TryUnify(x, y, unifierAttempt))
             {
@@ -42,7 +43,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         }
 
         /// <summary>
-        /// Attempts to unify two literals.
+        /// Attempts to unify two literals with their most general unifier.
         /// </summary>
         /// <param name="x">One of the two literals to attempt to unify.</param>
         /// <param name="y">One of the two literals to attempt to unify.</param>
@@ -63,7 +64,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <summary>
         /// Applies the unifier to a literal.
         /// </summary>
-        /// <param name="literal">the literal to apply the unifier to.</param>
+        /// <param name="literal">The literal to apply the unifier to.</param>
         /// <returns>The unified version of the literal.</returns>
         public CNFLiteral ApplyTo(CNFLiteral literal)
         {
@@ -77,14 +78,14 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             return new CNFLiteral(literalAsSentence);
         }
 
-        private static bool TryUnify(CNFLiteral x, CNFLiteral y, CNFLiteralUnifier unifier)
+        private static bool TryUnify(CNFLiteral x, CNFLiteral y, LiteralUnifier unifier)
         {
             if (x.IsNegated != y.IsNegated || !x.Predicate.Symbol.Equals(y.Predicate.Symbol))
             {
                 return false;
             }
 
-            // Makes the assumption that same symbol means same number of arguments.
+            // BUG?: Makes the assumption that same symbol means same number of arguments.
             // It is possible to confuse this algorithm by passing literals where that isn't true
             foreach (var args in x.Predicate.Arguments.Zip(y.Predicate.Arguments, (x, y) => (x, y)))
             {
@@ -97,7 +98,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             return true;
         }
 
-        private static bool TryUnify(Term x, Term y, CNFLiteralUnifier unifier)
+        private static bool TryUnify(Term x, Term y, LiteralUnifier unifier)
         {
             return (x, y) switch
             {
@@ -108,7 +109,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             };
         }
 
-        private static bool TryUnify(VariableReference variable, Term other, CNFLiteralUnifier unifier)
+        private static bool TryUnify(VariableReference variable, Term other, LiteralUnifier unifier)
         {
             if (unifier.variableSubstitution.Bindings.TryGetValue(variable, out var value))
             {
@@ -136,7 +137,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             }
         }
 
-        private static bool TryUnify(Function x, Function y, CNFLiteralUnifier unifier)
+        private static bool TryUnify(Function x, Function y, LiteralUnifier unifier)
         {
             if (!x.Symbol.Equals(y.Symbol))
             {

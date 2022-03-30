@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
 using FlUnit;
+using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.Inference.Unification
 {
-    public class CNFLiteralUnifierTests
+    public class UnifierTests
     {
         private static Function Mother(Term child) => new("Mother", child);
 
@@ -51,8 +52,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             })
             .When(tc =>
             {
-                (bool returnValue, CNFLiteralUnifier? unifier) result;
-                result.returnValue = CNFLiteralUnifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
+                (bool returnValue, LiteralUnifier? unifier) result;
+                result.returnValue = LiteralUnifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
@@ -69,8 +70,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             })
             .When(tc =>
             {
-                (bool returnValue, CNFLiteralUnifier? unifier) result;
-                result.returnValue = CNFLiteralUnifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
+                (bool returnValue, LiteralUnifier? unifier) result;
+                result.returnValue = LiteralUnifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())

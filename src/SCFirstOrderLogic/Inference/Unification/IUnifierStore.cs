@@ -1,7 +1,7 @@
 ﻿#if FALSE
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.UnifierStorage
+namespace SCFirstOrderLogic.Inference.UnifierStorage
 {
     /// <summary>
     /// Interface for types that facilitate lookup of all of the unifiers (i.e. sets of variable assignments) such

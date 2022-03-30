@@ -26,7 +26,7 @@ namespace SCFirstOrderLogic.Benchmarks
         private static readonly CNFLiteral YKnowsMotherOfY_Literal = new CNFLiteral(Knows(y, Mother(y)));
 
         [Benchmark]
-        public bool Unify1() => CNFLiteralUnifier.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);
+        public bool Unify1() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);
 
         [Benchmark]
         public bool Unify1Alt() => SentenceUnifier.TryUnify(JohnKnowsX, JohnKnowsJane, out _);
@@ -35,7 +35,7 @@ namespace SCFirstOrderLogic.Benchmarks
         public SentenceUnifierRaw.Substitution Unify1Raw() => SentenceUnifierRaw.Unify(JohnKnowsX, JohnKnowsJane, null);
 
         [Benchmark]
-        public bool Unify2() => CNFLiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
+        public bool Unify2() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
 
         [Benchmark]
         public bool Unify2Alt() => SentenceUnifier.TryUnify(JohnKnowsX, YKnowsJane, out _);
@@ -44,7 +44,7 @@ namespace SCFirstOrderLogic.Benchmarks
         public SentenceUnifierRaw.Substitution Unify2Raw() => SentenceUnifierRaw.Unify(JohnKnowsX, YKnowsJane, null);
 
         [Benchmark]
-        public bool Unify3() => CNFLiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);
+        public bool Unify3() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);
 
         [Benchmark]
         public bool Unify3Alt() => SentenceUnifier.TryUnify(JohnKnowsX, YKnowsMotherOfY, out _);

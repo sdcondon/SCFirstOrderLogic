@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.KnowledgeBases
+namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
     /// Helpful extension methods for <see cref="IKnowledgeBase"/> instances.

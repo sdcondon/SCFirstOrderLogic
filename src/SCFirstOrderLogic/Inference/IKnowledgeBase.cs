@@ -1,4 +1,4 @@
-﻿namespace SCFirstOrderLogic.KnowledgeBases
+﻿namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
     /// A store of knowledge expressed as sentences of first-order logic.

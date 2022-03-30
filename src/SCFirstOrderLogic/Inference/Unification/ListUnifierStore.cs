@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.UnifierStorage
+namespace SCFirstOrderLogic.Inference.UnifierStorage
 {
     /// <summary>
     /// Basic implementation of <see cref="IUnifierStore"/> that just maintains all known sentences in a <see cref="List{T}"./>

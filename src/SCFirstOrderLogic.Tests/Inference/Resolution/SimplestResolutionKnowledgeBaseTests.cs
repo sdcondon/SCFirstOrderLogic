@@ -4,14 +4,14 @@ using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCatDomain;
 
-namespace SCFirstOrderLogic.KnowledgeBases.Resolution
+namespace SCFirstOrderLogic.Inference.Resolution
 {
-    public static partial class ResolutionKnowledgeBaseTests
+    public static class SimplestResolutionKnowledgeBaseTests
     {
         public static Test BookExample1 => TestThat
             .When(() =>
             {
-                var kb = new ResolutionKnowledgeBase();
+                var kb = new SimplestResolutionKnowledgeBase();
                 kb.Tell(CrimeDomain.Axioms);
                 return kb.Ask(IsCriminal(West));
             })
@@ -21,7 +21,7 @@ namespace SCFirstOrderLogic.KnowledgeBases.Resolution
         public static Test BookExample2 => TestThat
             .When(() =>
             {
-                var kb = new ResolutionKnowledgeBase();
+                var kb = new SimplestResolutionKnowledgeBase();
                 kb.Tell(CuriousityAndTheCatDomain.Axioms);
                 return kb.Ask(Kills(Curiousity, Tuna));
             })
@@ -31,7 +31,7 @@ namespace SCFirstOrderLogic.KnowledgeBases.Resolution
         public static Test BookExample3 => TestThat
             .When(() =>
             {
-                var kb = new ResolutionKnowledgeBase();
+                var kb = new SimplestResolutionKnowledgeBase();
                 kb.Tell(CuriousityAndTheCatDomain.Axioms);
                 var query = kb.CreateQuery(Kills(Curiousity, Tuna));
                 query.Complete();
