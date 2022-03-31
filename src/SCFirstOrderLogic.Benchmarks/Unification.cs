@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Unification;
+using SCFirstOrderLogic.Inference.Unification;
 using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
 
 namespace SCFirstOrderLogic.Benchmarks
