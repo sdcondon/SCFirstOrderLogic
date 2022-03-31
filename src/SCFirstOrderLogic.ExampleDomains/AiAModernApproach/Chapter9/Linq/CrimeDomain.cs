@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Linq
     /// <para/>
     /// Example usage:
     /// <code>
-    /// ILinqKnowledgeBase&lt;CrimeDomain.IDomain, CrimeDomain.IElement&gt; kb = .. // a knowledge base implementation
+    /// ILinqKnowledgeBase&lt;CrimeDomain.IDomain, CrimeDomain.IElement&gt; kb = .. // a LINQ knowledge base implementation
     /// kb.Tell(CrimeDomain.Axioms);
     /// var answer = kb.Ask(d => d.IsCriminal(d.West));
     /// </code>

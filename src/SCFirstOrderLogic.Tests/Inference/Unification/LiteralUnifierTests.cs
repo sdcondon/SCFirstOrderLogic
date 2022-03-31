@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.Inference.Unification
 {
-    public class UnifierTests
+    public class LiteralUnifierTests
     {
         private static Function Mother(Term child) => new("Mother", child);
 

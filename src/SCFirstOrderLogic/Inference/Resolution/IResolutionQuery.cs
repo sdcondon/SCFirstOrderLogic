@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Probably needless copmlexity..
+    /// Probably needless complexity..
     /// </summary>
     public interface IResolutionQuery
     {
@@ -34,6 +34,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// </summary>
         void NextStep();
 
+        /// <summary>
+        /// Continuously executes the next step of the query until it completes.
+        /// </summary>
+        /// <returns>the result of the query.</returns>
         bool Complete();
     }
 }

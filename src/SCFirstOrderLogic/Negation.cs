@@ -3,7 +3,7 @@
 namespace SCFirstOrderLogic
 {
     /// <summary>
-    /// Representation of an negation sentence of first order logic. In typical FOL syntax, this is written as:
+    /// Representation of a negation sentence of first order logic. In typical FOL syntax, this is written as:
     /// <code>¬{sentence}</code>
     /// </summary>
     public sealed class Negation : Sentence

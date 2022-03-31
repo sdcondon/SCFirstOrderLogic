@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Unification
     /// </summary>
     public static class SentenceUnifier
     {
-        public static bool TryUnify(Sentence x, Sentence y, [NotNullWhen(returnValue: true)] out IDictionary<VariableReference, Term>? unifier)
+        public static bool TryUnify(Sentence x, Sentence y, out IDictionary<VariableReference, Term>? unifier)
         {
             unifier = new Dictionary<VariableReference, Term>();
 

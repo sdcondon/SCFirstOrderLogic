@@ -1,10 +1,11 @@
 ﻿namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Shorthand static factory methods for <see cref="Sentence"/> instances. 
-    /// <para/>
-    /// Obviously, using 'using static SCFirstOrderLogic.Sentence;' can make use of these methods fairly succinct.
-    /// Alternatively, see the <see cref="LanguageIntegration.SentenceFactory"/> class for another shorthand method of creating sentences.
+    /// Shorthand static factory methods for <see cref="Sentence"/> instances. It is recommended to use a 'using static' directive to make use of these methods succinct:
+    /// <code>using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;</code>
+    /// For domain-specific sentence elements (predicates, functions, constants etc), the recommendation is to create appropriate properties and methods to create them. For example:
+    /// <code>Predicate MyBinaryPredicate(Term arg1, Term arg2) => new Predicate(nameof(MyBinaryPredicate), arg1, arg2);</code>
+    /// See the SCFirstOrderLogic.ExampleDomains project for examples of this. Also see the <see cref="LanguageIntegration.SentenceFactory"/> class for an alternative method of creating sentences (from lambda expressions acting on interfaces representing the domain and entities therein).
     /// </summary>
     public static class SentenceFactory
     {

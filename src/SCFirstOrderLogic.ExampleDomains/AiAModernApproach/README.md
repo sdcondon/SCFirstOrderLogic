@@ -1,3 +1,3 @@
-﻿# Example Domains
+﻿# Example Domains - From Artificial Intelligence: A Modern Approach
 
-This project contains several example domains taken from "Artificial Intelligence: A Modern Approach, Global Edition" by Stuart Russel and Peter Norvig.
+This namespace contains several example domains taken from "Artificial Intelligence: A Modern Approach, Global Edition" by Stuart Russel and Peter Norvig.

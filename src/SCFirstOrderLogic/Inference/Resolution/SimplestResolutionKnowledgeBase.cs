@@ -9,11 +9,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
     /// Includes functionality for fine-grained execution and examination of individual steps of queries.
-    /// Has no in-built handling of equality (so would require it to be axiomised within the knowledge base (see §9.5.5 of Artifical Intelligence: A Modern Approach).
+    /// Has no in-built handling of equality (so, if equality appears in the knowledge base, requires its properties to be axiomised within the knowledge base - see §9.5.5 of Artifical Intelligence: A Modern Approach).
     /// </summary>
     public sealed class SimplestResolutionKnowledgeBase : IKnowledgeBase
     {
-        private readonly List<CNFSentence> sentences = new List<CNFSentence>(); // Ultimately to be replaced with unifier store?
+        private readonly List<CNFSentence> sentences = new List<CNFSentence>(); // To be replaced with unifier store
 
         /// <inheritdoc />
         public void Tell(Sentence sentence) => sentences.Add(new CNFSentence(sentence));
@@ -34,8 +34,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// </summary>
         private class Query : IResolutionQuery
         {
-            private readonly HashSet<CNFClause> clauses; // Ultimately to be replaced with comparer & unifier store
-            private readonly Queue<(CNFClause, CNFClause)> queue = new Queue<(CNFClause, CNFClause)>(); // Ultimately to be replaced with comparer & unifier store
+            private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store
+            private readonly Queue<(CNFClause, CNFClause)> queue = new Queue<(CNFClause, CNFClause)>(); // To be replaced with clause pair priority comparer & priority queue
             private readonly Dictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)>();
 
             private bool result;
@@ -61,19 +61,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
             }
 
-            /// <summary>
-            /// Gets a value indicating whether the query is complete.
-            /// The result of completed queries is available via the <see cref="Result"/> property.
-            /// Calling <see cref="NextStep"/> on a completed query will result in an <see cref="InvalidOperationException"/>.
-            /// </summary>
+            /// <inheritdoc/>
             public bool IsComplete { get; private set; } = false;
 
-            /// <summary>
-            /// Gets a value indicating the result of the query.
-            /// True indicates that the query is known to be true.
-            /// False indicates that the query is known to be false or cannot be determined.
-            /// </summary>
-            /// <exception cref="InvalidOperationException">The query is not yet complete.</exception>
+            /// <inheritdoc/>
             public bool Result
             {
                 get
@@ -87,14 +78,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
             }
 
-            /// <summary>
-            /// Gets a mapping from a clause to the two clauses from which it was inferred.
-            /// </summary>
+            /// <inheritdoc/>
             public IReadOnlyDictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)> Steps => steps;
 
-            /// <summary>
-            /// Executes the next step of the query.
-            /// </summary>
+            /// <inheritdoc/>
             public void NextStep()
             {
                 if (IsComplete)
@@ -135,10 +122,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
             }
 
-            /// <summary>
-            /// Continuously executes the next step of the query until it completes.
-            /// </summary>
-            /// <returns>the result of the query.</returns>
+            /// <inheritdoc/>
             public bool Complete()
             {
                 while (!IsComplete)

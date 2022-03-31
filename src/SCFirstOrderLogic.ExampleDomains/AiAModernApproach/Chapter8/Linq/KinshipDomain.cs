@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Linq
     /// <para/>
     /// Example usage:
     /// <code>
-    /// ILinqKnowledgeBase&lt;IPerson&gt; kb = .. // a knowledge base implementation
+    /// ILinqKnowledgeBase&lt;IPerson&gt; kb = .. // a LINQ knowledge base implementation
     /// kb.Tell(KinshipDomain.Axioms);
     /// kb.Tell(..facts about the specific problem..);
     /// // ..though the real value of language integration would be in KBs that support something like kb.Bind(domainAdapter, opts),
