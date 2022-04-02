@@ -27,7 +27,7 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Unification
         private static bool TryUnify(Sentence x, Sentence y, IDictionary<VariableReference, Term> unifier)
         {
             // TODO-PERFORMANCE: Given the fundamentality of unification and the number of times that this could be called during inference,
-            // it might be worth optimising it a little via a visitor-style design instead of this type switch..
+            // its probably worth optimising - perhaps via a visitor-style design instead of this type switch..
             return (x, y) switch
             {
                 (Conjunction conjunctionX, Conjunction conjunctionY) => TryUnify(conjunctionX, conjunctionY, unifier),

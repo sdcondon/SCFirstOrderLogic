@@ -5,10 +5,14 @@ using System.Linq.Expressions;
 namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
-    /// A store of knowledge expressed as statements of propositional logic (in turn expressed as LINQ expressions).
+    /// A store of knowledge expressed as statements of propositional logic (in turn expressed as LINQ expressions acting on the domain represented as an <see cref="IEnumerable{T}"/>).
     /// </summary>
     /// <typeparam name="TDomain">The type of the domain. The domain must be modelled as an <see cref="IEnumerable{T}"/> of <see cref="TElement"/>.</typeparam>
     /// <typeparam name="TElement">The type that the sentences passed to this class refer to.</typeparam>
+    /// <remarks>
+    /// Not 100% convinced by the need for this interface, given that I'm not sure of the need for any implementation other than the one provided.
+    /// There may be some reason for keeping the Expressions around to e.g. help out with AskVars type stuff though. So keeping for now. 
+    /// </remarks>
     public interface ILinqKnowledgeBase<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
     {

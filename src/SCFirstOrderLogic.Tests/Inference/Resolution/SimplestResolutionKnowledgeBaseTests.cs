@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public static Test BookExample1 => TestThat
             .When(() =>
             {
-                var kb = new SimplestResolutionKnowledgeBase();
+                var kb = new SimpleResolutionKnowledgeBase(ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
                 kb.Tell(CrimeDomain.Axioms);
                 return kb.Ask(IsCriminal(West));
             })
@@ -21,7 +21,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public static Test BookExample2 => TestThat
             .When(() =>
             {
-                var kb = new SimplestResolutionKnowledgeBase();
+                var kb = new SimpleResolutionKnowledgeBase(ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
                 kb.Tell(CuriousityAndTheCatDomain.Axioms);
                 return kb.Ask(Kills(Curiousity, Tuna));
             })
@@ -31,7 +31,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public static Test BookExample3 => TestThat
             .When(() =>
             {
-                var kb = new SimplestResolutionKnowledgeBase();
+                var kb = new SimpleResolutionKnowledgeBase(ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
                 kb.Tell(CuriousityAndTheCatDomain.Axioms);
                 var query = kb.CreateQuery(Kills(Curiousity, Tuna));
                 query.Complete();

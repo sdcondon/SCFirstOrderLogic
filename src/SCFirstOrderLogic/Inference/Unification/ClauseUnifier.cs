@@ -18,7 +18,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         public static IEnumerable<(LiteralUnifier unifier, CNFClause unified)> Unify(CNFClause clause1, CNFClause clause2)
         {
             // Yes, this is a slow implementation. It is simple, though - and thus will serve
-            // well as a baseline for improvements. (I'm thinking of a Unifier that accepts multiple
+            // well as a baseline for improvements. (e.g. I'm thinking of a Unifier that accepts multiple
             // literals and examines the tree for them all "simultaneously" - i.e. do full resolution, not binary).
             foreach (var literal1 in clause1.Literals)
             {

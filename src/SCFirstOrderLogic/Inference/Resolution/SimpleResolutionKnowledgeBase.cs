@@ -1,4 +1,5 @@
-﻿using SCFirstOrderLogic.Inference.Unification;
+﻿using SCFirstOrderLogic.Inference.Resolution.Utility;
+using SCFirstOrderLogic.Inference.Unification;
 using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,34 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
     /// Includes functionality for fine-grained execution and examination of individual steps of queries.
-    /// Has no in-built handling of equality (so, if equality appears in the knowledge base, requires its properties to be axiomised within the knowledge base - see §9.5.5 of Artifical Intelligence: A Modern Approach).
+    /// Notes:
+    /// <list type="bullet">
+    /// <item/>Has no in-built handling of equality (so, if equality appears in the knowledge base, its properties need to be axiomised - see §9.5.5 of Artifical Intelligence: A Modern Approach).
+    /// <item/>Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
+    /// </list>
     /// </summary>
-    public sealed class SimplestResolutionKnowledgeBase : IKnowledgeBase
+    public sealed class SimpleResolutionKnowledgeBase : IKnowledgeBase
     {
         private readonly List<CNFSentence> sentences = new List<CNFSentence>(); // To be replaced with unifier store
+        private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
+        private readonly IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer;
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="SimpleResolutionKnowledgeBase"/> class.
+        /// </summary>
+        /// <param name="unifierStore"></param>
+        /// <param name="clausePairFilter"></param>
+        /// <param name="clausePairPriorityComparer"></param>
+        public SimpleResolutionKnowledgeBase(/*IUnifierStore unifierStore, */Func<(CNFClause, CNFClause), bool> clausePairFilter, IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer)
+        {
+            //this.unifierStore = unifierStore;
+            // NB: throwing away clauses returned by the unifier store has performance impact. Could also use a store that knows to not look for certain clause pairings in the first place..
+            // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is then a mix of implementation (how unifiers are stored/indexed) and strategy,
+            // plus there's a bit more strategy in the priority comparer.. This feels a good compromise - there are of course alternatives (e.g. some kind of strategy object that encapsulates
+            // both) - but they felt like overkill for this Simple implementation.
+            this.clausePairFilter = clausePairFilter; 
+            this.clausePairPriorityComparer = clausePairPriorityComparer;
+        }
 
         /// <inheritdoc />
         public void Tell(Sentence sentence) => sentences.Add(new CNFSentence(sentence));
@@ -22,20 +46,20 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public bool Ask(Sentence sentence) => new Query(this, sentence).Complete();
 
         /// <summary>
-        /// Creates a new <see cref="IResolutionQuery"/>, for fine-grained execution and examination of a query.
+        /// 
         /// </summary>
-        /// <param name="sentence">The sentence to query the truth of.</param>
-        /// <returns>A new <see cref="IResolutionQuery"/> instance.</returns>
-        public IResolutionQuery CreateQuery(Sentence sentence) => new Query(this, sentence);
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public IResolutionQuery CreateQuery(Sentence query) => new Query(this, query);
 
         /// <summary>
         /// book 9.5.2
-        /// TODO-BUG: Need to account for equality (assuming we don't want to axiomise..). could this be part of strategy..?
         /// </summary>
         private class Query : IResolutionQuery
         {
             private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store
-            private readonly Queue<(CNFClause, CNFClause)> queue = new Queue<(CNFClause, CNFClause)>(); // To be replaced with clause pair priority comparer & priority queue
+            private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
+            private readonly MaxPriorityQueue<(CNFClause, CNFClause)> queue;
             private readonly Dictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)>();
 
             private bool result;
@@ -45,18 +69,23 @@ namespace SCFirstOrderLogic.Inference.Resolution
             /// </summary>
             /// <param name="knowledgeBase"></param>
             /// <param name="sentence"></param>
-            public Query(SimplestResolutionKnowledgeBase knowledgeBase, Sentence sentence)
+            public Query(SimpleResolutionKnowledgeBase knowledgeBase, Sentence sentence)
             {
                 this.clauses = knowledgeBase.sentences
                     .Append(new CNFSentence(new Negation(sentence)))
                     .SelectMany(s => s.Clauses)
                     .ToHashSet();
 
+                clausePairFilter = knowledgeBase.clausePairFilter;
+                queue = new MaxPriorityQueue<(CNFClause, CNFClause)>(knowledgeBase.clausePairPriorityComparer);
                 foreach (var ci in clauses)
                 {
                     foreach (var cj in clauses)
                     {
-                        queue.Enqueue((ci, cj));
+                        if (knowledgeBase.clausePairFilter((ci, cj)))
+                        {
+                            queue.Enqueue((ci, cj));
+                        }
                     }
                 }
             }
@@ -94,6 +123,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
                 foreach (var (unifier, resolvent) in resolvents)
                 {
+                    // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
                     if (resolvent.Equals(CNFClause.Empty))
                     {
                         steps[CNFClause.Empty] = (ci, cj, unifier.Substitutions);
@@ -102,19 +132,25 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         return;
                     }
 
+                    // Otherwise, queue up a bunch more clause pairs, adhering to any filtering and ordering we have in place.
+                    // NB: We only check if the clause is already present exactly -  we don't check for clauses that subsume the resolvent.
                     if (!clauses.Contains(resolvent))
                     {
                         steps[resolvent] = (ci, cj, unifier.Substitutions);
 
                         foreach (var clause in clauses)
                         {
-                            queue.Enqueue((clause, resolvent));
+                            if (clausePairFilter((clause, resolvent)))
+                            {
+                                queue.Enqueue((clause, resolvent));
+                            }
                         }
 
                         clauses.Add(resolvent);
                     }
                 }
 
+                // If we've run out of clauses to smash together, return a negative result.
                 if (queue.Count == 0)
                 {
                     result = false;

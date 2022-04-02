@@ -32,6 +32,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
             while (queue.Count > 0)
             {
                 var clause = queue.Dequeue();
+                if (orderedSteps.Contains(clause))
+                {
+                    // We have found the same clause "earlier" than another encounter of it..
+                    // Remove the "later" one.
+                    orderedSteps.Remove(clause);
+                }
                 orderedSteps.Add(clause);
 
                 if (query.Steps.TryGetValue(clause, out var input))
@@ -48,17 +54,17 @@ namespace SCFirstOrderLogic.Inference.Resolution
             {
                 if (query.Steps.TryGetValue(orderedSteps[i], out var input))
                 {
-                    explanation.AppendLine($"#{i}: {orderedSteps[i]}");
-                    explanation.AppendLine($"\tFrom #{orderedSteps.IndexOf(input.Item1)}: {input.Item1}");
-                    explanation.AppendLine($"\tAnd  #{orderedSteps.IndexOf(input.Item2)}: {input.Item2} ");
-                    explanation.Append("\tUsing  : {");
+                    explanation.AppendLine($"#{i:D2}: {orderedSteps[i]}");
+                    explanation.AppendLine($"     From #{orderedSteps.IndexOf(input.Item1):D2}: {input.Item1}");
+                    explanation.AppendLine($"     And  #{orderedSteps.IndexOf(input.Item2):D2}: {input.Item2} ");
+                    explanation.Append("     Using   : {");
                     explanation.Append(string.Join(", ", input.Item3.Select(s => $"{s.Key}/{s.Value}")));
                     explanation.AppendLine("}");
                 }
                 else
                 {
-                    explanation.AppendLine($"#{i}: {orderedSteps[i]}");
-                    explanation.AppendLine($"\tFrom known facts");
+                    explanation.AppendLine($"#{i:D2}: {orderedSteps[i]}");
+                    explanation.AppendLine($"     From known facts");
                 }
 
                 explanation.AppendLine();
