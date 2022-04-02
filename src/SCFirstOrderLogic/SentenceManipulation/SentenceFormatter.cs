@@ -16,6 +16,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         private static readonly string[] GreekAlphabet = new[] { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
         private static readonly Dictionary<CNFConversion.StandardisedVariableSymbol, string> StandardisedVariableLabels = new Dictionary<CNFConversion.StandardisedVariableSymbol, string>();
 
+        private static readonly string[] SkolemFunctionAlphabet = new[] { "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+        private static readonly Dictionary<CNFConversion.SkolemFunctionSymbol, string> SkolemFunctionLabels = new Dictionary<CNFConversion.SkolemFunctionSymbol, string>();
+
         public static string Print(this Sentence sentence) => sentence switch
         {
             Conjunction conjunction => Print(conjunction),
@@ -67,8 +70,11 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public static string Print(VariableReference variable) =>
             Print(variable.Declaration);
 
-        public static string Print(Function function) =>
-            $"{function.Symbol}({string.Join(", ", function.Arguments.Select(a => Print(a)))})";
+        public static string Print(Function function) => function.Symbol switch
+        {
+            CNFConversion.SkolemFunctionSymbol skm => $"{(SkolemFunctionLabels.ContainsKey(skm) ? SkolemFunctionLabels[skm] : SkolemFunctionLabels[skm] = SkolemFunctionAlphabet[SkolemFunctionLabels.Count])}({string.Join(", ", function.Arguments.Select(a => Print(a)))})",
+            _ => $"{function.Symbol}({string.Join(", ", function.Arguments.Select(a => Print(a)))})"
+        };
 
         public static string Print(VariableDeclaration variableDeclaration) => variableDeclaration.Symbol switch
         {

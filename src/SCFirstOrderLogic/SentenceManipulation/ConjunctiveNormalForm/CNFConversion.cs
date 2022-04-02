@@ -149,26 +149,39 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             }
         }
 
+        /// <summary>
+        /// Class for symbols of variables that have been standardised.
+        /// <para/>
+        /// NB: Doesn't override equality or hash code, so uses reference equality;
+        /// and we create exactly one instance per variable scope - thus achieving standardisation
+        /// without having to muck about with anything like trying to ensure names that are unique strings
+        /// (which should only be a rendering concern anyway).
+        /// </summary>
+        /// <remarks>
+        /// TODO-TESTABILITY: Difficult to test. Would much rather implement value semantics for equality.
+        /// Same variable in same sentence is the same (inside the var store sentence tree re-arranged so that var is the root
+        /// equality would need to avoid infinite loop though. and couldn't work on output of this CNFConversion since this
+        /// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
+        /// are universally quantified).
+        /// <para/>
+        /// Also: should we throw if the variable being standardised is already standardised? Or return it unchanged?
+        /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
+        /// </remarks>
         public class StandardisedVariableSymbol
         {
-            private readonly object underlyingSymbol;
+            internal StandardisedVariableSymbol(object underlyingSymbol) => UnderlyingSymbol = underlyingSymbol;
 
-            public StandardisedVariableSymbol(object underlyingSymbol) => this.underlyingSymbol = underlyingSymbol;
+            /// <summary>
+            /// Gets the underlying variable symbol that this symbol is the standardisation of.
+            /// </summary>
+            public object UnderlyingSymbol { get; }
 
-            public override string ToString() => underlyingSymbol.ToString(); // Should we do.. something to indicate that its standardised?
-
-            //// NB: Doesn't override equality or hash code, so uses reference equality;
-            //// and we create exactly one instance per variable scope - thus achieving standardisation
-            //// without having to muck about with trying to ensure names that are unique strings.
-            ////
-            //// TODO-TESTABILITY: Difficult to test. Would much rather implement value semantics for equality.
-            //// Same variable in same sentence is the same (inside the var store sentence tree re-arranged so that var is the root
-            //// equality would need to avoid infinite loop though. and couldn't work on output of this CNFConversion since this
-            //// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
-            //// are universally quantified).
-            ////
-            //// also: should we throw if the variable being standardised is already standardised? Or return it unchanged?
-            //// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
+            /// <inheritdoc/>
+            /// <remarks>
+            /// NB: SentenceFormatter has a special case when rendering these (to ensure that they are rendered distinctly),
+            /// so this ToString override is "just in case".
+            /// </remarks>
+            public override string ToString() => $"ST:{UnderlyingSymbol}";
         }
 
         /// <summary>
@@ -207,7 +220,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                     // Skolem function equality should be based on being the same function (at the same location)
                     // in the same original sentence (note "original" - else equality would be circular)
                     existentialVariableMap[existentialQuantification.Variable] = new Function(
-                        new SkolemFunctionSymbol($"Sk:{existentialVariableMap.Count + 1}"),
+                        new SkolemFunctionSymbol(existentialQuantification.Variable.Symbol),
                         universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
                     return base.ApplyTo(existentialQuantification.Sentence);
                 }
@@ -225,19 +238,24 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             }
         }
 
-        // Use our own symbol class rather than just a string for Skolem function symbols to eliminate
-        // the possibility of Skolem functions clashing with unfortunately-named user-provided functions.
+        /// <summary>
+        /// Class for Skolem function symbols.
+        /// </summary>
         public class SkolemFunctionSymbol
         {
-            private readonly string name;
+            internal SkolemFunctionSymbol(object underlyingSymbol) => UnderlyingSymbol = underlyingSymbol;
 
-            public SkolemFunctionSymbol(string name) => this.name = name;
+            /// <summary>
+            /// Gets the underlying (existentially quantified) variable symbol that this symbol is the standardisation of.
+            /// </summary>
+            public object UnderlyingSymbol { get; }
 
-            public override string ToString() => name; // TODO: Would be more intuitive if it were named for the underlying existentially defined variable
-
-            public override bool Equals(object obj) => obj is SkolemFunctionSymbol skolem && skolem.name.Equals(name);
-
-            public override int GetHashCode() => HashCode.Combine(name);
+            /// <inheritdoc/>
+            /// <remarks>
+            /// NB: SentenceFormatter has a special case when rendering these (to ensure that they are rendered distinctly),
+            /// so this ToString override is "just in case".
+            /// </remarks>
+            public override string ToString() => $"SK:{UnderlyingSymbol}"; // TODO: Would be more intuitive if it were named for the underlying existentially defined variable
         }
 
         /// <summary>

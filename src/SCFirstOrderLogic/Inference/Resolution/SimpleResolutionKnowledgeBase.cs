@@ -9,9 +9,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
-    /// Includes functionality for fine-grained execution and examination of individual steps of queries.
+    /// See §9.5 of Artificial Intelligence: A Modern Approach, for a detailed explanation of resolution.
     /// Notes:
     /// <list type="bullet">
+    /// <item/>Includes functionality for fine-grained execution and examination of individual steps of queries.
     /// <item/>Has no in-built handling of equality (so, if equality appears in the knowledge base, its properties need to be axiomised - see §9.5.5 of Artifical Intelligence: A Modern Approach).
     /// <item/>Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
     /// </list>
@@ -51,6 +52,17 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <param name="query"></param>
         /// <returns></returns>
         public IResolutionQuery CreateQuery(Sentence query) => new Query(this, query);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public bool Ask(Sentence sentence, out IResolutionQuery query)
+        {
+            query = new Query(this, sentence);
+            return query.Complete();
+        }
 
         /// <summary>
         /// book 9.5.2

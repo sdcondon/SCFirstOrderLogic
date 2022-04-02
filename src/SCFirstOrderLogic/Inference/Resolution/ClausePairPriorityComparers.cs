@@ -10,9 +10,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
     public class ClausePairPriorityComparers
     {
         /// <summary>
-        /// Naive comparison that orders clause paris consistently but not according to any particular algorithm.
+        /// Naive comparison that orders clause pairs consistently but not according to any particular algorithm.
         /// </summary>
-        public static IComparer<(CNFClause, CNFClause)> Dumb { get; } = Comparer<(CNFClause, CNFClause)>.Create((x, y) =>
+        public static IComparer<(CNFClause, CNFClause)> None { get; } = Comparer<(CNFClause, CNFClause)>.Create((x, y) =>
         {
             return x.GetHashCode().CompareTo(y.GetHashCode());
         });

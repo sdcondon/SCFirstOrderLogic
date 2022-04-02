@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// Decorator knowledge base class that adds equality axioms as knowledge is added to the underlying knowledge base.
-    /// See §9.5.5 of Artifical Intelligence: A Modern Approach for more on dealing with equality by axiomising.
+    /// See §9.5.5 of Artifical Intelligence: A Modern Approach for more on dealing with equality by axiomising it.
     /// </summary>
     public class EqualityAxiomisingKnowledgeBase : IKnowledgeBase
     {
@@ -36,7 +36,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
             innerKnowledgeBase.Tell(sentence);
 
             // TODO: Look for new functions and predicates, add equality axioms for them
-            // .. To figure out for myself - why don't the fundamental axioms suffice (given that using the fundamental axioms unification can encounter the same function or predicate?)
+            // .. To figure out for myself - why don't the fundamental axioms suffice (given that using the fundamental axioms
+            // menas that unification can encounter the same function or predicate?)
         }
     }
 }
