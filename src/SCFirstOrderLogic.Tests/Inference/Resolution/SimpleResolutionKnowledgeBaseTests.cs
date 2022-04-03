@@ -44,7 +44,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 return query;
             })
             .ThenReturns()
-            .And(retVal => retVal.Result.Should().Be(false));
-            //.And(retVal => retVal.Explain().Should().BeNull());
+            .And(retVal => retVal.Result.Should().Be(true))
+            .And(retVal => retVal.Explain().Should().BeNull());
     }
 }

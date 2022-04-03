@@ -179,7 +179,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     && typeof(TDomain).IsAssignableFrom(memberExpr.Expression.Type)) // TODO-ROBUSTNESS: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                 {
                     // TElement-valued property access of the domain is interpreted as a constant.
-                    term = new MemberConstant(memberExpr.Member);
+                    term = new Constant(new MemberConstantSymbol(memberExpr.Member));
                     return true;
                 }
                 else if (expression is MethodCallExpression methodCallExpr
@@ -187,7 +187,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     && methodCallExpr.Arguments.Count == 0)
                 {
                     // TElement-valued parameterless method call of the domain is interpreted as a constant.
-                    term = new MemberConstant(methodCallExpr.Method);
+                    term = new Constant(new MemberConstantSymbol(methodCallExpr.Method));
                     return true;
                 }
             }
@@ -321,7 +321,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     && TryCreateTerm<TDomain, TElement>(memberExpr.Expression, out var argument))
                 {
                     // TElement-valued property access is interpreted as a unary function.
-                    term = new MemberFunction(memberExpr.Member, new[] { argument });
+                    term = new Function(new MemberFunctionSymbol(memberExpr.Member), new[] { argument });
                     return true;
                 }
                 else if (expression is MethodCallExpression methodCallExpr
@@ -352,7 +352,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                         arguments.Add(arg);
                     }
 
-                    term = new MemberFunction(methodCallExpr.Method, arguments);
+                    term = new Function(new MemberFunctionSymbol(methodCallExpr.Method), arguments);
                     return true;
                 }
             }
@@ -408,7 +408,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         }
 
         /// <summary>
-        /// Tries to create a <see cref="MemberPredicate"/> from an expression acting on the domain (and any relevant variables and constants) that
+        /// Tries to create a <see cref="MemberPredicateSymbol"/> from an expression acting on the domain (and any relevant variables and constants) that
         /// is a boolean-valued property or method call on an element object, or a boolean-valued property or method call on a domain object.
         /// </summary>
         private static bool TryCreatePredicate<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
@@ -425,13 +425,13 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 if (memberExpr.Expression.Type == typeof(TDomain)) // TODO: no guarantee that this is the domain param of the original lambda... Make me robust! requires passing domain param down through the whole process..
                 {
                     // Boolean-valued property access on the domain parameter is interpreted as a ground predicate
-                    sentence = new MemberPredicate(memberExpr.Member, Array.Empty<Term>());
+                    sentence = new Predicate(new MemberPredicateSymbol(memberExpr.Member), Array.Empty<Term>());
                     return true;
                 }
                 else if (TryCreateTerm<TDomain, TElement>(memberExpr.Expression, out var argument))
                 {
                     // Boolean-valued property access on a term is interpreted as a unary predicate.
-                    sentence = new MemberPredicate(memberExpr.Member, new[] { argument });
+                    sentence = new Predicate(new MemberPredicateSymbol(memberExpr.Member), new[] { argument });
                     return true;
                 }
             }
@@ -463,7 +463,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     arguments.Add(arg);
                 }
 
-                sentence = new MemberPredicate(methodCallExpr.Method, arguments);
+                sentence = new Predicate(new MemberPredicateSymbol(methodCallExpr.Method), arguments);
                 return true;
             }
             //// ... also to consider - certain things will fail the above but could be very sensibly interpreted

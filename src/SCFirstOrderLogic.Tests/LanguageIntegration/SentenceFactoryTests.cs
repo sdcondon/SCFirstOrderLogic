@@ -37,53 +37,53 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 new TestCase(
                     Expression: d => d.GroundPredicate1 && d.GroundPredicate2,
                     ExpectedSentence: new Conjunction(
-                        new MemberPredicate(groundPredicate1, emptyArgList),
-                        new MemberPredicate(groundPredicate2, emptyArgList))),
+                        new Predicate(new MemberPredicateSymbol(groundPredicate1), emptyArgList),
+                        new Predicate(new MemberPredicateSymbol(groundPredicate2), emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.GroundPredicate1 || d.GroundPredicate2,
                     ExpectedSentence: new Disjunction(
-                        new MemberPredicate(groundPredicate1, emptyArgList),
-                        new MemberPredicate(groundPredicate2, emptyArgList))),
+                        new Predicate(new MemberPredicateSymbol(groundPredicate1), emptyArgList),
+                        new Predicate(new MemberPredicateSymbol(groundPredicate2), emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.Constant1.Parent == d.Constant1,
                     ExpectedSentence: new Equality(
-                        new MemberFunction(parent, new[] { new MemberConstant(constant1) }),
-                        new MemberConstant(constant1))),
+                        new Function(new MemberFunctionSymbol(parent), new[] { new Constant(new MemberConstantSymbol(constant1)) }),
+                        new Constant(new MemberConstantSymbol(constant1)))),
 
                 new TestCase(
                     Expression: d => Iff(d.GroundPredicate1, d.GroundPredicate2),
                     ExpectedSentence: new Equivalence(
-                        new MemberPredicate(groundPredicate1, emptyArgList),
-                        new MemberPredicate(groundPredicate2, emptyArgList))),
+                        new Predicate(new MemberPredicateSymbol(groundPredicate1), emptyArgList),
+                        new Predicate(new MemberPredicateSymbol(groundPredicate2), emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.Any(x => x.Parent == d.Constant1),
                     ExpectedSentence: new ExistentialQuantification(
                         new VariableDeclaration("x"),
                         new Equality(
-                            new MemberFunction(parent, new[] { new VariableReference(new VariableDeclaration("x")) }),
-                            new MemberConstant(constant1)))),
+                            new Function(new MemberFunctionSymbol(parent), new[] { new VariableReference(new VariableDeclaration("x")) }),
+                            new Constant(new MemberConstantSymbol(constant1))))),
 
                 new TestCase(
                     Expression: d => If(d.GroundPredicate1, d.GroundPredicate2),
                     ExpectedSentence: new Implication(
-                        new MemberPredicate(groundPredicate1, emptyArgList),
-                        new MemberPredicate(groundPredicate2, emptyArgList))),
+                        new Predicate(new MemberPredicateSymbol(groundPredicate1), emptyArgList),
+                        new Predicate(new MemberPredicateSymbol(groundPredicate2), emptyArgList))),
 
                 new TestCase(
                     Expression: d => !d.GroundPredicate1,
                     ExpectedSentence: new Negation(
-                        new MemberPredicate(groundPredicate1, emptyArgList))),
+                        new Predicate(new MemberPredicateSymbol(groundPredicate1), emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.All(x => x.Parent == d.Constant1),
                     ExpectedSentence: new UniversalQuantification(
                         new VariableDeclaration("x"),
                         new Equality(
-                            new MemberFunction(parent, new[] { new VariableReference(new VariableDeclaration("x")) }),
-                            new MemberConstant(constant1)))),
+                            new Function(new MemberFunctionSymbol(parent), new[] { new VariableReference(new VariableDeclaration("x")) }),
+                            new Constant(new MemberConstantSymbol(constant1))))),
             })
             .When(tc => SentenceFactory.Create<IDomain, IElement>(tc.Expression))
             .ThenReturns((tc, sentence) =>
