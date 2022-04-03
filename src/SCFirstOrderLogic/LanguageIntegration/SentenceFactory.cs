@@ -422,7 +422,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
 
             if (expression is MemberExpression memberExpr && memberExpr.Expression != null) // Non-static field or property access
             {
-                if (memberExpr.Expression.Type == typeof(TDomain)) // todo: no guarantee that this is the domain param of the original lambda... Make me robust! requires passing domain param down through the whole process..
+                if (memberExpr.Expression.Type == typeof(TDomain)) // TODO: no guarantee that this is the domain param of the original lambda... Make me robust! requires passing domain param down through the whole process..
                 {
                     // Boolean-valued property access on the domain parameter is interpreted as a ground predicate
                     sentence = new MemberPredicate(memberExpr.Member, Array.Empty<Term>());

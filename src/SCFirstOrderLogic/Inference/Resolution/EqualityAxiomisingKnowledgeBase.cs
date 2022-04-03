@@ -37,7 +37,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             // TODO: Look for new functions and predicates, add equality axioms for them
             // .. To figure out for myself - why don't the fundamental axioms suffice (given that using the fundamental axioms
-            // menas that unification can encounter the same function or predicate?)
+            // means that unification can encounter the same function or predicate?)
         }
     }
 }

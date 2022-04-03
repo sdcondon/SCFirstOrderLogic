@@ -12,7 +12,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// </summary>
     internal static class SentenceFormatter
     {
-        // TODO: Name uniqueness should really be scoped (by formatter instance?) rather than global.
+        // TODO-BUG: Name uniqueness should really be scoped (by formatter instance?) rather than global.
+        // This approach will quickly start throwing index out of range exceptions in any real-world scenario.
         private static readonly string[] GreekAlphabet = new[] { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "ο", "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω" };
         private static readonly Dictionary<CNFConversion.StandardisedVariableSymbol, string> StandardisedVariableLabels = new Dictionary<CNFConversion.StandardisedVariableSymbol, string>();
 

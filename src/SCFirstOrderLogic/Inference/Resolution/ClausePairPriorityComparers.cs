@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Common clause pair priority comparers for use by <see cref="SimpleResolutionKnowledgeBase"/>.
+    /// Clause pair priority comparers for use by <see cref="SimpleResolutionKnowledgeBase"/>.
     /// For context, see §9.5.6 ("Resolution Strategies") of Artifical Intelligence: A Modern Approach.
     /// </summary>
     public class ClausePairPriorityComparers

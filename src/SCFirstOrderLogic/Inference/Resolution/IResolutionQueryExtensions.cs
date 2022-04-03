@@ -23,7 +23,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
             else if (!query.Result)
             {
-                throw new NotSupportedException("Explanation of a negative result is not yet supported");
+                throw new InvalidOperationException("Explanation of a negative result (which would be massive, potentially infinite) is not supported");
             }
 
             // walk back through the tree of steps (CNFClause.Empty will be the root), breadth-first
@@ -49,7 +49,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             orderedSteps.Reverse();
             var explanation = new StringBuilder();
-            explanation.AppendLine($"Query is {query.Result}");
             for (var i = 0; i < orderedSteps.Count; i++)
             {
                 if (query.Steps.TryGetValue(orderedSteps[i], out var input))

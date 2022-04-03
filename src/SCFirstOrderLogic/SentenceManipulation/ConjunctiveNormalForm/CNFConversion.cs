@@ -187,7 +187,15 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <summary>
         /// Transformation that eliminate existential quantification via the process of "Skolemisation". Replaces all existentially declared variables
         /// with a generated "Skolem" function that acts on all universally declared variables in scope when the existential variable was declared.
+        /// <para/>
+        /// NB: Doesn't override equality or hash code, so uses reference equality;
+        /// and we create exactly one instance per variable scope - thus achieving standardisation
+        /// without having to muck about with anything like trying to ensure names that are unique strings
+        /// (which should only be a rendering concern anyway).
         /// </summary>
+        /// <remarks>
+        /// As with standardised variables, would prefer to use value semantics for equality.
+        /// </remarks>
         private class Skolemisation : SentenceTransformation
         {
             /// <inheritdoc />
@@ -216,9 +224,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 
                 protected override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
                 {
-                    // TODO-MAINTAINABILITY: Skolem function equality shouldn't be on name.
-                    // Skolem function equality should be based on being the same function (at the same location)
-                    // in the same original sentence (note "original" - else equality would be circular)
                     existentialVariableMap[existentialQuantification.Variable] = new Function(
                         new SkolemFunctionSymbol(existentialQuantification.Variable.Symbol),
                         universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
@@ -255,7 +260,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             /// NB: SentenceFormatter has a special case when rendering these (to ensure that they are rendered distinctly),
             /// so this ToString override is "just in case".
             /// </remarks>
-            public override string ToString() => $"SK:{UnderlyingSymbol}"; // TODO: Would be more intuitive if it were named for the underlying existentially defined variable
+            public override string ToString() => $"SK:{UnderlyingSymbol}";
         }
 
         /// <summary>

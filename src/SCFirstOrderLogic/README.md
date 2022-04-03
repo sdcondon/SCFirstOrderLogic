@@ -7,3 +7,4 @@ The main goal here is for it to be a learning resource - as such, care has been 
 For real-world scenarios, there are other better inference engines out there - that use more powerful logics than first-order (e.g. Bayesian logic - see infer.net).
 
 [Usage guidance](https://github.com/sdcondon/SCFirstOrderLogic/tree/master/docs/user-guide) can be found in the docs folder of the [github repository](https://github.com/sdcondon/SCFirstOrderLogic) for the moment.
+

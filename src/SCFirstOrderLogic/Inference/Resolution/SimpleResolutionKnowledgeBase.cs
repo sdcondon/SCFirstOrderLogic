@@ -9,11 +9,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
-    /// See §9.5 of Artificial Intelligence: A Modern Approach, for a detailed explanation of resolution.
+    /// See §9.5 of 'Artificial Intelligence: A Modern Approach' for a detailed explanation of resolution.
     /// Notes:
     /// <list type="bullet">
-    /// <item/>Includes functionality for fine-grained execution and examination of individual steps of queries.
-    /// <item/>Has no in-built handling of equality (so, if equality appears in the knowledge base, its properties need to be axiomised - see §9.5.5 of Artifical Intelligence: A Modern Approach).
+    /// <item/>Includes functionality for fine-grained execution and examination of individual steps of queries. Use the <see cref="CreateQuery"/> method.
+    /// <item/>Has no in-built handling of equality - so, if equality appears in the knowledge base, its properties need to be axiomised - see §9.5.5 of 'Artifical Intelligence: A Modern Approach'.
     /// <item/>Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
     /// </list>
     /// </summary>
@@ -47,29 +47,18 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public bool Ask(Sentence sentence) => new Query(this, sentence).Complete();
 
         /// <summary>
-        /// 
+        /// Creates an <see cref="IResolutionQuery"/> instance for fine-grained execution and examination of a query.
         /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public IResolutionQuery CreateQuery(Sentence query) => new Query(this, query);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
-        public bool Ask(Sentence sentence, out IResolutionQuery query)
-        {
-            query = new Query(this, sentence);
-            return query.Complete();
-        }
+        /// <param name="sentence">The query sentence.</param>
+        /// <returns>An <see cref="IResolutionQuery"/> instance that can be used to execute and examine the query.</returns>
+        public IResolutionQuery CreateQuery(Sentence sentence) => new Query(this, sentence);
 
         /// <summary>
         /// book 9.5.2
         /// </summary>
         private class Query : IResolutionQuery
         {
-            private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store
+            private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store (scope).
             private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
             private readonly MaxPriorityQueue<(CNFClause, CNFClause)> queue;
             private readonly Dictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)>();
