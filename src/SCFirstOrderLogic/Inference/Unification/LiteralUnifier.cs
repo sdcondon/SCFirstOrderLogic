@@ -8,6 +8,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 {
     /// <summary>
     /// Utility class for unifying literals.
+    /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
     /// </summary>
     public class LiteralUnifier
     {
@@ -57,6 +58,9 @@ namespace SCFirstOrderLogic.Inference.Unification
                 return false;
             }
 
+            // TODO-PERFORMANCE: we can avoid visiting the input literal twice by building the unified version
+            // immediately instead of building a unifier. For later consideration (if and when anything actually
+            // cals this method).
             unified = unifier.ApplyTo(x);
             return true;
         }
@@ -105,7 +109,9 @@ namespace SCFirstOrderLogic.Inference.Unification
                 (VariableReference variable, _) => TryUnify(variable, y, unifier),
                 (_, VariableReference variable) => TryUnify(variable, x, unifier),
                 (Function functionX, Function functionY) => TryUnify(functionX, functionY, unifier),
-                _ => x.Equals(y), // TODO: only potential for equality is if they're both constants. Is it worth being explicit?
+                // only potential for equality is if they're both constants. Perhaps worth testing this vs that explicitly and a default that just returns false.
+                // Very similar from a performace perspective (constant equality does type check)
+                _ => x.Equals(y),
             };
         }
 

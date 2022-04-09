@@ -1,7 +1,8 @@
 ﻿#if FALSE
+using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
 
-namespace SCFirstOrderLogic.Inference.Resolution
+namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
     /// Decorator knowledge base class that adds equality axioms as knowledge is added to the underlying knowledge base.
@@ -10,6 +11,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
     public class EqualityAxiomisingKnowledgeBase : IKnowledgeBase
     {
         private readonly IKnowledgeBase innerKnowledgeBase;
+        private readonly ISet<object> knownPredicateSymbols = new HashSet<object>();
+        private readonly ISet<object> knownFunctionSymbols = new HashSet<object>();
 
         /// <summary>
         /// Initialises a new instance of the <see cref="EqualityAxiomisingKnowledgeBase"/> class.

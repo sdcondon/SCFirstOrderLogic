@@ -48,7 +48,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         /// <para/>
         /// TODO: No caching here, but the class is immutable so recalculating every time is wasted effort.
         /// Don't want to calculate on construction because this class is super low-level and we might never retrieve this property.
-        /// In short - perhaps look at using a Lazy&lt;T&gt; at some point?
+        /// In short - perhaps look at using a Lazy&lt;T&gt; at some point? More mem / GC load though..
         /// </summary>
         public bool IsHornClause => Literals.Count(l => l.IsPositive) <= 1;
 

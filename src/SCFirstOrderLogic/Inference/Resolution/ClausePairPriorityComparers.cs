@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// Clause pair priority comparers for use by <see cref="SimpleResolutionKnowledgeBase"/>.
-    /// For context, see §9.5.6 ("Resolution Strategies") of Artifical Intelligence: A Modern Approach.
+    /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
     /// </summary>
     public class ClausePairPriorityComparers
     {
@@ -22,11 +22,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// </summary>
         public static IComparer<(CNFClause, CNFClause)> UnitPreference { get; } = Comparer<(CNFClause, CNFClause)>.Create((x, y) =>
         {
-            if (x.Item1.Literals.Count == 1 || x.Item2.Literals.Count == 1 && !(y.Item1.Literals.Count == 1 || y.Item2.Literals.Count == 1))
+            if ((x.Item1.IsUnitClause || x.Item2.IsUnitClause) && !(y.Item1.IsUnitClause || y.Item2.IsUnitClause))
             {
                 return 1;
             }
-            else if (!(x.Item1.Literals.Count == 1 || x.Item2.Literals.Count == 1) && y.Item1.Literals.Count == 1 || y.Item2.Literals.Count == 1)
+            else if (!(x.Item1.IsUnitClause || x.Item2.IsUnitClause) && (y.Item1.IsUnitClause || y.Item2.IsUnitClause))
             {
                 return -1;
             }

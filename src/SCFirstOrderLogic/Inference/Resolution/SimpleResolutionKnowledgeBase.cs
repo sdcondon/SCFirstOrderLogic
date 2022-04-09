@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
-    /// See §9.5 of 'Artificial Intelligence: A Modern Approach' for a detailed explanation of resolution.
+    /// See §9.5 ("Resolution") of 'Artificial Intelligence: A Modern Approach' for a detailed explanation of resolution.
     /// Notes:
     /// <list type="bullet">
     /// <item/>Includes functionality for fine-grained execution and examination of individual steps of queries. Use the <see cref="CreateQuery"/> method.
@@ -26,9 +26,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <summary>
         /// Initialises a new instance of the <see cref="SimpleResolutionKnowledgeBase"/> class.
         /// </summary>
-        /// <param name="unifierStore"></param>
-        /// <param name="clausePairFilter"></param>
-        /// <param name="clausePairPriorityComparer"></param>
+        /// <param name="clausePairFilter">A delegate to use to filter the pairs of clauses to be queued for a unification attempt. A true value indicates that the pair should be enqueued.</param>
+        /// <param name="clausePairPriorityComparer">An object to use to compare the pairs of clauses to be queued for a unification attempt.</param>
         public SimpleResolutionKnowledgeBase(/*IUnifierStore unifierStore, */Func<(CNFClause, CNFClause), bool> clausePairFilter, IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer)
         {
             //this.unifierStore = unifierStore;
@@ -53,9 +52,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <returns>An <see cref="IResolutionQuery"/> instance that can be used to execute and examine the query.</returns>
         public IResolutionQuery CreateQuery(Sentence sentence) => new Query(this, sentence);
 
-        /// <summary>
-        /// book 9.5.2
-        /// </summary>
         private class Query : IResolutionQuery
         {
             private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store (scope).
@@ -65,11 +61,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             private bool result;
 
-            /// <summary>
-            /// Initializes a new instance of the <see cref="SimplestResolutionQuery"/> class.
-            /// </summary>
-            /// <param name="knowledgeBase"></param>
-            /// <param name="sentence"></param>
             public Query(SimpleResolutionKnowledgeBase knowledgeBase, Sentence sentence)
             {
                 this.clauses = knowledgeBase.sentences
@@ -120,9 +111,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
 
                 var (ci, cj) = queue.Dequeue();
-                var resolvents = ClauseUnifier.Unify(ci, cj);
-
-                foreach (var (unifier, resolvent) in resolvents)
+                foreach (var (unifier, resolvent) in ClauseUnifier.Unify(ci, cj))
                 {
                     // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
                     if (resolvent.Equals(CNFClause.Empty))
@@ -134,12 +123,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     }
 
                     // Otherwise, queue up a bunch more clause pairs, adhering to any filtering and ordering we have in place.
-                    // NB: We only check if the clause is already present exactly -  we don't check for clauses that subsume the resolvent.
+                    // NB: a limitation of this implementation - we only check if the clause is already present exactly -  we don't check for clauses that subsume the resolvent.
                     if (!clauses.Contains(resolvent))
                     {
                         steps[resolvent] = (ci, cj, unifier.Substitutions);
 
-                        foreach (var clause in clauses)
+                        foreach (var clause in clauses) // use unifier store instead of all clauses
                         {
                             if (clausePairFilter((clause, resolvent)))
                             {

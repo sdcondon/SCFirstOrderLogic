@@ -5,7 +5,8 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Probably needless complexity..
+    /// An interface for representations of an individual query - for fine-grained step-by-step execution and examination.
+    /// Probably needless complexity, given that we've only got a single resolution knowledge base - may disappear..
     /// </summary>
     public interface IResolutionQuery
     {

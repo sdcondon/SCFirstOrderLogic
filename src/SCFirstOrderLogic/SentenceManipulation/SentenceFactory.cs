@@ -1,7 +1,7 @@
 ﻿namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Shorthand static factory methods for <see cref="Sentence"/> instances. Intended to be used with a 'using static' directive to make method invocation succinct:
+    /// Shorthand static factory methods for <see cref="Sentence"/> instances. Intended to be used with a 'using static' directive to make method invocations acceptably succinct:
     /// <code>using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;</code>
     /// For domain-specific sentence elements (predicates, functions, constants etc), the recommendation is to create appropriate properties and methods to create them. For example:
     /// <code>Predicate MyBinaryPredicate(Term arg1, Term arg2) => new Predicate(nameof(MyBinaryPredicate), arg1, arg2);</code>
@@ -11,23 +11,65 @@
     /// </summary>
     public static class SentenceFactory
     {
+        /// <summary>
+        /// Shorthand factory method for a new <see cref="UniversalQuantification"/> instance.
+        /// </summary>
+        /// <param name="variableDeclaration">The variable declaration.</param>
+        /// <param name="sentence">The body sentence that refers to the declared variable.</param>
+        /// <returns>A new <see cref="UniversalQuantification"/> instance.</returns>
         public static Sentence ForAll(VariableDeclaration variableDeclaration, Sentence sentence) =>
             new UniversalQuantification(variableDeclaration, sentence);
 
+        /// <summary>
+        /// Shorthand factory method for a (tree of) new <see cref="UniversalQuantification"/> instances that declares two universally quantified variables.
+        /// </summary>
+        /// <param name="variableDeclaration1">The first variable declaration.</param>
+        /// <param name="variableDeclaration1">The second variable declaration.</param>
+        /// <param name="sentence">The body sentence that refers to the declared variables.</param>
+        /// <returns>A new <see cref="UniversalQuantification"/> instance.</returns>
         public static Sentence ForAll(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, Sentence sentence) => 
             new UniversalQuantification(variableDeclaration1, new UniversalQuantification(variableDeclaration2, sentence));
 
+        /// <summary>
+        /// Shorthand factory method for a (tree of) new <see cref="UniversalQuantification"/> instances that declares three universally quantified variables.
+        /// </summary>
+        /// <param name="variableDeclaration1">The first variable declaration.</param>
+        /// <param name="variableDeclaration1">The second variable declaration.</param>
+        /// <param name="variableDeclaration1">The third variable declaration.</param>
+        /// <param name="sentence">The body sentence that refers to the declared variables.</param>
+        /// <returns>A new <see cref="UniversalQuantification"/> instance.</returns>
         public static Sentence ForAll(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, VariableDeclaration variableDeclaration3, Sentence sentence) => 
             new UniversalQuantification(variableDeclaration1, new UniversalQuantification(variableDeclaration2, new UniversalQuantification(variableDeclaration3, sentence)));
 
+        /// <summary>
+        /// Shorthand factory method for a new <see cref="ExistentialQuantification"/> instance.
+        /// </summary>
+        /// <param name="variableDeclaration">The variable declaration.</param>
+        /// <param name="sentence">The body sentence that refers to the declared variable.</param>
+        /// <returns>A new <see cref="ExistentialQuantification"/> instance.</returns>
         public static Sentence ThereExists(VariableDeclaration variableDeclaration, Sentence sentence) => 
             new ExistentialQuantification(variableDeclaration, sentence);
 
+        /// <summary>
+        /// Shorthand factory method for a (tree of) new <see cref="ExistentialQuantification"/> instances that declares two universally quantified variables.
+        /// </summary>
+        /// <param name="variableDeclaration1">The first variable declaration.</param>
+        /// <param name="variableDeclaration1">The second variable declaration.</param>
+        /// <param name="sentence">The body sentence that refers to the declared variables.</param>
+        /// <returns>A new <see cref="ExistentialQuantification"/> instance.</returns>
         public static Sentence ThereExists(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, Sentence sentence) => 
             new ExistentialQuantification(variableDeclaration1, new UniversalQuantification(variableDeclaration2, sentence));
 
+        /// <summary>
+        /// Shorthand factory method for a (tree of) new <see cref="ExistentialQuantification"/> instances that declares three universally quantified variables.
+        /// </summary>
+        /// <param name="variableDeclaration1">The first variable declaration.</param>
+        /// <param name="variableDeclaration1">The second variable declaration.</param>
+        /// <param name="variableDeclaration1">The third variable declaration.</param>
+        /// <param name="sentence">The body sentence that refers to the declared variables.</param>
+        /// <returns>A new <see cref="ExistentialQuantification"/> instance.</returns>
         public static Sentence ThereExists(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, VariableDeclaration variableDeclaration3, Sentence sentence) =>
-            new UniversalQuantification(variableDeclaration1, new UniversalQuantification(variableDeclaration2, new UniversalQuantification(variableDeclaration3, sentence)));
+            new ExistentialQuantification(variableDeclaration1, new ExistentialQuantification(variableDeclaration2, new ExistentialQuantification(variableDeclaration3, sentence)));
 
         /// <summary>
         /// Shorthand factory method for a (tree of) new <see cref="Conjunction"/>(s) of two (or more) operands.
@@ -96,8 +138,8 @@
         public static Sentence AreEqual(Term left, Term right) =>
             new Equality(left, right);
 
-        //// These properties are almost certainly a bad idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
         #region VariableDeclarations
+        //// I'm still unconvinced that these properties are a good idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "A".

@@ -63,7 +63,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// The symbol class for equality. 
         /// </summary>
-        private class EqualitySymbol
+        internal class EqualitySymbol
         {
             public static EqualitySymbol Instance { get; } = new EqualitySymbol();
 

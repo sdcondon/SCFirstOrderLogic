@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Unification
+namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Inference.Unification
 {
     /// <summary>
     /// Most general unifier logic - optimised from the version presented in the source material,
@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Unification
     /// </summary>
     public static class SentenceUnifier
     {
-        public static bool TryUnify(Sentence x, Sentence y, out IDictionary<VariableReference, Term>? unifier)
+        public static bool TryUnify(Sentence x, Sentence y, out IDictionary<VariableReference, Term> unifier)
         {
             unifier = new Dictionary<VariableReference, Term>();
 

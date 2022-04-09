@@ -23,10 +23,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
             else if (!query.Result)
             {
-                throw new InvalidOperationException("Explanation of a negative result (which would be massive, potentially infinite) is not supported");
+                throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
             }
 
-            // walk back through the tree of steps (CNFClause.Empty will be the root), breadth-first
+            // Walk back through the tree of steps (CNFClause.Empty will be the root), breadth-first:
             var orderedSteps = new List<CNFClause>();
             var queue = new Queue<CNFClause>(new[] { CNFClause.Empty });
             while (queue.Count > 0)
@@ -34,8 +34,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 var clause = queue.Dequeue();
                 if (orderedSteps.Contains(clause))
                 {
-                    // We have found the same clause "earlier" than another encounter of it..
-                    // Remove the "later" one.
+                    // We have found the same clause "earlier" than another encounter of it.
+                    // Remove the "later" one so that once we reverse the list, there are no
+                    // references to clauses we've not seen yet.
                     orderedSteps.Remove(clause);
                 }
                 orderedSteps.Add(clause);
