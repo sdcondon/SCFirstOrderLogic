@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
     /// NB: for now at least contains no logic for ordering literals (sentences will be explored depth-frst and left to right) - and equality is based on there
     /// being the same literals in the same order. This is because different algorithms may need different things.. TODO: May (probably should) be changed..
     /// </summary>
-    public class CNFClause
+    public class CNFClause : IEquatable<CNFClause>
     {
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFClause"/> class from a sentence that is a disjunction of literals (a literal being a predicate or a negated predicate).
@@ -76,17 +76,20 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         public override string ToString() => Literals.Count == 0 ? "<EMPTY CLAUSE - IMPLICITLY FALSE>" : string.Join(" ∨ ", Literals);
 
         /// <inheritdoc />
+        public override bool Equals(object obj) => obj is CNFClause clause && Equals(clause);
+
+        /// <inheritdoc />
         /// <remarks>
         /// Clauses that contain exactly the same collection of literals in the same order are considered equal.
         /// </remarks>
-        public override bool Equals(object obj)
+        public bool Equals(CNFClause other)
         {
-            if (!(obj is CNFClause clause) || Literals.Count != clause.Literals.Count)
+            if (Literals.Count != other.Literals.Count)
             {
                 return false;
             }
 
-            foreach (var (xLiteral, yLiteral) in Literals.Zip(clause.Literals, (x, y) => (x, y)))
+            foreach (var (xLiteral, yLiteral) in Literals.Zip(other.Literals, (x, y) => (x, y)))
             {
                 if (!xLiteral.Equals(yLiteral))
                 {

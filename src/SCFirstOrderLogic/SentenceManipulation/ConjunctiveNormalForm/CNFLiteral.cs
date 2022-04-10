@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
     /// <remarks>
     /// NB: Yes, literals are a meaningful notion regardless of CNF, but we only use THIS type within our CNF representation. Hence this type being called CNFLiteral and residing in this namespace.
     /// </remarks>
-    public class CNFLiteral
+    public class CNFLiteral : IEquatable<CNFLiteral>
     {
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFLiteral"/> class.
@@ -68,12 +68,12 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
         public override string ToString() => $"{(IsNegated ? "¬" : "")}{Predicate}";
 
         /// <inheritdoc />
-        /// TODO: Explain this choice of equality (and hashcode) implementation.
-        public override bool Equals(object obj)
+        public override bool Equals(object obj) => obj is CNFLiteral literal && Equals(literal);
+
+        /// <inheritdoc />
+        public bool Equals(CNFLiteral other)
         {
-            return obj is CNFLiteral literal
-                && literal.Predicate.Equals(Predicate)
-                && literal.IsNegated.Equals(IsNegated);
+            return other.Predicate.Equals(Predicate) && other.IsNegated.Equals(IsNegated);
         }
 
         /// <inheritdoc />
