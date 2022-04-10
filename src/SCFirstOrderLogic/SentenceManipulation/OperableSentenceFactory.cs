@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <para/>
     /// <strong>N.B.</strong> The real sentence classes do not define these operators to keep them as lean and mean as possible.
     /// In fact, the author's worry is that these operators aren't a good idea at all - because of the resulting wishy-washy mix of C# syntax and first-order logic concepts.
-    /// Using the full LINQ integration (via <see cref="LanguageIntegration.SentenceFactory"/>) is strongly recommended instead of this - because it has a much clearer and cleaner definition for how C# is mapped to FoL logic ("this expression evaluates as true when invoked on the IEnumerable representing the domain").
+    /// Using the full LINQ integration (via <see cref="LanguageIntegration.SentenceFactory"/>) is strongly recommended instead of this - because it has a much clearer and cleaner definition for how C# is mapped to FoL logic ("this expression would evaluate as true when invoked on the IEnumerable representing the domain").
     /// However, libraries should empower people, not constrain them, so here we are.
     /// </summary>
     public static class OperableSentenceFactory

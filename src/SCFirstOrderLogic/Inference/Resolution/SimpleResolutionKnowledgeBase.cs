@@ -30,11 +30,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <param name="clausePairPriorityComparer">An object to use to compare the pairs of clauses to be queued for a unification attempt.</param>
         public SimpleResolutionKnowledgeBase(/*IUnifierStore unifierStore, */Func<(CNFClause, CNFClause), bool> clausePairFilter, IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer)
         {
-            //this.unifierStore = unifierStore;
-            // NB: throwing away clauses returned by the unifier store has performance impact. Could also use a store that knows to not look for certain clause pairings in the first place..
+            ////this.unifierStore = unifierStore;
+
+            // NB: Throwing away clauses returned by the unifier store has performance impact. Could instead/also use a store that knows to not look for certain clause pairings in the first place..
             // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is then a mix of implementation (how unifiers are stored/indexed) and strategy,
-            // plus there's a bit more strategy in the priority comparer.. This feels a good compromise - there are of course alternatives (e.g. some kind of strategy object that encapsulates
-            // both) - but they felt like overkill for this Simple implementation.
+            // plus there's a bit more strategy in the form of the priority comparer. This feels a good compromise - there are of course alternatives (e.g. some kind of strategy object that encapsulates
+            // both) - but they felt like overkill for this simple implementation.
             this.clausePairFilter = clausePairFilter; 
             this.clausePairPriorityComparer = clausePairPriorityComparer;
         }
@@ -110,7 +111,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     throw new InvalidOperationException("Query is complete");
                 }
 
+                // Grab the next clause pairing from the queue..
                 var (ci, cj) = queue.Dequeue();
+
+                // ..and iterate through its resolvents (if any) - also make a note of the unifier so that we can include it in the record of steps that we maintain:
                 foreach (var (unifier, resolvent) in ClauseUnifier.Unify(ci, cj))
                 {
                     // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
@@ -122,13 +126,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         return;
                     }
 
-                    // Otherwise, queue up a bunch more clause pairs, adhering to any filtering and ordering we have in place.
-                    // NB: a limitation of this implementation - we only check if the clause is already present exactly -  we don't check for clauses that subsume the resolvent.
+                    // Otherwise, check if we've found a new clause (i.e. something that we didn't know already)..
+                    // NB: a limitation of this implementation - we only check if the clause is already present exactly -  we don't check for clauses that subsume it.
                     if (!clauses.Contains(resolvent))
                     {
-                        steps[resolvent] = (ci, cj, unifier.Substitutions);
-
-                        foreach (var clause in clauses) // use unifier store instead of all clauses
+                        // If this is a new clause, we queue up some more clause pairings - combinations of the resolvent and existing known clauses - adhering to any filtering and ordering we have in place.
+                        foreach (var clause in clauses) // use unifier store lookup instead of all clauses
                         {
                             if (clausePairFilter((clause, resolvent)))
                             {
@@ -136,6 +139,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                             }
                         }
 
+                        steps[resolvent] = (ci, cj, unifier.Substitutions);
                         clauses.Add(resolvent);
                     }
                 }

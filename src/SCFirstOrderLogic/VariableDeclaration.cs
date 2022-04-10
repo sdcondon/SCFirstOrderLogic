@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic
     /// <see cref="VariableDeclaration"/> instances are implicitly convertible to <see cref="VariableReference"/> instances referring to them,
     /// to aid in the succinct creation of sentences.
     /// </summary>
-    public sealed class VariableDeclaration
+    public sealed class VariableDeclaration : IEquatable<VariableDeclaration>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableDeclaration"/> class.
@@ -39,7 +39,10 @@ namespace SCFirstOrderLogic
         public object Symbol { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is VariableDeclaration otherVariableDeclaration && Symbol.Equals(otherVariableDeclaration.Symbol);
+        public override bool Equals(object obj) => obj is VariableDeclaration otherVariableDeclaration && Equals(otherVariableDeclaration);
+
+        /// <inheritdoc />
+        public bool Equals(VariableDeclaration other) => Symbol.Equals(other.Symbol);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Symbol);

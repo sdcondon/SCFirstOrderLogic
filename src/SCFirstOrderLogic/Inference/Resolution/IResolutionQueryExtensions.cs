@@ -39,12 +39,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     // references to clauses we've not seen yet.
                     orderedSteps.Remove(clause);
                 }
-                orderedSteps.Add(clause);
-
+                
                 if (query.Steps.TryGetValue(clause, out var input))
                 {
                     queue.Enqueue(input.Item1);
                     queue.Enqueue(input.Item2);
+
+                    // NB: only record it as a step if its not a clause from the KB - explanation is clearer that way..
+                    orderedSteps.Add(clause);
                 }
             }
 
@@ -52,20 +54,17 @@ namespace SCFirstOrderLogic.Inference.Resolution
             var explanation = new StringBuilder();
             for (var i = 0; i < orderedSteps.Count; i++)
             {
-                if (query.Steps.TryGetValue(orderedSteps[i], out var input))
-                {
-                    explanation.AppendLine($"#{i:D2}: {orderedSteps[i]}");
-                    explanation.AppendLine($"     From #{orderedSteps.IndexOf(input.Item1):D2}: {input.Item1}");
-                    explanation.AppendLine($"     And  #{orderedSteps.IndexOf(input.Item2):D2}: {input.Item2} ");
-                    explanation.Append("     Using   : {");
-                    explanation.Append(string.Join(", ", input.Item3.Select(s => $"{s.Key}/{s.Value}")));
-                    explanation.AppendLine("}");
-                }
-                else
-                {
-                    explanation.AppendLine($"#{i:D2}: {orderedSteps[i]}");
-                    explanation.AppendLine($"     From known facts");
-                }
+                var input = query.Steps[orderedSteps[i]];
+
+                var from1 = orderedSteps.Contains(input.Item1) ? $"#{orderedSteps.IndexOf(input.Item1).ToString("D2")}" : " KB";
+                var from2 = orderedSteps.Contains(input.Item2) ? $"#{orderedSteps.IndexOf(input.Item2).ToString("D2")}" : " KB";
+
+                explanation.AppendLine($"#{i:D2}: {orderedSteps[i]}");
+                explanation.AppendLine($"     From {from1}: {input.Item1}");
+                explanation.AppendLine($"     And  {from2}: {input.Item2} ");
+                explanation.Append("     Using   : {");
+                explanation.Append(string.Join(", ", input.Item3.Select(s => $"{s.Key}/{s.Value}")));
+                explanation.AppendLine("}");
 
                 explanation.AppendLine();
             }
