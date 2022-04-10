@@ -33,7 +33,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
                 new TestCase(
                     SentenceSurrogate: Constant1 == Constant2,
-                    ExpectedSentence: new Equality(
+                    ExpectedSentence: new Predicate(
+                        EqualitySymbol.Instance,
                         new Constant(nameof(Constant1)),
                         new Constant(nameof(Constant2)))),
 
@@ -47,7 +48,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     SentenceSurrogate: ThereExists(X, UnaryFunction(X) == Constant1),
                     ExpectedSentence: new ExistentialQuantification(
                         new VariableDeclaration("X"),
-                        new Equality(
+                        new Predicate(
+                            EqualitySymbol.Instance,
                             new Function(nameof(UnaryFunction), new[] { new VariableReference(new VariableDeclaration("X")) }),
                             new Constant(nameof(Constant1))))),
 
@@ -66,7 +68,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     SentenceSurrogate: ForAll(X, UnaryFunction(X) == Constant1),
                     ExpectedSentence: new UniversalQuantification(
                         new VariableDeclaration("X"),
-                        new Equality(
+                        new Predicate(
+                            EqualitySymbol.Instance,
                             new Function(nameof(UnaryFunction), new[] { new VariableReference(new VariableDeclaration("X")) }),
                             new Constant(nameof(Constant1))))),
             })

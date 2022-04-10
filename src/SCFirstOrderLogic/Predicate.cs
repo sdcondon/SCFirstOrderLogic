@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic
     /// Representation of an predicate sentence of first order logic, In typical FOL syntax, this is written as:
     /// <code>{predicate symbol}({term}, ..)</code>
     /// </summary>
-    public class Predicate : Sentence
+    public sealed class Predicate : Sentence
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate"/> class.

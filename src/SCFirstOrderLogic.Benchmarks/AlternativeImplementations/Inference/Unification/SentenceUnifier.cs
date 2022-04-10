@@ -31,7 +31,6 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Inference.Unif
             {
                 (Conjunction conjunctionX, Conjunction conjunctionY) => TryUnify(conjunctionX, conjunctionY, unifier),
                 (Disjunction disjunctionX, Disjunction disjunctionY) => TryUnify(disjunctionX, disjunctionY, unifier),
-                (Equality equalityX, Equality equalityY) => TryUnify(equalityX, equalityY, unifier),
                 (Equivalence equivalenceX, Equivalence equivalenceY) => TryUnify(equivalenceX, equivalenceY, unifier),
                 //(ExistentialQuantification existentialQuantificationX, ExistentialQuantification existentialQuantificationY) => TryUnify(existentialQuantificationX, existentialQuantificationY, unifier),
                 (Implication implicationX, Implication implicationY) => TryUnify(implicationX, implicationY, unifier),
@@ -50,13 +49,6 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Inference.Unif
         }
 
         private static bool TryUnify(Disjunction x, Disjunction y, IDictionary<VariableReference, Term> unifier)
-        {
-            // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
-            // perhaps Low and High (internal) props in conjunction? Or assume normalised ordering (which at the time of writing WE DONT DO)
-            return TryUnify(x.Left, y.Left, unifier) && TryUnify(x.Right, y.Right, unifier);
-        }
-
-        private static bool TryUnify(Equality x, Equality y, IDictionary<VariableReference, Term> unifier)
         {
             // BUG: Order shouldn't matter (but need to be careful about partially updating unifier)
             // perhaps Low and High (internal) props in conjunction? Or assume normalised ordering (which at the time of writing WE DONT DO)

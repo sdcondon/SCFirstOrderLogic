@@ -22,7 +22,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
             {
                 Conjunction conjunction => ApplyTo(conjunction),
                 Disjunction disjunction => ApplyTo(disjunction),
-                Equality equality => ApplyTo(equality),
                 Equivalence equivalence => ApplyTo(equivalence),
                 Implication implication => ApplyTo(implication),
                 Negation negation => ApplyTo(negation),
@@ -66,24 +65,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
             }
 
             return disjunction;
-        }
-
-        /// <summary>
-        /// Applies this transformation to an <see cref="Equality"/> instance..
-        /// The default implementation returns an <see cref="Equality"/> of the result of calling <see cref="ApplyTo"/> on both of the existing terms.
-        /// </summary>
-        /// <param name="equality">The <see cref="Equality"/> instance to visit.</param>
-        /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        protected virtual Sentence ApplyTo(Equality equality)
-        {
-            var left = ApplyTo(equality.Left);
-            var right = ApplyTo(equality.Right);
-            if (left != equality.Left || right != equality.Right)
-            {
-                return new Equality(left, right);
-            }
-
-            return equality;
         }
 
         /// <summary>

@@ -48,7 +48,8 @@ namespace SCFirstOrderLogic.LanguageIntegration
 
                 new TestCase(
                     Expression: d => d.Constant1.Parent == d.Constant1,
-                    ExpectedSentence: new Equality(
+                    ExpectedSentence: new Predicate(
+                        EqualitySymbol.Instance,
                         new Function(new MemberFunctionSymbol(parent), new[] { new Constant(new MemberConstantSymbol(constant1)) }),
                         new Constant(new MemberConstantSymbol(constant1)))),
 
@@ -62,7 +63,8 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     Expression: d => d.Any(x => x.Parent == d.Constant1),
                     ExpectedSentence: new ExistentialQuantification(
                         new VariableDeclaration("x"),
-                        new Equality(
+                        new Predicate(
+                            EqualitySymbol.Instance,
                             new Function(new MemberFunctionSymbol(parent), new[] { new VariableReference(new VariableDeclaration("x")) }),
                             new Constant(new MemberConstantSymbol(constant1))))),
 
@@ -81,7 +83,8 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     Expression: d => d.All(x => x.Parent == d.Constant1),
                     ExpectedSentence: new UniversalQuantification(
                         new VariableDeclaration("x"),
-                        new Equality(
+                        new Predicate(
+                            EqualitySymbol.Instance,
                             new Function(new MemberFunctionSymbol(parent), new[] { new VariableReference(new VariableDeclaration("x")) }),
                             new Constant(new MemberConstantSymbol(constant1))))),
             })

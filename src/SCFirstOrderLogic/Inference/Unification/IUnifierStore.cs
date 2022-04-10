@@ -1,7 +1,8 @@
 ﻿#if FALSE
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace SCFirstOrderLogic.Inference.UnifierStorage
+namespace SCFirstOrderLogic.Inference.Unification
 {
     /// <summary>
     /// Interface for types that facilitate lookup of all of the unifiers (i.e. sets of variable assignments) such
@@ -19,13 +20,13 @@ namespace SCFirstOrderLogic.Inference.UnifierStorage
         /// Registers a sentence with the store.
         /// </summary>
         /// <param name="sentence">The sentence to store.</param>
-        void Store(Sentence sentence);
+        Task StoreAsync(Sentence sentence);
 
         /// <summary>
         /// Returns all unifiers such that the query q unifies with some sentence in the store.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<IDictionary<VariableReference, Constant>> Fetch(Sentence sentence);
+        IAsyncEnumerable<IDictionary<VariableReference, Constant>> Fetch(Sentence sentence);
     }
 }
 #endif

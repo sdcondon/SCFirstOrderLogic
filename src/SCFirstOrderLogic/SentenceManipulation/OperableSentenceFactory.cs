@@ -419,9 +419,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         // hopefully a good example of why I want to keep this approach to creating sentences well away from the actual sentence classes..
         public abstract class OperableTerm
         {
-            public static OperableSentence operator ==(OperableTerm left, OperableTerm right) => new OperablePredicate(Equality.EqualitySymbol.Instance, left, right);
+            public static OperableSentence operator ==(OperableTerm left, OperableTerm right) => new OperablePredicate(EqualitySymbol.Instance, left, right);
 
-            public static OperableSentence operator !=(OperableTerm left, OperableTerm right) => new OperableNegation(new OperablePredicate(Equality.EqualitySymbol.Instance, left, right));
+            public static OperableSentence operator !=(OperableTerm left, OperableTerm right) => new OperableNegation(new OperablePredicate(EqualitySymbol.Instance, left, right));
 
             public static implicit operator Term(OperableTerm term) => term switch
             {

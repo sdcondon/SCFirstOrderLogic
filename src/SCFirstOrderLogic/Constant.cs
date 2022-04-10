@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic
     /// <summary>
     /// Representation of a constant term within a sentence of first order logic.
     /// </summary>
-    public class Constant : Term
+    public sealed class Constant : Term
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Constant"/> class.

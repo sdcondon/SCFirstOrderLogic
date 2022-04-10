@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic
     /// Representation of a function term within a sentence of first order logic. In typical FOL syntax, this is written as:
     /// <code>{function symbol}({term}, ..)</code>
     /// </summary>
-    public class Function : Term
+    public sealed class Function : Term
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberFunction"/> class.

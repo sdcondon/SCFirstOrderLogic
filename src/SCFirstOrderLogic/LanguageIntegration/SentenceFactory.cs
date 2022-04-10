@@ -221,7 +221,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         }
 
         /// <summary>
-        /// Tries to create an <see cref="Equality"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+        /// Tries to create a <see cref="Predicate"/> with the <see cref="EqualitySymbol"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>{expression} == {expression}</code>
         /// </summary>
         private static bool TryCreateEquality<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
@@ -232,7 +232,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 && TryCreateTerm<TDomain, TElement>(binaryExpr.Left, out var left)
                 && TryCreateTerm<TDomain, TElement>(binaryExpr.Right, out var right))
             {
-                sentence = new Equality(left, right);
+                sentence = new Predicate(EqualitySymbol.Instance, left, right);
                 return true;
             }
 
@@ -399,7 +399,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 && TryCreateTerm<TDomain, TElement>(binaryExpr.Left, out var left)
                 && TryCreateTerm<TDomain, TElement>(binaryExpr.Right, out var right))
             {
-                sentence = new Negation(new Equality(left, right));
+                sentence = new Negation(new Predicate(EqualitySymbol.Instance, left, right));
                 return true;
             }
 

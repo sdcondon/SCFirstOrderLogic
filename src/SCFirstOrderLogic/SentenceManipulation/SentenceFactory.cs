@@ -136,7 +136,7 @@
             new Negation(sentence);
 
         public static Sentence AreEqual(Term left, Term right) =>
-            new Equality(left, right);
+            new Predicate(EqualitySymbol.Instance, left, right);
 
         #region VariableDeclarations
         //// I'm still unconvinced that these properties are a good idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..

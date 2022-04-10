@@ -93,7 +93,6 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Inference.Unif
             {
                 Conjunction => true,
                 Disjunction => true,
-                Equality => true,
                 Equivalence => true,
                 ExistentialQuantification => true,
                 Function => true,
@@ -111,7 +110,6 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Inference.Unif
             {
                 Conjunction => "∧",
                 Disjunction => "∨",
-                Equality => "=",
                 Equivalence => "⇔",
                 ExistentialQuantification => "∃",
                 Function f => f.Symbol,
@@ -129,7 +127,6 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Inference.Unif
             {
                 Conjunction c => new List<object> { c.Left, c.Right },
                 Disjunction d => new List<object> { d.Left, d.Right },
-                Equality e => new List<object> { e.Left, e.Right },
                 Equivalence e => new List<object> { e.Left, e.Right },
                 ExistentialQuantification eq => eq.Sentence,
                 Function f => f.Arguments.ToList<object>(),
