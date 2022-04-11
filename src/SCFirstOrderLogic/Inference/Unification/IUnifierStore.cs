@@ -6,27 +6,25 @@ namespace SCFirstOrderLogic.Inference.Unification
 {
     /// <summary>
     /// Interface for types that facilitate lookup of all of the unifiers (i.e. sets of variable assignments) such
-    /// that a given query unifies (i.e. matches, once the variable assignents are made) with some known sentence.
+    /// that a given query unifies (i.e. matches, once the variable assignents are made) with some known clause.
     /// <para/>
     /// This is a process that underpins first-order logic inference algorithms. We have an abstraction for it because
-    /// stores of different sizes and natures will have different requirements for how the known sentences are stored
+    /// stores of different sizes and natures will have different requirements for how the known clauses are stored
     /// (w.r.t. indexing approach, primary vs secondary storage, and so on) in order to be acceptably performant.
-    /// <para/>
-    /// TBD: given the potential for secondary storage here, should these methods be async?
     /// </summary>
     public interface IUnifierStore
     {
         /// <summary>
-        /// Registers a sentence with the store.
+        /// Registers a clause with the store.
         /// </summary>
-        /// <param name="sentence">The sentence to store.</param>
-        Task StoreAsync(Sentence sentence);
+        /// <param name="clause">The clause to store.</param>
+        Task StoreAsync(CNFClause clause);
 
         /// <summary>
-        /// Returns all unifiers such that the query q unifies with some sentence in the store.
+        /// Returns all unifiers such that the given clause unifies with some clause in the store.
         /// </summary>
         /// <returns></returns>
-        IAsyncEnumerable<IDictionary<VariableReference, Constant>> Fetch(Sentence sentence);
+        IAsyncEnumerable<IReadOnlyDictionary<VariableReference, Term>> Fetch(CNFClause clause);
     }
 }
 #endif

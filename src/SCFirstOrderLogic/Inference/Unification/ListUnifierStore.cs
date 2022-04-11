@@ -1,6 +1,5 @@
 ﻿#if FALSE
 using SCFirstOrderLogic.SentenceManipulation;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,15 +13,22 @@ namespace SCFirstOrderLogic.Inference.Unification
         private readonly List<CNFClause> clauses = new List<CNFClause>();
 
         /// <inheritdoc />
-        public async Task StoreAsync(Sentence sentence)
+        public Task StoreAsync(CNFClause clause)
         {
-            throw new NotImplementedException();
+            clauses.Add(clause);
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
-        public IAsyncEnumerable<IDictionary<VariableReference, Constant>> Fetch(Sentence sentence)
+        public async IAsyncEnumerable<IReadOnlyDictionary<VariableReference, Term>> Fetch(CNFClause clause)
         {
-            throw new NotImplementedException();
+            foreach (var otherClause in clauses)
+            {
+                foreach (var (unifier, unified) in ClauseUnifier.Unify(clause, otherClause))
+                {
+                    yield return unifier.Substitutions;
+                }
+            }
         }
     }
 }
