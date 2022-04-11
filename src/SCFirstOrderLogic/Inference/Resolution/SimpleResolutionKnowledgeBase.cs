@@ -64,8 +64,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             public Query(SimpleResolutionKnowledgeBase knowledgeBase, Sentence sentence)
             {
+                this.NegatedQuery = new CNFSentence(new Negation(sentence));
+
                 this.clauses = knowledgeBase.sentences
-                    .Append(new CNFSentence(new Negation(sentence)))
+                    .Append(NegatedQuery)
                     .SelectMany(s => s.Clauses)
                     .ToHashSet();
 
@@ -82,6 +84,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     }
                 }
             }
+
+            public CNFSentence NegatedQuery { get; }
 
             /// <inheritdoc/>
             public bool IsComplete { get; private set; } = false;

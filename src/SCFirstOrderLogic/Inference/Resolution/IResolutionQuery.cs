@@ -11,6 +11,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
     public interface IResolutionQuery
     {
         /// <summary>
+        /// Gets the (CNF representation of) the negation of the query.
+        /// </summary>
+        public CNFSentence NegatedQuery { get; }
+
+        /// <summary>
         /// Gets a value indicating whether the query is complete.
         /// The result of completed queries is available via the <see cref="Result"/> property.
         /// Calling <see cref="NextStep"/> on a completed query will result in an <see cref="InvalidOperationException"/>.

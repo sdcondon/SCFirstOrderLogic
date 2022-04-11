@@ -49,10 +49,10 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
             {
-                if (sentence is Conjunction)
+                if (sentence is Conjunction conjunction)
                 {
                     // The expression is already in CNF - so the root down until the individual clauses will all be Conjunctions - we just skip past those.
-                    return base.ApplyTo(sentence);
+                    return ApplyTo(conjunction);
                 }
                 else
                 {

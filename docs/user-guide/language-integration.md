@@ -54,10 +54,10 @@ The mapping between bool-valued C# expressions (that act on the TDomain) and FoL
 |Function|`{function symbol}({term}, ...)`|Invocation of a TElement-valued method on TElement that accepts only TElement-valued paramaters, or access of a TElement-valued property of TElement|
 |Variable|`{variable symbol}`|A variable from the lambda passed to All or Any|
 
-\* C# lacks a single operator appropriate for material equivalence and implication, so LinqToKB offers some shorthand methods in the `Operators` static class.
-Library consumers are encouraged use `using static LinqToKB.FirstOrderLogic.Operators;` where appropriate
+\* C# lacks a single operator appropriate for material equivalence and implication, so we offer some shorthand methods in the `Operators` static class.
+Library consumers are encouraged use `using static SCFirstOrderLogic.LanguageIntegration.Operators;` where appropriate
 
-† LinqToKB also defines some more overloads of `All` and `Any` that accept multiple parameters - which can help with keeping expressions simple when there are multiple variables involved
+† We also define some more overloads of `All` and `Any` that accept multiple parameters - which can help with keeping expressions simple when there are multiple variables involved
 
 ‡ How to deal effectively with constants is an open question.
 At present, they can be declared as TElement-valued props on the domain, but this doesn't facilitate scenarios where being able to define constants at run-time is a requirement.

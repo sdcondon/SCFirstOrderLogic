@@ -45,7 +45,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     queue.Enqueue(input.Item1);
                     queue.Enqueue(input.Item2);
 
-                    // NB: only record it as a step if its not a clause from the KB - explanation is clearer that way..
+                    // NB: only record it as a step if its not a clause from the KB (or negated query) - explanation is clearer that way..
                     orderedSteps.Add(clause);
                 }
             }
@@ -56,12 +56,25 @@ namespace SCFirstOrderLogic.Inference.Resolution
             {
                 var input = query.Steps[orderedSteps[i]];
 
-                var from1 = orderedSteps.Contains(input.Item1) ? $"#{orderedSteps.IndexOf(input.Item1).ToString("D2")}" : " KB";
-                var from2 = orderedSteps.Contains(input.Item2) ? $"#{orderedSteps.IndexOf(input.Item2).ToString("D2")}" : " KB";
+                string GetSource(CNFClause clause)
+                {
+                    if (orderedSteps.Contains(clause))
+                    {
+                        return $"#{orderedSteps.IndexOf(clause):D2}";
+                    }
+                    else if (query.NegatedQuery.Clauses.Contains(clause))
+                    {
+                        return " ¬Q";
+                    }
+                    else
+                    {
+                        return " KB";
+                    }
+                }
 
                 explanation.AppendLine($"#{i:D2}: {orderedSteps[i]}");
-                explanation.AppendLine($"     From {from1}: {input.Item1}");
-                explanation.AppendLine($"     And  {from2}: {input.Item2} ");
+                explanation.AppendLine($"     From {GetSource(input.Item1)}: {input.Item1}");
+                explanation.AppendLine($"     And  {GetSource(input.Item2)}: {input.Item2} ");
                 explanation.Append("     Using   : {");
                 explanation.Append(string.Join(", ", input.Item3.Select(s => $"{s.Key}/{s.Value}")));
                 explanation.AppendLine("}");
