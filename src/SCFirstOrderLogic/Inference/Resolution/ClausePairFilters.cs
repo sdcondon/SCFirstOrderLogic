@@ -1,4 +1,4 @@
-﻿using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
+﻿using SCFirstOrderLogic.SentenceManipulation;
 using System;
 
 namespace SCFirstOrderLogic.Inference.Resolution

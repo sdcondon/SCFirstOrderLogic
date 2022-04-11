@@ -1,4 +1,5 @@
 ﻿#if FALSE
+using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,14 +11,16 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// </summary>
     public class ListUnifierStore : IUnifierStore
     {
+        private readonly List<CNFClause> clauses = new List<CNFClause>();
+
         /// <inheritdoc />
-        public IAsyncEnumerable<IDictionary<VariableReference, Constant>> Fetch(Sentence sentence)
+        public async Task StoreAsync(Sentence sentence)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc />
-        public async Task StoreAsync(Sentence sentence)
+        public IAsyncEnumerable<IDictionary<VariableReference, Constant>> Fetch(Sentence sentence)
         {
             throw new NotImplementedException();
         }

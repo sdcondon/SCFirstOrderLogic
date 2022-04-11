@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Implementation of <see cref="SentenceTransformation"/> that converts sentences to conjunctive normal form.

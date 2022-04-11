@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Representation of an individual clause (i.e. a disjunction of <see cref="CNFLiteral"/>s) of a first-order logic sentence in conjunctive normal form.

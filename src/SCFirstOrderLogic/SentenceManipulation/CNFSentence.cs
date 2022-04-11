@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Representation of a <see cref="Sentence"/> in conjunctive normal form (CNF).
