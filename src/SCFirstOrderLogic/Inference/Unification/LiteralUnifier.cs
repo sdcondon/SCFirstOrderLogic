@@ -6,21 +6,11 @@ using System.Linq;
 namespace SCFirstOrderLogic.Inference.Unification
 {
     /// <summary>
-    /// Utility class for unifying literals.
+    /// Utility class for creating unifiers for literals.
     /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
     /// </summary>
-    public class LiteralUnifier
+    public static class LiteralUnifier
     {
-        private readonly VariableSubstitution variableSubstitution = new VariableSubstitution();
-
-        /// <summary>
-        /// Gets the substitions made by this unifier.
-        /// </summary>
-        /// <remarks>
-        /// TODO: Just returns a dictionary (so could be interfered with by casting) - should probably actually return an immutable type. But not a big deal.
-        /// </remarks>
-        public IReadOnlyDictionary<VariableReference, Term> Substitutions => variableSubstitution.Bindings;
-
         /// <summary>
         /// Attempts to create the most general unifier for two literals.
         /// </summary>
@@ -28,9 +18,9 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier (which can then be applied with <see cref="ApplyTo"/>).</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryCreate(CNFLiteral x, CNFLiteral y, [NotNullWhen(returnValue: true)] out LiteralUnifier? unifier)
+        public static bool TryCreate(CNFLiteral x, CNFLiteral y, [NotNullWhen(returnValue: true)] out VariableSubstitution? unifier)
         {
-            var unifierAttempt = new LiteralUnifier();
+            var unifierAttempt = new VariableSubstitution();
 
             if (!TryUnify(x, y, unifierAttempt))
             {
@@ -64,24 +54,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             return true;
         }
 
-        /// <summary>
-        /// Applies the unifier to a literal.
-        /// </summary>
-        /// <param name="literal">The literal to apply the unifier to.</param>
-        /// <returns>The unified version of the literal.</returns>
-        public CNFLiteral ApplyTo(CNFLiteral literal)
-        {
-            // should this complain if its not being applied to one of the literals it was created against?
-            // or am I thinking about this wrong and we should always just be returning the unified literal?
-            // wait and see..
-
-            // TODO-PERFORMANCE / TODO-MAINTAINABILITY: Also, think about not using SentenceTransformation here - perhaps create CNFLiteralTransformation
-            // (or just making VariableSubstitution contain the logic itself - creating a base class when there's only one implementation is needless complexity)
-            var literalAsSentence = variableSubstitution.ApplyTo(literal.IsNegated ? (Sentence)new Negation(literal.Predicate) : literal.Predicate);
-            return new CNFLiteral(literalAsSentence);
-        }
-
-        private static bool TryUnify(CNFLiteral x, CNFLiteral y, LiteralUnifier unifier)
+        private static bool TryUnify(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
         {
             if (x.IsNegated != y.IsNegated || !x.Predicate.Symbol.Equals(y.Predicate.Symbol))
             {
@@ -101,7 +74,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             return true;
         }
 
-        private static bool TryUnify(Term x, Term y, LiteralUnifier unifier)
+        private static bool TryUnify(Term x, Term y, VariableSubstitution unifier)
         {
             return (x, y) switch
             {
@@ -114,15 +87,15 @@ namespace SCFirstOrderLogic.Inference.Unification
             };
         }
 
-        private static bool TryUnify(VariableReference variable, Term other, LiteralUnifier unifier)
+        private static bool TryUnify(VariableReference variable, Term other, VariableSubstitution unifier)
         {
-            if (unifier.variableSubstitution.Bindings.TryGetValue(variable, out var value))
+            if (unifier.Bindings.TryGetValue(variable, out var value))
             {
                 // The variable is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.
                 return TryUnify(value, other, unifier);
             }
-            else if (other is VariableReference otherVariable && unifier.variableSubstitution.Bindings.TryGetValue(otherVariable, out value))
+            else if (other is VariableReference otherVariable && unifier.Bindings.TryGetValue(otherVariable, out value))
             {
                 // The other value is also a variable that is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.
@@ -136,13 +109,13 @@ namespace SCFirstOrderLogic.Inference.Unification
             {
                 // This substitution is not in the source book, but is so that e.g. unifying Knows(John, X) and Knows(Y, Mother(Y)) will give { X / Mother(John) }, not { X / Mother(Y) }
                 // Might be duplicated effort in the broader scheme of things, but time will tell.
-                other = unifier.variableSubstitution.ApplyTo(other);
-                unifier.variableSubstitution.AddBinding(variable, other);
+                other = unifier.ApplyTo(other);
+                unifier.bindings.Add(variable, other);
                 return true;
             }
         }
 
-        private static bool TryUnify(Function x, Function y, LiteralUnifier unifier)
+        private static bool TryUnify(Function x, Function y, VariableSubstitution unifier)
         {
             if (!x.Symbol.Equals(y.Symbol))
             {
@@ -184,26 +157,6 @@ namespace SCFirstOrderLogic.Inference.Unification
                     // TODO-PERFORMANCE: For performance, should override everything and stop as soon as IsFound is true.
                     // And/or establish visitor pattern to make this easier.
                     IsFound = true;
-                }
-
-                return variable;
-            }
-        }
-
-        private class VariableSubstitution : SentenceTransformation
-        {
-            private readonly Dictionary<VariableReference, Term> bindings = new Dictionary<VariableReference, Term>();
-
-            public IReadOnlyDictionary<VariableReference, Term> Bindings => bindings;
-
-            public void AddBinding(VariableReference variable, Term term) => bindings.Add(variable, term);
-
-            protected override Term ApplyTo(VariableReference variable)
-            {
-                if (bindings.TryGetValue(variable, out var substitutedTerm))
-                {
-                    // Don't need base.ApplyTo because we apply this as we add each substitution.
-                    return substitutedTerm;
                 }
 
                 return variable;

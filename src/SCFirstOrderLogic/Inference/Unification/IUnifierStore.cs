@@ -1,4 +1,4 @@
-﻿#if FALSE
+﻿using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -27,4 +27,3 @@ namespace SCFirstOrderLogic.Inference.Unification
         IAsyncEnumerable<IReadOnlyDictionary<VariableReference, Term>> Fetch(CNFClause clause);
     }
 }
-#endif

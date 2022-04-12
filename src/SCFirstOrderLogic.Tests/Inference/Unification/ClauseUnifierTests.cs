@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
+using SCFirstOrderLogic.SentenceManipulation;
 using System;
+using System.Linq;
 using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
 
 namespace SCFirstOrderLogic.Inference.Unification
@@ -91,6 +92,6 @@ namespace SCFirstOrderLogic.Inference.Unification
                     }),
             })
             .When(g => ClauseUnifier.Unify(g.Clause1, g.Clause2))
-            .ThenReturns((g, r) => r.Should().BeEquivalentTo(g.ExpectedOutputs));
+            .ThenReturns((g, r) => r.Select(u => u.unified).Should().BeEquivalentTo(g.ExpectedOutputs));
     }
 }

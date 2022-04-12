@@ -58,7 +58,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store (scope).
             private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
             private readonly MaxPriorityQueue<(CNFClause, CNFClause)> queue;
-            private readonly Dictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)>();
+            private readonly Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)>();
 
             private bool result;
 
@@ -105,7 +105,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             /// <inheritdoc/>
-            public IReadOnlyDictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)> Steps => steps;
+            public IReadOnlyDictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> Steps => steps;
 
             /// <inheritdoc/>
             public void NextStep()
@@ -124,7 +124,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
                     if (resolvent.Equals(CNFClause.Empty))
                     {
-                        steps[CNFClause.Empty] = (ci, cj, unifier.Substitutions);
+                        steps[CNFClause.Empty] = (ci, cj, unifier);
                         result = true;
                         IsComplete = true;
                         return;
@@ -143,7 +143,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                             }
                         }
 
-                        steps[resolvent] = (ci, cj, unifier.Substitutions);
+                        steps[resolvent] = (ci, cj, unifier);
                         clauses.Add(resolvent);
                     }
                 }

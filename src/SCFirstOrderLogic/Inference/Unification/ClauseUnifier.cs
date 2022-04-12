@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// <param name="clause1">The first of the clauses to resolve.</param>
         /// <param name="clause2">The second of the clauses to resolve.</param>
         /// <returns>Zero or more results, each consisting of a unifier and output clause.</returns>
-        public static IEnumerable<(LiteralUnifier unifier, CNFClause unified)> Unify(CNFClause clause1, CNFClause clause2)
+        public static IEnumerable<(VariableSubstitution unifier, CNFClause unified)> Unify(CNFClause clause1, CNFClause clause2)
         {
             // Yes, this is a slow implementation. It is simple, though - and thus will serve
             // well as a baseline for improvements. (I'm thinking including LiteralUnifier creation tweak so that it accepts multiple

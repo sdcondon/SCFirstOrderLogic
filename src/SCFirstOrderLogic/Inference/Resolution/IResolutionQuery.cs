@@ -1,4 +1,5 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.Inference.Unification;
+using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 
@@ -33,7 +34,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <summary>
         /// Gets a mapping from a clause to the two clauses from which it was inferred.
         /// </summary>
-        IReadOnlyDictionary<CNFClause, (CNFClause, CNFClause, IReadOnlyDictionary<VariableReference, Term>)> Steps { get; }
+        IReadOnlyDictionary<CNFClause, (CNFClause clause1, CNFClause clause2, VariableSubstitution unifier)> Steps { get; }
 
         /// <summary>
         /// Executes the next step of the query.

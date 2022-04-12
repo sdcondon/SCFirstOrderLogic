@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm;
+using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.Inference.Unification
@@ -52,12 +52,12 @@ namespace SCFirstOrderLogic.Inference.Unification
             })
             .When(tc =>
             {
-                (bool returnValue, LiteralUnifier? unifier) result;
+                (bool returnValue, VariableSubstitution? unifier) result;
                 result.returnValue = LiteralUnifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-            .And((tc, r) => r.unifier!.Substitutions.Should().Equal(tc.ExpectedSubstitutions))
+            .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal1).Should().Be(tc.ExpectedUnified))
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal2).Should().Be(tc.ExpectedUnified));
 
@@ -70,7 +70,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             })
             .When(tc =>
             {
-                (bool returnValue, LiteralUnifier? unifier) result;
+                (bool returnValue, VariableSubstitution? unifier) result;
                 result.returnValue = LiteralUnifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
                 return result;
             })

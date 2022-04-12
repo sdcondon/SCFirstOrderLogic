@@ -42,8 +42,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 
                 if (query.Steps.TryGetValue(clause, out var input))
                 {
-                    queue.Enqueue(input.Item1);
-                    queue.Enqueue(input.Item2);
+                    queue.Enqueue(input.clause1);
+                    queue.Enqueue(input.clause2);
 
                     // NB: only record it as a step if its not a clause from the KB (or negated query) - explanation is clearer that way..
                     orderedSteps.Add(clause);
@@ -54,7 +54,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             var explanation = new StringBuilder();
             for (var i = 0; i < orderedSteps.Count; i++)
             {
-                var input = query.Steps[orderedSteps[i]];
+                var (clause1, clause2, unifier) = query.Steps[orderedSteps[i]];
 
                 string GetSource(CNFClause clause)
                 {
@@ -73,10 +73,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
 
                 explanation.AppendLine($"#{i:D2}: {orderedSteps[i]}");
-                explanation.AppendLine($"     From {GetSource(input.Item1)}: {input.Item1}");
-                explanation.AppendLine($"     And  {GetSource(input.Item2)}: {input.Item2} ");
+                explanation.AppendLine($"     From {GetSource(clause1)}: {clause1}");
+                explanation.AppendLine($"     And  {GetSource(clause2)}: {clause2} ");
                 explanation.Append("     Using   : {");
-                explanation.Append(string.Join(", ", input.Item3.Select(s => $"{s.Key}/{s.Value}")));
+                explanation.Append(string.Join(", ", unifier.Bindings.Select(s => $"{s.Key}/{s.Value}")));
                 explanation.AppendLine("}");
 
                 explanation.AppendLine();
