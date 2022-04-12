@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.Unification
 {
     /// <summary>
-    /// Basic implementation of <see cref="IUnifierStore"/> that just maintains all known sentences in a <see cref="List{T}"./>
+    /// Basic implementation of <see cref="IClauseStore"/> that just maintains all known clauses in a <see cref="List{T}"/>.
     /// </summary>
-    public class ListUnifierStore : IUnifierStore
+    public class ListClauseStore : IClauseStore
     {
         private readonly List<CNFClause> clauses = new List<CNFClause>();
 
@@ -20,13 +20,13 @@ namespace SCFirstOrderLogic.Inference.Unification
         }
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<IReadOnlyDictionary<VariableReference, Term>> Fetch(CNFClause clause)
+        public async IAsyncEnumerable<(CNFClause, VariableSubstitution)> FindUnifiers(CNFClause clause)
         {
             foreach (var otherClause in clauses)
             {
-                foreach (var (unifier, unified) in ClauseUnifier.Unify(clause, otherClause))
+                foreach (var (unifier, _) in ClauseUnifier.Unify(clause, otherClause))
                 {
-                    yield return unifier.Substitutions;
+                    yield return (otherClause, unifier);
                 }
             }
         }
