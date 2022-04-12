@@ -25,6 +25,6 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// Returns all unifiers such that the given clause unifies with some clause in the store.
         /// </summary>
         /// <returns></returns>
-        IAsyncEnumerable<(CNFClause, VariableSubstitution)> FindUnifiers(CNFClause clause);
+        IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindUnifiers(CNFClause clause);
     }
 }

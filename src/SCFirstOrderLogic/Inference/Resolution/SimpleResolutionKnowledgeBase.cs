@@ -19,7 +19,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// </summary>
     public sealed class SimpleResolutionKnowledgeBase : IKnowledgeBase
     {
-        private readonly List<CNFSentence> sentences = new List<CNFSentence>(); // To be replaced with unifier store
+        private readonly List<CNFSentence> sentences = new List<CNFSentence>(); // To be replaced with clause store
         private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
         private readonly IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer;
 
@@ -28,9 +28,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// </summary>
         /// <param name="clausePairFilter">A delegate to use to filter the pairs of clauses to be queued for a unification attempt. A true value indicates that the pair should be enqueued.</param>
         /// <param name="clausePairPriorityComparer">An object to use to compare the pairs of clauses to be queued for a unification attempt.</param>
-        public SimpleResolutionKnowledgeBase(/*IUnifierStore unifierStore, */Func<(CNFClause, CNFClause), bool> clausePairFilter, IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer)
+        public SimpleResolutionKnowledgeBase(/*IClauseStore clauseStore, */Func<(CNFClause, CNFClause), bool> clausePairFilter, IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer)
         {
-            ////this.unifierStore = unifierStore;
+            ////this.clauseStore = clauseStore;
 
             // NB: Throwing away clauses returned by the unifier store has performance impact. Could instead/also use a store that knows to not look for certain clause pairings in the first place..
             // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is then a mix of implementation (how unifiers are stored/indexed) and strategy,
@@ -55,7 +55,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         private class Query : IResolutionQuery
         {
-            private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store (scope).
+            private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store (scope thereof).
             private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
             private readonly MaxPriorityQueue<(CNFClause, CNFClause)> queue;
             private readonly Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)>();

@@ -1,5 +1,4 @@
-﻿#if FALSE
-using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,16 +19,15 @@ namespace SCFirstOrderLogic.Inference.Unification
         }
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<(CNFClause, VariableSubstitution)> FindUnifiers(CNFClause clause)
+        public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindUnifiers(CNFClause clause)
         {
             foreach (var otherClause in clauses)
             {
-                foreach (var (unifier, _) in ClauseUnifier.Unify(clause, otherClause))
+                foreach (var (unifier, unified) in ClauseUnifier.Unify(clause, otherClause))
                 {
-                    yield return (otherClause, unifier);
+                    yield return (otherClause, unifier, unified);
                 }
             }
         }
     }
 }
-#endif
