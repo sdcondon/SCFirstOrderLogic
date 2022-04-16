@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Inference.Unification
+namespace SCFirstOrderLogic.Inference.Unification
 {
     /// <summary>
     /// Most general unifier logic - optimised from the version presented in the source material,

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="SCFirstOrderLogic.Tests" />
+    <InternalsVisibleTo Include="SCFirstOrderLogic.Benchmarks" />
   </ItemGroup>
 
   <ItemGroup>

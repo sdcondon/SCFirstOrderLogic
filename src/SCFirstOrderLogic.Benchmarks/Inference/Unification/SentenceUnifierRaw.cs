@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Inference.Unification
+namespace SCFirstOrderLogic.Inference.Unification
 {
     /// <summary>
     /// Most general unifier logic implemented as close as possible to the way it
-    /// is stated in figure 9.1 of Artificial Intelligence: A Modern Approach.
+    /// is stated in figure 9.1 of 'Artificial Intelligence: A Modern Approach'.
     /// For learning outcomes only - obviously not a great way to implement this in C#.
     /// </summary>
     public static class SentenceUnifierRaw
@@ -161,7 +161,7 @@ namespace SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Inference.Unif
         }
 
         // NB: we use the algorithm exactly as listed in the book, not even subsituting in a thrown exception
-        // for the "failure" value - the book plays it a little fast and loose with types - i guess assuming
+        // for the "failure" value - the book plays it a little fast and loose with types - I guess assuming
         // a dynamically typed system (but why then does it say that theta is a substitation..).
         // ..anyway, we create our own "substitution" type so that we can exactly copy the algorithm as listed
         // in the book

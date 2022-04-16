@@ -1,13 +1,11 @@
 ﻿using BenchmarkDotNet.Attributes;
-using SCFirstOrderLogic.Benchmarks.AlternativeImplementations.Inference.Unification;
-using SCFirstOrderLogic.Inference.Unification;
 using SCFirstOrderLogic.SentenceManipulation;
 
-namespace SCFirstOrderLogic.Benchmarks
+namespace SCFirstOrderLogic.Inference.Unification
 {
     [MemoryDiagnoser]
     [InProcess]
-    public class Unification
+    public class _Benchmarks
     {
         private static Function Mother(Term child) => new("Mother", child);
         private static Predicate Knows(Term knower, Term known) => new("Knows", knower, known);
