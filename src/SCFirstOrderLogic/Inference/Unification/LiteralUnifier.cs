@@ -48,7 +48,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 
             // TODO-PERFORMANCE: we can avoid visiting the input literal twice by building the unified version
             // immediately instead of building a unifier. For later consideration (if and when anything actually
-            // cals this method).
+            // calls this method).
             unified = unifier.ApplyTo(x);
             return true;
         }
