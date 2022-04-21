@@ -13,10 +13,19 @@ namespace SCFirstOrderLogic.Inference.Unification
         private readonly List<CNFClause> clauses = new List<CNFClause>();
 
         /// <inheritdoc />
-        public Task AddAsync(CNFClause clause)
+        public async Task<bool> AddAsync(CNFClause clause)
         {
+            // NB: a limitation of this implementation - we only check if the clause is already present exactly -  we don't check for clauses that subsume it.
+            await foreach (var existingClause in this)
+            {
+                if (existingClause.Equals(clause))
+                {
+                    return false;
+                }
+            }
+
             clauses.Add(clause);
-            return Task.CompletedTask;
+            return true;
         }
 
         /// <inheritdoc />
@@ -53,10 +62,19 @@ namespace SCFirstOrderLogic.Inference.Unification
             public QueryClauseStore(IEnumerable<CNFClause> clauses) => this.clauses = new List<CNFClause>(clauses);
 
             /// <inheritdoc />
-            public Task AddAsync(CNFClause clause)
+            public async Task<bool> AddAsync(CNFClause clause)
             {
+                // NB: a limitation of this implementation - we only check if the clause is already present exactly -  we don't check for clauses that subsume it.
+                await foreach (var existingClause in this)
+                {
+                    if (existingClause.Equals(clause))
+                    {
+                        return false;
+                    }
+                }
+
                 clauses.Add(clause);
-                return Task.CompletedTask;
+                return true;
             }
 
             /// <inheritdoc />

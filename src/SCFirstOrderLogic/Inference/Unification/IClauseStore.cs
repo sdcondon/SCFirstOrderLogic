@@ -17,10 +17,11 @@ namespace SCFirstOrderLogic.Inference.Unification
     public interface IClauseStore : IAsyncEnumerable<CNFClause>
     {
         /// <summary>
-        /// Stores a clause.
+        /// Stores a clause - if it is not already present.
         /// </summary>
         /// <param name="clause">The clause to store.</param>
-        Task AddAsync(CNFClause clause);
+        /// <returns>True if the clause was added, false if it was already present.</returns>
+        Task<bool> AddAsync(CNFClause clause);
 
         /// <summary>
         /// Returns all unifiers such that the given clause unifies with some clause in the store.
