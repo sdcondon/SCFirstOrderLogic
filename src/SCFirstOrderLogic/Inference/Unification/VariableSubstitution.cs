@@ -4,11 +4,13 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.Inference.Unification
 {
     /// <summary>
-    /// Sentence transformation class that makes some subtitutions for variable terms.
-    /// Can be applied to <see cref="CNFLiteral"/>s as well as <see cref="Sentence"/>s.
+    /// Sentence transformation class that makes some substitutions for variable terms.
+    /// In addition to the <see cref="SentenceTransformation.ApplyTo(Sentence)"/> method
+    /// offered by the base class, this also offers an <see cref="ApplyTo(CNFLiteral)"/> method.
     /// </summary>
     public class VariableSubstitution : SentenceTransformation
     {
+        // TODO-MAINTAINABILITY: Don't like internal fields.. internal AddBinding method instead?
         internal readonly Dictionary<VariableReference, Term> bindings = new Dictionary<VariableReference, Term>();
 
         /// <summary>
@@ -29,8 +31,9 @@ namespace SCFirstOrderLogic.Inference.Unification
 
             // TODO-PERFORMANCE / TODO-MAINTAINABILITY: Also, think about not using SentenceTransformation here - perhaps create CNFLiteralTransformation
             // (or just making VariableSubstitution contain the logic itself - creating a base class when there's only one implementation is needless complexity)
-            var literalAsSentence = ApplyTo(literal.IsNegated ? (Sentence)new Negation(literal.Predicate) : literal.Predicate);
-            return new CNFLiteral(literalAsSentence);
+            // TODO-MAINTAINABILITY: Logic for conversion of a CNFLiteral back to a Sentence really belongs in the CNFLiteral class..
+            var literalAsSentence = literal.IsNegated ? (Sentence)new Negation(literal.Predicate) : literal.Predicate;
+            return new CNFLiteral(ApplyTo(literalAsSentence));
         }
 
         protected override Term ApplyTo(VariableReference variable)
