@@ -7,7 +7,8 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// <summary>
     /// Most general unifier logic implemented as close as possible to the way it
     /// is stated in figure 9.1 of 'Artificial Intelligence: A Modern Approach'.
-    /// For learning outcomes only - obviously not a great way to implement this in C#.
+    /// For learning and benchmarking only - obviously this is a terrible way to 
+    /// implement this in C#.
     /// </summary>
     public static class SentenceUnifierRaw
     {
@@ -79,9 +80,14 @@ namespace SCFirstOrderLogic.Inference.Unification
             {
                 (Constant cx, Constant cy) => cx.Symbol.Equals(cy.Symbol),
                 (VariableReference vx, VariableReference vy) => vx.Declaration.Symbol.Equals(vy.Declaration.Symbol),
-                (List<object> lx, List<object> ly) => lx.Count == 0 && ly.Count == 0,
                 (Operator ox, Operator oy) => ox.Symbol.Equals(oy.Symbol),
-                _ => false // e.g. Conjunction, Disjunction, Equality, Equivalence, ExistentialQuantification, Function, Implication, Negation, Predicate, UniversalQuantification..
+                (List<object> lx, List<object> ly) => lx.Count == 0 && ly.Count == 0,
+                // Otherwise its e.g. Conjunction, Disjunction, Equality, Equivalence, ExistentialQuantification, Function, Implication, Negation, Predicate, UniversalQuantification..
+                // We could of course have identical conjunctions etc, but we'll discover that in due course if so. The difficulty (in terms of understanding) here is the vague notion of
+                // equality, not clarified by the source material. What this is really doing is checking if the things under consideration are "atomic" (w.r.t. this algorithm) and
+                // equal. The things that are "atomic" for this algorithm are constants, variable references, "operators" (i.e. function, predicate or operator symbols), and EMPTY argument
+                // lists. Everything else needs to be recursed into to determine unifiability.
+                _ => false 
             };
         }
 
@@ -106,6 +112,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 
         private static object OperatorOf(object x)
         {
+            // not perfect, of course - e.g. there's nothing stopping a function from having the symbol "∧"
             return new Operator(x switch
             {
                 Conjunction => "∧",
