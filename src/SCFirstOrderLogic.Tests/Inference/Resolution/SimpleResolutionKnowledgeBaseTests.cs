@@ -2,6 +2,7 @@
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
+using SCFirstOrderLogic.Inference.Unification;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.KinshipDomain;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCatDomain;
@@ -14,9 +15,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public static Test CrimeExample => TestThat
             .When(() =>
             {
-                var kb = new SimpleResolutionKnowledgeBase(ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
-                kb.Tell(CrimeDomain.Axioms);
-                return kb.Ask(IsCriminal(West));
+                var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
+                kb.TellAsync(CrimeDomain.Axioms).Wait();
+                return kb.AskAsync(IsCriminal(West)).Result;
             })
             .ThenReturns()
             .And(retVal => retVal.Should().Be(true));
@@ -24,10 +25,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public static Test CuriousityAndTheCatExample => TestThat
             .When(() =>
             {
-                var kb = new SimpleResolutionKnowledgeBase(ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
-                kb.Tell(CuriousityAndTheCatDomain.Axioms);
-                var query = kb.CreateQuery(Kills(Curiousity, Tuna));
-                query.Complete();
+                var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
+                kb.TellAsync(CuriousityAndTheCatDomain.Axioms).Wait();
+                var query = kb.CreateQueryAsync(Kills(Curiousity, Tuna)).Result;
+                query.CompleteAsync().Wait();
                 return query;
             })
             .ThenReturns()
@@ -40,10 +41,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public static Test KinshipExample => TestThat
             .When(() =>
             {
-                var kb = new SimpleResolutionKnowledgeBase(ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
-                kb.Tell(KinshipDomain.Axioms);
-                var query = kb.CreateQuery(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X))));
-                query.Complete();
+                var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
+                kb.TellAsync(KinshipDomain.Axioms).Wait();
+                var query = kb.CreateQueryAsync(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X)))).Result;
+                query.CompleteAsync().Wait();
                 return query;
             })
             .ThenReturns()

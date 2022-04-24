@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.LanguageIntegration
 {
@@ -20,14 +22,14 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// Inform the knowledge base that a given expression acting on the domain can be assumed to evaluate to true when answering queries.
         /// </summary>
         /// <param name="sentence">The expression that can be assumed to evaluate to true when answering queries.</param>
-        public void Tell(Expression<Predicate<TDomain>> sentence);
+        public Task TellAsync(Expression<Predicate<TDomain>> sentence, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Ask the knowledge base whether a given expression acting on the domain must be true, given what it knows.
         /// </summary>
         /// <param name="query">The sentence to ask about.</param>
         /// <returns>True if the sentence is known to be true, false if it is known to be false or cannot be determined.</returns>
-        public bool Ask(Expression<Predicate<TDomain>> query);
+        public Task<bool> AskAsync(Expression<Predicate<TDomain>> query, CancellationToken cancellationToken = default);
 
         //// NB: No AskVars just yet.. Still half-hoping that implementing IQueryable with support
         //// for Where is doable (though the more I think about it the less feasible it seems)

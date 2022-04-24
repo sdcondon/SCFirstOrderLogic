@@ -3,7 +3,8 @@ using SCFirstOrderLogic.Inference.Unification;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {
@@ -19,7 +20,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// </summary>
     public sealed class SimpleResolutionKnowledgeBase : IKnowledgeBase
     {
-        private readonly List<CNFSentence> sentences = new List<CNFSentence>(); // To be replaced with clause store
+        private readonly IKnowledgeBaseClauseStore clauseStore;
         private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
         private readonly IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer;
 
@@ -28,9 +29,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// </summary>
         /// <param name="clausePairFilter">A delegate to use to filter the pairs of clauses to be queued for a unification attempt. A true value indicates that the pair should be enqueued.</param>
         /// <param name="clausePairPriorityComparer">An object to use to compare the pairs of clauses to be queued for a unification attempt.</param>
-        public SimpleResolutionKnowledgeBase(/*IClauseStore clauseStore, */Func<(CNFClause, CNFClause), bool> clausePairFilter, IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer)
+        public SimpleResolutionKnowledgeBase(IKnowledgeBaseClauseStore clauseStore, Func<(CNFClause, CNFClause), bool> clausePairFilter, IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer)
         {
-            ////this.clauseStore = clauseStore;
+            this.clauseStore = clauseStore;
 
             // NB: Throwing away clauses returned by the unifier store has performance impact. Could instead/also use a store that knows to not look for certain clause pairings in the first place..
             // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is then a mix of implementation (how unifiers are stored/indexed) and strategy,
@@ -41,50 +42,61 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <inheritdoc />
-        public void Tell(Sentence sentence) => sentences.Add(new CNFSentence(sentence));
+        public async Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
+        {
+            foreach(var clause in new CNFSentence(sentence).Clauses)
+            {
+                await clauseStore.AddAsync(clause, cancellationToken);
+            }
+        }
 
         /// <inheritdoc />
-        public bool Ask(Sentence sentence) => new Query(this, sentence).Complete();
+        public async Task<bool> AskAsync(Sentence sentence, CancellationToken cancellationToken = default)
+        {
+            return await (await CreateQueryAsync(sentence)).CompleteAsync(cancellationToken);
+        }
 
         /// <summary>
         /// Creates an <see cref="IResolutionQuery"/> instance for fine-grained execution and examination of a query.
         /// </summary>
         /// <param name="sentence">The query sentence.</param>
         /// <returns>An <see cref="IResolutionQuery"/> instance that can be used to execute and examine the query.</returns>
-        public IResolutionQuery CreateQuery(Sentence sentence) => new Query(this, sentence);
+        public async Task<IResolutionQuery> CreateQueryAsync(Sentence sentence, CancellationToken cancellationToken = default)
+        {
+            var query = new Query(clauseStore.CreateQueryClauseStore(), clausePairFilter, clausePairPriorityComparer, sentence);
+            await query.InitialiseAsync(cancellationToken);
+            return query;
+        }
 
         private class Query : IResolutionQuery
         {
-            private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store (scope thereof).
+            private readonly IQueryClauseStore clauseStore;
             private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
-            private readonly MaxPriorityQueue<(CNFClause, CNFClause)> queue;
-            private readonly Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)>();
+            private readonly MaxPriorityQueue<(CNFClause, CNFClause, VariableSubstitution, CNFClause)> queue;
+            private readonly Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> steps;
 
             private bool result;
 
-            public Query(SimpleResolutionKnowledgeBase knowledgeBase, Sentence sentence)
+            public Query(
+                IQueryClauseStore clauseStore,
+                Func<(CNFClause, CNFClause), bool> clausePairFilter,
+                IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer,
+                Sentence query)
             {
-                this.NegatedQuery = new CNFSentence(new Negation(sentence));
-
-                this.clauses = knowledgeBase.sentences
-                    .Append(NegatedQuery)
-                    .SelectMany(s => s.Clauses)
-                    .ToHashSet();
-
-                clausePairFilter = knowledgeBase.clausePairFilter;
-                queue = new MaxPriorityQueue<(CNFClause, CNFClause)>(knowledgeBase.clausePairPriorityComparer);
-                foreach (var ci in clauses)
+                this.clauseStore = clauseStore;
+                this.clausePairFilter = clausePairFilter;
+                queue = new MaxPriorityQueue<(CNFClause, CNFClause, VariableSubstitution, CNFClause)>(Comparer<(CNFClause, CNFClause, VariableSubstitution, CNFClause)>.Create((x, y) =>
                 {
-                    foreach (var cj in clauses)
-                    {
-                        if (knowledgeBase.clausePairFilter((ci, cj)))
-                        {
-                            queue.Enqueue((ci, cj));
-                        }
-                    }
-                }
+                    return clausePairPriorityComparer.Compare((x.Item1, x.Item2), (y.Item1, y.Item2));  // TODO: ugh, hideous (and perhaps slow - test me)
+                }));
+                steps = new Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)>();
+
+                NegatedQuery = new CNFSentence(new Negation(query));
             }
 
+            /// <summary>
+            /// Gets the (CNF representation of) the negation of the query.
+            /// </summary>
             public CNFSentence NegatedQuery { get; }
 
             /// <inheritdoc/>
@@ -107,45 +119,57 @@ namespace SCFirstOrderLogic.Inference.Resolution
             /// <inheritdoc/>
             public IReadOnlyDictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> Steps => steps;
 
+            /// <summary>
+            /// Carries out potentially long-running initialisation of the query.
+            /// </summary>
+            /// <returns>A <see cref="Task"/> encapsulating the initialisation process.</returns>
+            public async Task InitialiseAsync(CancellationToken cancellationToken = default)
+            {
+                // Initialise the clause store with the clauses from the negation of the query:
+                foreach (var clause in NegatedQuery.Clauses)
+                {
+                    await clauseStore.AddAsync(clause, cancellationToken);
+                }
+
+                // Queue up all initial clause pairings - adhering to our clause pair filter and priority comparer.
+                await foreach (var clause in clauseStore)
+                {
+                    await EnqueueUnfilteredResolventsAsync(clause, cancellationToken);
+                }
+            }
+
             /// <inheritdoc/>
-            public void NextStep()
+            public async Task NextStepAsync(CancellationToken cancellationToken = default)
             {
                 if (IsComplete)
                 {
                     throw new InvalidOperationException("Query is complete");
                 }
 
-                // Grab the next clause pairing from the queue..
-                var (ci, cj) = queue.Dequeue();
+                // Grab the next resolvent (in addition to the two clauses it originates from and the variable substitution) from the queue..
+                var (ci, cj, sub, clause) = queue.Dequeue();
+                steps[clause] = (ci, cj, sub);
 
-                // ..and iterate through its resolvents (if any) - also make a note of the unifier so that we can include it in the record of steps that we maintain:
-                foreach (var (unifier, resolvent) in ClauseUnifier.Unify(ci, cj))
+                // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
+                if (clause.Equals(CNFClause.Empty))
                 {
-                    // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
-                    if (resolvent.Equals(CNFClause.Empty))
-                    {
-                        steps[CNFClause.Empty] = (ci, cj, unifier);
-                        result = true;
-                        IsComplete = true;
-                        return;
-                    }
+                    steps[CNFClause.Empty] = (ci, cj, sub);
+                    result = true;
+                    IsComplete = true;
+                    return;
+                }
 
-                    // Otherwise, check if we've found a new clause (i.e. something that we didn't know already)..
-                    // NB: a limitation of this implementation - we only check if the clause is already present exactly -  we don't check for clauses that subsume it.
-                    if (!clauses.Contains(resolvent))
-                    {
-                        // If this is a new clause, we queue up some more clause pairings - combinations of the resolvent and existing known clauses - adhering to any filtering and ordering we have in place.
-                        foreach (var clause in clauses) // use unifier store lookup instead of all clauses
-                        {
-                            if (clausePairFilter((clause, resolvent)))
-                            {
-                                queue.Enqueue((clause, resolvent));
-                            }
-                        }
+                // Otherwise, check if we've found a new clause (i.e. something that we didn't know already)..
+                // Upside: Don't need a separate "Contains" method on the store (which raises potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
+                // Downside: clause store will encounter itself when looking for unifiers - not a big deal
+                if (clauseStore.AddAsync(clause, cancellationToken).Result)
+                {
+                    // This is a new clause, so we queue up some more clause pairings -
+                    // (combinations of the resolvent and existing known clauses)
+                    // adhering to any filtering and ordering we have in place.
 
-                        steps[resolvent] = (ci, cj, unifier);
-                        clauses.Add(resolvent);
-                    }
+                    // ..and iterate through its resolvents (if any) - also make a note of the unifier so that we can include it in the record of steps that we maintain:
+                    await EnqueueUnfilteredResolventsAsync(clause, cancellationToken);
                 }
 
                 // If we've run out of clauses to smash together, return a negative result.
@@ -157,14 +181,25 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             /// <inheritdoc/>
-            public bool Complete()
+            public async Task<bool> CompleteAsync(CancellationToken cancellationToken = default)
             {
                 while (!IsComplete)
                 {
-                    NextStep();
+                    await NextStepAsync(cancellationToken);
                 }
-
+                
                 return result;
+            }
+
+            private async Task EnqueueUnfilteredResolventsAsync(CNFClause clause, CancellationToken cancellationToken = default)
+            {
+                await foreach (var (otherClause, unifier, unified) in clauseStore.FindUnifiers(clause, cancellationToken))
+                {
+                    if (clausePairFilter((clause, otherClause)))
+                    {
+                        queue.Enqueue((clause, otherClause, unifier, unified));
+                    }
+                }
             }
         }
     }

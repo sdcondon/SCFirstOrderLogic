@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 {
     [MemoryDiagnoser]
     [InProcess]
-    public class _Benchmarks
+    public class _UnificationBenchmarks
     {
         private static Function Mother(Term child) => new("Mother", child);
         private static Predicate Knows(Term knower, Term known) => new("Knows", knower, known);

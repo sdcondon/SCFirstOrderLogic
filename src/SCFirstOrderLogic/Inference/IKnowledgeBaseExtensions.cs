@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.Inference
 {
@@ -11,11 +13,11 @@ namespace SCFirstOrderLogic.Inference
         /// Inform a knowledge base that a given enumerable of sentences can all be assumed to hold true when answering queries.
         /// </summary>
         /// <param name="sentences">The sentences that can be assumed to hold true when ansering queries.</param>
-        public static void Tell(this IKnowledgeBase knowledgeBase, IEnumerable<Sentence> sentences)
+        public static async Task TellAsync(this IKnowledgeBase knowledgeBase, IEnumerable<Sentence> sentences, CancellationToken cancellationToken = default)
         {
             foreach (var sentence in sentences)
             {
-                knowledgeBase.Tell(sentence);
+                await knowledgeBase.TellAsync(sentence, cancellationToken); // No guarentee of thread safety - go one at a time..
             }
         }
     }

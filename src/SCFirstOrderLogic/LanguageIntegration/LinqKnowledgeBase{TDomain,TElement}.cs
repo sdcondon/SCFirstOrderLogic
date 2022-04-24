@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.LanguageIntegration
 {
@@ -21,15 +23,15 @@ namespace SCFirstOrderLogic.LanguageIntegration
         public LinqKnowledgeBase(IKnowledgeBase innerKnowledgeBase) => this.innerKnowledgeBase = innerKnowledgeBase;
 
         /// <inheritdoc/>
-        public bool Ask(Expression<Predicate<TDomain>> query)
+        public async Task<bool> AskAsync(Expression<Predicate<TDomain>> query, CancellationToken cancellationToken = default)
         {
-            return innerKnowledgeBase.Ask(SentenceFactory.Create<TDomain, TElement>(query));
+            return await innerKnowledgeBase.AskAsync(SentenceFactory.Create<TDomain, TElement>(query), cancellationToken);
         }
 
         /// <inheritdoc/>
-        public void Tell(Expression<Predicate<TDomain>> sentence)
+        public async Task TellAsync(Expression<Predicate<TDomain>> sentence, CancellationToken cancellationToken = default)
         {
-            innerKnowledgeBase.Tell(SentenceFactory.Create<TDomain, TElement>(sentence));
+            await innerKnowledgeBase.TellAsync(SentenceFactory.Create<TDomain, TElement>(sentence), cancellationToken);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.Inference.Unification
@@ -20,13 +21,15 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// Stores a clause - if it is not already present.
         /// </summary>
         /// <param name="clause">The clause to store.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>True if the clause was added, false if it was already present.</returns>
-        Task<bool> AddAsync(CNFClause clause);
+        Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns all unifiers such that the given clause unifies with some clause in the store.
         /// </summary>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns></returns>
-        IAsyncEnumerable<(CNFClause otherClause, VariableSubstitution unifier, CNFClause unified)> FindUnifiers(CNFClause clause);
+        IAsyncEnumerable<(CNFClause otherClause, VariableSubstitution unifier, CNFClause unified)> FindUnifiers(CNFClause clause, CancellationToken cancellationToken = default);
     }
 }

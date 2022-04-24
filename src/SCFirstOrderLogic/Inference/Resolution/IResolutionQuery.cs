@@ -2,6 +2,8 @@
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {
@@ -39,12 +41,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <summary>
         /// Executes the next step of the query.
         /// </summary>
-        void NextStep();
+        Task NextStepAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Continuously executes the next step of the query until it completes.
         /// </summary>
         /// <returns>the result of the query.</returns>
-        bool Complete();
+        Task<bool> CompleteAsync(CancellationToken cancellationToken = default);
     }
 }

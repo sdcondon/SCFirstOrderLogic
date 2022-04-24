@@ -1,5 +1,6 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,10 +14,10 @@ namespace SCFirstOrderLogic.Inference.Unification
         private readonly List<CNFClause> clauses = new List<CNFClause>();
 
         /// <inheritdoc />
-        public async Task<bool> AddAsync(CNFClause clause)
+        public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
         {
-            // NB: a limitation of this implementation - we only check if the clause is already present exactly -  we don't check for clauses that subsume it.
-            await foreach (var existingClause in this)
+            // NB: a limitation of this implementation - we only check if the clause is already present exactly - we don't check for clauses that subsume it.
+            await foreach (var existingClause in this.WithCancellation(cancellationToken))
             {
                 if (existingClause.Equals(clause))
                 {
@@ -38,9 +39,11 @@ namespace SCFirstOrderLogic.Inference.Unification
         }
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindUnifiers(CNFClause clause)
+        public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindUnifiers(
+            CNFClause clause,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            foreach (var otherClause in clauses)
+            await foreach (var otherClause in this.WithCancellation(cancellationToken))
             {
                 foreach (var (unifier, unified) in ClauseUnifier.Unify(clause, otherClause))
                 {
@@ -62,10 +65,10 @@ namespace SCFirstOrderLogic.Inference.Unification
             public QueryClauseStore(IEnumerable<CNFClause> clauses) => this.clauses = new List<CNFClause>(clauses);
 
             /// <inheritdoc />
-            public async Task<bool> AddAsync(CNFClause clause)
+            public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
             {
-                // NB: a limitation of this implementation - we only check if the clause is already present exactly -  we don't check for clauses that subsume it.
-                await foreach (var existingClause in this)
+                // NB: a limitation of this implementation - we only check if the clause is already present exactly - we don't check for clauses that subsume it.
+                await foreach (var existingClause in this.WithCancellation(cancellationToken))
                 {
                     if (existingClause.Equals(clause))
                     {
@@ -87,9 +90,11 @@ namespace SCFirstOrderLogic.Inference.Unification
             }
 
             /// <inheritdoc />
-            public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindUnifiers(CNFClause clause)
+            public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindUnifiers(
+                CNFClause clause,
+                [EnumeratorCancellation] CancellationToken cancellationToken = default)
             {
-                foreach (var otherClause in clauses)
+                await foreach (var otherClause in this.WithCancellation(cancellationToken))
                 {
                     foreach (var (unifier, unified) in ClauseUnifier.Unify(clause, otherClause))
                     {
