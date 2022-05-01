@@ -23,7 +23,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .And(retVal => retVal.Should().Be(true));
 
         public static Test CuriousityAndTheCatExample => TestThat
-            .When(() =>
+            .GivenTestContext()
+            .When(_ =>
             {
                 var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
                 kb.TellAsync(CuriousityAndTheCatDomain.Axioms).Wait();
@@ -32,14 +33,15 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 return query;
             })
             .ThenReturns()
-            .And(retVal => retVal.Result.Should().Be(true))
-            .And(retVal => retVal.Explain().Should().BeNull());
+            .And((_, retVal) => retVal.Result.Should().Be(true))
+            .And((ctx, retVal) => ctx.WriteOutputLine(retVal.Explain()));
 
         // TODO-BUG? Some* of the explanations this comes up with look very questionable. Have I made a mistake somewhere?
         // Perhaps build up explanation logic? Maybe try to improve (create a legend of?) Skolem function labelling. 
         // *(nb can vary across executions because unit preference not stable across executions because of hash code reliance)
         public static Test KinshipExample => TestThat
-            .When(() =>
+            .GivenTestContext()
+            .When(_ =>
             {
                 var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparers.UnitPreference);
                 kb.TellAsync(KinshipDomain.Axioms).Wait();
@@ -48,7 +50,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 return query;
             })
             .ThenReturns()
-            .And(retVal => retVal.Result.Should().Be(true))
-            .And(retVal => retVal.Explain().Should().BeNull());
+            .And((_, retVal) => retVal.Result.Should().Be(true))
+            .And((ctx, retVal) => ctx.WriteOutputLine(retVal.Explain()));
     }
 }
