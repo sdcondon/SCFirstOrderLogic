@@ -12,10 +12,7 @@
     /// Same variable in same sentence is the same (inside the var, store sentence tree re-arranged so that var is the root.
     /// Equality would need to avoid infinite loop though, and couldn't work on output of this CNFConversion since this
     /// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
-    /// are universally quantified).
-    /// <para/>
-    /// Also: should we throw if the variable being standardised is already standardised? Or return it unchanged?
-    /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
+    /// are universally quantified). 
     /// </summary>
     public class StandardisedVariableSymbol
     {

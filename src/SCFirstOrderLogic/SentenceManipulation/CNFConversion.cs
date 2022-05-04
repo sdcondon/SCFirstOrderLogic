@@ -141,6 +141,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
                 protected override Sentence ApplyTo(Quantification quantification)
                 {
+                    /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
+                    /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
                     mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification.Variable.Symbol));
                     return base.ApplyTo(quantification);
                 }
