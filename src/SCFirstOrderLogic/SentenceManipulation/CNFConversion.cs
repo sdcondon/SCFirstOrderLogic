@@ -131,7 +131,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 return new ScopedVariableStandardisation().ApplyTo(sentence);
             }
 
-            // NB: A "Transformation" that doesn't transform and has to use a property to expose its output. More evidence to suggest introduction of visitor pattern at some point.
+            // Private inner class to hide away the mapping from callers.
+            // Would feel a bit uncomfortable publicly exposing a transformation
+            // class that can only be applied once..
+            // (Yes, I've ended up making VariableStandardisation private too - perhaps simplify now).
             private class ScopedVariableStandardisation : SentenceTransformation
             {
                 private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
@@ -147,40 +150,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     return mapping[variableDeclaration];
                 }
             }
-        }
-
-        /// <summary>
-        /// Class for symbols of variables that have been standardised.
-        /// <para/>
-        /// NB: Doesn't override equality or hash code, so uses reference equality;
-        /// and the normalisation process creates exactly one instance per variable scope - thus achieving standardisation
-        /// without having to muck about with anything like trying to ensure names that are unique strings
-        /// (which should only be a rendering concern anyway).
-        /// <para/>
-        /// TODO-TESTABILITY: Difficult to test. Even with the above, would perhaps still rather implement value semantics for equality.
-        /// Same variable in same sentence is the same (inside the var, store sentence tree re-arranged so that var is the root
-        /// equality would need to avoid infinite loop though. and couldn't work on output of this CNFConversion since this
-        /// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
-        /// are universally quantified).
-        /// <para/>
-        /// Also: should we throw if the variable being standardised is already standardised? Or return it unchanged?
-        /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-        /// </summary>
-        public class StandardisedVariableSymbol
-        {
-            internal StandardisedVariableSymbol(object underlyingSymbol) => UnderlyingSymbol = underlyingSymbol;
-
-            /// <summary>
-            /// Gets the underlying variable symbol that this symbol is the standardisation of.
-            /// </summary>
-            public object UnderlyingSymbol { get; }
-
-            /// <inheritdoc/>
-            /// <remarks>
-            /// NB: SentenceFormatter has a special case when rendering these (to ensure that they are rendered distinctly),
-            /// so this ToString override is "just in case".
-            /// </remarks>
-            public override string ToString() => $"ST:{UnderlyingSymbol}";
         }
 
         /// <summary>
@@ -203,6 +172,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 return new ScopedSkolemisation(Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>()).ApplyTo(sentence);
             }
 
+            // Private inner class to hide away the mapping from callers.
+            // Would feel a bit uncomfortable publicly exposing a transformation
+            // class that can only be applied once..
+            // (Yes, I've ended up making Skolemisation private too - perhaps simplify now).
             private class ScopedSkolemisation : SentenceTransformation
             {
                 private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
@@ -236,30 +209,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
                         return skolemFunction;
                     }
 
-                    // NB: if we didn't find it in the map, its a universally quantified variable - and we leave it alone:
+                    // NB: if we didn't find it in the map, then its a universally quantified variable - and we leave it alone:
                     return base.ApplyTo(variable);
                 }
             }
-        }
-
-        /// <summary>
-        /// Class for Skolem function symbols.
-        /// </summary>
-        public class SkolemFunctionSymbol
-        {
-            internal SkolemFunctionSymbol(object underlyingSymbol) => UnderlyingSymbol = underlyingSymbol;
-
-            /// <summary>
-            /// Gets the underlying (existentially quantified) variable symbol that this symbol is the standardisation of.
-            /// </summary>
-            public object UnderlyingSymbol { get; }
-
-            /// <inheritdoc/>
-            /// <remarks>
-            /// NB: SentenceFormatter has a special case when rendering these (to ensure that they are rendered distinctly),
-            /// so this ToString override is "just in case".
-            /// </remarks>
-            public override string ToString() => $"SK:{UnderlyingSymbol}";
         }
 
         /// <summary>
