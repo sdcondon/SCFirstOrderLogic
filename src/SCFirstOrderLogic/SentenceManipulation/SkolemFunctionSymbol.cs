@@ -5,10 +5,13 @@
     /// </summary>
     public class SkolemFunctionSymbol
     {
+        /// <remarks>
+        /// Intended only for construction by the normalisation process.
+        /// </remarks>
         internal SkolemFunctionSymbol(object underlyingSymbol) => UnderlyingSymbol = underlyingSymbol;
 
         /// <summary>
-        /// Gets the underlying (existentially quantified) variable symbol that this symbol is the standardisation of.
+        /// Gets the underlying (existentially quantified) variable symbol that this Skolem function represents the existential instantiation of.
         /// </summary>
         public object UnderlyingSymbol { get; }
 

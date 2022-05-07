@@ -8,11 +8,12 @@
     /// without having to muck about with anything like trying to ensure names that are unique strings
     /// (which should only be a rendering concern).
     /// <para/>
-    /// TODO-TESTABILITY: Difficult to test. Even with the above, would perhaps still rather implement value semantics for equality.
-    /// Same variable in same sentence is the same (inside the var, store sentence tree re-arranged so that var is the root.
-    /// Equality would need to avoid infinite loop though, and couldn't work on output of this CNFConversion since this
+    /// TODO-TESTABILITY: Difficult to test, and has shortcomings when serialization is involved. 
+    /// Would ultimately rather implement value semantics for equality. Same variable in same sentence is the same.
+    /// Inside the var, could store sentence tree re-arranged so that var is the root.
+    /// Equality would need to avoid infinite loop though, and couldn't work on output of CNFConversion since this
     /// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
-    /// are universally quantified).
+    /// are universally quantified.
     /// </summary>
     public class StandardisedVariableSymbol
     {

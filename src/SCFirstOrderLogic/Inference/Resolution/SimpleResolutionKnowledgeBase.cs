@@ -160,8 +160,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
 
                 // Otherwise, check if we've found a new clause (i.e. something that we didn't know already)..
-                // Upside: Don't need a separate "Contains" method on the store (which raises potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
-                // Downside: clause store will encounter itself when looking for unifiers - not a big deal
+                // Upside: Don't need a separate "Contains" method on the store (which would raise potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
+                // Downside: clause store will encounter itself when looking for unifiers - not a big deal, but a performance/maintainability tradeoff nonetheless
                 if (clauseStore.AddAsync(clause, cancellationToken).Result)
                 {
                     // This is a new clause, so we queue up some more clause pairings -

@@ -29,20 +29,24 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <inheritdoc />
         public override Sentence ApplyTo(Sentence sentence)
         {
-            // It might be possible to do some of these conversions at the same time, but for now
-            // at least we do them sequentially - and in so doing favour maintainability over performance.
-            // Revisit this later.
-            sentence = implicationElimination.ApplyTo(sentence);
-            sentence = nnfConversion.ApplyTo(sentence);
-            sentence = variableStandardisation.ApplyTo(sentence);
-            sentence = skolemisation.ApplyTo(sentence);
-            sentence = universalQuantifierElimination.ApplyTo(sentence);
-            sentence = disjunctionDistribution.ApplyTo(sentence);
-
+            // We do variable standardisation first, before messing with the sentence in any
+            // other way, so that we can easily store the context of the original variable in the new symbol. This
+            // facilitates value semantics for equality, as well as explanations of the origins of a particular
+            // variable (or Skolem function) in query result explanations.
             // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
             // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong.
             // Should we validate here..? Or handle on the assumption that they are universally quantified?
             // Also should probably complain when nested definitions uses the same symbol (i.e. symbols that are equal).
+            sentence = variableStandardisation.ApplyTo(sentence);
+
+            // It might be possible to do some of these conversions at the same time, but for now
+            // at least we do them sequentially - and in so doing favour maintainability over performance.
+            // Perhaps revisit this later (but given that the main purpose of this library is learning, probably not).
+            sentence = implicationElimination.ApplyTo(sentence);
+            sentence = nnfConversion.ApplyTo(sentence);
+            sentence = skolemisation.ApplyTo(sentence);
+            sentence = universalQuantifierElimination.ApplyTo(sentence);
+            sentence = disjunctionDistribution.ApplyTo(sentence);
 
             return sentence;
         }
@@ -131,8 +135,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 return new ScopedVariableStandardisation().ApplyTo(sentence);
             }
 
-            // Private inner class to hide away the mapping from callers.
-            // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once..
+            // Private inner class to hide necessarily short-lived object away from callers.
+            // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
             // (Yes, I've ended up making VariableStandardisation private too - so can perhaps simplify now).
             private class ScopedVariableStandardisation : SentenceTransformation
             {
@@ -173,8 +177,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 return new ScopedSkolemisation(Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>()).ApplyTo(sentence);
             }
 
-            // Private inner class to hide away the mapping from callers.
-            // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once..
+            // Private inner class to hide necessarily short-lived object away from callers.
+            // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
             // (Yes, I've ended up making Skolemisation private too - so can perhaps simplify now).
             private class ScopedSkolemisation : SentenceTransformation
             {
