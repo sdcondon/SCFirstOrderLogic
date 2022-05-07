@@ -14,9 +14,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// </summary>
     public class CNFConversion : SentenceTransformation
     {
+        private static readonly VariableStandardisation variableStandardisation = new VariableStandardisation();
         private static readonly ImplicationElimination implicationElimination = new ImplicationElimination();
         private static readonly NNFConversion nnfConversion = new NNFConversion();
-        private static readonly VariableStandardisation variableStandardisation = new VariableStandardisation();
         private static readonly Skolemisation skolemisation = new Skolemisation();
         private static readonly UniversalQuantifierElimination universalQuantifierElimination = new UniversalQuantifierElimination();
         private static readonly DisjunctionDistribution disjunctionDistribution = new DisjunctionDistribution();
@@ -25,6 +25,48 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Gets a singleton instance of the <see cref="CNFConversion"/> class.
         /// </summary>
         public static CNFConversion Instance => new CNFConversion();
+
+        /// <summary>
+        /// Tranformation that "standardises apart" variables - essentially ensuring that variable symbols are unique.
+        /// </summary>
+        private class VariableStandardisation : SentenceTransformation
+        {
+            /// <inheritdoc />
+            public override Sentence ApplyTo(Sentence sentence)
+            {
+                return new ScopedVariableStandardisation().ApplyTo(sentence);
+            }
+
+            // Private inner class to hide necessarily short-lived object away from callers.
+            // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
+            // (Yes, I've ended up making VariableStandardisation private too - so can perhaps simplify now).
+            private class ScopedVariableStandardisation : SentenceTransformation
+            {
+                private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
+                ////private readonly Stack<Sentence> context = new Stack<Sentence>();
+
+                ////public override Sentence ApplyTo(Sentence sentence)
+                ////{
+                ////    context.Push(sentence);
+                ////    sentence = base.ApplyTo(sentence);
+                ////    context.Pop();
+                ////    return sentence;
+                ////}
+
+                protected override Sentence ApplyTo(Quantification quantification)
+                {
+                    /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
+                    /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
+                    mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification.Variable.Symbol));
+                    return base.ApplyTo(quantification);
+                }
+
+                protected override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
+                {
+                    return mapping[variableDeclaration];
+                }
+            }
+        }
 
         /// <inheritdoc />
         public override Sentence ApplyTo(Sentence sentence)
@@ -72,6 +114,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 return ApplyTo(new Conjunction(
                     new Disjunction(new Negation(equivalence.Left), equivalence.Right),
                     new Disjunction(equivalence.Left, new Negation(equivalence.Right))));
+            }
+
+            protected override Sentence ApplyTo(Predicate predicate)
+            {
+                // There can't be any more implications once we've hit an atomic sentence, so just return.
+                return predicate;
             }
         }
 
@@ -122,38 +170,11 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     return base.ApplyTo(negation);
                 }
             }
-        }
 
-        /// <summary>
-        /// Tranformation that "standardises apart" variables - essentially ensuring that variable symbols are unique.
-        /// </summary>
-        private class VariableStandardisation : SentenceTransformation
-        {
-            /// <inheritdoc />
-            public override Sentence ApplyTo(Sentence sentence)
+            protected override Sentence ApplyTo(Predicate predicate)
             {
-                return new ScopedVariableStandardisation().ApplyTo(sentence);
-            }
-
-            // Private inner class to hide necessarily short-lived object away from callers.
-            // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
-            // (Yes, I've ended up making VariableStandardisation private too - so can perhaps simplify now).
-            private class ScopedVariableStandardisation : SentenceTransformation
-            {
-                private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
-
-                protected override Sentence ApplyTo(Quantification quantification)
-                {
-                    /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
-                    /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-                    mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification.Variable.Symbol));
-                    return base.ApplyTo(quantification);
-                }
-
-                protected override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
-                {
-                    return mapping[variableDeclaration];
-                }
+                // There can't be any more negations once we've hit an atomic sentence, so just return.
+                return predicate;
             }
         }
 
@@ -217,6 +238,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     return base.ApplyTo(variable);
                 }
             }
+
+            protected override Sentence ApplyTo(Predicate predicate)
+            {
+                // There can't be any more quantifications once we've hit an atomic sentence, so just return.
+                return predicate;
+            }
         }
 
         /// <summary>
@@ -228,6 +255,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
             protected override Sentence ApplyTo(UniversalQuantification universalQuantification)
             {
                 return ApplyTo(universalQuantification.Sentence);
+            }
+
+            protected override Sentence ApplyTo(Predicate predicate)
+            {
+                // There can't be any more quantifications once we've hit an atomic sentence, so just return.
+                return predicate;
             }
         }
 
@@ -263,6 +296,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 }
 
                 return ApplyTo(sentence);
+            }
+
+            protected override Sentence ApplyTo(Predicate predicate)
+            {
+                // There can't be any more disjunctions once we've hit an atomic sentence, so just return.
+                return predicate;
             }
         }
     }
