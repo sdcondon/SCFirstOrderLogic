@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation
@@ -43,6 +42,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
             // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong.
             // Should we validate here..? Or handle on the assumption that they are universally quantified?
+            // Also should probably complain when nested definitions uses the same symbol (i.e. symbols that are equal).
 
             return sentence;
         }
@@ -132,9 +132,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
             }
 
             // Private inner class to hide away the mapping from callers.
-            // Would feel a bit uncomfortable publicly exposing a transformation
-            // class that can only be applied once..
-            // (Yes, I've ended up making VariableStandardisation private too - perhaps simplify now).
+            // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once..
+            // (Yes, I've ended up making VariableStandardisation private too - so can perhaps simplify now).
             private class ScopedVariableStandardisation : SentenceTransformation
             {
                 private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
@@ -175,9 +174,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
             }
 
             // Private inner class to hide away the mapping from callers.
-            // Would feel a bit uncomfortable publicly exposing a transformation
-            // class that can only be applied once..
-            // (Yes, I've ended up making Skolemisation private too - perhaps simplify now).
+            // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once..
+            // (Yes, I've ended up making Skolemisation private too - so can perhaps simplify now).
             private class ScopedSkolemisation : SentenceTransformation
             {
                 private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;

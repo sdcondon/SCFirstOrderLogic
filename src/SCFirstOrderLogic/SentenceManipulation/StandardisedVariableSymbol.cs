@@ -1,7 +1,7 @@
 ﻿namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Class for symbols of variables that have been standardised.
+    /// Class for symbols of variables that have been standardised as part of the normalisation process.
     /// <para/>
     /// NB: Doesn't override equality or hash code, so uses reference equality;
     /// and the normalisation process creates exactly one instance per variable scope - thus achieving standardisation
@@ -12,7 +12,7 @@
     /// Same variable in same sentence is the same (inside the var, store sentence tree re-arranged so that var is the root.
     /// Equality would need to avoid infinite loop though, and couldn't work on output of this CNFConversion since this
     /// class doesn't completely normalise. Perhaps made easier by the fact that after normalisation, all surviving variables
-    /// are universally quantified). 
+    /// are universally quantified).
     /// </summary>
     public class StandardisedVariableSymbol
     {
