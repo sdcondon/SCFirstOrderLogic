@@ -1,4 +1,6 @@
-﻿namespace SCFirstOrderLogic.SentenceManipulation
+﻿using System.Collections.Generic;
+
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Class for symbols of variables that have been standardised as part of the normalisation process.
@@ -20,18 +22,29 @@
         /// <remarks>
         /// Intended only for construction by the normalisation process.
         /// </remarks>
-        internal StandardisedVariableSymbol(object underlyingSymbol) => UnderlyingSymbol = underlyingSymbol;
+        internal StandardisedVariableSymbol(object originalSymbol, Stack<Sentence> originalContext)
+        {
+            OriginalSymbol = originalSymbol;
+            OriginalContext = originalContext.ToArray();
+        }
 
         /// <summary>
-        /// Gets the underlying variable symbol that this symbol is the standardisation of.
+        /// Gets the original variable symbol that this symbol is the standardisation of.
         /// </summary>
-        public object UnderlyingSymbol { get; }
+        public object OriginalSymbol { get; }
+
+        /// <summary>
+        /// Gets the original context of the variable. Contains all ancestors of the original variable declaration
+        /// in the sentence tree - starting with the quantification that declares the variable, and ending with the
+        /// root element of the sentence.
+        /// </summary>
+        public IReadOnlyList<Sentence> OriginalContext { get; }
 
         /// <inheritdoc/>
         /// <remarks>
         /// NB: SentenceFormatter has a special case when rendering these (to ensure that they are rendered distinctly),
         /// so this ToString override is "just in case".
         /// </remarks>
-        public override string ToString() => $"ST:{UnderlyingSymbol}";
+        public override string ToString() => $"ST:{OriginalSymbol}";
     }
 }

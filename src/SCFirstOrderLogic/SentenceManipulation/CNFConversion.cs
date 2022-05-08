@@ -6,11 +6,11 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <summary>
     /// Implementation of <see cref="SentenceTransformation"/> that converts sentences to conjunctive normal form.
     /// <para/>
-    /// Well.. It's arguable whether the output could be considered *completely* normalised, since it *won't* normalise the
+    /// TODO: Well.. It's arguable whether the output could be considered *completely* normalised, since it *won't* normalise the
     /// order of evaluation of the clauses (i.e. the conjunctions found at the root of the output sentence),
     /// or the literals within those clauses (i.e. disjunctions found below those top-level conjunctions).
-    /// The <see cref="CNFSentence"/> class does that (TODO: not true any more - ordering apparently not as useful as in propositional logic). It is because of this (and because the half-job done by this class is of limited
-    /// use on its own) that this class should probably be internal.
+    /// The <see cref="CNFSentence"/> class does that (TODO: not true any more - ordering apparently not as useful as in propositional logic).
+    /// It is because of this (and because the half-job done by this class is of limited use on its own) that this class should probably be internal.
     /// </summary>
     public class CNFConversion : SentenceTransformation
     {
@@ -43,21 +43,21 @@ namespace SCFirstOrderLogic.SentenceManipulation
             private class ScopedVariableStandardisation : SentenceTransformation
             {
                 private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
-                ////private readonly Stack<Sentence> context = new Stack<Sentence>();
+                private readonly Stack<Sentence> context = new Stack<Sentence>();
 
-                ////public override Sentence ApplyTo(Sentence sentence)
-                ////{
-                ////    context.Push(sentence);
-                ////    sentence = base.ApplyTo(sentence);
-                ////    context.Pop();
-                ////    return sentence;
-                ////}
+                public override Sentence ApplyTo(Sentence sentence)
+                {
+                    context.Push(sentence);
+                    sentence = base.ApplyTo(sentence);
+                    context.Pop();
+                    return sentence;
+                }
 
                 protected override Sentence ApplyTo(Quantification quantification)
                 {
                     /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
                     /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-                    mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification.Variable.Symbol));
+                    mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification.Variable.Symbol, context));
                     return base.ApplyTo(quantification);
                 }
 
@@ -71,7 +71,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <inheritdoc />
         public override Sentence ApplyTo(Sentence sentence)
         {
-            // We do variable standardisation first, before messing with the sentence in any
+            // We do variable standardisation first, before altering the sentence in any
             // other way, so that we can easily store the context of the original variable in the new symbol. This
             // facilitates value semantics for equality, as well as explanations of the origins of a particular
             // variable (or Skolem function) in query result explanations.
