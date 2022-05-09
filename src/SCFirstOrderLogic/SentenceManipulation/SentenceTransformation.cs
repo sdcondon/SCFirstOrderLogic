@@ -241,7 +241,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Applies this transformation to a <see cref="Function"/> instance.
         /// The default implementation returns a <see cref="Function"/> with the same Symbol and with an argument list that is the result of calling <see cref="ApplyTo"/> on each of the existing arguments.
         /// </summary>
-        /// <param name="domainFunction">The function to visit.</param>
+        /// <param name="function">The function to visit.</param>
         /// <returns>The transformed term.</returns>
         protected virtual Term ApplyTo(Function function)
         {

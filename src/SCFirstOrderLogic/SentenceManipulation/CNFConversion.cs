@@ -73,8 +73,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             // We do variable standardisation first, before altering the sentence in any
             // other way, so that we can easily store the context of the original variable in the new symbol. This
-            // facilitates value semantics for equality, as well as explanations of the origins of a particular
-            // variable (or Skolem function) in query result explanations.
+            // facilitates explanations of the origins of a particular variable (or Skolem function) in query result explanations.
             // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
             // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong.
             // Should we validate here..? Or handle on the assumption that they are universally quantified?
@@ -96,7 +95,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Transformation that eliminates implications by replacing P ⇒ Q with ¬P ∨ Q and P ⇔ Q with (¬P ∨ Q) ∧ (P ∨ ¬Q)
         /// </summary>
-        private class ImplicationElimination : SentenceTransformation
+        public class ImplicationElimination : SentenceTransformation
         {
             /// <inheritdoc />
             protected override Sentence ApplyTo(Implication implication)
@@ -127,7 +126,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Transformation that converts to Negation Normal Form by moving negations as far as possible from the root of the sentence tree.
         /// That is, directly applied to predicates.
         /// </summary>
-        private class NNFConversion : SentenceTransformation
+        public class NNFConversion : SentenceTransformation
         {
             /// <inheritdoc />
             protected override Sentence ApplyTo(Negation negation)
@@ -190,7 +189,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <remarks>
         /// As with standardised variables, would prefer to use value semantics for equality.
         /// </remarks>
-        private class Skolemisation : SentenceTransformation
+        public class Skolemisation : SentenceTransformation
         {
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
@@ -200,7 +199,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             // Private inner class to hide necessarily short-lived object away from callers.
             // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
-            // (Yes, I've ended up making Skolemisation private too - so can perhaps simplify now).
             private class ScopedSkolemisation : SentenceTransformation
             {
                 private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
@@ -222,7 +220,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 protected override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
                 {
                     existentialVariableMap[existentialQuantification.Variable] = new Function(
-                        new SkolemFunctionSymbol(existentialQuantification.Variable.Symbol),
+                        new SkolemFunctionSymbol((StandardisedVariableSymbol)existentialQuantification.Variable.Symbol), // a safe cast, because we do standardisation first
                         universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
                     return base.ApplyTo(existentialQuantification.Sentence);
                 }
@@ -250,7 +248,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Transformation that simply removes all universal quantifications.
         /// All variables in CNF sentences are assumed to be universally quantified.
         /// </summary>
-        private class UniversalQuantifierElimination : SentenceTransformation
+        public class UniversalQuantifierElimination : SentenceTransformation
         {
             protected override Sentence ApplyTo(UniversalQuantification universalQuantification)
             {
@@ -267,7 +265,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Transformation that recursively distributes disjunctions over conjunctions.
         /// </summary>
-        private class DisjunctionDistribution : SentenceTransformation
+        public class DisjunctionDistribution : SentenceTransformation
         {
             protected override Sentence ApplyTo(Disjunction disjunction)
             {

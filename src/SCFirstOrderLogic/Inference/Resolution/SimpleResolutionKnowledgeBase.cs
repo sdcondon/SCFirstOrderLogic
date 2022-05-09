@@ -22,23 +22,21 @@ namespace SCFirstOrderLogic.Inference.Resolution
     {
         private readonly IKnowledgeBaseClauseStore clauseStore;
         private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
-        private readonly IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer;
+        private readonly Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="SimpleResolutionKnowledgeBase"/> class.
         /// </summary>
-        /// <param name="clausePairFilter">A delegate to use to filter the pairs of clauses to be queued for a unification attempt. A true value indicates that the pair should be enqueued.</param>
+        /// <param name="clausePairFilter">
+        /// A delegate to use to filter the pairs of clauses to be queued for a unification attempt.
+        /// A true value indicates that the pair should be enqueued.
+        /// </param>
         /// <param name="clausePairPriorityComparer">An object to use to compare the pairs of clauses to be queued for a unification attempt.</param>
-        public SimpleResolutionKnowledgeBase(IKnowledgeBaseClauseStore clauseStore, Func<(CNFClause, CNFClause), bool> clausePairFilter, IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer)
+        public SimpleResolutionKnowledgeBase(IKnowledgeBaseClauseStore clauseStore, Func<(CNFClause, CNFClause), bool> clausePairFilter, Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison)
         {
             this.clauseStore = clauseStore;
-
-            // NB: Throwing away clauses returned by the unifier store has performance impact. Could instead/also use a store that knows to not look for certain clause pairings in the first place..
-            // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is then a mix of implementation (how unifiers are stored/indexed) and strategy,
-            // plus there's a bit more strategy in the form of the priority comparer. This feels a good compromise - there are of course alternatives (e.g. some kind of strategy object that encapsulates
-            // both) - but they felt like overkill for this simple implementation.
             this.clausePairFilter = clausePairFilter; 
-            this.clausePairPriorityComparer = clausePairPriorityComparer;
+            this.clausePairPriorityComparison = clausePairPriorityComparison;
         }
 
         /// <inheritdoc />
@@ -53,7 +51,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <inheritdoc />
         public async Task<bool> AskAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
-            return await (await CreateQueryAsync(sentence)).CompleteAsync(cancellationToken);
+            var query = await CreateQueryAsync(sentence);
+            return await query.CompleteAsync(cancellationToken);
         }
 
         /// <summary>
@@ -63,11 +62,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <returns>An <see cref="IResolutionQuery"/> instance that can be used to execute and examine the query.</returns>
         public async Task<IResolutionQuery> CreateQueryAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
-            var query = new Query(clauseStore.CreateQueryClauseStore(), clausePairFilter, clausePairPriorityComparer, sentence);
-            await query.InitialiseAsync(cancellationToken);
-            return query;
+            return await Query.CreateAsync(clauseStore, clausePairFilter, clausePairPriorityComparison, sentence, cancellationToken);
         }
 
+        /// <remark>
+        /// The only real reason not to make this public (probably called SimpleResolutionQuery or somesuch) is the async initialisation
+        /// issue. I don't want to have to check that its been initialised on each and every step invocation, and don't want to make
+        /// construction long-running..
+        /// </remarks>
         private class Query : IResolutionQuery
         {
             private readonly IQueryClauseStore clauseStore;
@@ -77,18 +79,18 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             private bool result;
 
-            public Query(
-                IQueryClauseStore clauseStore,
+            private Query(
+                IKnowledgeBaseClauseStore clauseStore,
                 Func<(CNFClause, CNFClause), bool> clausePairFilter,
-                IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer,
+                Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison,
                 Sentence query)
             {
-                this.clauseStore = clauseStore;
+                this.clauseStore = clauseStore.CreateQueryClauseStore();
                 this.clausePairFilter = clausePairFilter;
-                queue = new MaxPriorityQueue<(CNFClause, CNFClause, VariableSubstitution, CNFClause)>(Comparer<(CNFClause, CNFClause, VariableSubstitution, CNFClause)>.Create((x, y) =>
+                queue = new MaxPriorityQueue<(CNFClause, CNFClause, VariableSubstitution, CNFClause)>((x, y) =>
                 {
-                    return clausePairPriorityComparer.Compare((x.Item1, x.Item2), (y.Item1, y.Item2));  // TODO: ugh, hideous (and perhaps slow - test me)
-                }));
+                    return clausePairPriorityComparison((x.Item1, x.Item2), (y.Item1, y.Item2));  // TODO: ugh, hideous (and perhaps slow - test me)
+                });
                 steps = new Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)>();
 
                 NegatedQuery = new CNFSentence(new Negation(query));
@@ -120,13 +122,21 @@ namespace SCFirstOrderLogic.Inference.Resolution
             public IReadOnlyDictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> Steps => steps;
 
             /// <summary>
-            /// Carries out potentially long-running initialisation of the query.
+            /// Creates and initialises a new instance of the <see cref="Query"/> class.
+            /// Initialisation can potentially be a long-running operation - hence this method existing and the constructor being private.
             /// </summary>
-            /// <returns>A <see cref="Task"/> encapsulating the initialisation process.</returns>
-            public async Task InitialiseAsync(CancellationToken cancellationToken = default)
+            /// <returns>A new query.</returns>
+            public static async Task<Query> CreateAsync(
+                IKnowledgeBaseClauseStore clauseStore,
+                Func<(CNFClause, CNFClause), bool> clausePairFilter,
+                Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison,
+                Sentence querySentence,
+                CancellationToken cancellationToken = default)
             {
+                var query = new Query(clauseStore, clausePairFilter, clausePairPriorityComparison, querySentence);
+
                 // Initialise the clause store with the clauses from the negation of the query:
-                foreach (var clause in NegatedQuery.Clauses)
+                foreach (var clause in query.NegatedQuery.Clauses)
                 {
                     await clauseStore.AddAsync(clause, cancellationToken);
                 }
@@ -134,8 +144,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 // Queue up all initial clause pairings - adhering to our clause pair filter and priority comparer.
                 await foreach (var clause in clauseStore)
                 {
-                    await EnqueueUnfilteredResolventsAsync(clause, cancellationToken);
+                    await query.EnqueueUnfilteredResolventsAsync(clause, cancellationToken);
                 }
+
+                return query;
             }
 
             /// <inheritdoc/>
@@ -160,8 +172,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
 
                 // Otherwise, check if we've found a new clause (i.e. something that we didn't know already)..
-                // Upside: Don't need a separate "Contains" method on the store (which would raise potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
-                // Downside: clause store will encounter itself when looking for unifiers - not a big deal, but a performance/maintainability tradeoff nonetheless
+                // Upside of using Add: Don't need a separate "Contains" method on the store (which would raise potential
+                // misunderstandings about what the store means by "contains" - c.f. subsumption..)
+                // Downside of using Add: clause store will encounter itself when looking for unifiers - not a big deal,
+                // but a performance/maintainability tradeoff nonetheless
                 if (clauseStore.AddAsync(clause, cancellationToken).Result)
                 {
                     // This is a new clause, so we queue up some more clause pairings -
@@ -191,10 +205,23 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 return result;
             }
 
+            /// <inheritdoc/>
+            public void Dispose()
+            {
+                clauseStore.Dispose();
+            }
+
             private async Task EnqueueUnfilteredResolventsAsync(CNFClause clause, CancellationToken cancellationToken = default)
             {
                 await foreach (var (otherClause, unifier, unified) in clauseStore.FindUnifiers(clause, cancellationToken))
                 {
+                    // NB: Throwing away clauses returned by the unifier store has performance impact.
+                    // Could instead/also use a store that knows to not look for certain clause pairings in the first place..
+                    // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is
+                    // then a mix of implementation (how unifiers are stored/indexed) and strategy, plus there's a bit more
+                    // strategy in the form of the priority comparer. This feels a good compromise - there are of course
+                    // alternatives (e.g. some kind of strategy object that encapsulates both) - but they felt like overkill
+                    // for this simple implementation.
                     if (clausePairFilter((clause, otherClause)))
                     {
                         queue.Enqueue((clause, otherClause, unifier, unified));

@@ -1,21 +1,22 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
+using System;
 using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Clause pair priority comparers for use by <see cref="SimpleResolutionKnowledgeBase"/>.
+    /// Clause pair priority comparisons for use by <see cref="SimpleResolutionKnowledgeBase"/>.
     /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
     /// </summary>
-    public class ClausePairPriorityComparers
+    public class ClausePairPriorityComparisons
     {
         /// <summary>
         /// Naive comparison that orders clause pairs consistently but not according to any particular algorithm.
         /// </summary>
-        public static IComparer<(CNFClause, CNFClause)> None { get; } = Comparer<(CNFClause, CNFClause)>.Create((x, y) =>
+        public static Comparison<(CNFClause, CNFClause)> None { get; } = (x, y) =>
         {
             return x.GetHashCode().CompareTo(y.GetHashCode());
-        });
+        };
 
         /// <summary>
         /// Comparison that gives priority to pairs where one of the clauses is a unit clause.
@@ -24,7 +25,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// some sentence things use reference equality (notably, symbols of standardised variables and Skolem functions),
         /// means that things can be ordered differently from one execution to the next. Not ideal..
         /// </summary>
-        public static IComparer<(CNFClause, CNFClause)> UnitPreference { get; } = Comparer<(CNFClause, CNFClause)>.Create((x, y) =>
+        public static Comparison<(CNFClause, CNFClause)> UnitPreference { get; } =  (x, y) =>
         {
             if ((x.Item1.IsUnitClause || x.Item2.IsUnitClause) && !(y.Item1.IsUnitClause || y.Item2.IsUnitClause))
             {
@@ -38,6 +39,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
             {
                 return x.GetHashCode().CompareTo(y.GetHashCode());
             }
-        });
+        };
     }
 }

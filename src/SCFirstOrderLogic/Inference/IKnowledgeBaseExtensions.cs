@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic.Inference
         {
             foreach (var sentence in sentences)
             {
-                await knowledgeBase.TellAsync(sentence, cancellationToken); // No guarentee of thread safety - go one at a time..
+                await knowledgeBase.TellAsync(sentence, cancellationToken); // No guarantee of thread safety - go one at a time..
             }
         }
     }

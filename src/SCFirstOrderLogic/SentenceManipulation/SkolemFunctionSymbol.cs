@@ -8,12 +8,12 @@
         /// <remarks>
         /// Intended only for construction by the normalisation process.
         /// </remarks>
-        internal SkolemFunctionSymbol(object existentialVariableSymbol) => ExistentialVariableSymbol = existentialVariableSymbol;
+        internal SkolemFunctionSymbol(StandardisedVariableSymbol existentialVariableSymbol) => ExistentialVariableSymbol = existentialVariableSymbol;
 
         /// <summary>
         /// Gets the underlying (existentially quantified) variable symbol that this Skolem function represents the existential instantiation of.
         /// </summary>
-        public object ExistentialVariableSymbol { get; }
+        public StandardisedVariableSymbol ExistentialVariableSymbol { get; }
 
         /// <inheritdoc/>
         /// <remarks>

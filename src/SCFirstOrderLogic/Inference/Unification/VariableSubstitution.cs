@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// </summary>
     public class VariableSubstitution : SentenceTransformation
     {
-        // TODO-MAINTAINABILITY: Don't like internal fields.. internal AddBinding method instead?
+        // TODO-MAINTAINABILITY: This was lazy - I don't like non-private fields. Perhaps add an internal AddBinding method instead?
         internal readonly Dictionary<VariableReference, Term> bindings = new Dictionary<VariableReference, Term>();
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// <returns>The unified version of the literal.</returns>
         public CNFLiteral ApplyTo(CNFLiteral literal)
         {
-            // should this complain if its not being applied to one of the literals it was created against?
+            // Should this complain if its not being applied to one of the literals it was created against?
             // or am I thinking about this wrong and we should always just be returning the unified literal?
             // wait and see..
 

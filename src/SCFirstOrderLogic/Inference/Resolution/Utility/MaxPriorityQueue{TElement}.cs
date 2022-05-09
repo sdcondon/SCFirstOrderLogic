@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.Inference.Resolution.Utility
     /// <typeparam name="TElement">The type of objects to be stored.</typeparam>
     internal sealed class MaxPriorityQueue<TElement>
     {
-        private readonly IComparer<TElement> priorityComparer;
+        private readonly Comparison<TElement> priorityComparison;
 
         private TElement[] heap = new TElement[16];
 
@@ -17,9 +17,9 @@ namespace SCFirstOrderLogic.Inference.Resolution.Utility
         /// Initializes a new instance of the <see cref="MaxPriorityQueue{TElement}"/> class.
         /// </summary>
         /// <param name="priorityComparer">The comparer to use to compare elements.</param>
-        public MaxPriorityQueue(IComparer<TElement> priorityComparer)
+        public MaxPriorityQueue(Comparison<TElement> priorityComparer)
         {
-            this.priorityComparer = priorityComparer ?? throw new ArgumentNullException(nameof(priorityComparer));
+            this.priorityComparison = priorityComparer ?? throw new ArgumentNullException(nameof(priorityComparer));
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace SCFirstOrderLogic.Inference.Resolution.Utility
                 var parentIndex = (index - 1) / 2;
                 ref var parent = ref heap[parentIndex];
 
-                if (priorityComparer.Compare(parent, element) >= 0)
+                if (priorityComparison(parent, element) >= 0)
                 {
                     break;
                 }
@@ -107,7 +107,7 @@ namespace SCFirstOrderLogic.Inference.Resolution.Utility
                 for (int childIndex = 2 * i + 1; childIndex - 2 * i <= 2 && childIndex < Count; childIndex++)
                 {
                     ref var child = ref heap[childIndex];
-                    if (priorityComparer.Compare(child, dominating) > 0)
+                    if (priorityComparison(child, dominating) > 0)
                     {
                         dominatingIndex = childIndex;
                         dominating = ref child;

@@ -34,7 +34,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         bool Result { get; }
 
         /// <summary>
-        /// Gets a mapping from a clause to the two clauses from which it was inferred.
+        /// Gets a mapping from a clause to the two clauses from which it was inferred. NB: Assumes binary resolution.
         /// </summary>
         IReadOnlyDictionary<CNFClause, (CNFClause clause1, CNFClause clause2, VariableSubstitution unifier)> Steps { get; }
 

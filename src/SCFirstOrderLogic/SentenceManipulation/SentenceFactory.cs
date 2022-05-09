@@ -24,7 +24,7 @@
         /// Shorthand factory method for a (tree of) new <see cref="UniversalQuantification"/> instances that declares two universally quantified variables.
         /// </summary>
         /// <param name="variableDeclaration1">The first variable declaration.</param>
-        /// <param name="variableDeclaration1">The second variable declaration.</param>
+        /// <param name="variableDeclaration2">The second variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variables.</param>
         /// <returns>A new <see cref="UniversalQuantification"/> instance.</returns>
         public static Sentence ForAll(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, Sentence sentence) => 
@@ -34,8 +34,8 @@
         /// Shorthand factory method for a (tree of) new <see cref="UniversalQuantification"/> instances that declares three universally quantified variables.
         /// </summary>
         /// <param name="variableDeclaration1">The first variable declaration.</param>
-        /// <param name="variableDeclaration1">The second variable declaration.</param>
-        /// <param name="variableDeclaration1">The third variable declaration.</param>
+        /// <param name="variableDeclaration2">The second variable declaration.</param>
+        /// <param name="variableDeclaration3">The third variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variables.</param>
         /// <returns>A new <see cref="UniversalQuantification"/> instance.</returns>
         public static Sentence ForAll(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, VariableDeclaration variableDeclaration3, Sentence sentence) => 
@@ -54,7 +54,7 @@
         /// Shorthand factory method for a (tree of) new <see cref="ExistentialQuantification"/> instances that declares two universally quantified variables.
         /// </summary>
         /// <param name="variableDeclaration1">The first variable declaration.</param>
-        /// <param name="variableDeclaration1">The second variable declaration.</param>
+        /// <param name="variableDeclaration2">The second variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variables.</param>
         /// <returns>A new <see cref="ExistentialQuantification"/> instance.</returns>
         public static Sentence ThereExists(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, Sentence sentence) => 
@@ -64,8 +64,8 @@
         /// Shorthand factory method for a (tree of) new <see cref="ExistentialQuantification"/> instances that declares three universally quantified variables.
         /// </summary>
         /// <param name="variableDeclaration1">The first variable declaration.</param>
-        /// <param name="variableDeclaration1">The second variable declaration.</param>
-        /// <param name="variableDeclaration1">The third variable declaration.</param>
+        /// <param name="variableDeclaration2">The second variable declaration.</param>
+        /// <param name="variableDeclaration3">The third variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variables.</param>
         /// <returns>A new <see cref="ExistentialQuantification"/> instance.</returns>
         public static Sentence ThereExists(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, VariableDeclaration variableDeclaration3, Sentence sentence) =>

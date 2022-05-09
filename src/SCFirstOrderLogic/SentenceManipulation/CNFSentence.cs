@@ -5,7 +5,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <summary>
     /// Representation of a <see cref="Sentence"/> in conjunctive normal form (CNF).
     /// </summary>
-    /// <typeparam name="TModel">The type that the literals of this expression refer to.</typeparam>
     public class CNFSentence
     {
         /// <summary>
