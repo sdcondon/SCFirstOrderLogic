@@ -26,10 +26,36 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// </summary>
         public static CNFConversion Instance => new CNFConversion();
 
+        /// <inheritdoc />
+        public override Sentence ApplyTo(Sentence sentence)
+        {
+            // We do variable standardisation first, before altering the sentence in any
+            // other way, so that we can easily store the context of the original variable in the new symbol. This
+            // facilitates explanations of the origins of a particular variable (or Skolem function) in query result explanations.
+            // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
+            // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong.
+            // Should we validate here..? Or handle on the assumption that they are universally quantified?
+            // Also should probably complain when nested definitions uses the same symbol (i.e. symbols that are equal).
+            sentence = variableStandardisation.ApplyTo(sentence);
+
+            // It might be possible to do some of these conversions at the same time, but for now
+            // at least we do them sequentially - and in so doing favour maintainability over performance.
+            // Perhaps revisit this later (but given that the main purpose of this library is learning, probably not).
+            sentence = implicationElimination.ApplyTo(sentence);
+            sentence = nnfConversion.ApplyTo(sentence);
+            sentence = skolemisation.ApplyTo(sentence);
+            sentence = universalQuantifierElimination.ApplyTo(sentence);
+            sentence = disjunctionDistribution.ApplyTo(sentence);
+
+            return sentence;
+        }
+
         /// <summary>
-        /// Tranformation that "standardises apart" variables - essentially ensuring that variable symbols are unique.
+        /// Transformation that "standardises apart" variables - essentially ensuring that variable symbols are unique.
+        /// <para/>
+        /// Public to allow callers to mess about with the normalisation process.
         /// </summary>
-        private class VariableStandardisation : SentenceTransformation
+        public class VariableStandardisation : SentenceTransformation
         {
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
@@ -39,7 +65,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             // Private inner class to hide necessarily short-lived object away from callers.
             // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
-            // (Yes, I've ended up making VariableStandardisation private too - so can perhaps simplify now).
             private class ScopedVariableStandardisation : SentenceTransformation
             {
                 private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
@@ -66,30 +91,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     return mapping[variableDeclaration];
                 }
             }
-        }
-
-        /// <inheritdoc />
-        public override Sentence ApplyTo(Sentence sentence)
-        {
-            // We do variable standardisation first, before altering the sentence in any
-            // other way, so that we can easily store the context of the original variable in the new symbol. This
-            // facilitates explanations of the origins of a particular variable (or Skolem function) in query result explanations.
-            // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
-            // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong.
-            // Should we validate here..? Or handle on the assumption that they are universally quantified?
-            // Also should probably complain when nested definitions uses the same symbol (i.e. symbols that are equal).
-            sentence = variableStandardisation.ApplyTo(sentence);
-
-            // It might be possible to do some of these conversions at the same time, but for now
-            // at least we do them sequentially - and in so doing favour maintainability over performance.
-            // Perhaps revisit this later (but given that the main purpose of this library is learning, probably not).
-            sentence = implicationElimination.ApplyTo(sentence);
-            sentence = nnfConversion.ApplyTo(sentence);
-            sentence = skolemisation.ApplyTo(sentence);
-            sentence = universalQuantifierElimination.ApplyTo(sentence);
-            sentence = disjunctionDistribution.ApplyTo(sentence);
-
-            return sentence;
         }
 
         /// <summary>
@@ -180,15 +181,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Transformation that eliminate existential quantification via the process of "Skolemisation". Replaces all existentially declared variables
         /// with a generated "Skolem" function that acts on all universally declared variables in scope when the existential variable was declared.
-        /// <para/>
-        /// NB: Doesn't override equality or hash code, so uses reference equality;
-        /// and the normalisation process creates exactly one instance per variable scope - thus achieving standardisation
-        /// without having to muck about with anything like trying to ensure names that are unique strings
-        /// (which should only be a rendering concern anyway).
         /// </summary>
-        /// <remarks>
-        /// As with standardised variables, would prefer to use value semantics for equality.
-        /// </remarks>
         public class Skolemisation : SentenceTransformation
         {
             /// <inheritdoc />

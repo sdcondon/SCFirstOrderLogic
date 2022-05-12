@@ -16,8 +16,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
         public virtual Sentence ApplyTo(Sentence sentence)
         {
-            // TODO-PERFORMANCE: Using "proper" visitor pattern will be (ever so slightly) faster than this,
-            // as well as adhering better to the OCP - decide if its worth the extra complexity.
+            // TODO-PERFORMANCE: Using "proper" visitor pattern (i.e. a virtual 'Accept' method on the Sentence & Term classes)
+            // would be (ever so slightly) faster than this - decide if its worth the extra complexity.
             return sentence switch
             {
                 Conjunction conjunction => ApplyTo(conjunction),

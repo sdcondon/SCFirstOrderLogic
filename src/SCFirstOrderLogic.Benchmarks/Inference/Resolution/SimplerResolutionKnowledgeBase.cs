@@ -15,21 +15,21 @@ namespace SCFirstOrderLogic.Inference.Resolution
     {
         private readonly List<CNFSentence> sentences = new List<CNFSentence>(); // To be replaced with clause store
         private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
-        private readonly IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer;
+        private readonly Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="SimpleResolutionKnowledgeBase"/> class.
         /// </summary>
         /// <param name="clausePairFilter">A delegate to use to filter the pairs of clauses to be queued for a unification attempt. A true value indicates that the pair should be enqueued.</param>
-        /// <param name="clausePairPriorityComparer">An object to use to compare the pairs of clauses to be queued for a unification attempt.</param>
-        public SimplerResolutionKnowledgeBase(Func<(CNFClause, CNFClause), bool> clausePairFilter, IComparer<(CNFClause, CNFClause)> clausePairPriorityComparer)
+        /// <param name="clausePairPriorityComparison">A delegate to use to compare the pairs of clauses to be queued for a unification attempt.</param>
+        public SimplerResolutionKnowledgeBase(Func<(CNFClause, CNFClause), bool> clausePairFilter, Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison)
         {
             // NB: Throwing away clauses returned by the unifier store has performance impact. Could instead/also use a store that knows to not look for certain clause pairings in the first place..
             // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is then a mix of implementation (how unifiers are stored/indexed) and strategy,
             // plus there's a bit more strategy in the form of the priority comparer. This feels a good compromise - there are of course alternatives (e.g. some kind of strategy object that encapsulates
             // both) - but they felt like overkill for this simple implementation.
             this.clausePairFilter = clausePairFilter; 
-            this.clausePairPriorityComparer = clausePairPriorityComparer;
+            this.clausePairPriorityComparison = clausePairPriorityComparison;
         }
 
         /// <inheritdoc />
@@ -64,7 +64,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     .ToHashSet();
 
                 clausePairFilter = knowledgeBase.clausePairFilter;
-                queue = new MaxPriorityQueue<(CNFClause, CNFClause)>(knowledgeBase.clausePairPriorityComparer);
+                queue = new MaxPriorityQueue<(CNFClause, CNFClause)>(knowledgeBase.clausePairPriorityComparison);
                 foreach (var ci in clauses)
                 {
                     foreach (var cj in clauses)
