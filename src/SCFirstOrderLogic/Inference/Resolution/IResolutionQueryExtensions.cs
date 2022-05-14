@@ -155,11 +155,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 {
                     if (term is Function function && function.Symbol is SkolemFunctionSymbol skolemFunctionSymbol)
                     {
-                        return $"some {skolemFunctionSymbol.ExistentialVariableSymbol.OriginalSymbol} from {skolemFunctionSymbol.ExistentialVariableSymbol.OriginalContext.Last()}";
+                        return $"some {skolemFunctionSymbol.ExistentialVariableSymbol.OriginalSymbol} from {skolemFunctionSymbol.ExistentialVariableSymbol.OriginalSentence}";
                     }
                     else if (term is VariableReference variable && variable.Symbol is StandardisedVariableSymbol standardisedVariableSymbol)
                     {
-                        return $"a standardisation of {standardisedVariableSymbol.OriginalSymbol} from {standardisedVariableSymbol.OriginalContext.Last()}";
+                        return $"a standardisation of {standardisedVariableSymbol.OriginalSymbol} from {standardisedVariableSymbol.OriginalSentence}";
                     }
                     else
                     {

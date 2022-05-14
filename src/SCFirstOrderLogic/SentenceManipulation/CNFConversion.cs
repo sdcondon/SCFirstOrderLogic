@@ -60,7 +60,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
             {
-                return new ScopedVariableStandardisation().ApplyTo(sentence);
+                return new ScopedVariableStandardisation(sentence).ApplyTo(sentence);
             }
 
             // Private inner class to hide necessarily short-lived object away from callers.
@@ -68,21 +68,18 @@ namespace SCFirstOrderLogic.SentenceManipulation
             private class ScopedVariableStandardisation : SentenceTransformation
             {
                 private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new Dictionary<VariableDeclaration, VariableDeclaration>();
-                private readonly Stack<Sentence> context = new Stack<Sentence>();
+                private readonly Sentence rootSentence;
 
-                public override Sentence ApplyTo(Sentence sentence)
+                public ScopedVariableStandardisation(Sentence rootSentence)
                 {
-                    context.Push(sentence);
-                    sentence = base.ApplyTo(sentence);
-                    context.Pop();
-                    return sentence;
+                    this.rootSentence = rootSentence;
                 }
-
+                
                 protected override Sentence ApplyTo(Quantification quantification)
                 {
                     /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
                     /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-                    mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification.Variable.Symbol, context));
+                    mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification, rootSentence));
                     return base.ApplyTo(quantification);
                 }
 
@@ -197,7 +194,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
                 private readonly Dictionary<VariableDeclaration, Function> existentialVariableMap;
 
-                public ScopedSkolemisation(IEnumerable<VariableDeclaration> universalVariablesInScope, Dictionary<VariableDeclaration, Function> existentialVariableMap)
+                public ScopedSkolemisation(
+                    IEnumerable<VariableDeclaration> universalVariablesInScope,
+                    Dictionary<VariableDeclaration, Function> existentialVariableMap)
                 {
                     this.universalVariablesInScope = universalVariablesInScope;
                     this.existentialVariableMap = existentialVariableMap;
@@ -215,6 +214,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     existentialVariableMap[existentialQuantification.Variable] = new Function(
                         new SkolemFunctionSymbol((StandardisedVariableSymbol)existentialQuantification.Variable.Symbol), // a safe cast, because we do standardisation first
                         universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
+
                     return base.ApplyTo(existentialQuantification.Sentence);
                 }
 
