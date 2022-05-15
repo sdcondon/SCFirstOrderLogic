@@ -1,4 +1,5 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.SentenceFormatting;
+using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -66,15 +67,15 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
-        /// Returns an enumeration of all of the Terms not directly provided by the user that are referenced by a given clause.
+        /// Returns an enumeration of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
         /// That is, standardised variables and Skolem functions. Intended to be useful in creating a "legend" of such terms.
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<Term> FindNonUserProvidedTerms(CNFClause clause)
+        public static IEnumerable<Term> FindNormalisationTerms(params CNFClause[] clauses)
         {
             var returnedAlready = new List<Term>();
 
-            foreach (var literal in clause.Literals)
+            foreach (var literal in clauses.SelectMany(c => c.Literals))
             {
                 foreach (var topLevelTerm in literal.Predicate.Arguments)
                 {
@@ -118,6 +119,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <returns>A (very raw) explanation of the steps that led to the result of the query.</returns>
         public static string Explain(this IResolutionQuery query)
         {
+            var formatter = new SentenceFormatter();
+
             if (!query.IsComplete)
             {
                 throw new InvalidOperationException("Query is not yet complete");
@@ -151,32 +154,32 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     }
                 }
 
-                string ExplainNonUserTerm(Term term)
+                string ExplainNormalisationTerm(Term term)
                 {
                     if (term is Function function && function.Symbol is SkolemFunctionSymbol skolemFunctionSymbol)
                     {
-                        return $"some {skolemFunctionSymbol.ExistentialVariableSymbol.OriginalSymbol} from {skolemFunctionSymbol.ExistentialVariableSymbol.OriginalSentence}";
+                        return $"some {formatter.GetOrCreateStandardisedVariableLabel(skolemFunctionSymbol.StandardisedVariableSymbol)} from {skolemFunctionSymbol.OriginalSentence}";
                     }
                     else if (term is VariableReference variable && variable.Symbol is StandardisedVariableSymbol standardisedVariableSymbol)
                     {
-                        return $"a standardisation of {standardisedVariableSymbol.OriginalSymbol} from {standardisedVariableSymbol.OriginalSentence}";
+                        return $"a standardisation of {standardisedVariableSymbol.OriginalSymbol} from {standardisedVariableSymbol.OriginalSentence.ToString()}";
                     }
                     else
                     {
-                        return $"something I don't recognise. Something has gone wrong..";
+                        return $"something unrecognised. Something has gone wrong..";
                     } 
                 }
 
-                explanation.AppendLine($"#{i:D2}: {discoveredClauses[i]}");
-                foreach (var term in FindNonUserProvidedTerms(discoveredClauses[i]))
-                {
-                    explanation.AppendLine($"     ..where {term} is {ExplainNonUserTerm(term)}");
-                }
-                explanation.AppendLine($"     From {GetSource(clause1)}: {clause1}");
-                explanation.AppendLine($"     And  {GetSource(clause2)}: {clause2} ");
+                explanation.AppendLine($"#{i:D2}: {formatter.Print(discoveredClauses[i])}");
+                explanation.AppendLine($"     From {GetSource(clause1)}: {formatter.Print(clause1)}");
+                explanation.AppendLine($"     And  {GetSource(clause2)}: {formatter.Print(clause2)} ");
                 explanation.Append("     Using   : {");
                 explanation.Append(string.Join(", ", unifier.Bindings.Select(s => $"{s.Key}/{s.Value}")));
                 explanation.AppendLine("}");
+                foreach (var term in FindNormalisationTerms(discoveredClauses[i], clause1, clause2))
+                {
+                    explanation.AppendLine($"     ..where {formatter.Print(term)} is {ExplainNormalisationTerm(term)}");
+                }
 
                 explanation.AppendLine();
             }

@@ -33,11 +33,16 @@
         /// If needed though, we could always add some validation of the sentence here (a quick search through the sentence to ensure the quantification reference
         /// is unique), rather than necessarily have to go back to the full context approach.
         /// </remarks>
-        internal StandardisedVariableSymbol(Quantification quantification, Sentence originalSentence)
+        internal StandardisedVariableSymbol(Quantification originalVariableScope, Sentence originalSentence)
         {
-            OriginalVariableScope = quantification;
+            OriginalVariableScope = originalVariableScope;
             OriginalSentence = originalSentence;
         }
+
+        /// <summary>
+        /// Gets the quantification in which the original variable was declared.
+        /// </summary>
+        public Quantification OriginalVariableScope { get; }
 
         /// <summary>
         /// Gets the original top-level sentence in which the variable was declared.
@@ -46,11 +51,6 @@
         /// root element of the sentence. Intended for use within explanations of query results.
         /// </summary>
         public Sentence OriginalSentence { get; }
-
-        /// <summary>
-        /// Gets the quantification in which the original variable was declared.
-        /// </summary>
-        public Quantification OriginalVariableScope { get; }
 
         /// <summary>
         /// Gets the original variable symbol that this symbol is the standardisation of.

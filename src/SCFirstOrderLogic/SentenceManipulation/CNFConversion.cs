@@ -184,20 +184,23 @@ namespace SCFirstOrderLogic.SentenceManipulation
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)
             {
-                return new ScopedSkolemisation(Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>()).ApplyTo(sentence);
+                return new ScopedSkolemisation(sentence, Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>()).ApplyTo(sentence);
             }
 
             // Private inner class to hide necessarily short-lived object away from callers.
             // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
             private class ScopedSkolemisation : SentenceTransformation
             {
+                private readonly Sentence rootSentence;
                 private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
                 private readonly Dictionary<VariableDeclaration, Function> existentialVariableMap;
 
                 public ScopedSkolemisation(
+                    Sentence rootSentence,
                     IEnumerable<VariableDeclaration> universalVariablesInScope,
                     Dictionary<VariableDeclaration, Function> existentialVariableMap)
                 {
+                    this.rootSentence = rootSentence;
                     this.universalVariablesInScope = universalVariablesInScope;
                     this.existentialVariableMap = existentialVariableMap;
                 }
@@ -206,13 +209,13 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 {
                     return new UniversalQuantification(
                         universalQuantification.Variable,
-                        new ScopedSkolemisation(universalVariablesInScope.Append(universalQuantification.Variable), existentialVariableMap).ApplyTo(universalQuantification.Sentence));
+                        new ScopedSkolemisation(rootSentence, universalVariablesInScope.Append(universalQuantification.Variable), existentialVariableMap).ApplyTo(universalQuantification.Sentence));
                 }
 
                 protected override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
                 {
                     existentialVariableMap[existentialQuantification.Variable] = new Function(
-                        new SkolemFunctionSymbol((StandardisedVariableSymbol)existentialQuantification.Variable.Symbol), // a safe cast, because we do standardisation first
+                        new SkolemFunctionSymbol(existentialQuantification, rootSentence),
                         universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
 
                     return base.ApplyTo(existentialQuantification.Sentence);

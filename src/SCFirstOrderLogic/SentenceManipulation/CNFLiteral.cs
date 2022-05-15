@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SCFirstOrderLogic.SentenceFormatting;
+using System;
 
 namespace SCFirstOrderLogic.SentenceManipulation
 {
@@ -64,8 +65,16 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <returns>A literal that is the negation of this one.</returns>
         public CNFLiteral Negate() => new CNFLiteral(Predicate, !IsNegated);
 
-        /// <inheritdoc />
-        public override string ToString() => $"{(IsNegated ? "¬" : "")}{Predicate}";
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// <para/>
+        /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to print the literal.
+        /// Note that this will not guarantee unique labelling of normalisation terms (standardised variables or Skolem functions)
+        /// across multiple calls, or provide any choice as to the sets of labels used for normalisation terms. If you want either
+        /// of these things, instantiate your own <see cref="SentenceFormatter"/> instance.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString() => new SentenceFormatter().Print(this);
 
         /// <inheritdoc />
         public override bool Equals(object obj) => obj is CNFLiteral literal && Equals(literal);
