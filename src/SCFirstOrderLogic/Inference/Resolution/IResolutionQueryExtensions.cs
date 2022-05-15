@@ -158,11 +158,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 {
                     if (term is Function function && function.Symbol is SkolemFunctionSymbol skolemFunctionSymbol)
                     {
-                        return $"some {formatter.GetOrCreateStandardisedVariableLabel(skolemFunctionSymbol.StandardisedVariableSymbol)} from {skolemFunctionSymbol.OriginalSentence}";
+                        return $"some {formatter.GetOrCreateStandardisedVariableLabel(skolemFunctionSymbol.StandardisedVariableSymbol)} from {formatter.Print(skolemFunctionSymbol.OriginalSentence)}";
                     }
                     else if (term is VariableReference variable && variable.Symbol is StandardisedVariableSymbol standardisedVariableSymbol)
                     {
-                        return $"a standardisation of {standardisedVariableSymbol.OriginalSymbol} from {standardisedVariableSymbol.OriginalSentence.ToString()}";
+                        return $"a standardisation of {standardisedVariableSymbol.OriginalSymbol} from {formatter.Print(standardisedVariableSymbol.OriginalSentence)}";
                     }
                     else
                     {
@@ -174,7 +174,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 explanation.AppendLine($"     From {GetSource(clause1)}: {formatter.Print(clause1)}");
                 explanation.AppendLine($"     And  {GetSource(clause2)}: {formatter.Print(clause2)} ");
                 explanation.Append("     Using   : {");
-                explanation.Append(string.Join(", ", unifier.Bindings.Select(s => $"{s.Key}/{s.Value}")));
+                explanation.Append(string.Join(", ", unifier.Bindings.Select(s => $"{formatter.Print(s.Key)}/{formatter.Print(s.Value)}")));
                 explanation.AppendLine("}");
                 foreach (var term in FindNormalisationTerms(discoveredClauses[i], clause1, clause2))
                 {

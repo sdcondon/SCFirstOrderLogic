@@ -39,23 +39,15 @@ namespace SCFirstOrderLogic.SentenceFormatting
 
         /// <summary>
         /// Gets or sets the default label set to use for standardised variables.
+        /// Defaults to the (lower-case) Greek alphabet.
         /// </summary>
         public static IEnumerable<string> DefaultStandardisedVariableLabelSet { get; set; } = LabelSets.LowerGreekAlphabet;
 
         /// <summary>
         /// Gets or sets the default label set to use for Skolem functions.
+        /// Defaults to the (upper-case) modern Latin alphabet;
         /// </summary>
         public static IEnumerable<string> DefaultSkolemFunctionLabelSet { get; set; } = LabelSets.UpperModernLatinAlphabet;
-
-        /// <summary>
-        /// Gets the mapping from standardised variables to labels used by this formatter.
-        /// </summary>
-        public IReadOnlyDictionary<StandardisedVariableSymbol, string> LabelsByStandardisedVariableSymbol => labelsByStandardisedVariableSymbol;
-
-        /// <summary>
-        /// Gets the mapping from Skolem functions to labels used by this formatter.
-        /// </summary>
-        public IReadOnlyDictionary<SkolemFunctionSymbol, string> LabelsBySkolemFunctionSymbol => labelsBySkolemFunctionSymbol;
 
         public string Print(CNFClause clause) => string.Join(" ∨ ", clause.Literals.Select(l => Print(l)));
 
@@ -84,7 +76,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
             $"[{Print(equivalence.Left)} ⇔ {Print(equivalence.Right)}]";
 
         public string Print(ExistentialQuantification existentialQuantification) =>
-            $"∃ {Print(existentialQuantification.Variable)}, {Print(existentialQuantification.Sentence)}";
+            $"[∃ {Print(existentialQuantification.Variable)}, {Print(existentialQuantification.Sentence)}]";
 
         public string Print(Implication implication) =>
             $"[{Print(implication.Antecedent)} ⇒ {Print(implication.Consequent)}]";
@@ -96,7 +88,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
             $"{predicate.Symbol}({string.Join(", ", predicate.Arguments.Select(a => Print(a)))})";
 
         public string Print(UniversalQuantification universalQuantification) =>
-            $"∀ {Print(universalQuantification.Variable)}, {Print(universalQuantification.Sentence)}";
+            $"[∀ {Print(universalQuantification.Variable)}, {Print(universalQuantification.Sentence)}]";
 
         public string Print(Term term) => term switch
         {
@@ -114,14 +106,11 @@ namespace SCFirstOrderLogic.SentenceFormatting
 
         public string Print(Function function)
         {
-            return function.Symbol switch
-            {
-                SkolemFunctionSymbol skm => $"{GetOrCreateSkolemFunctionLabel(skm)}({string.Join(", ", function.Arguments.Select(a => Print(a)))})",
-                _ => $"{function.Symbol}({string.Join(", ", function.Arguments.Select(a => Print(a)))})"
-            };
+            var label = function.Symbol is SkolemFunctionSymbol skm ? Print(skm) : function.Symbol.ToString();
+            return $"{label}({string.Join(", ", function.Arguments.Select(a => Print(a)))})";
         }
 
-        public string GetOrCreateSkolemFunctionLabel(SkolemFunctionSymbol symbol)
+        public string Print(SkolemFunctionSymbol symbol)
         {
             if (labelsBySkolemFunctionSymbol.TryGetValue(symbol, out var label))
             {
@@ -137,6 +126,11 @@ namespace SCFirstOrderLogic.SentenceFormatting
                 // But obviously then we lose the unique representation guarentee, and it should be relatively
                 // easy to use essentially infinite label sets - so I'd rather just fail.
                 throw new InvalidOperationException("Skolem function label set is exhausted");
+                // Should come back to this at some point though. Difficult to use a common formatter
+                // when e.g. debugging.
+                // asterisk supposed to represent some kind of puff of smoke for the existential instantiation..
+                ////return $"*{symbol.StandardisedVariableSymbol.OriginalSymbol}";
+                // .. Or ILabeller instead of IEnumerable<string>?
             }
         }
 
@@ -144,12 +138,12 @@ namespace SCFirstOrderLogic.SentenceFormatting
         {
             return variableDeclaration.Symbol switch
             {
-                StandardisedVariableSymbol std => GetOrCreateStandardisedVariableLabel(std),
+                StandardisedVariableSymbol std => Print(std),
                 _ => variableDeclaration.Symbol.ToString()
             };
         }
 
-        public string GetOrCreateStandardisedVariableLabel(StandardisedVariableSymbol symbol)
+        public string Print(StandardisedVariableSymbol symbol)
         {
             if (labelsByStandardisedVariableSymbol.TryGetValue(symbol, out var label))
             {
@@ -162,9 +156,14 @@ namespace SCFirstOrderLogic.SentenceFormatting
             else
             {
                 // Suppose we *could* fall back on the ToString of the underlying variable symbol here.
-                // But obviously then we lose the unique representation guarentee, and it should be relatively
+                // But obviously then we lose the unique representation guarantee, and it should be relatively
                 // easy to use essentially infinite label sets - so I'd rather just fail.
                 throw new InvalidOperationException("Skolem function label set is exhausted");
+                // Should come back to this at some point though. Difficult to use a common formatter
+                // when e.g. debugging.
+                // double arrow supposed to represent standardising variables "apart".
+                ////return $"↔{symbol.OriginalSymbol}";
+                // .. Or ILabeller instead of IEnumerable<string>?
             }
         }
     }

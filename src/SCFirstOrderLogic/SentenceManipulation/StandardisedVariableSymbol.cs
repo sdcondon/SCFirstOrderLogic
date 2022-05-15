@@ -1,4 +1,6 @@
-﻿namespace SCFirstOrderLogic.SentenceManipulation
+﻿using SCFirstOrderLogic.SentenceFormatting;
+
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Class for symbols of variables that have been standardised as part of the normalisation process.
@@ -73,10 +75,6 @@
         ////}
 
         /// <inheritdoc/>
-        /// <remarks>
-        /// NB: SentenceFormatter has a special case when rendering these (to ensure that they are rendered distinctly),
-        /// so this ToString override is "just in case".
-        /// </remarks>
-        public override string ToString() => $"ST:{OriginalSymbol}";
+        public override string ToString() => new SentenceFormatter().Print(this);
     }
 }
