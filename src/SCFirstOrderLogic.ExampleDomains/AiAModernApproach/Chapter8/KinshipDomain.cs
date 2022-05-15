@@ -53,7 +53,7 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8
 
         //// Unary predicates:
         public static Predicate IsMale(Term subject) => new Predicate(nameof(IsMale), subject);
-        public static Predicate IsFemale(Term subject) => new Predicate(nameof(IsMale), subject);
+        public static Predicate IsFemale(Term subject) => new Predicate(nameof(IsFemale), subject);
 
         //// Binary predicates:
         public static Predicate IsParent(Term subject, Term @object) => new Predicate(nameof(IsParent), subject, @object);

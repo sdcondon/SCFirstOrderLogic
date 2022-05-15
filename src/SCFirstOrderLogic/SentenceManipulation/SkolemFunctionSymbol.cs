@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// NB: Doesn't override equality or hash code, so uses reference equality;
     /// and the normalisation process creates exactly one instance per variable scope - thus achieving standardisation
     /// without having to muck about with anything like trying to ensure names that are unique strings
-    /// (which should only be a rendering concern anyway).
+    /// (which only sentence formatting logic, not the symbol itself, should care about).
     /// <para/>
     /// As with standardised variables, value semantics for equality might be useful.
     /// </remarks>

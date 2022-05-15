@@ -38,13 +38,15 @@ namespace SCFirstOrderLogic.SentenceFormatting
         }
 
         /// <summary>
-        /// Gets or sets the default label set to use for standardised variables.
+        /// Gets or sets the default label set to use for standardised variables. Used by
+        /// <see cref="SentenceFormatter"/> instances constructed with the parameterless constructor.
         /// Defaults to the (lower-case) Greek alphabet.
         /// </summary>
         public static IEnumerable<string> DefaultStandardisedVariableLabelSet { get; set; } = LabelSets.LowerGreekAlphabet;
 
         /// <summary>
-        /// Gets or sets the default label set to use for Skolem functions.
+        /// Gets or sets the default label set to use for Skolem functions. Used by
+        /// <see cref="SentenceFormatter"/> instances constructed with the parameterless constructor.
         /// Defaults to the (upper-case) modern Latin alphabet;
         /// </summary>
         public static IEnumerable<string> DefaultSkolemFunctionLabelSet { get; set; } = LabelSets.UpperModernLatinAlphabet;

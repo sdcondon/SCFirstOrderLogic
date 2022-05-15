@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// NB: Doesn't override equality or hash code, so uses reference equality;
     /// and the normalisation process creates exactly one instance per variable scope - thus achieving standardisation
     /// without having to muck about with anything like trying to ensure names that are unique strings
-    /// (which should only be a rendering concern).
+    /// (which only sentence formatting logic, not the symbol itself, should care about).
     /// <para/>
     /// This is however slightly awkward to to test, and has shortcomings when serialization is involved.
     /// Also can cause inconsistent behaviour across runs when anything relies on hash code (like ClausePairPriorityComparers.UnitPreference)

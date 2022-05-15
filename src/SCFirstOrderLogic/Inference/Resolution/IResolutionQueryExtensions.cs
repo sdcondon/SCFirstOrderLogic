@@ -158,7 +158,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 {
                     if (term is Function function && function.Symbol is SkolemFunctionSymbol skolemFunctionSymbol)
                     {
-                        return $"some {formatter.GetOrCreateStandardisedVariableLabel(skolemFunctionSymbol.StandardisedVariableSymbol)} from {formatter.Print(skolemFunctionSymbol.OriginalSentence)}";
+                        return $"some {formatter.Print(skolemFunctionSymbol.StandardisedVariableSymbol)} from {formatter.Print(skolemFunctionSymbol.OriginalSentence)}";
                     }
                     else if (term is VariableReference variable && variable.Symbol is StandardisedVariableSymbol standardisedVariableSymbol)
                     {
