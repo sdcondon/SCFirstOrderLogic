@@ -1,5 +1,7 @@
-﻿#if FALSE
+﻿using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
 
 namespace SCFirstOrderLogic.Inference
@@ -11,8 +13,7 @@ namespace SCFirstOrderLogic.Inference
     public class EqualityAxiomisingKnowledgeBase : IKnowledgeBase
     {
         private readonly IKnowledgeBase innerKnowledgeBase;
-        private readonly ISet<object> knownPredicateSymbols = new HashSet<object>();
-        private readonly ISet<object> knownFunctionSymbols = new HashSet<object>();
+        private readonly PredicateAndFunctionEqualityAxiomiser predicateAndFunctionEqualityAxiomiser;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="EqualityAxiomisingKnowledgeBase"/> class.
@@ -20,28 +21,66 @@ namespace SCFirstOrderLogic.Inference
         public EqualityAxiomisingKnowledgeBase(IKnowledgeBase innerKnowledgeBase)
         {
             this.innerKnowledgeBase = innerKnowledgeBase;
+            this.predicateAndFunctionEqualityAxiomiser = new PredicateAndFunctionEqualityAxiomiser(innerKnowledgeBase);
 
             // Tell the knowledge base the fundamental properties of equality:
-            innerKnowledgeBase.Tell(ForAll(X, AreEqual(X, X))); // Reflexivity
-            innerKnowledgeBase.Tell(ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X)))); // Commutativity
-            innerKnowledgeBase.Tell(ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z)))); // Transitivity
+            innerKnowledgeBase.TellAsync(ForAll(X, AreEqual(X, X))).Wait(); // Reflexivity
+            innerKnowledgeBase.TellAsync(ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X)))).Wait(); // Commutativity
+            innerKnowledgeBase.TellAsync(ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z)))).Wait(); // Transitivity
         }
 
         /// <inheritdoc/>
-        public bool Ask(Sentence query)
+        public Task<bool> AskAsync(Sentence query, CancellationToken cancellationToken = default)
         {
-            return innerKnowledgeBase.Ask(query);
+            return innerKnowledgeBase.AskAsync(query, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public void Tell(Sentence sentence)
+        public async Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
-            innerKnowledgeBase.Tell(sentence);
+            await innerKnowledgeBase.TellAsync(sentence);
+            predicateAndFunctionEqualityAxiomiser.ApplyTo(sentence);
+        }
 
-            // TODO: Look for new functions and predicates, add equality axioms for them
-            // .. To figure out for myself - why don't the fundamental axioms suffice (given that using the fundamental axioms
-            // means that unification can encounter the same function or predicate?)
+        // TODO: Look for new functions and predicates, add equality axioms for them
+        // .. To figure out for myself - why don't the fundamental axioms suffice (given that using the fundamental axioms
+        // means that unification can encounter the same function or predicate?)
+        private class PredicateAndFunctionEqualityAxiomiser : SentenceTransformation
+        {
+            private readonly IKnowledgeBase innerKnowledgeBase;
+            private readonly HashSet<object> knownPredicateSymbols = new HashSet<object>();
+            private readonly HashSet<object> knownFunctionSymbols = new HashSet<object>();
+
+            public PredicateAndFunctionEqualityAxiomiser(IKnowledgeBase innerKnowledgeBase)
+            {
+                this.innerKnowledgeBase = innerKnowledgeBase;
+            }
+
+            protected override Sentence ApplyTo(Predicate predicate)
+            {
+                // NB: we check only for the symbol, not for the symbol with the particular
+                // argument count. a fairly safe assumption that we could possible eliminate at some point.
+                if (!knownPredicateSymbols.Contains(predicate.Symbol))
+                {
+                    knownPredicateSymbols.Add(predicate.Symbol);
+                    // todo: tell
+                }
+
+                return base.ApplyTo(predicate);
+            }
+
+            protected override Term ApplyTo(Function function)
+            {
+                // NB: we check only for the symbol, not for the symbol with the particular
+                // argument count. a fairly safe assumption that we could possible eliminate at some point.
+                if (!knownFunctionSymbols.Contains(function.Symbol))
+                {
+                    knownFunctionSymbols.Add(function.Symbol);
+                    // todo: tell
+                }
+
+                return base.ApplyTo(function);
+            }
         }
     }
 }
-#endif

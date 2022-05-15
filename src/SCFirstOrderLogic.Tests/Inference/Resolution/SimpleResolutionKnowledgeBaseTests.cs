@@ -40,22 +40,20 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .And((_, retVal) => retVal.Result.Should().Be(true))
             .And((ctx, retVal) => ctx.WriteOutputLine(retVal.Explain()));
 
-        // TODO-BUG: Some* of the explanations this comes up with are just plain wrong.
-        // Is this type of query not something resolution can cope with? Or just a mistake?
-        // Perhaps build up explanation logic? Maybe try to improve (create a legend of?) Skolem function labelling. 
-        // *(NB can vary across executions because unit preference not stable across executions because of hash code reliance)
-        public static Test KinshipExample => TestThat
-            .GivenTestContext()
-            .When(_ =>
-            {
-                var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparisons.UnitPreference);
-                kb.TellAsync(KinshipDomain.Axioms).Wait();
-                var query = kb.CreateQueryAsync(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X)))).Result;
-                query.CompleteAsync().Wait();
-                return query;
-            })
-            .ThenReturns()
-            .And((_, retVal) => retVal.Result.Should().Be(true))
-            .And((ctx, retVal) => ctx.WriteOutputLine(retVal.Explain()));
+        // NB can vary across executions because priority comparison used not stable across executions because of hash code reliance
+        // Needs equality..
+        ////public static Test KinshipExample => TestThat
+        ////    .GivenTestContext()
+        ////    .When(_ =>
+        ////    {
+        ////        var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparisons.TotalLiteralCountMinimisation);
+        ////        kb.TellAsync(KinshipDomain.Axioms).Wait();
+        ////        var query = kb.CreateQueryAsync(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X)))).Result;
+        ////        query.CompleteAsync().Wait();
+        ////        return query;
+        ////    })
+        ////    .ThenReturns()
+        ////    .And((_, retVal) => retVal.Result.Should().Be(true))
+        ////    .And((ctx, retVal) => ctx.WriteOutputLine(retVal.Explain()));
     }
 }

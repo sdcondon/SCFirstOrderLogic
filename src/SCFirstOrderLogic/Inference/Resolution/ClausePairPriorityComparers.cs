@@ -27,11 +27,34 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// </summary>
         public static Comparison<(CNFClause, CNFClause)> UnitPreference { get; } =  (x, y) =>
         {
-            if ((x.Item1.IsUnitClause || x.Item2.IsUnitClause) && !(y.Item1.IsUnitClause || y.Item2.IsUnitClause))
+            var xHasUnitClause = x.Item1.IsUnitClause || x.Item2.IsUnitClause;
+            var yHasUnitClause = y.Item1.IsUnitClause || y.Item2.IsUnitClause;
+
+            if (xHasUnitClause && !yHasUnitClause)
             {
                 return 1;
             }
-            else if (!(x.Item1.IsUnitClause || x.Item2.IsUnitClause) && (y.Item1.IsUnitClause || y.Item2.IsUnitClause))
+            else if (!xHasUnitClause && yHasUnitClause)
+            {
+                return -1;
+            }
+            else
+            {
+                return x.GetHashCode().CompareTo(y.GetHashCode());
+            }
+        };
+
+        // Not mentioned in source material, but I figured it was a logical variant of unit preference.
+        public static Comparison<(CNFClause, CNFClause)> TotalLiteralCountMinimisation { get; } = (x, y) =>
+        {
+            var xTotalClauseCount = x.Item1.Literals.Count + x.Item2.Literals.Count;
+            var yTotalClauseCount = y.Item1.Literals.Count + y.Item2.Literals.Count;
+
+            if (xTotalClauseCount < yTotalClauseCount)
+            {
+                return 1;
+            }
+            else if (xTotalClauseCount > yTotalClauseCount)
             {
                 return -1;
             }

@@ -136,7 +136,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateSentence<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO-USABILITY: might be nice to return more info than just "false" - but can't rely on exceptions due to the way this works.
+            // TODO-USABILITY: might be nice to return more info than just "false" on failure.
             return
                 // Complex sentences:
                 TryCreateNegation<TDomain, TElement>(expression, out sentence)

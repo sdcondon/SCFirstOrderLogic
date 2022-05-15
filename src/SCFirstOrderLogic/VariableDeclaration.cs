@@ -32,7 +32,7 @@ namespace SCFirstOrderLogic
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
         /// </remarks>
         /// <remarks>
-        /// TODO-ROBUSTNESS: Yeah, I don't like using object here. We could create an ISymbol interface (with a e.g. Render method),
+        /// TODO-ROBUSTNESS: Not 100% convinced by using object here. We could create an ISymbol interface (with a e.g. Render method),
         /// together with a StringSymbol implementation that is implicitly convertible from strings for ease of use.. Probably at the 
         /// same time as figuring out a good long-term approach to rendering and formatting.
         /// </remarks>

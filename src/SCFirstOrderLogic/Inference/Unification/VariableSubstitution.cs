@@ -25,12 +25,8 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// <returns>The unified version of the literal.</returns>
         public CNFLiteral ApplyTo(CNFLiteral literal)
         {
-            // Should this complain if its not being applied to one of the literals it was created against?
-            // or am I thinking about this wrong and we should always just be returning the unified literal?
-            // wait and see..
-
-            // TODO-PERFORMANCE / TODO-MAINTAINABILITY: Also, think about not using SentenceTransformation here - perhaps create CNFLiteralTransformation
-            // (or just making VariableSubstitution contain the logic itself - creating a base class when there's only one implementation is needless complexity)
+            // TODO-PERFORMANCE / TODO-MAINTAINABILITY: Think about not using SentenceTransformation here - perhaps create CNFLiteralTransformation
+            // (or just make VariableSubstitution contain the logic itself - creating a base class when there's only one implementation is needless complexity)
             // TODO-MAINTAINABILITY: Logic for conversion of a CNFLiteral back to a Sentence really belongs in the CNFLiteral class..
             var literalAsSentence = literal.IsNegated ? (Sentence)new Negation(literal.Predicate) : literal.Predicate;
             return new CNFLiteral(ApplyTo(literalAsSentence));
