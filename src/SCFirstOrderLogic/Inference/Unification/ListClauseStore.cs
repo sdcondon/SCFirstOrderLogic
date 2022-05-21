@@ -11,7 +11,9 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// </summary>
     public class ListClauseStore : IKnowledgeBaseClauseStore
     {
-        private readonly List<CNFClause> clauses = new List<CNFClause>();
+        // todo: concurrent(bag?), or keep it as a list and do locking - intended as simplest implementation after all.
+        // Concurrency problems abound with this class at the mo.
+        private readonly List<CNFClause> clauses = new List<CNFClause>(); 
 
         /// <inheritdoc />
         public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
@@ -32,7 +34,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
-            foreach (var clause in clauses)
+            foreach (var clause in clauses) // nb: will currently explode if changed..
             {
                 yield return clause;
             }
@@ -60,7 +62,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// </summary>
         private class QueryClauseStore : IQueryClauseStore
         {
-            private readonly List<CNFClause> clauses;
+            private readonly List<CNFClause> clauses; // todo: concurrent or locking.
 
             public QueryClauseStore(IEnumerable<CNFClause> clauses) => this.clauses = new List<CNFClause>(clauses);
 

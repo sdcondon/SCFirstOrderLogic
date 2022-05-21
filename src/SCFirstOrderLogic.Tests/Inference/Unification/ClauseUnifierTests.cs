@@ -42,7 +42,7 @@ namespace SCFirstOrderLogic.Inference.Unification
                 new(
                     Clause1: new CNFClause(Or(Not(S(X)), T(X))), // ∀X, S(X) => T(X)
                     Clause2: new CNFClause(S(Y)),
-                    ExpectedOutputs: new CNFClause(T(X))), // {X/Y} .. Or {Y/X}
+                    ExpectedOutputs: new CNFClause(T(Y))), // {Y/X} .. Or {X/Y}, giving T(X). Should really accept either..
 
                 // More complicated - with a constant
                 new(

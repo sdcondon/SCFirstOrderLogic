@@ -21,6 +21,6 @@ namespace SCFirstOrderLogic.Inference
         /// <returns>True if the sentence is known to be true, false if it is known to be false or cannot be determined.</returns>
         public Task<bool> AskAsync(Sentence query, CancellationToken cancellationToken = default);
 
-        //// NB: No AskVars just yet..
+        //// NB: No AskVars, yet anyway..
     }
 }

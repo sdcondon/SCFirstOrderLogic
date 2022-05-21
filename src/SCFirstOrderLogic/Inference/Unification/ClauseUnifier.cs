@@ -70,5 +70,8 @@ namespace SCFirstOrderLogic.Inference.Unification
                 }
             }
         }
+
+        // TODO: make instantiable, with Unifier and Unified props (rather than tuple return value for Unify)?
+        // Hmm. class name and prop name clash not ideal. Substitution and Unified?
     }
 }

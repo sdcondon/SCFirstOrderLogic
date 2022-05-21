@@ -1,5 +1,6 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
@@ -18,6 +19,7 @@ namespace SCFirstOrderLogic.Inference
         /// <summary>
         /// Initialises a new instance of the <see cref="EqualityAxiomisingKnowledgeBase"/> class.
         /// </summary>
+        /// <param name="innerKnowledgeBase">The inner knowledge base decorated by this class.</param>
         public EqualityAxiomisingKnowledgeBase(IKnowledgeBase innerKnowledgeBase)
         {
             this.innerKnowledgeBase = innerKnowledgeBase;
@@ -42,9 +44,6 @@ namespace SCFirstOrderLogic.Inference
             predicateAndFunctionEqualityAxiomiser.ApplyTo(sentence);
         }
 
-        // TODO: Look for new functions and predicates, add equality axioms for them
-        // .. To figure out for myself - why don't the fundamental axioms suffice (given that using the fundamental axioms
-        // means that unification can encounter the same function or predicate?)
         private class PredicateAndFunctionEqualityAxiomiser : SentenceTransformation
         {
             private readonly IKnowledgeBase innerKnowledgeBase;
@@ -59,11 +58,33 @@ namespace SCFirstOrderLogic.Inference
             protected override Sentence ApplyTo(Predicate predicate)
             {
                 // NB: we check only for the symbol, not for the symbol with the particular
-                // argument count. a fairly safe assumption that we could possible eliminate at some point.
-                if (!knownPredicateSymbols.Contains(predicate.Symbol))
+                // argument count. A fairly safe assumption that we could nevertheless eliminate at some point.
+                if (!knownPredicateSymbols.Contains(predicate.Symbol) && predicate.Arguments.Count > 0)
                 {
                     knownPredicateSymbols.Add(predicate.Symbol);
-                    // todo: tell
+
+                    // For all predicates, we have something like this,
+                    // depending on the argument count:
+                    // ∀ l0, r0, l0 = r0 ⇒ [P(l0) ⇔ P(r0)]
+                    // ∀ l0, r0, l1, r1 [l0 = r0 ∧ l1 = r1] ⇒ [P(l0, l1) ⇔ P(r0, r1)]
+                    // ... and so on
+                    var leftArgs = predicate.Arguments.Select((_, i) => new VariableReference($"l{i}")).ToArray();
+                    var rightArgs = predicate.Arguments.Select((_, i) => new VariableReference($"r{i}")).ToArray();
+                    var consequent = Iff(new Predicate(predicate.Symbol, leftArgs), new Predicate(predicate.Symbol, rightArgs));
+
+                    Sentence antecedent = AreEqual(leftArgs[0], rightArgs[0]);
+                    for (int i = 1; i < predicate.Arguments.Count; i++)
+                    {
+                        antecedent = And(AreEqual(leftArgs[i], rightArgs[i]), antecedent);
+                    }
+
+                    Sentence sentence = ForAll(leftArgs[0].Declaration, ForAll(rightArgs[0].Declaration, If(antecedent, consequent)));
+                    for (int i = 1; i < predicate.Arguments.Count; i++)
+                    {
+                        sentence = ForAll(leftArgs[i].Declaration, ForAll(rightArgs[i].Declaration, sentence));
+                    }
+
+                    innerKnowledgeBase.TellAsync(sentence).Wait(); // potentially long-running..
                 }
 
                 return base.ApplyTo(predicate);
@@ -72,11 +93,33 @@ namespace SCFirstOrderLogic.Inference
             protected override Term ApplyTo(Function function)
             {
                 // NB: we check only for the symbol, not for the symbol with the particular
-                // argument count. a fairly safe assumption that we could possible eliminate at some point.
+                // argument count. A fairly safe assumption that we could nevertheless eliminate at some point.
                 if (!knownFunctionSymbols.Contains(function.Symbol))
                 {
                     knownFunctionSymbols.Add(function.Symbol);
-                    // todo: tell
+
+                    // For all functions, we have something like this,
+                    // depending on the argument count:
+                    // ∀ l0, r0, l0 = r0 ⇒ [F(l0) = F(r0)]
+                    // ∀ l0, r0, l1, r1, [l0 = r0 ∧ l1 = r1] ⇒ [F(l0, l1) = F(r0, r1)]
+                    // .. and so on
+                    var leftArgs = function.Arguments.Select((_, i) => new VariableReference($"l{i}")).ToArray();
+                    var rightArgs = function.Arguments.Select((_, i) => new VariableReference($"r{i}")).ToArray();
+                    var consequent = AreEqual(new Function(function.Symbol, leftArgs), new Function(function.Symbol, rightArgs));
+
+                    Sentence antecedent = AreEqual(leftArgs[0], rightArgs[0]);
+                    for (int i = 1; i < function.Arguments.Count; i++)
+                    {
+                        antecedent = new Conjunction(AreEqual(leftArgs[i], rightArgs[i]), antecedent);
+                    }
+
+                    Sentence sentence = ForAll(leftArgs[0].Declaration, ForAll(rightArgs[0].Declaration, If(antecedent, consequent)));
+                    for (int i = 1; i < function.Arguments.Count; i++)
+                    {
+                        sentence = ForAll(leftArgs[i].Declaration, ForAll(rightArgs[i].Declaration, sentence));
+                    }
+
+                    innerKnowledgeBase.TellAsync(sentence).Wait(); // potentially long-running..
                 }
 
                 return base.ApplyTo(function);

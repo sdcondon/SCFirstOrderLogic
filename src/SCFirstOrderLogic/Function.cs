@@ -49,7 +49,7 @@ namespace SCFirstOrderLogic
         }
 
         /// <summary>
-        /// Gets the arguments of this predicate.
+        /// Gets the arguments of this function.
         /// </summary>
         public ReadOnlyCollection<Term> Arguments { get; }
 

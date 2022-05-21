@@ -123,7 +123,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             /// <summary>
             /// Creates and initialises a new instance of the <see cref="Query"/> class.
-            /// Initialisation can potentially be a long-running operation - hence this method existing and the constructor being private.
+            /// Initialisation can potentially be a long-running operation (and long-running constructors are a bad idea) -
+            /// hence this method exists and the constructor is private.
             /// </summary>
             /// <returns>A new query.</returns>
             public static async Task<Query> CreateAsync(

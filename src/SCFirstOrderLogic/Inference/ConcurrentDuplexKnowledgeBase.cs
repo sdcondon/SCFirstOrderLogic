@@ -1,12 +1,12 @@
 ﻿#if FALSE
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
     /// Decorator knowledge base class that, when answering queries, will concurrently execute the query and the negation of the query
-    /// at the same time. This allows for returning a negative result in a reasonble timeframe when a query is known to be false.
-    /// It does of course still return the same result for false and unknown - despite in theory being able to distinguish between the two scenarios.
+    /// at the same time. This allows for returning a negative result in a reasonable timeframe when a query is known to be false.
     /// <para/>
     /// No reference back to the source material for this one.
     /// </summary>
@@ -23,11 +23,11 @@ namespace SCFirstOrderLogic.Inference
         }
 
         /// <inheritdoc/>
-        public bool Ask(Sentence query)
+        public async Task<bool> AskAsync(Sentence query, CancellationToken cancellationToken = default)
         {
-            var positiveQuery = Task.Run(() => innerKnowledgeBase.Ask(query));
-            var negativeQuery = Task.Run(() => innerKnowledgeBase.Ask(new Negation(query)));
-            return Task
+            var positiveQuery = innerKnowledgeBase.AskAsync(query, cancellationToken);
+            var negativeQuery = innerKnowledgeBase.AskAsync(new Negation(query), cancellationToken));
+            return await Task
                 .WhenAny(positiveQuery, negativeQuery)
                 .ContinueWith(t =>
                 {
@@ -39,12 +39,11 @@ namespace SCFirstOrderLogic.Inference
                     {
                         return !t.Result.Result;
                     }
-                })
-                .Result;
+                }, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public void Tell(Sentence sentence) => innerKnowledgeBase.Tell(sentence);
+        public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default) => innerKnowledgeBase.TellAsync(sentence, cancellationToken);
     }
 }
 #endif
