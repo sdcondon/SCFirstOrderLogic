@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.Inference
         /// </summary>
         /// <param name="sentence">A sentence that can be assumed to hold true when answering queries.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default);
+        Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Initiates a new query against the knowledge base.
@@ -26,6 +26,6 @@ namespace SCFirstOrderLogic.Inference
         /// <param name="query">The query sentence.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>An <see cref="IQuery"/> implementation representing the query, that can then be used </returns>
-        public Task<IQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default);
+        Task<IQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default);
     }
 }
