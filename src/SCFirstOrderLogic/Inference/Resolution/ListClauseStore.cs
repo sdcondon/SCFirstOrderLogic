@@ -15,7 +15,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
         // TODO-ROBUSTNESS: concurrent(bag?), or keep it as a list and do locking - intended as simplest implementation after all.
         // Concurrency problems abound with this class at the mo.
         private readonly List<CNFClause> clauses = new List<CNFClause>();
-        private readonly object @lock = new object();
 
         /// <inheritdoc />
         public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)

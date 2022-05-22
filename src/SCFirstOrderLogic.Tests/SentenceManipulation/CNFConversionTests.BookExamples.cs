@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Equivalency;
 using FlUnit;
+using SCFirstOrderLogic.TestUtilities;
 using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
 
 namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
@@ -25,9 +26,14 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             // When converted to CNF..
             .When(sentence => new CNFConversion().ApplyTo(sentence))
             // Then gives [Animal(F(x)) ∨ Loves(G(x), x)] ∧ [¬Loves(x, F(x)) ∨ Loves(G(x), x)]
-            .ThenReturns((_, sentence) => sentence.Should().BeEquivalentTo(And(
-                Or(IsAnimal(F(StdX)), Loves(G(StdX), StdX)),
-                Or(Not(Loves(StdX, F(StdX))), Loves(G(StdX), StdX))), CNFEquivalencyOpts));
+            .ThenReturns((_, sentence) =>
+            {
+                sentence.Should().BeEquivalentTo(
+                    expectation: And(
+                        Or(IsAnimal(F(StdX)), Loves(G(StdX), StdX)),
+                        Or(Not(Loves(StdX, F(StdX))), Loves(G(StdX), StdX))),
+                    config: EquivalencyOptions.UsingOnlyConsistencyForVariablesAndSkolemFunctions);
+            });
 
         private static EquivalencyAssertionOptions<Sentence> CNFEquivalencyOpts(EquivalencyAssertionOptions<Sentence> opts)
         {

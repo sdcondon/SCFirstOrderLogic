@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using FlUnit;
+using SCFirstOrderLogic.TestUtilities;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,24 +15,37 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .Given(() => new MockKnowledgeBase())
             .When(kb => new EqualityAxiomisingKnowledgeBase(kb).TellAsync(ForAll(X, IsMale(Father(X)))).Wait())
             .ThenReturns()
-            .And(kb => kb.Sentences.Should().Contain(ForAll(X, IsMale(Father(X)))))
-            // will fail if it used different variable names - but meh, will do for now
-            .And(kb => kb.Sentences.Should().Contain(ForAll(X, AreEqual(X, X))))
-            .And(kb => kb.Sentences.Should().Contain(ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X)))))
-            .And(kb => kb.Sentences.Should().Contain(ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z)))))
-            // again, variable choice dependence. Various things we can do to sort this out.
-            .And(kb => kb.Sentences.Should().Contain(ForAll(X, Y, If(AreEqual(X, Y), Iff(IsMale(X), IsMale(Y))))))
-            .And(kb => kb.Sentences.Should().Contain(ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Father(X), Father(Y))))));
+            .And(kb =>
+            {
+                kb.Sentences.Should().BeEquivalentTo(
+                    expectation: new Sentence[]
+                    {
+                        ForAll(X, AreEqual(X, X)), // Equality reflexivity
+                        ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X))), // Equality commutativity
+                        ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z))), // Equality transitivity
+                        ForAll(X, IsMale(Father(X))), // Sentence that we told it
+                        ForAll(X, Y, If(AreEqual(X, Y), Iff(IsMale(X), IsMale(Y)))), // Equality and IsMale predicate
+                        ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Father(X), Father(Y)))), // Equality and Father function
+                    },
+                    config: EquivalencyOptions.UsingOnlyConsistencyForVariables);
+            });
 
         public static Test GroundPredicate => TestThat
             .Given(() => new MockKnowledgeBase())
             .When(kb => new EqualityAxiomisingKnowledgeBase(kb).TellAsync(new Predicate("GroundPredicate")).Wait())
             .ThenReturns()
-            .And(kb => kb.Sentences.Should().Contain(new Predicate("GroundPredicate")))
-            // will fail if it used different variable names - but meh, will do for now
-            .And(kb => kb.Sentences.Should().Contain(ForAll(X, AreEqual(X, X))))
-            .And(kb => kb.Sentences.Should().Contain(ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X)))))
-            .And(kb => kb.Sentences.Should().Contain(ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z)))));
+            .And(kb =>
+            {
+                kb.Sentences.Should().BeEquivalentTo(
+                    expectation: new Sentence[]
+                    {
+                        ForAll(X, AreEqual(X, X)), // Equality reflexivity
+                        ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X))), // Equality commutativity
+                        ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z))), // Equality transitivity
+                        new Predicate("GroundPredicate"), // Sentence that we told it
+                    },
+                    config: EquivalencyOptions.UsingOnlyConsistencyForVariables);
+            });
 
         private class MockKnowledgeBase : IKnowledgeBase
         {
