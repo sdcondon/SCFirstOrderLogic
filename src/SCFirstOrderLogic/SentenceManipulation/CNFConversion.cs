@@ -10,7 +10,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// order of evaluation of the clauses (i.e. the conjunctions found at the root of the output sentence),
     /// or the literals within those clauses (i.e. disjunctions found below those top-level conjunctions).
     /// The <see cref="CNFSentence"/> class does that (TODO: not true any more - ordering apparently not as useful as in propositional logic).
-    /// It is because of this (and because the half-job done by this class is of limited use on its own) that this class should probably be internal.
+    /// It is because of this (and because the half-job done by this class is of limited use on its own) that this class should probably be internal -
+    /// or not a transformation in that its output should be the CNFSentence, not the transformed Sentence.
     /// </summary>
     public class CNFConversion : SentenceTransformation
     {

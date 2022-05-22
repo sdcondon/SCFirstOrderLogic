@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation
 {
@@ -16,7 +17,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             var cnfSentence = new CNFConversion().ApplyTo(sentence);
             var clauses = new List<CNFClause>();
             new CNFClausesTransformation(clauses).ApplyTo(cnfSentence);
-            Clauses = clauses.AsReadOnly();
+            Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
         }
 
         /// <summary>

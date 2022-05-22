@@ -24,7 +24,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
             // its a super low-level class and I'd rather err on the side of using the simplest/smallest implementation possible.
-            Literals = ctor.Literals;
+            // Note that we order literals - important to justifiably consider the clause "normalised".
+            Literals = ctor.Literals.OrderBy(l => l.GetHashCode()).ToArray();
         }
 
         /// <summary>
@@ -35,7 +36,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
             // its a super low-level class and I'd rather err on the side of using the simplest/smallest implementation possible.
-            Literals = literals.ToArray();
+            // Note that we order literals - important to justifiably consider the clause "normalised".
+            Literals = literals.OrderBy(l => l.GetHashCode()).ToArray();
         }
 
         /// <summary>
@@ -52,8 +54,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Gets a value indicating whether this is a Horn clause - that is, whether at most one of its literals is positive.
         /// <para/>
         /// No caching here, but the class is immutable so recalculating every time is wasted effort, strictly speaking.
-        /// Various things we could do, but for the moment, I'm erring on the side of doing nothing, on the grounds that these
-        /// properties are unlikely to be on the "hot" path.
+        /// Various things we could do, but for the moment I'm erring on the side of doing nothing, on the grounds that these
+        /// properties are unlikely to be on the "hot" path of any given applicaiton.
         /// </summary>
         public bool IsHornClause => Literals.Count(l => l.IsPositive) <= 1;
 
