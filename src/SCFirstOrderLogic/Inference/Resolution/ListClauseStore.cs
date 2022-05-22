@@ -38,6 +38,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         {
             foreach (var clause in clauses) // nb: will currently explode if changed..
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 yield return clause;
             }
         }
