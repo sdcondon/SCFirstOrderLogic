@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         private record TestCase(CNFClause Clause1, CNFClause Clause2, params CNFClause[] ExpectedOutputs);
 
-        public static Test UnificationOfUnifiableClauses => TestThat
+        public static Test ResolutionOfResolvableClauses => TestThat
             .GivenEachOf(() => new TestCase[]
             {
                 // Modus Ponens resolution with a constant

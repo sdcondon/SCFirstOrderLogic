@@ -37,15 +37,15 @@ namespace SCFirstOrderLogic.Inference.Resolution
         {
             public Collection<Sentence> Sentences { get; } = new Collection<Sentence>();
 
-            public Task<bool> AskAsync(Sentence query, CancellationToken cancellationToken = default)
-            {
-                throw new System.NotImplementedException();
-            }
-
             public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
             {
                 Sentences.Add(sentence);
                 return Task.CompletedTask;
+            }
+
+            public Task<IQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default)
+            {
+                throw new System.NotImplementedException();
             }
         }
     }

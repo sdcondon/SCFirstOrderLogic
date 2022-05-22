@@ -24,7 +24,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// some sentence things use reference equality (notably, symbols of standardised variables and Skolem functions),
         /// means that things can be ordered differently from one execution to the next. Not ideal..
         /// </summary>
-        public static Comparison<(CNFClause, CNFClause)> UnitPreference { get; } =  (x, y) =>
+        public static Comparison<(CNFClause, CNFClause)> UnitPreference { get; } = (x, y) =>
         {
             var xHasUnitClause = x.Item1.IsUnitClause || x.Item2.IsUnitClause;
             var yHasUnitClause = y.Item1.IsUnitClause || y.Item2.IsUnitClause;

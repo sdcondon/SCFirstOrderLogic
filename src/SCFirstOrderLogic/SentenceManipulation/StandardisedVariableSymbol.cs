@@ -70,7 +70,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         ////{
         ////    get
         ////    {
-        ////        // DFS for originalvariablescope (by reference, just in case), keeping track of 
+        ////        // DFS for originalvariablescope (by reference, just in case), keeping track of path to it as we do so.
         ////    }
         ////}
 

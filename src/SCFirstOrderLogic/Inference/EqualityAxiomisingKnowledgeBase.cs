@@ -32,16 +32,16 @@ namespace SCFirstOrderLogic.Inference
         }
 
         /// <inheritdoc/>
-        public Task<bool> AskAsync(Sentence query, CancellationToken cancellationToken = default)
-        {
-            return innerKnowledgeBase.AskAsync(query, cancellationToken);
-        }
-
-        /// <inheritdoc/>
         public async Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
             await innerKnowledgeBase.TellAsync(sentence);
             predicateAndFunctionEqualityAxiomiser.ApplyTo(sentence);
+        }
+
+        /// <inheritdoc/>
+        public Task<IQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default)
+        {
+            return innerKnowledgeBase.CreateQueryAsync(query, cancellationToken);
         }
 
         private class PredicateAndFunctionEqualityAxiomiser : SentenceTransformation

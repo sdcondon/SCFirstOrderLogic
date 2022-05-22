@@ -4,19 +4,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SCFirstOrderLogic.Inference.Resolution
+namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
     /// An interface for representations of an individual query - for fine-grained step-by-step execution and examination.
-    /// Probably needless complexity, given that we've only got a single resolution knowledge base - may disappear..
     /// </summary>
-    public interface IResolutionQuery
+    public interface IQuery
     {
-        /// <summary>
-        /// Gets the (CNF representation of) the negation of the query.
-        /// </summary>
-        public CNFSentence NegatedQuery { get; }
-
         /// <summary>
         /// Gets a value indicating whether the query is complete.
         /// The result of completed queries is available via the <see cref="Result"/> property.
@@ -33,19 +27,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
         bool Result { get; }
 
         /// <summary>
-        /// Gets a mapping from a clause to the two clauses from which it was inferred. NB: Assumes binary resolution.
-        /// </summary>
-        IReadOnlyDictionary<CNFClause, (CNFClause clause1, CNFClause clause2, VariableSubstitution unifier)> Steps { get; }
-
-        /// <summary>
         /// Executes the next step of the query.
         /// </summary>
         Task NextStepAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Continuously executes the next step of the query until it completes.
-        /// </summary>
-        /// <returns>the result of the query.</returns>
-        Task<bool> CompleteAsync(CancellationToken cancellationToken = default);
     }
 }

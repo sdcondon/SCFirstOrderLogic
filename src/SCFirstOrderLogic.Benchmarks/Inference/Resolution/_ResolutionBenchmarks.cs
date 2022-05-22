@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
-using SCFirstOrderLogic.Inference.Unification;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 
 namespace SCFirstOrderLogic.Inference.Resolution
