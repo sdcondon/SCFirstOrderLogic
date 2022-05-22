@@ -7,9 +7,11 @@ namespace SCFirstOrderLogic
     /// </summary>
     public abstract class Term
     {
-        // TODO: visitor pattern, perhaps..
+        // TODO: proper visitor pattern probably useful for transformations and others..
+        ////public abstract void Accept(ISentenceVisitor visitor);
+        // and perhaps even this, to avoid performance impact of return value accumulation:
         ////public abstract T Accept<T>(ISentenceVisitor<T> visitor);
-        
+
         /// <summary>
         /// Gets a value indicating whether the term is a ground term - that is, that it contains no variables.
         /// </summary>

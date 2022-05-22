@@ -121,6 +121,13 @@ namespace SCFirstOrderLogic.Inference
                 }
             }
 
+            /// <inheritdoc/>
+            public void Dispose()
+            {
+                PositiveQuery.Dispose();
+                NegativeQuery.Dispose();
+            }
+
             internal static async Task<DuplexKnowledgeBaseQuery> CreateAsync(IKnowledgeBase innerKnowledgeBase, Sentence sentence, CancellationToken cancellationToken)
             {
                 var positiveQueryCreation = innerKnowledgeBase.CreateQueryAsync(sentence, cancellationToken);

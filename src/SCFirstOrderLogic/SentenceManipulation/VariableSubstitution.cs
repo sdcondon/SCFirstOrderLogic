@@ -9,13 +9,22 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// </summary>
     public class VariableSubstitution : SentenceTransformation
     {
-        // TODO-MAINTAINABILITY: This was lazy - I don't like non-private fields. Perhaps add an internal AddBinding method instead?
-        internal readonly Dictionary<VariableReference, Term> bindings = new Dictionary<VariableReference, Term>();
+        private readonly Dictionary<VariableReference, Term> bindings = new Dictionary<VariableReference, Term>();
 
         /// <summary>
         /// Gets the substitions applied by this transformation.
         /// </summary>
         public IReadOnlyDictionary<VariableReference, Term> Bindings => bindings;
+
+        /// <summary>
+        /// Adds a binding.
+        /// </summary>
+        /// <param name="variable">A reference to the variable to be substituted out.</param>
+        /// <param name="term">The term to be substituted in.</param>
+        internal void AddBinding(VariableReference variable, Term term)
+        {
+            bindings.Add(variable, term);
+        }
 
         /// <summary>
         /// Applies the unifier to a literal.
@@ -24,11 +33,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <returns>The unified version of the literal.</returns>
         public CNFLiteral ApplyTo(CNFLiteral literal)
         {
-            // TODO-PERFORMANCE / TODO-MAINTAINABILITY: Think about not using SentenceTransformation here - perhaps create CNFLiteralTransformation
-            // (or just make VariableSubstitution contain the logic itself - creating a base class when there's only one implementation is needless complexity)
-            // TODO-MAINTAINABILITY: Logic for conversion of a CNFLiteral back to a Sentence really belongs in the CNFLiteral class..
-            var literalAsSentence = literal.IsNegated ? (Sentence)new Negation(literal.Predicate) : literal.Predicate;
-            return new CNFLiteral(ApplyTo(literalAsSentence));
+            // TODO-PERFORMANCE vs TODO-MAINTAINABILITY: Lots of converting to and from Sentence here.
+            // How much faster would it be to just make this class contain the logic itself - test me!
+            return new CNFLiteral(ApplyTo(literal.ToSentence()));
         }
 
         protected override Term ApplyTo(VariableReference variable)

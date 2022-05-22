@@ -32,7 +32,7 @@ namespace SCFirstOrderLogic.Inference
         /// <returns>True if the sentence is known to be true, false if it is known to be false or cannot be determined.</returns>
         public static async Task<bool> AskAsync(this IKnowledgeBase knowledgeBase, Sentence sentence, CancellationToken cancellationToken = default)
         {
-            var query = await knowledgeBase.CreateQueryAsync(sentence, cancellationToken);
+            using var query = await knowledgeBase.CreateQueryAsync(sentence, cancellationToken);
             return await query.CompleteAsync(cancellationToken);
         }
     }

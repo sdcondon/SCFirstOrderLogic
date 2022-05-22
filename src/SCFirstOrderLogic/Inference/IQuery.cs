@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.Inference
     /// <summary>
     /// An interface for representations of an individual query - for fine-grained step-by-step execution and examination.
     /// </summary>
-    public interface IQuery
+    public interface IQuery : IDisposable
     {
         /// <summary>
         /// Gets a value indicating whether the query is complete.

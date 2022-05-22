@@ -7,6 +7,7 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// <summary>
     /// Most general unifier logic - optimised from the version presented in the source material,
     /// but operating on entire sentences, as opposed to literals. More powerful, but slower.
+    /// This class is intended as a more realistic baseline than <see cref="SentenceUnifierRaw"/>.
     /// </summary>
     public static class SentenceUnifier
     {
@@ -25,8 +26,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 
         private static bool TryUnify(Sentence x, Sentence y, IDictionary<VariableReference, Term> unifier)
         {
-            // TODO-PERFORMANCE: Given the fundamentality of unification and the number of times that this could be called during inference,
-            // its probably worth optimising - perhaps via a visitor-style design instead of this type switch..
+            // NB: type switch likely to be slower than using visitor pattern
             return (x, y) switch
             {
                 (Conjunction conjunctionX, Conjunction conjunctionY) => TryUnify(conjunctionX, conjunctionY, unifier),
@@ -168,12 +168,14 @@ namespace SCFirstOrderLogic.Inference.Unification
 
         private static bool Occurs(VariableReference variable, Term term)
         {
-            // TODO*-PERFORMANCE: GC impact when creating a bunch of these.. Mutability and pooling?
+            // NB: This is very low-level, frequently called code.
+            // Potentially avoidable GC pressure when creating a bunch of these.
             var finder = new VariableFinder(variable);
             finder.ApplyTo(term);
             return finder.IsFound;
         }
 
+        // NB: Doesn't stop as soon as IsFound is true.
         private class VariableFinder : SentenceTransformation
         {
             private readonly VariableReference variableReference;
@@ -181,9 +183,6 @@ namespace SCFirstOrderLogic.Inference.Unification
             public VariableFinder(VariableReference variableReference) => this.variableReference = variableReference;
 
             public bool IsFound { get; private set; } = false;
-
-            // TODO-PERFORMANCE: For performance, should probably override everything and stop as soon as IsFound is true.
-            // And/or establish visitor pattern to make this easier..
 
             protected override Term ApplyTo(VariableReference variable)
             {

@@ -18,9 +18,10 @@ namespace SCFirstOrderLogic
     /// </summary>
     public abstract class Sentence
     {
-        // TODO.. proper visitor pattern probably useful for transformations and others..
-        ////public abstract T Accept<T>(ISentenceVisitor<T> visitor);
+        // TODO: proper visitor pattern probably useful for transformations and others..
         ////public abstract void Accept(ISentenceVisitor visitor);
+        // and perhaps even this, to avoid performance impact of return value accumulation:
+        ////public abstract T Accept<T>(ISentenceVisitor<T> visitor);
 
         /// <summary>
         /// Returns a string that represents the current object.

@@ -85,6 +85,15 @@ namespace SCFirstOrderLogic.SentenceManipulation
             return other.Predicate.Equals(Predicate) && other.IsNegated.Equals(IsNegated);
         }
 
+        /// <summary>
+        /// Converts the literal to a <see cref="Sentence"/>
+        /// </summary>
+        /// <returns>A representation of this literal as a <see cref="Sentence"/>.</returns>
+        public Sentence ToSentence()
+        {
+            return IsNegated ? (Sentence)new Negation(Predicate) : Predicate;
+        }
+
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
 

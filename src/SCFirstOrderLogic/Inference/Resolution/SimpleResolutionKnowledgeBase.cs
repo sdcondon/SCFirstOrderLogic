@@ -10,9 +10,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// See §9.5 ("Resolution") of 'Artificial Intelligence: A Modern Approach' for a detailed explanation of resolution.
     /// Notes:
     /// <list type="bullet">
-    /// <item/>Includes functionality for fine-grained execution and examination of individual steps of queries. Use the <see cref="CreateQuery"/> method.
     /// <item/>Has no in-built handling of equality - so, if equality appears in the knowledge base, its properties need to be axiomised - see §9.5.5 of 'Artifical Intelligence: A Modern Approach'.
-    /// <item/>Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
     /// </list>
     /// </summary>
     public sealed partial class SimpleResolutionKnowledgeBase : IKnowledgeBase
@@ -48,12 +46,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
         }
 
-        /// <summary>
-        /// Creates an <see cref="IResolutionQuery"/> instance for fine-grained execution and examination of a query.
-        /// </summary>
-        /// <param name="sentence">The query sentence.</param>
-        /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        /// <returns>An <see cref="IResolutionQuery"/> instance that can be used to execute and examine the query.</returns>
+        /// <inheritdoc />
         async Task<IQuery> IKnowledgeBase.CreateQueryAsync(Sentence sentence, CancellationToken cancellationToken)
         {
             return await CreateQueryAsync(sentence, cancellationToken);
@@ -63,7 +56,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// Creates an <see cref="IResolutionQuery"/> instance for fine-grained execution and examination of a query.
         /// </summary>
         /// <param name="sentence">The query sentence.</param>
-        /// <returns>An <see cref="IResolutionQuery"/> instance that can be used to execute and examine the query.</returns>
+        /// <returns>An <see cref="SimpleResolutionQuery"/> instance that can be used to execute and examine the query.</returns>
         public async Task<SimpleResolutionQuery> CreateQueryAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
             return await SimpleResolutionQuery.CreateAsync(clauseStore, clausePairFilter, clausePairPriorityComparison, sentence, cancellationToken);

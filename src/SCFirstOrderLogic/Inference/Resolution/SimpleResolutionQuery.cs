@@ -14,6 +14,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// <summary>
     /// Implementation of <see cref="IQuery"/> used by <see cref="SimpleResolutionKnowledgeBase"/>.
     /// Encapsulates a query, allowing for step-by-step execution, as well as examination of those steps, as or after they are carried out.
+    /// Notes:
+    /// <list type="bullet">
+    /// <item/>Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
+    /// </list>  
     /// </summary>
     public class SimpleResolutionQuery : IQuery
     {
@@ -64,7 +68,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
-        /// Gets a mapping from a clause to the two clauses from which it was inferred. NB: Assumes binary resolution.
+        /// Gets a mapping from a clause to the two clauses from which it was inferred. NB: we use binary resolution,
+        /// hence two input clauses.
         /// </summary>
         public IReadOnlyDictionary<CNFClause, (CNFClause clause1, CNFClause clause2, VariableSubstitution unifier)> Steps => steps;
 
@@ -73,13 +78,13 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// Initialisation can potentially be a long-running operation (and long-running constructors are a bad idea) -
         /// hence this method exists and the constructor is private.
         /// </summary>
-        /// <param name="clauseStore">The knowledge base clause store to use to create the clause store for this query.</param>
-        /// <param name="clausePairFilter"></param>
-        /// <param name="clausePairPriorityComparison"></param>
+        /// <param name="clauseStore">A knowledge base clause store to use to create the clause store for this query.</param>
+        /// <param name="clausePairFilter">A filter to apply to clause pairings during this query.</param>
+        /// <param name="clausePairPriorityComparison">A comparison delegate to use to prioritise clause pairings during this query.</param>
         /// <param name="querySentence">The query itself.</param>
         /// <param name="querySentence">The cancellation token for this operation.</param>
         /// <returns>A new query instance.</returns>
-        public static async Task<SimpleResolutionQuery> CreateAsync(
+        internal static async Task<SimpleResolutionQuery> CreateAsync(
             IKnowledgeBaseClauseStore clauseStore,
             Func<(CNFClause, CNFClause), bool> clausePairFilter,
             Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison,
@@ -206,53 +211,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
-        /// Returns an enumeration of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
-        /// That is, standardised variables and Skolem functions. Intended to be useful in creating a "legend" of such terms.
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerable<Term> FindNormalisationTerms(params CNFClause[] clauses)
-        {
-            var returnedAlready = new List<Term>();
-
-            foreach (var literal in clauses.SelectMany(c => c.Literals))
-            {
-                foreach (var topLevelTerm in literal.Predicate.Arguments)
-                {
-                    var stack = new Stack<Term>();
-                    stack.Push(topLevelTerm);
-                    while (stack.Count > 0)
-                    {
-                        var term = stack.Pop();
-                        switch (term)
-                        {
-                            case Function function:
-                                if (function.Symbol is SkolemFunctionSymbol && !returnedAlready.Contains(function))
-                                {
-                                    returnedAlready.Add(function);
-                                    yield return function;
-                                }
-
-                                foreach (var argument in function.Arguments)
-                                {
-                                    stack.Push(argument);
-                                }
-
-                                break;
-                            case VariableReference variable:
-                                if (variable.Symbol is StandardisedVariableSymbol && !returnedAlready.Contains(variable))
-                                {
-                                    returnedAlready.Add(variable);
-                                    yield return variable;
-                                }
-
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Produces a (very raw) explanation of the steps that led to the result of the query.
         /// </summary>
         /// <returns>A (very raw) explanation of the steps that led to the result of the query.</returns>
@@ -324,6 +282,53 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             return explanation.ToString();
+        }
+
+        /// <summary>
+        /// Returns an enumeration of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
+        /// That is, standardised variables and Skolem functions. Intended to be useful in creating a "legend" of such terms.
+        /// </summary>
+        /// <returns></returns>
+        private static IEnumerable<Term> FindNormalisationTerms(params CNFClause[] clauses)
+        {
+            var returnedAlready = new List<Term>();
+
+            foreach (var literal in clauses.SelectMany(c => c.Literals))
+            {
+                foreach (var topLevelTerm in literal.Predicate.Arguments)
+                {
+                    var stack = new Stack<Term>();
+                    stack.Push(topLevelTerm);
+                    while (stack.Count > 0)
+                    {
+                        var term = stack.Pop();
+                        switch (term)
+                        {
+                            case Function function:
+                                if (function.Symbol is SkolemFunctionSymbol && !returnedAlready.Contains(function))
+                                {
+                                    returnedAlready.Add(function);
+                                    yield return function;
+                                }
+
+                                foreach (var argument in function.Arguments)
+                                {
+                                    stack.Push(argument);
+                                }
+
+                                break;
+                            case VariableReference variable:
+                                if (variable.Symbol is StandardisedVariableSymbol && !returnedAlready.Contains(variable))
+                                {
+                                    returnedAlready.Add(variable);
+                                    yield return variable;
+                                }
+
+                                break;
+                        }
+                    }
+                }
+            }
         }
 
         private async Task EnqueueUnfilteredResolventsAsync(CNFClause clause, CancellationToken cancellationToken = default)

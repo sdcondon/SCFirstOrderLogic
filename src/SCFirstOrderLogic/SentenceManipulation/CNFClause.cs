@@ -21,7 +21,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             var ctor = new ClauseConstructor();
             ctor.ApplyTo(sentence);
-            Literals = ctor.Literals; // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
+
+            // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
+            // its a super low-level class and I'd rather err on the side of using the simplest/smallest implementation possible.
+            Literals = ctor.Literals;
         }
 
         /// <summary>
@@ -30,7 +33,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="literals">The set of literals to be included in the clause.</param>
         public CNFClause(IEnumerable<CNFLiteral> literals)
         {
-            // TODO-ROBUSTNESS: would rather actually wrap this with something akin to an AsReadOnly, but not a huge deal..
+            // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
+            // its a super low-level class and I'd rather err on the side of using the simplest/smallest implementation possible.
             Literals = literals.ToArray();
         }
 
@@ -47,9 +51,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Gets a value indicating whether this is a Horn clause - that is, whether at most one of its literals is positive.
         /// <para/>
-        /// TODO: No caching here, but the class is immutable so recalculating every time is wasted effort.
-        /// Don't want to calculate on construction because this class is super low-level and we might never retrieve this property.
-        /// In short - perhaps look at using a Lazy&lt;T&gt; at some point? More mem / GC load though..
+        /// No caching here, but the class is immutable so recalculating every time is wasted effort, strictly speaking.
+        /// Various things we could do, but for the moment, I'm erring on the side of doing nothing, on the grounds that these
+        /// properties are unlikely to be on the "hot" path.
         /// </summary>
         public bool IsHornClause => Literals.Count(l => l.IsPositive) <= 1;
 

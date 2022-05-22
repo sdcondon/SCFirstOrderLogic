@@ -103,8 +103,18 @@ namespace SCFirstOrderLogic.Inference.Resolution.Utility
                 var dominatingIndex = -1;
                 ref var dominating = ref element;
 
-                // TODO-PERFORMANCE: Does this *really* need to be a loop? Performance test this at some point..
-                for (int childIndex = 2 * i + 1; childIndex - 2 * i <= 2 && childIndex < Count; childIndex++)
+                var childIndex = 2 * i + 1;
+                if (childIndex < Count)
+                {
+                    ref var child = ref heap[childIndex];
+                    if (priorityComparison(child, dominating) > 0)
+                    {
+                        dominatingIndex = childIndex;
+                        dominating = ref child;
+                    }
+                }
+
+                if (++childIndex < Count)
                 {
                     ref var child = ref heap[childIndex];
                     if (priorityComparison(child, dominating) > 0)

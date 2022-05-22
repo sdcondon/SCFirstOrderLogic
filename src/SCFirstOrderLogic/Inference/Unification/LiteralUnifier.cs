@@ -31,28 +31,6 @@ namespace SCFirstOrderLogic.Inference.Unification
             return true;
         }
 
-        /// <summary>
-        /// Attempts to unify two literals with their most general unifier.
-        /// </summary>
-        /// <param name="x">One of the two literals to attempt to unify.</param>
-        /// <param name="y">One of the two literals to attempt to unify.</param>
-        /// <param name="unified">If the literals can be unified, this out parameter will be the unified version of the literals.</param>
-        /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryUnify(CNFLiteral x, CNFLiteral y, [NotNullWhen(returnValue: true)] out CNFLiteral? unified)
-        {
-            if (!TryCreate(x, y, out var unifier))
-            {
-                unified = null;
-                return false;
-            }
-
-            // TODO-PERFORMANCE: we can avoid visiting the input literal twice by building the unified version
-            // immediately instead of building a unifier. For later consideration (if and when anything actually
-            // calls this method).
-            unified = unifier.ApplyTo(x);
-            return true;
-        }
-
         private static bool TryUnify(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
         {
             if (x.IsNegated != y.IsNegated || !x.Predicate.Symbol.Equals(y.Predicate.Symbol))
@@ -109,7 +87,7 @@ namespace SCFirstOrderLogic.Inference.Unification
                 // This substitution is not in the source book, but is so that e.g. unifying Knows(John, X) and Knows(Y, Mother(Y)) will give { X / Mother(John) }, not { X / Mother(Y) }
                 // Might be duplicated effort in the broader scheme of things, but time will tell.
                 other = unifier.ApplyTo(other);
-                unifier.bindings.Add(variable, other);
+                unifier.AddBinding(variable, other);
                 return true;
             }
         }
@@ -154,7 +132,6 @@ namespace SCFirstOrderLogic.Inference.Unification
                 if (variable.Equals(variableReference))
                 {
                     // TODO-PERFORMANCE: For performance, should override everything and stop as soon as IsFound is true.
-                    // And/or establish visitor pattern to make this easier.
                     IsFound = true;
                 }
 

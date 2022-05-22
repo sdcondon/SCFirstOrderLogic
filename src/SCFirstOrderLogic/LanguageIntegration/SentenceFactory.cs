@@ -268,7 +268,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateExistentialQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO*-MAINTAINABILITY: Ick. This is horrible. Can we recurse to make it more graceful without losing any more perf than we need to?
+            // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse to make it more graceful without losing any more perf than we need to?
 
             if (expression is MethodCallExpression methodCallExpr)
             {
@@ -422,7 +422,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
 
             if (expression is MemberExpression memberExpr && memberExpr.Expression != null) // Non-static field or property access
             {
-                if (memberExpr.Expression.Type == typeof(TDomain)) // TODO: no guarantee that this is the domain param of the original lambda... Make me robust! requires passing domain param down through the whole process..
+                if (memberExpr.Expression.Type == typeof(TDomain)) // TODO-ROBUSTNESS: no guarantee that this is the domain param of the original lambda... Make me robust! requires passing domain param down through the whole process..
                 {
                     // Boolean-valued property access on the domain parameter is interpreted as a ground predicate
                     sentence = new Predicate(new MemberPredicateSymbol(memberExpr.Member), Array.Empty<Term>());
@@ -440,7 +440,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 var arguments = new List<Term>();
 
                 // If the method is not against the domain, the instance it is operating on is the first arg of the predicate:
-                if (methodCallExpr.Object.Type != typeof(TDomain)) // todo: in theory objs of that type might also not be "the" domain param. requires passing domain param down through the whole process..
+                if (methodCallExpr.Object.Type != typeof(TDomain)) // TODO-ROBUSTNESS: in theory objs of that type might also not be "the" domain param. requires passing domain param down through the whole process..
                 {
                     if (!TryCreateTerm<TDomain, TElement>(methodCallExpr.Object, out var arg))
                     {
