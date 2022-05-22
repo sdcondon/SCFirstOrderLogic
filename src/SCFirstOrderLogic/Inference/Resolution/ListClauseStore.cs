@@ -91,6 +91,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             {
                 foreach (var clause in clauses)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     yield return clause;
                 }
             }
