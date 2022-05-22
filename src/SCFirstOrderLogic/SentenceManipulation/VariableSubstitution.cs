@@ -1,7 +1,6 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.Inference.Unification
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Sentence transformation class that makes some substitutions for variable terms.

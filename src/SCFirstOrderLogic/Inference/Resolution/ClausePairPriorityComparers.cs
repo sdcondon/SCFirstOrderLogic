@@ -1,6 +1,5 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
 using System;
-using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {

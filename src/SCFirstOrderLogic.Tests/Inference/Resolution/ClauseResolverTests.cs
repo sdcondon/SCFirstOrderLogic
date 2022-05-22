@@ -5,9 +5,9 @@ using System;
 using System.Linq;
 using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
 
-namespace SCFirstOrderLogic.Inference.Unification
+namespace SCFirstOrderLogic.Inference.Resolution
 {
-    public static partial class ClauseUnifierTests
+    public static partial class ClauseResolverTests
     {
         private static Term C => new Constant(nameof(C));
         private static Term D => new Constant(nameof(D));
@@ -91,7 +91,7 @@ namespace SCFirstOrderLogic.Inference.Unification
                         new CNFClause(Or(T(C), Not(T(C))))
                     }),
             })
-            .When(g => ClauseUnifier.Unify(g.Clause1, g.Clause2))
-            .ThenReturns((g, r) => r.Select(u => u.unified).Should().BeEquivalentTo(g.ExpectedOutputs));
+            .When(g => ClauseResolver.Resolve(g.Clause1, g.Clause2))
+            .ThenReturns((g, r) => r.Select(u => u.resolvent).Should().BeEquivalentTo(g.ExpectedOutputs));
     }
 }

@@ -1,5 +1,4 @@
-﻿using SCFirstOrderLogic.Inference.Unification;
-using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Threading;

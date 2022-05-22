@@ -4,14 +4,15 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SCFirstOrderLogic.Inference.Unification
+namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Basic implementation of <see cref="IKnowledgeBaseClauseStore"/> that just maintains all known clauses in a <see cref="List{T}"/>.
+    /// Basic implementation of <see cref="IKnowledgeBaseClauseStore"/> that just maintains all known clauses in
+    /// an in-memory collection and iterates through them all to find resolvents.
     /// </summary>
     public class ListClauseStore : IKnowledgeBaseClauseStore
     {
-        // todo: concurrent(bag?), or keep it as a list and do locking - intended as simplest implementation after all.
+        // TODO: concurrent(bag?), or keep it as a list and do locking - intended as simplest implementation after all.
         // Concurrency problems abound with this class at the mo.
         private readonly List<CNFClause> clauses = new List<CNFClause>(); 
 
@@ -31,6 +32,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             return true;
         }
 
+#pragma warning disable CS1998 // async lacks await.. Could stick a Task.Yield in there, but not worth it.
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
@@ -39,17 +41,18 @@ namespace SCFirstOrderLogic.Inference.Unification
                 yield return clause;
             }
         }
+#pragma warning restore CS1998
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindUnifiers(
+        public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindResolutions(
             CNFClause clause,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await foreach (var otherClause in this.WithCancellation(cancellationToken))
             {
-                foreach (var (unifier, unified) in ClauseUnifier.Unify(clause, otherClause))
+                foreach (var (unifier, resolvent) in ClauseResolver.Resolve(clause, otherClause))
                 {
-                    yield return (otherClause, unifier, unified);
+                    yield return (otherClause, unifier, resolvent);
                 }
             }
         }
@@ -82,6 +85,7 @@ namespace SCFirstOrderLogic.Inference.Unification
                 return true;
             }
 
+#pragma warning disable CS1998 // async lacks await.. Could stick a Task.Yield in there, but not worth it.
             /// <inheritdoc />
             public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
             {
@@ -90,15 +94,16 @@ namespace SCFirstOrderLogic.Inference.Unification
                     yield return clause;
                 }
             }
+#pragma warning restore CS1998
 
             /// <inheritdoc />
-            public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindUnifiers(
+            public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindResolutions(
                 CNFClause clause,
                 [EnumeratorCancellation] CancellationToken cancellationToken = default)
             {
                 await foreach (var otherClause in this.WithCancellation(cancellationToken))
                 {
-                    foreach (var (unifier, unified) in ClauseUnifier.Unify(clause, otherClause))
+                    foreach (var (unifier, unified) in ClauseResolver.Resolve(clause, otherClause))
                     {
                         yield return (otherClause, unifier, unified);
                     }

@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.Inference
     /// <para/>
     /// No reference back to the source material for this one.
     /// </summary>
-    public class ConcurrentDuplexKnowledgeBase : IKnowledgeBase
+    public class DuplexKnowledgeBase : IKnowledgeBase
     {
         private readonly IKnowledgeBase innerKnowledgeBase;
 

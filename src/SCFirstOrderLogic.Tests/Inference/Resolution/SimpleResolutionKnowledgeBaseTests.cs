@@ -46,7 +46,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         ////    .GivenTestContext()
         ////    .When(_ =>
         ////    {
-        ////        var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparisons.TotalLiteralCountMinimisation);
+        ////        var kb = new EqualityAxiomisingKnowledgeBase(new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparisons.TotalLiteralCountMinimisation));
         ////        kb.TellAsync(KinshipDomain.Axioms).Wait();
         ////        var query = kb.CreateQueryAsync(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X)))).Result;
         ////        query.CompleteAsync().Wait();

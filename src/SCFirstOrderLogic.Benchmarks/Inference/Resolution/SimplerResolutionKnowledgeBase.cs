@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// </summary>
     public sealed class SimplerResolutionKnowledgeBase
     {
-        private readonly List<CNFSentence> sentences = new List<CNFSentence>(); // To be replaced with clause store
+        private readonly List<CNFSentence> sentences = new(); // To be replaced with clause store
         private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
         private readonly Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison;
 
@@ -43,14 +43,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// </summary>
         /// <param name="sentence">The query sentence.</param>
         /// <returns>An <see cref="IResolutionQuery"/> instance that can be used to execute and examine the query.</returns>
-        public Query CreateQuery(Sentence sentence) => new Query(this, sentence);
+        public Query CreateQuery(Sentence sentence) => new(this, sentence);
 
         public class Query
         {
             private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store (scope thereof).
             private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
             private readonly MaxPriorityQueue<(CNFClause, CNFClause)> queue;
-            private readonly Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> steps = new Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)>();
+            private readonly Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> steps = new();
 
             private bool result;
 
@@ -111,7 +111,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 var (ci, cj) = queue.Dequeue();
 
                 // ..and iterate through its resolvents (if any) - also make a note of the unifier so that we can include it in the record of steps that we maintain:
-                foreach (var (unifier, resolvent) in ClauseUnifier.Unify(ci, cj))
+                foreach (var (unifier, resolvent) in ClauseResolver.Resolve(ci, cj))
                 {
                     // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
                     if (resolvent.Equals(CNFClause.Empty))

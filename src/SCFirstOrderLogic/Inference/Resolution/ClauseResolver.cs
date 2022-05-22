@@ -1,21 +1,24 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.Inference.Unification;
+using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.Inference.Unification
+namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Utility class for unifying CNF clauses.
+    /// Utility class for resolving CNF clauses.
+    /// <para/>
+    /// TODO: value tuple return value of resolve is avoidable. Make me instantiable, with Unifier and Resolvent props?
     /// </summary>
-    public static class ClauseUnifier
+    public static class ClauseResolver
     {
         /// <summary>
-        /// Unifies two clauses to potentially create some new clauses.
+        /// Attempts to resolve two clauses to potentially create some new clauses.
         /// </summary>
         /// <param name="clause1">The first of the clauses to resolve.</param>
         /// <param name="clause2">The second of the clauses to resolve.</param>
         /// <returns>Zero or more results, each consisting of a unifier and output clause.</returns>
-        public static IEnumerable<(VariableSubstitution unifier, CNFClause unified)> Unify(CNFClause clause1, CNFClause clause2)
+        public static IEnumerable<(VariableSubstitution unifier, CNFClause resolvent)> Resolve(CNFClause clause1, CNFClause clause2)
         {
             // Yes, this is a slow implementation. It is simple, though - and thus will serve
             // well as a baseline for improvements. (I'm thinking including LiteralUnifier creation tweak so that it accepts multiple
@@ -70,8 +73,5 @@ namespace SCFirstOrderLogic.Inference.Unification
                 }
             }
         }
-
-        // TODO: make instantiable, with Unifier and Unified props (rather than tuple return value for Unify)?
-        // Hmm. class name and prop name clash not ideal. Substitution and Unified?
     }
 }

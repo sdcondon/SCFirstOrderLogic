@@ -214,7 +214,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             private async Task EnqueueUnfilteredResolventsAsync(CNFClause clause, CancellationToken cancellationToken = default)
             {
-                await foreach (var (otherClause, unifier, unified) in clauseStore.FindUnifiers(clause, cancellationToken))
+                await foreach (var (otherClause, unifier, unified) in clauseStore.FindResolutions(clause, cancellationToken))
                 {
                     // NB: Throwing away clauses returned by the unifier store has performance impact.
                     // Could instead/also use a store that knows to not look for certain clause pairings in the first place..

@@ -1,4 +1,4 @@
-﻿namespace SCFirstOrderLogic.Inference.Unification
+﻿namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// Sub-type of <see cref="IClauseStore"/> for implementations intended for storing the known clauses
