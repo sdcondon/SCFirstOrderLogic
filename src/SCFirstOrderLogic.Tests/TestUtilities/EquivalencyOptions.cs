@@ -40,13 +40,13 @@ namespace SCFirstOrderLogic.TestUtilities
         /// <typeparam name="T"></typeparam>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public static EquivalencyAssertionOptions<TTopLevel> UsingJustAConsistencyCheckFor<TTopLevel, TSpecific>(this EquivalencyAssertionOptions<TTopLevel> opts, Func<TSpecific, bool>? filter = null)
-            where TSpecific : class
+        public static EquivalencyAssertionOptions<TRoot> UsingJustAConsistencyCheckFor<TRoot, TType>(this EquivalencyAssertionOptions<TRoot> opts, Func<TType, bool>? filter = null)
+            where TType : class
         {
-            Dictionary<(string root, TSpecific expectation), TSpecific> actualByExpectation = new();
+            Dictionary<(string root, TType expectation), TType> actualByExpectation = new();
 
             return opts
-                .Using<TSpecific>(ctx =>
+                .Using<TType>(ctx =>
                 {
                     // We use this for comparing collections. When we do so, we want to allow the mapping of expected to actual
                     // to differ for different elements of the collection. Yes, this is rather hacky.
@@ -68,7 +68,7 @@ namespace SCFirstOrderLogic.TestUtilities
                         ctx.Subject.Should().Be(ctx.Expectation);
                     }
                 })
-                .WhenTypeIs<TSpecific>();
+                .WhenTypeIs<TType>();
         }
     }
 }

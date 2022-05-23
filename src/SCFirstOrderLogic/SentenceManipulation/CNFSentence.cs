@@ -41,10 +41,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// </summary>
         private class CNFClausesTransformation : SentenceTransformation
         {
-            // TODO: should probably be sorted?
-            private readonly List<CNFClause> clauses;
+            private readonly ICollection<CNFClause> clauses;
 
-            public CNFClausesTransformation(List<CNFClause> clauses) => this.clauses = clauses;
+            public CNFClausesTransformation(ICollection<CNFClause> clauses) => this.clauses = clauses;
 
             /// <inheritdoc />
             public override Sentence ApplyTo(Sentence sentence)

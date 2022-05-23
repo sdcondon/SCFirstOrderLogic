@@ -84,13 +84,11 @@ namespace SCFirstOrderLogic.Inference
                     // and robustness.
                     if (PositiveQuery.IsComplete)
                     {
-                        
                         IsComplete = true;
                         Result = PositiveQuery.Result;
                     }
                     else if (NegativeQuery.IsComplete)
                     {
-
                         IsComplete = true;
                         Result = NegativeQuery.Result;
                     }
