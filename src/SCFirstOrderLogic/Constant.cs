@@ -15,6 +15,11 @@ namespace SCFirstOrderLogic
         /// <para/>
         /// Symbol equality should indicate that it is the same constant in the domain.
         /// <see cref="object.ToString"/> of the Symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// equatability and the ability to convert them to a string, and both of these things are possible with the
+        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
         /// </param>
         public Constant(object symbol)
         {
@@ -29,12 +34,12 @@ namespace SCFirstOrderLogic
         /// <para/>
         /// Symbol equality should indicate that it is the same constant in the domain.
         /// <see cref="object.ToString"/> of the Symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// equatability and the ability to convert them to a string, and both of these things are possible with the
+        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
         /// </summary>
-        /// <remarks>
-        /// TODO-ROBUSTNESS: Not 100% set on using object here. We *could* create an ISymbol interface (with a e.g. Render method),
-        /// together with a StringSymbol implementation that is implicitly convertible from strings for ease of use.. Probably at the 
-        /// same time as figuring out a good long-term approach to rendering and formatting.
-        /// </remarks>
         public object Symbol { get; }
 
         /// <inheritdoc />

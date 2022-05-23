@@ -19,7 +19,16 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableDeclaration"/> class.
         /// </summary>
-        /// <param name="symbol">The symbol of the variable. Equality of symbols should indicate that it is the same variable in the domain, and ToString of the symbol should be appropriate for rendering in FoL syntax.</param>
+        /// <param name="symbol">
+        /// The symbol of the variable.
+        /// <para/>
+        /// Equality of symbols should indicate that it is the same variable in the domain, and ToString of the symbol should be appropriate for rendering in FoL syntax.
+        /// <para/>
+        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// equatability and the ability to convert them to a string, and both of these things are possible with the
+        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
+        /// </param>
         public VariableDeclaration(object symbol) => Symbol = symbol;
 
         /// <summary>
@@ -30,11 +39,11 @@ namespace SCFirstOrderLogic
         /// <para/>
         /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
-        /// </remarks>
-        /// <remarks>
-        /// TODO-ROBUSTNESS: Not 100% set on using object here. We *could* create an ISymbol interface (with a e.g. Render method),
-        /// together with a StringSymbol implementation that is implicitly convertible from strings for ease of use.. Probably at the 
-        /// same time as figuring out a good long-term approach to rendering and formatting.
+        /// <para/>
+        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// equatability and the ability to convert them to a string, and both of these things are possible with the
+        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
         /// </remarks>
         public object Symbol { get; }
 

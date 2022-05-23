@@ -22,6 +22,11 @@ namespace SCFirstOrderLogic
         /// <para/>
         /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
+        /// <para/>
+        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// equatability and the ability to convert them to a string, and both of these things are possible with the
+        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
         /// </param>
         /// <param name="arguments">The arguments of this function.</param>
         public Function(object symbol, params Term[] arguments)
@@ -40,6 +45,11 @@ namespace SCFirstOrderLogic
         /// <para/>
         /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
+        /// <para/>
+        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// equatability and the ability to convert them to a string, and both of these things are possible with the
+        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
         /// </param>
         /// <param name="arguments">The arguments of this function.</param>
         public Function(object symbol, IList<Term> arguments)
@@ -64,12 +74,12 @@ namespace SCFirstOrderLogic
         /// <para/>
         /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
+        /// <para/>
+        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// equatability and the ability to convert them to a string, and both of these things are possible with the
+        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
         /// </summary>
-        /// <remarks>
-        /// TODO-ROBUSTNESS: Not 100% set on using object here. We *could* create an ISymbol interface (with a e.g. Render method),
-        /// together with a StringSymbol implementation that is implicitly convertible from strings for ease of use.. Probably at the 
-        /// same time as figuring out a good long-term approach to rendering and formatting.
-        /// </remarks>
         public object Symbol { get; }
 
         /// <inheritdoc />
