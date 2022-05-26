@@ -30,6 +30,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <param name="clause">The clause to find resolutions for.</param>
         /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns></returns>
-        IAsyncEnumerable<(CNFClause otherClause, VariableSubstitution unifier, CNFClause resolvent)> FindResolutions(CNFClause clause, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<(CNFClause otherClause, ClauseResolution resolver)> FindResolutions(CNFClause clause, CancellationToken cancellationToken = default);
     }
 }

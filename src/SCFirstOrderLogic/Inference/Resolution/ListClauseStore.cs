@@ -45,15 +45,15 @@ namespace SCFirstOrderLogic.Inference.Resolution
 #pragma warning restore CS1998
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindResolutions(
+        public async IAsyncEnumerable<(CNFClause, ClauseResolution)> FindResolutions(
             CNFClause clause,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             await foreach (var otherClause in this.WithCancellation(cancellationToken))
             {
-                foreach (var (unifier, resolvent) in ClauseResolver.Resolve(clause, otherClause))
+                foreach (var resolution in ClauseResolution.Resolve(clause, otherClause))
                 {
-                    yield return (otherClause, unifier, resolvent);
+                    yield return (otherClause, resolution);
                 }
             }
         }
@@ -99,15 +99,15 @@ namespace SCFirstOrderLogic.Inference.Resolution
 #pragma warning restore CS1998
 
             /// <inheritdoc />
-            public async IAsyncEnumerable<(CNFClause, VariableSubstitution, CNFClause)> FindResolutions(
+            public async IAsyncEnumerable<(CNFClause, ClauseResolution)> FindResolutions(
                 CNFClause clause,
                 [EnumeratorCancellation] CancellationToken cancellationToken = default)
             {
                 await foreach (var otherClause in this.WithCancellation(cancellationToken))
                 {
-                    foreach (var (unifier, unified) in ClauseResolver.Resolve(clause, otherClause))
+                    foreach (var resolution in ClauseResolution.Resolve(clause, otherClause))
                     {
-                        yield return (otherClause, unifier, unified);
+                        yield return (otherClause, resolution);
                     }
                 }
             }

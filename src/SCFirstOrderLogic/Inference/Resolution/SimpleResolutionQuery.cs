@@ -23,7 +23,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     {
         private readonly IQueryClauseStore clauseStore;
         private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
-        private readonly MaxPriorityQueue<(CNFClause, CNFClause, VariableSubstitution, CNFClause)> queue;
+        private readonly MaxPriorityQueue<(CNFClause, CNFClause, ClauseResolution)> queue;
         private readonly Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> steps;
 
         private bool result;
@@ -36,7 +36,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         {
             this.clauseStore = clauseStore.CreateQueryClauseStore();
             this.clausePairFilter = clausePairFilter;
-            queue = new MaxPriorityQueue<(CNFClause, CNFClause, VariableSubstitution, CNFClause)>((x, y) =>
+            queue = new MaxPriorityQueue<(CNFClause, CNFClause, ClauseResolution)>((x, y) =>
             {
                 return clausePairPriorityComparison((x.Item1, x.Item2), (y.Item1, y.Item2));  // TODO: ugh, hideous (and perhaps slow - test me)
             });
@@ -117,13 +117,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             // Grab the next resolvent (in addition to the two clauses it originates from and the variable substitution) from the queue..
-            var (ci, cj, unifier, resolvent) = queue.Dequeue();
-            steps[resolvent] = (ci, cj, unifier);
+            var (ci, cj, resolution) = queue.Dequeue();
+            steps[resolution.Resolvent] = (ci, cj, resolution.Substitution);
 
             // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
-            if (resolvent.Equals(CNFClause.Empty))
+            if (resolution.Resolvent.Equals(CNFClause.Empty))
             {
-                steps[CNFClause.Empty] = (ci, cj, unifier);
                 result = true;
                 IsComplete = true;
                 return;
@@ -134,14 +133,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
             // on the store (which would raise potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
             // Downside of using Add: clause store will encounter itself when looking for unifiers - not a big deal,
             // but a performance/maintainability tradeoff nonetheless
-            if (clauseStore.AddAsync(resolvent, cancellationToken).Result)
+            if (clauseStore.AddAsync(resolution.Resolvent, cancellationToken).Result)
             {
                 // This is a new clause, so we queue up some more clause pairings -
                 // (combinations of the resolvent and existing known clauses)
                 // adhering to any filtering and ordering we have in place.
 
                 // ..and iterate through its resolvents (if any) - also make a note of the unifier so that we can include it in the record of steps that we maintain:
-                await EnqueueUnfilteredResolventsAsync(resolvent, cancellationToken);
+                await EnqueueUnfilteredResolventsAsync(resolution.Resolvent, cancellationToken);
             }
 
             // If we've run out of clauses to smash together, return a negative result.
@@ -333,7 +332,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         private async Task EnqueueUnfilteredResolventsAsync(CNFClause clause, CancellationToken cancellationToken = default)
         {
-            await foreach (var (otherClause, unifier, unified) in clauseStore.FindResolutions(clause, cancellationToken))
+            await foreach (var (otherClause, resolution) in clauseStore.FindResolutions(clause, cancellationToken))
             {
                 // NB: Throwing away clauses returned by the unifier store has performance impact.
                 // Could instead/also use a store that knows to not look for certain clause pairings in the first place..
@@ -344,7 +343,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 // for this simple implementation.
                 if (clausePairFilter((clause, otherClause)))
                 {
-                    queue.Enqueue((clause, otherClause, unifier, unified));
+                    queue.Enqueue((clause, otherClause, resolution));
                 }
             }
         }

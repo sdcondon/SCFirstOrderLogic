@@ -7,7 +7,7 @@ using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {
-    public static partial class ClauseResolverTests
+    public static partial class ClauseResolutionTests
     {
         private static Term C => new Constant(nameof(C));
         private static Term D => new Constant(nameof(D));
@@ -15,53 +15,53 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private static Sentence T(Term t) => new Predicate(nameof(T), new[] { t });
         private static Sentence U(Term t) => new Predicate(nameof(U), new[] { t });
 
-        private record TestCase(CNFClause Clause1, CNFClause Clause2, params CNFClause[] ExpectedOutputs);
+        private record TestCase(CNFClause Clause1, CNFClause Clause2, params CNFClause[] ExpectedResolvents);
 
         public static Test ResolutionOfResolvableClauses => TestThat
-            .GivenEachOf(() => new TestCase[]
+            .GivenEachOf<TestCase>(() => new TestCase[]
             {
                 // Modus Ponens resolution with a constant
                 new(
                     Clause1: new CNFClause(Or(Not(S(C)), T(C))), // S(C) => T(C)
                     Clause2: new CNFClause(S(C)),
-                    ExpectedOutputs: new CNFClause(T(C))),
+                    ExpectedResolvents: new CNFClause(T(C))),
 
                 // Modus Ponens resolution on a globally quantified variable & a constant
                 new(
                     Clause1: new CNFClause(Or(Not(S(X)), T(X))), // ∀X, S(X) => T(X)
                     Clause2: new CNFClause(S(C)),
-                    ExpectedOutputs: new CNFClause(T(C))), // {X/C}
+                    ExpectedResolvents: new CNFClause(T(C))), // {X/C}
 
                 // Modus Ponens resolution on a constant & a globally quantified variable
                 new(
                     Clause1: new CNFClause(Or(Not(S(C)), T(C))), // S(C) => T(C)
                     Clause2: new CNFClause(S(X)),
-                    ExpectedOutputs: new CNFClause(T(C))), // {X/C}
+                    ExpectedResolvents: new CNFClause(T(C))), // {X/C}
 
                 // Modus Ponens resolution on a globally quantified variable
                 new(
                     Clause1: new CNFClause(Or(Not(S(X)), T(X))), // ∀X, S(X) => T(X)
                     Clause2: new CNFClause(S(Y)),
-                    ExpectedOutputs: new CNFClause(T(Y))), // {Y/X} .. Or {X/Y}, giving T(X). Should really accept either..
+                    ExpectedResolvents: new CNFClause(T(Y))), // {Y/X} .. Or {X/Y}, giving T(X). Should really accept either..
 
                 // More complicated - with a constant
                 new(
                     Clause1: new CNFClause(Or(Not(S(C)), T(C))), // ¬S(C) ∨ T(C)
                     Clause2: new CNFClause(Or(S(C), U(C))), // S(C) ∨ U(C)
-                    ExpectedOutputs: new CNFClause(Or(T(C), U(C)))),
+                    ExpectedResolvents: new CNFClause(Or(T(C), U(C)))),
 
                 // Complementary unit clauses
                 new(
                     Clause1: new CNFClause(S(C)),
                     Clause2: new CNFClause(Not(S(C))),
-                    ExpectedOutputs: CNFClause.Empty),
+                    ExpectedResolvents: CNFClause.Empty),
 
                 // Unresolvable clauses
                 // TODO: Probably more test cases where it trivially looks like there should be resolvents, but no resolver will work. E.g. (but prob others too) occurs check failure.
                 new(
                     Clause1: new CNFClause(S(C)),
                     Clause2: new CNFClause(T(C)),
-                    ExpectedOutputs: Array.Empty<CNFClause>()),
+                    ExpectedResolvents: Array.Empty<CNFClause>()),
 
                 // Multiply-resolvable clauses
                 // There's probably a better (more intuitive) human-language example, here
@@ -70,7 +70,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     Clause1: new CNFClause(Or(Not(S(D)), Not(T(X)))), 
                     // ¬T(C) ⇒ S(Y). In human e.g.: "If TShirtLover is not wearing a T-shirt, everyone is wearing a snowshoes"
                     Clause2: new CNFClause(Or(T(C), S(Y))),
-                    ExpectedOutputs: new[]
+                    ExpectedResolvents: new[]
                     {
                         // {X/C} gives ∀Y, S(Y) ∨ ¬S(D) (that is, S(D) ⇒ S(Y)). If D is S, everything is. (If snowshoehater is wearing snowshoes, everyone is)
                         // NB: becomes obvious by forward chaining Clause1 to Clause2.
@@ -84,14 +84,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 new(
                     Clause1: new CNFClause(Or(S(C), Not(T(C)))),
                     Clause2: new CNFClause(Or(Not(S(C)), T(C))),
-                    ExpectedOutputs: new[]
+                    ExpectedResolvents: new[]
                     {
                         // Both of these resolvents are trivially true - so largely useless - TODO: the expectation should probably be no resolvents in this case?
                         new CNFClause(Or(S(C), Not(S(C)))),
                         new CNFClause(Or(T(C), Not(T(C))))
                     }),
             })
-            .When(g => ClauseResolver.Resolve(g.Clause1, g.Clause2))
-            .ThenReturns((g, r) => r.Select(u => u.resolvent).Should().BeEquivalentTo(g.ExpectedOutputs));
+            .When<System.Collections.Generic.IEnumerable<ClauseResolution>>(g => ClauseResolution.Resolve(g.Clause1, g.Clause2))
+            .ThenReturns(((g, r) => r.Select(u => u.Resolvent).Should().BeEquivalentTo(g.ExpectedResolvents)));
     }
 }

@@ -6,19 +6,33 @@ using System.Linq;
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Utility class for resolving CNF clauses.
-    /// <para/>
-    /// TODO: value tuple return value of resolve is avoidable. Make me instantiable, with Unifier and Resolvent props?
+    /// Container for information about the resolution of some CNF clauses.
     /// </summary>
-    public static class ClauseResolver
+    public class ClauseResolution
     {
+        private ClauseResolution(VariableSubstitution substitution, CNFClause resolvent)
+        {
+            Substitution = substitution;
+            Resolvent = resolvent;
+        }
+
+        /// <summary>
+        /// Gets the variable substitution that is applied to resolve the input clauses.
+        /// </summary>
+        public VariableSubstitution Substitution { get; }
+
+        /// <summary>
+        /// Gets the resolvent clause.
+        /// </summary>
+        public CNFClause Resolvent { get; }
+
         /// <summary>
         /// Attempts to resolve two clauses to potentially create some new clauses.
         /// </summary>
         /// <param name="clause1">The first of the clauses to resolve.</param>
         /// <param name="clause2">The second of the clauses to resolve.</param>
         /// <returns>Zero or more results, each consisting of a unifier and output clause.</returns>
-        public static IEnumerable<(VariableSubstitution unifier, CNFClause resolvent)> Resolve(CNFClause clause1, CNFClause clause2)
+        public static IEnumerable<ClauseResolution> Resolve(CNFClause clause1, CNFClause clause2)
         {
             // Yes, this is a slow implementation. It is simple, though - and thus will serve
             // well as a baseline for improvements. (I'm thinking including LiteralUnifier creation tweak so that it accepts multiple
@@ -67,7 +81,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
                         if (!clauseIsTriviallyTrue)
                         {
-                            yield return (unifier, new CNFClause(unifiedLiterals));
+                            yield return new ClauseResolution(unifier, new CNFClause(unifiedLiterals));
                         }
                     }
                 }

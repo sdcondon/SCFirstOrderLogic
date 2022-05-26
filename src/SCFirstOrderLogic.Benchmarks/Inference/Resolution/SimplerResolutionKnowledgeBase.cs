@@ -111,12 +111,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 var (ci, cj) = queue.Dequeue();
 
                 // ..and iterate through its resolvents (if any) - also make a note of the unifier so that we can include it in the record of steps that we maintain:
-                foreach (var (unifier, resolvent) in ClauseResolver.Resolve(ci, cj))
+                foreach (var resolution in ClauseResolution.Resolve(ci, cj))
                 {
                     // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
-                    if (resolvent.Equals(CNFClause.Empty))
+                    if (resolution.Resolvent.Equals(CNFClause.Empty))
                     {
-                        steps[CNFClause.Empty] = (ci, cj, unifier);
+                        steps[CNFClause.Empty] = (ci, cj, resolution.Substitution);
                         result = true;
                         IsComplete = true;
                         return;
@@ -124,19 +124,19 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
                     // Otherwise, check if we've found a new clause (i.e. something that we didn't know already)..
                     // NB: a limitation of this implementation - we only check if the clause is already present exactly -  we don't check for clauses that subsume it.
-                    if (!clauses.Contains(resolvent))
+                    if (!clauses.Contains(resolution.Resolvent))
                     {
                         // If this is a new clause, we queue up some more clause pairings - combinations of the resolvent and existing known clauses - adhering to any filtering and ordering we have in place.
                         foreach (var clause in clauses) // use unifier store lookup instead of all clauses
                         {
-                            if (clausePairFilter((clause, resolvent)))
+                            if (clausePairFilter((clause, resolution.Resolvent)))
                             {
-                                queue.Enqueue((clause, resolvent));
+                                queue.Enqueue((clause, resolution.Resolvent));
                             }
                         }
 
-                        steps[resolvent] = (ci, cj, unifier);
-                        clauses.Add(resolvent);
+                        steps[resolution.Resolvent] = (ci, cj, resolution.Substitution);
+                        clauses.Add(resolution.Resolvent);
                     }
                 }
 

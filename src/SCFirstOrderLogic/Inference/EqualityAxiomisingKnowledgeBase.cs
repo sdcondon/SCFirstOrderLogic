@@ -25,6 +25,7 @@ namespace SCFirstOrderLogic.Inference
             this.innerKnowledgeBase = innerKnowledgeBase;
             this.predicateAndFunctionEqualityAxiomiser = new PredicateAndFunctionEqualityAxiomiser(innerKnowledgeBase);
 
+            // TODO: Long running initialization - have CreateAsync instead of this?
             // Tell the knowledge base the fundamental properties of equality:
             innerKnowledgeBase.TellAsync(ForAll(X, AreEqual(X, X))).Wait(); // Reflexivity
             innerKnowledgeBase.TellAsync(ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X)))).Wait(); // Commutativity
