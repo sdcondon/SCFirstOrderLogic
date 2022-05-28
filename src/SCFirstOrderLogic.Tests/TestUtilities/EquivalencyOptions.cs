@@ -11,6 +11,13 @@ namespace SCFirstOrderLogic.TestUtilities
     {
         private static readonly Func<Function, bool> isSkolemFunction = f => f.Symbol is SkolemFunctionSymbol;
 
+        /// <summary>
+        /// Applies equivalency rules that check only for consistency when examining variable referances and declarations.
+        /// That is, we only care that the same (by equality) actual instance is encountered whenever the same instance 
+        /// is encountered in the expectation.
+        /// </summary>
+        /// <param name="opts">The options instance to apply the equivalency rules to.</param>
+        /// <returns>the updated options instance.</returns>
         public static EquivalencyAssertionOptions<Sentence> UsingOnlyConsistencyForVariables(this EquivalencyAssertionOptions<Sentence> opts)
         {
             return opts
@@ -21,6 +28,13 @@ namespace SCFirstOrderLogic.TestUtilities
                 .UsingJustAConsistencyCheckFor<Sentence, VariableReference>();
         }
 
+        /// <summary>
+        /// Applies equivalency rules that check only for consistency when examining variable referances, variable
+        /// declarations and Skolem functions. That is, we only care that the same (by equality) actual instance is
+        /// encountered whenever the same instance is encountered in the expectation.
+        /// </summary>
+        /// <param name="opts">The options instance to apply the equivalency rules to.</param>
+        /// <returns>the updated options instance.</returns>
         public static EquivalencyAssertionOptions<Sentence> UsingOnlyConsistencyForVariablesAndSkolemFunctions(this EquivalencyAssertionOptions<Sentence> opts)
         {
             return opts

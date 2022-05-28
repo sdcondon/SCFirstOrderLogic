@@ -10,6 +10,8 @@ namespace SCFirstOrderLogic.Inference
     {
         /// <summary>
         /// Tells the knowledge base that a given <see cref="Sentence"/> can be assumed to hold true when answering queries.
+        /// <para/>
+        /// NB: This is an asynchronous method ultimately because "real" knowledge bases will often need to do IO to store knowledge.
         /// </summary>
         /// <param name="sentence">A sentence that can be assumed to hold true when answering queries.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
@@ -18,10 +20,10 @@ namespace SCFirstOrderLogic.Inference
         /// <summary>
         /// Initiates a new query against the knowledge base.
         /// <para/>
-        /// NB: We don't define an AskAsync method directly on the knowledge base interface because of this library's
+        /// NB: We don't define an Ask(Async) method directly on the knowledge base interface because of this library's
         /// focus on learning outcomes. Knowledge bases MUST use the <see cref="IQuery"/> interface to allow for fine-grained
-        /// execution, and examination of the steps that lead to the result. Note that an <see cref="IKnowledgeBaseExtensions.AskAsync"/>
-        /// extension method does exist, though (which creates a query and immediately executes it to completion).
+        /// execution, and examination of the steps that lead to the result. Note that "Ask" extension methods do exist,
+        /// though (which create queries and immediately execute them to completion).
         /// </summary>
         /// <param name="query">The query sentence.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>

@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     {
         public static Test Smoke => TestThat
             .Given(() => new MockKnowledgeBase())
-            .When(kb => new EqualityAxiomisingKnowledgeBase(kb).TellAsync(ForAll(X, IsMale(Father(X)))).Wait())
+            .When(kb => EqualityAxiomisingKnowledgeBase.CreateAsync(kb).Result.TellAsync(ForAll(X, IsMale(Father(X)))).Wait())
             .ThenReturns()
             .And(kb =>
             {
@@ -32,7 +32,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         public static Test GroundPredicate => TestThat
             .Given(() => new MockKnowledgeBase())
-            .When(kb => new EqualityAxiomisingKnowledgeBase(kb).TellAsync(new Predicate("GroundPredicate")).Wait())
+            .When(kb => EqualityAxiomisingKnowledgeBase.CreateAsync(kb).Result.TellAsync(new Predicate("GroundPredicate")).Wait())
             .ThenReturns()
             .And(kb =>
             {

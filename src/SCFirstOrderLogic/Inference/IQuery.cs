@@ -28,6 +28,8 @@ namespace SCFirstOrderLogic.Inference
 
         /// <summary>
         /// Executes the next step of the query.
+        /// <para/>
+        /// NB: This is an asynchronous method ultimately because "real" knowledge bases will often need to do IO to retrieve knowledge.
         /// </summary>
         Task NextStepAsync(CancellationToken cancellationToken = default);
     }

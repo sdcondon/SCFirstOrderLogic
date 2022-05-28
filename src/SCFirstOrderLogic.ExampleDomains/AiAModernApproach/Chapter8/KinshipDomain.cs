@@ -12,7 +12,6 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8
     /// kb.Tell(..facts about the specific problem..);
     /// var answer = kb.Ask(..my query..);
     /// </code>
-    /// TODO: example code needs updating (or some more extension methods for synchronous execution need to be added to knowledge base extensions).
     /// </summary>
     public static class KinshipDomain
     {

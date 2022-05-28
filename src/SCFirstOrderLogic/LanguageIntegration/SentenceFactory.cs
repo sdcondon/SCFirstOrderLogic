@@ -248,7 +248,6 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateEquivalence<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // Would it be reasonable to also accept {sentence} == {sentence} here?
             if (expression is MethodCallExpression methodCallExpr && MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, IffMethod)
                 && TryCreateSentence<TDomain, TElement>(methodCallExpr.Arguments[0], out var equivalent1)
                 && TryCreateSentence<TDomain, TElement>(methodCallExpr.Arguments[1], out var equivalent2))
@@ -269,11 +268,11 @@ namespace SCFirstOrderLogic.LanguageIntegration
             where TDomain : IEnumerable<TElement>
         {
             // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse to make it more graceful without losing any more perf than we need to?
-
+            // TODO-ROBUSTNESS: also would be nice to have better errors if they've e.g. attempted to use something other than a lambda..
             if (expression is MethodCallExpression methodCallExpr)
             {
                 if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AnyMethod)
-                    && methodCallExpr.Arguments[1] is LambdaExpression anyLambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
+                    && methodCallExpr.Arguments[1] is LambdaExpression anyLambda
                     && TryCreateSentence<TDomain, TElement>(anyLambda.Body, out var subSentence)
                     && TryCreateVariableDeclaration<TDomain, TElement>(anyLambda.Parameters[0], out VariableDeclaration? declaration))
                 {
@@ -281,7 +280,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     return true;
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAnyMethod2)
-                    && methodCallExpr.Arguments[1] is LambdaExpression any2Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
+                    && methodCallExpr.Arguments[1] is LambdaExpression any2Lambda
                     && TryCreateSentence<TDomain, TElement>(any2Lambda.Body, out var all2SubSentence)
                     && TryCreateVariableDeclaration<TDomain, TElement>(any2Lambda.Parameters[0], out VariableDeclaration? declaration1Of2)
                     && TryCreateVariableDeclaration<TDomain, TElement>(any2Lambda.Parameters[1], out VariableDeclaration? declaration2Of2))
@@ -292,7 +291,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     return true;
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAnyMethod3)
-                    && methodCallExpr.Arguments[1] is LambdaExpression any3Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
+                    && methodCallExpr.Arguments[1] is LambdaExpression any3Lambda
                     && TryCreateSentence<TDomain, TElement>(any3Lambda.Body, out var all3SubSentence)
                     && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[0], out VariableDeclaration? declaration1Of3)
                     && TryCreateVariableDeclaration<TDomain, TElement>(any3Lambda.Parameters[1], out VariableDeclaration? declaration2Of3)
@@ -490,11 +489,11 @@ namespace SCFirstOrderLogic.LanguageIntegration
             where TDomain : IEnumerable<TElement>
         {
             // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse or something to make it more graceful without losing any more perf than we need to?
-
+            // TODO-ROBUSTNESS: also would be nice to have better errors if they've e.g. attempted to use something other than a lambda..
             if (expression is MethodCallExpression methodCallExpr)
             {
                 if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AllMethod)
-                    && methodCallExpr.Arguments[1] is LambdaExpression allLambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
+                    && methodCallExpr.Arguments[1] is LambdaExpression allLambda 
                     && TryCreateSentence<TDomain, TElement>(allLambda.Body, out var allSubSentence)
                     && TryCreateVariableDeclaration<TDomain, TElement>(allLambda.Parameters[0], out VariableDeclaration? declaration))
                 {
@@ -502,7 +501,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     return true;
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAllMethod2)
-                    && methodCallExpr.Arguments[1] is LambdaExpression all2Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
+                    && methodCallExpr.Arguments[1] is LambdaExpression all2Lambda
                     && TryCreateSentence<TDomain, TElement>(all2Lambda.Body, out var all2SubSentence)
                     && TryCreateVariableDeclaration<TDomain, TElement>(all2Lambda.Parameters[0], out VariableDeclaration? declaration1Of2)
                     && TryCreateVariableDeclaration<TDomain, TElement>(all2Lambda.Parameters[1], out VariableDeclaration? declaration2Of2))
@@ -513,7 +512,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     return true;
                 }
                 else if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, ShorthandAllMethod3)
-                    && methodCallExpr.Arguments[1] is LambdaExpression all3Lambda // TODO-ROBUSTNESS: need better errors if they've e.g. attempted to use something other than a lambda..
+                    && methodCallExpr.Arguments[1] is LambdaExpression all3Lambda
                     && TryCreateSentence<TDomain, TElement>(all3Lambda.Body, out var all3SubSentence)
                     && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[0], out VariableDeclaration? declaration1Of3)
                     && TryCreateVariableDeclaration<TDomain, TElement>(all3Lambda.Parameters[1], out VariableDeclaration? declaration2Of3)

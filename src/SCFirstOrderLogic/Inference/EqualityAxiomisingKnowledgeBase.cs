@@ -20,16 +20,28 @@ namespace SCFirstOrderLogic.Inference
         /// Initialises a new instance of the <see cref="EqualityAxiomisingKnowledgeBase"/> class.
         /// </summary>
         /// <param name="innerKnowledgeBase">The inner knowledge base decorated by this class.</param>
-        public EqualityAxiomisingKnowledgeBase(IKnowledgeBase innerKnowledgeBase)
+        private EqualityAxiomisingKnowledgeBase(IKnowledgeBase innerKnowledgeBase)
         {
             this.innerKnowledgeBase = innerKnowledgeBase;
             this.predicateAndFunctionEqualityAxiomiser = new PredicateAndFunctionEqualityAxiomiser(innerKnowledgeBase);
+        }
 
-            // TODO: Long running initialization - have CreateAsync instead of this?
-            // Tell the knowledge base the fundamental properties of equality:
-            innerKnowledgeBase.TellAsync(ForAll(X, AreEqual(X, X))).Wait(); // Reflexivity
-            innerKnowledgeBase.TellAsync(ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X)))).Wait(); // Commutativity
-            innerKnowledgeBase.TellAsync(ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z)))).Wait(); // Transitivity
+        /// <summary>
+        /// Instantiates and initializes a new instance of the <see cref="EqualityAxiomisingKnowledgeBase"/> class.
+        /// <para/>
+        /// This method exists and the constructor for <see cref="EqualityAxiomisingKnowledgeBase"/> is private
+        /// because complete initialisation here involves telling the knowledge base some things. Telling is asynchronous
+        /// because it is potentially long-running, and including potentially long-running operations in a constructor is generally a bad idea.
+        /// </summary>
+        /// <returns>A task that returns a new <see cref="EqualityAxiomisingKnowledgeBase"/> instance.</returns>
+        public static async Task<EqualityAxiomisingKnowledgeBase> CreateAsync(IKnowledgeBase innerKnowledgeBase)
+        {
+            // ..could invoke these in parallel if we wanted to. At the time of writing the only KB we have isn't re-entrant though..
+            await innerKnowledgeBase.TellAsync(ForAll(X, AreEqual(X, X))); // Reflexivity
+            await innerKnowledgeBase.TellAsync(ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X)))); // Commutativity
+            await innerKnowledgeBase.TellAsync(ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z)))); // Transitivity
+
+            return new EqualityAxiomisingKnowledgeBase(innerKnowledgeBase);
         }
 
         /// <inheritdoc/>
