@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
     /// method or property or parameterless method call on a class representing the domain.
     /// </summary>
     /// <remarks>
-    /// TODO-ZZZ/MINOR-FUNCTIONALITY: Might ultimately be useful to make the Member..Symbol classes generic in the same way as ILinqKnowledgeBase - for
+    /// Might ultimately be useful to make the Member..Symbol classes generic in the same way as ILinqKnowledgeBase - for
     /// validation, as well as potential manipulation power.
     /// </remarks>
     public class MemberConstantSymbol

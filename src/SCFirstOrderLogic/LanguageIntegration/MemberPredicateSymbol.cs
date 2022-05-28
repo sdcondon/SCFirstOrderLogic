@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
     /// property of elements of the domain (or the domain itself, in the case of ground predicates).
     /// </summary>
     /// <remarks>
-    /// TODO-ZZZ/MINOR-FUNCTIONALITY: Might ultimately be useful to make the Member.. classes generic in the same way as ILinqKnowledgeBase - for
+    /// Might ultimately be useful to make the Member.. classes generic in the same way as ILinqKnowledgeBase - for
     /// validation, as well as potential manipulation power.
     /// </remarks>
     public class MemberPredicateSymbol

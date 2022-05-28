@@ -22,6 +22,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <summary>
         /// Initialises a new instance of the <see cref="SimpleResolutionKnowledgeBase"/> class.
         /// </summary>
+        /// <param name="clauseStore">The object to use to store clauses.</param>
         /// <param name="clausePairFilter">
         /// A delegate to use to filter the pairs of clauses to be queued for a unification attempt.
         /// A true value indicates that the pair should be enqueued.

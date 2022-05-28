@@ -136,7 +136,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateSentence<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO-USABILITY: might be nice to return more info than just "false" on failure.
+            // TODO-QOL: might be nice to return more info than just "false" on failure.
             return
                 // Complex sentences:
                 TryCreateNegation<TDomain, TElement>(expression, out sentence)
@@ -192,7 +192,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 }
             }
 
-            // TODO-USABILITY: Perhaps we should allow literals here too? For cases where the domain is of primitive types, it seems
+            // Perhaps we should allow literals here too? For cases where the domain is of primitive types, it seems
             // silly to require d => d.Hello rather than d => "Hello". For user provided types is of less value because
             // it requires an instantiation of the constant (where otherwise just working with interfaces is fine), but
             // as far as I can see there's no reason (aside from equality et al - probably solvable) to actually forbid it..?
@@ -227,7 +227,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateEquality<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO-ROBUSTNESS: ..and Object.Equals invocation? And others? How to think about map of different types of .NET equality to FOL "equals"?
+            // TODO-QOL: ..and Object.Equals invocation? And others? How to think about map of different types of .NET equality to FOL "equals"?
             if (expression is BinaryExpression binaryExpr && binaryExpr.NodeType == ExpressionType.Equal
                 && TryCreateTerm<TDomain, TElement>(binaryExpr.Left, out var left)
                 && TryCreateTerm<TDomain, TElement>(binaryExpr.Right, out var right))
@@ -267,8 +267,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateExistentialQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse to make it more graceful without losing any more perf than we need to?
-            // TODO-ROBUSTNESS: also would be nice to have better errors if they've e.g. attempted to use something other than a lambda..
+            // TODO-QOL: would be nice to have better errors if they've e.g. attempted to use something other than a lambda..
             if (expression is MethodCallExpression methodCallExpr)
             {
                 if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AnyMethod)
@@ -488,8 +487,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         private static bool TryCreateUniversalQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO-MAINTAINABILITY: Ick. This is horrible. Can we recurse or something to make it more graceful without losing any more perf than we need to?
-            // TODO-ROBUSTNESS: also would be nice to have better errors if they've e.g. attempted to use something other than a lambda..
+            // TODO-QOL: also would be nice to have better errors if they've e.g. attempted to use something other than a lambda..
             if (expression is MethodCallExpression methodCallExpr)
             {
                 if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AllMethod)

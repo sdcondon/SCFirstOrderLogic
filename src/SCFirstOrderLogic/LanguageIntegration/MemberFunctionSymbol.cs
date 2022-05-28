@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
     /// Representation of the symbol of a <see cref="Function"/> that refers to a particular element-valued method or property of elements of the domain.
     /// </summary>
     /// <remarks>
-    /// TODO-ZZZ/MINOR-FUNCTIONALITY: Might ultimately be useful to make the Member..Symbol classes generic in the same way as ILinqKnowledgeBase - for
+    /// Might ultimately be useful to make the Member..Symbol classes generic in the same way as ILinqKnowledgeBase - for
     /// validation, as well as potential manipulation power.
     /// </remarks>
     public class MemberFunctionSymbol

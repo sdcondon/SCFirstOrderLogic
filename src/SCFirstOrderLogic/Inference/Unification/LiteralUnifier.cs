@@ -113,7 +113,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         private static bool Occurs(VariableReference variable, Term term)
         {
             // TODO-PERFORMANCE: this is very low-level code, so need to think about the GC impact when creating a bunch of these..
-            // Caching? Mutability and pooling? Short-lived, so perhaps okay. Test me!
+            // Caching? Mutability and pooling? Short-lived, so perhaps okay. Test me! E.g. vs just a method, and vs a method in Term class with callbacks.
             var occursCheck = new OccursCheck(variable); 
             occursCheck.ApplyTo(term);
             return occursCheck.IsFound;
