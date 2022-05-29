@@ -1,5 +1,4 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -8,8 +7,10 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// <summary>
     /// Utility class for creating unifiers for literals.
     /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
+    /// <para/>
+    /// Differs from production version by using an occurs check that is a SentenceTransformation.
     /// </summary>
-    public static class LiteralUnifier
+    public static class LiteralUnifier_WithOccursCheckAsTransformation
     {
         /// <summary>
         /// Attempts to create the most general unifier for two literals.
@@ -111,15 +112,40 @@ namespace SCFirstOrderLogic.Inference.Unification
             return true;
         }
 
-        private static bool Occurs(VariableReference variableReference, Term term)
+        private static bool Occurs(VariableReference variable, Term term)
         {
-            return term switch
+            // TODO-PERFORMANCE: this is very low-level code, so need to think about the GC impact when creating a bunch of these..
+            // Caching? Mutability and pooling? Short-lived, so perhaps okay. Test me! E.g. vs just a method, and vs a method in Term class with callbacks.
+            // just a method could look like this:
+            ////return term switch
+            ////{
+            ////    Constant constant => false,
+            ////    VariableReference variableReference => variable.Equals(variableReference),
+            ////    Function function => function.Arguments.Any(a => Occurs(variable, a))
+            ////};
+            var occursCheck = new OccursCheck(variable);
+            occursCheck.ApplyTo(term);
+            return occursCheck.IsFound;
+        }
+
+        private class OccursCheck : SentenceTransformation
+        {
+            private readonly VariableReference variableReference;
+
+            public OccursCheck(VariableReference variableReference) => this.variableReference = variableReference;
+
+            public bool IsFound { get; private set; } = false;
+
+            protected override Term ApplyTo(VariableReference variable)
             {
-                Constant c => false,
-                VariableReference v => variableReference.Equals(v),
-                Function f => f.Arguments.Any(a => Occurs(variableReference, a)),
-                _ => throw new ArgumentException("Unexpected term type encountered"),
-            };
+                if (variable.Equals(variableReference))
+                {
+                    // TODO-PERFORMANCE: For performance, should override everything and stop as soon as IsFound is true.
+                    IsFound = true;
+                }
+
+                return variable;
+            }
         }
     }
 }

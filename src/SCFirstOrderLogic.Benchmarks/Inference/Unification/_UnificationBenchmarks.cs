@@ -25,30 +25,39 @@ namespace SCFirstOrderLogic.Inference.Unification
         private static readonly CNFLiteral YKnowsMotherOfY_Literal = new(Knows(y, Mother(y)));
 
         [Benchmark]
-        public static bool Unify1() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);
+        public static bool Unify1_Actual() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);
 
         [Benchmark]
-        public static bool Unify1Alt() => SentenceUnifier.TryUnify(JohnKnowsX, JohnKnowsJane, out _);
+        public static bool Unify1_OccursCheckTransform() => LiteralUnifier_WithOccursCheckAsTransformation.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);
 
         [Benchmark]
-        public static SentenceUnifierRaw.Substitution Unify1Raw() => SentenceUnifierRaw.Unify(JohnKnowsX, JohnKnowsJane, null);
+        public static bool Unify1_Sentence() => SentenceUnifier.TryUnify(JohnKnowsX, JohnKnowsJane, out _);
 
         [Benchmark]
-        public static bool Unify2() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
+        public static SentenceUnifierRaw.Substitution Unify1_SentenceRaw() => SentenceUnifierRaw.Unify(JohnKnowsX, JohnKnowsJane, null);
 
         [Benchmark]
-        public static bool Unify2Alt() => SentenceUnifier.TryUnify(JohnKnowsX, YKnowsJane, out _);
+        public static bool Unify2_Actual() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
 
         [Benchmark]
-        public static SentenceUnifierRaw.Substitution Unify2Raw() => SentenceUnifierRaw.Unify(JohnKnowsX, YKnowsJane, null);
+        public static bool Unify2_OccursCheckTransform() => LiteralUnifier_WithOccursCheckAsTransformation.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
 
         [Benchmark]
-        public static bool Unify3() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);
+        public static bool Unify2_Sentence() => SentenceUnifier.TryUnify(JohnKnowsX, YKnowsJane, out _);
 
         [Benchmark]
-        public static bool Unify3Alt() => SentenceUnifier.TryUnify(JohnKnowsX, YKnowsMotherOfY, out _);
+        public static SentenceUnifierRaw.Substitution Unify2_SentenceRaw() => SentenceUnifierRaw.Unify(JohnKnowsX, YKnowsJane, null);
 
         [Benchmark]
-        public static SentenceUnifierRaw.Substitution Unify3Raw() => SentenceUnifierRaw.Unify(JohnKnowsX, YKnowsMotherOfY, null);
+        public static bool Unify3_Actual() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);
+
+        [Benchmark]
+        public static bool Unify3_OccursCheckTransform() => LiteralUnifier_WithOccursCheckAsTransformation.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);
+
+        [Benchmark]
+        public static bool Unify3_Sentence() => SentenceUnifier.TryUnify(JohnKnowsX, YKnowsMotherOfY, out _);
+
+        [Benchmark]
+        public static SentenceUnifierRaw.Substitution Unify3_SentenceRaw() => SentenceUnifierRaw.Unify(JohnKnowsX, YKnowsMotherOfY, null);
     }
 }

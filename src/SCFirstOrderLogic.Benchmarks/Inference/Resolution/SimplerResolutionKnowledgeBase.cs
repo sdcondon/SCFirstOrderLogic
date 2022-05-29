@@ -1,4 +1,4 @@
-﻿using SCFirstOrderLogic.Inference.Resolution.Utility;
+﻿using SCFirstOrderLogic.InternalUtilities;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
