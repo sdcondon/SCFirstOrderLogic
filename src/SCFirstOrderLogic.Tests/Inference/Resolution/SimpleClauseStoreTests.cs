@@ -5,12 +5,12 @@ using System.Linq;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {
-    public static class ListClauseStoreTests
+    public static class SimpleClauseStoreTests
     {
         public static Test Smoke => TestThat
             .Given(() =>
             {
-                var store = new ListClauseStore();
+                var store = new SimpleClauseStore();
                 store.AddAsync(new CNFClause(new Predicate("A"))).Wait();
                 store.AddAsync(new CNFClause(new Predicate("B"))).Wait();
                 return store;
@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .Given(() =>
             {
                 // we have a store that has had a couple of clauses added...
-                var store = new ListClauseStore();
+                var store = new SimpleClauseStore();
                 store.AddAsync(new CNFClause(new Predicate("A"))).Wait();
                 store.AddAsync(new CNFClause(new Predicate("B"))).Wait();
 

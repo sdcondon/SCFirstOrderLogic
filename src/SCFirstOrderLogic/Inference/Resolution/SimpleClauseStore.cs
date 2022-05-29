@@ -1,4 +1,5 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -10,26 +11,36 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// Basic implementation of <see cref="IKnowledgeBaseClauseStore"/> that just maintains all known clauses in
     /// an (un-indexed) in-memory collection and iterates through them all to find resolvents.
     /// </summary>
-    public class ListClauseStore : IKnowledgeBaseClauseStore
+    public class SimpleClauseStore : IKnowledgeBaseClauseStore
     {
-        // TODO-ROBUSTNESS: concurrent(bag?), or keep it as a list and do locking - intended as simplest implementation after all.
-        // Concurrency problems abound with this class at the mo.
-        private readonly List<CNFClause> clauses = new List<CNFClause>();
+        private readonly ConcurrentBag<CNFClause> clauses = new ConcurrentBag<CNFClause>();
+        private readonly SemaphoreSlim addLock = new SemaphoreSlim(1);
 
         /// <inheritdoc />
         public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
         {
-            // NB: a limitation of this implementation - we only check if the clause is already present exactly - we don't check for clauses that subsume it.
-            await foreach (var existingClause in this.WithCancellation(cancellationToken))
-            {
-                if (existingClause.Equals(clause))
-                {
-                    return false;
-                }
-            }
+            // We need to lock here to avoid an issue when a clause is added by another
+            // thread between us checking and adding.
+            await addLock.WaitAsync(cancellationToken);
 
-            clauses.Add(clause);
-            return true;
+            try
+            {
+                // NB: a limitation of this implementation - we only check if the clause is already present exactly - we don't check for clauses that subsume it.
+                await foreach (var existingClause in this.WithCancellation(cancellationToken))
+                {
+                    if (existingClause.Equals(clause))
+                    {
+                        return false;
+                    }
+                }
+
+                clauses.Add(clause);
+                return true;
+            }
+            finally
+            {
+                addLock.Release();
+            }
         }
 
 #pragma warning disable CS1998 // async lacks await.. Could stick a Task.Yield in there, but not worth it.
@@ -62,28 +73,40 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public IQueryClauseStore CreateQueryClauseStore() => new QueryClauseStore(clauses);
 
         /// <summary>
-        /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="ListClauseStore"/>.
+        /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="SimpleClauseStore"/>.
         /// </summary>
         private class QueryClauseStore : IQueryClauseStore
         {
-            private readonly List<CNFClause> clauses; // todo: concurrent or locking.
+            private readonly ConcurrentBag<CNFClause> clauses;
+            private readonly SemaphoreSlim addLock = new SemaphoreSlim(1);
 
-            public QueryClauseStore(IEnumerable<CNFClause> clauses) => this.clauses = new List<CNFClause>(clauses);
+            public QueryClauseStore(IEnumerable<CNFClause> clauses) => this.clauses = new ConcurrentBag<CNFClause>(clauses);
 
             /// <inheritdoc />
             public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
             {
-                // NB: a limitation of this implementation - we only check if the clause is already present exactly - we don't check for clauses that subsume it.
-                await foreach (var existingClause in this.WithCancellation(cancellationToken))
-                {
-                    if (existingClause.Equals(clause))
-                    {
-                        return false;
-                    }
-                }
+                // We need to lock here to avoid an issue when a clause is added by another
+                // thread between us checking and adding.
+                await addLock.WaitAsync(cancellationToken);
 
-                clauses.Add(clause);
-                return true;
+                try
+                {
+                    // NB: a limitation of this implementation - we only check if the clause is already present exactly - we don't check for clauses that subsume it.
+                    await foreach (var existingClause in this.WithCancellation(cancellationToken))
+                    {
+                        if (existingClause.Equals(clause))
+                        {
+                            return false;
+                        }
+                    }
+
+                    clauses.Add(clause);
+                    return true;
+                }
+                finally
+                {
+                    addLock.Release();
+                }
             }
 
 #pragma warning disable CS1998 // async lacks await.. Could stick a Task.Yield in there, but not worth it.

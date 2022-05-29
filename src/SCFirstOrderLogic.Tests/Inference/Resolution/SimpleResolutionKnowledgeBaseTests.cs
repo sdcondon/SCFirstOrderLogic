@@ -18,7 +18,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .GivenTestContext()
             .When(_ =>
             {
-                var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+                var kb = new SimpleResolutionKnowledgeBase(new SimpleClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
                 kb.TellAsync(CrimeDomain.Axioms).Wait();
                 var query = kb.CreateQueryAsync(IsCriminal(West)).Result;
                 query.CompleteAsync().Wait();
@@ -32,7 +32,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .GivenTestContext()
             .When(_ =>
             {
-                var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+                var kb = new SimpleResolutionKnowledgeBase(new SimpleClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
                 kb.TellAsync(CuriousityAndTheCatDomain.Axioms).Wait();
                 var query = kb.CreateQueryAsync(Kills(Curiousity, Tuna)).Result;
                 query.CompleteAsync().Wait();
@@ -42,8 +42,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .And((_, retVal) => retVal.Result.Should().Be(true))
             .And((ctx, retVal) => ctx.WriteOutputLine(retVal.Explain()));
 
-        // This one needs equality (so not really a test of this KB alone), and in practice doesn't terminate in any reasonable time frame - would need smarter clause prioritisation.
-        // NB can vary across executions because priority comparison used not stable across executions because of hash code relianc
+        // This one needs equality (so not really a test of this KB alone), and in practice doesn't terminate in any reasonable time frame.
+        // Would need smarter clause prioritisation, and possibly smarter treatment of equality (e.g. demodulation)
+        // NB can vary across executions because priority comparison used not stable across executions because of hash code reliance
         ////public static Test KinshipExample => TestThat
         ////    .GivenTestContext()
         ////    .When(_ =>
