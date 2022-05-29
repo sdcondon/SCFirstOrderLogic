@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Basic implementation of <see cref="IKnowledgeBaseClauseStore"/> that just maintains all known clauses in
+    /// A basic implementation of <see cref="IKnowledgeBaseClauseStore"/> that just maintains all known clauses in
     /// an (un-indexed) in-memory collection and iterates through them all to find resolvents.
     /// </summary>
     public class SimpleClauseStore : IKnowledgeBaseClauseStore

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.Inference.Resolution.Utility
+namespace SCFirstOrderLogic.InternalUtilities
 {
     /// <summary>
     /// Max priority queue implementation that uses a binary heap.

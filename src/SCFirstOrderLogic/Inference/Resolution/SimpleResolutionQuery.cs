@@ -1,4 +1,4 @@
-﻿using SCFirstOrderLogic.Inference.Resolution.Utility;
+﻿using SCFirstOrderLogic.InternalUtilities;
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
@@ -112,7 +112,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 throw new InvalidOperationException("Query is complete");
             }
 
-            // Grab the next resolvent (in addition to the two clauses it originates from and the variable substitution) from the queue..
+            // Grab the next resolution (including the resolvent, the clauses it originates from, and the variable substitution) from the queue..
             var resolution = queue.Dequeue();
             steps[resolution.Resolvent] = resolution;
 
