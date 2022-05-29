@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         [Benchmark]
         public static bool CrimeExample_SimplestResolutionKnowledgeBase()
         {
-            var kb = new SimplerResolutionKnowledgeBase(ClausePairFilters.None, ClausePairPriorityComparisons.UnitPreference);
+            var kb = new SimplerResolutionKnowledgeBase(SimplerResolutionKnowledgeBase.Filters.None, SimplerResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
             foreach (var axiom in CrimeDomain.Axioms)
             {
                 kb.Tell(axiom);
@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         [Benchmark]
         public static bool CrimeExample_SimpleResolutionKnowledgeBase()
         {
-            var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparisons.UnitPreference);
+            var kb = new SimpleResolutionKnowledgeBase(new ListClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
             kb.TellAsync(CrimeDomain.Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).Result;
         }

@@ -22,25 +22,22 @@ namespace SCFirstOrderLogic.Inference.Resolution
     public class SimpleResolutionQuery : IQuery
     {
         private readonly IQueryClauseStore clauseStore;
-        private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
-        private readonly MaxPriorityQueue<(CNFClause, CNFClause, ClauseResolution)> queue;
-        private readonly Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> steps;
+        private readonly Func<ClauseResolution, bool> filter;
+        private readonly MaxPriorityQueue<ClauseResolution> queue;
+        private readonly Dictionary<CNFClause, ClauseResolution> steps;
 
         private bool result;
 
         private SimpleResolutionQuery(
             IKnowledgeBaseClauseStore clauseStore,
-            Func<(CNFClause, CNFClause), bool> clausePairFilter,
-            Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison,
+            Func<ClauseResolution, bool> filter,
+            Comparison<ClauseResolution> priorityComparison,
             Sentence query)
         {
             this.clauseStore = clauseStore.CreateQueryClauseStore();
-            this.clausePairFilter = clausePairFilter;
-            queue = new MaxPriorityQueue<(CNFClause, CNFClause, ClauseResolution)>((x, y) =>
-            {
-                return clausePairPriorityComparison((x.Item1, x.Item2), (y.Item1, y.Item2));  // TODO: ugh, hideous (and perhaps slow - test me)
-            });
-            steps = new Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)>();
+            this.filter = filter;
+            queue = new MaxPriorityQueue<ClauseResolution>(priorityComparison);
+            steps = new Dictionary<CNFClause, ClauseResolution>();
 
             NegatedQuery = new CNFSentence(new Negation(query));
         }
@@ -68,15 +65,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
-        /// Gets a mapping from a clause to the two clauses from which it was inferred. NB: we use binary resolution,
-        /// hence two input clauses.
+        /// Gets a mapping from a clause to the resolution from which it was inferred.
         /// </summary>
-        public IReadOnlyDictionary<CNFClause, (CNFClause clause1, CNFClause clause2, VariableSubstitution unifier)> Steps => steps;
+        public IReadOnlyDictionary<CNFClause, ClauseResolution> Steps => steps;
 
         /// <summary>
-        /// Creates and initialises a new instance of the <see cref="Query"/> class.
-        /// Initialisation can potentially be a long-running operation (and long-running constructors are a bad idea) -
-        /// hence this method exists and the constructor is private.
+        /// Creates and initialises a new instance of the <see cref="SimpleResolutionQuery"/> class. Initialisation can potentially
+        /// be a long-running operation (and long-running constructors are a bad idea) - so the constructor is private
+        /// and this method exists.
         /// </summary>
         /// <param name="clauseStore">A knowledge base clause store to use to create the clause store for this query.</param>
         /// <param name="clausePairFilter">A filter to apply to clause pairings during this query.</param>
@@ -86,12 +82,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <returns>A new query instance.</returns>
         internal static async Task<SimpleResolutionQuery> CreateAsync(
             IKnowledgeBaseClauseStore clauseStore,
-            Func<(CNFClause, CNFClause), bool> clausePairFilter,
-            Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison,
+            Func<ClauseResolution, bool> filter,
+            Comparison<ClauseResolution> priorityComparison,
             Sentence querySentence,
             CancellationToken cancellationToken = default)
         {
-            var query = new SimpleResolutionQuery(clauseStore, clausePairFilter, clausePairPriorityComparison, querySentence);
+            var query = new SimpleResolutionQuery(clauseStore, filter, priorityComparison, querySentence);
 
             // Initialise the clause store with the clauses from the negation of the query:
             foreach (var clause in query.NegatedQuery.Clauses)
@@ -117,8 +113,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             // Grab the next resolvent (in addition to the two clauses it originates from and the variable substitution) from the queue..
-            var (ci, cj, resolution) = queue.Dequeue();
-            steps[resolution.Resolvent] = (ci, cj, resolution.Substitution);
+            var resolution = queue.Dequeue();
+            steps[resolution.Resolvent] = resolution;
 
             // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
             if (resolution.Resolvent.Equals(CNFClause.Empty))
@@ -191,11 +187,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
                 // If the clause is an intermediate one from the query (as opposed to one found
                 // in the knowledge base or negated query)..
-                if (Steps.TryGetValue(clause, out var input))
+                if (Steps.TryGetValue(clause, out var resolution))
                 {
                     // ..queue up the two clauses that resolved to give us this one..
-                    queue.Enqueue(input.clause1);
-                    queue.Enqueue(input.clause2);
+                    queue.Enqueue(resolution.Clause1);
+                    queue.Enqueue(resolution.Clause2);
 
                     // ..and record it in the steps list.
                     orderedSteps.Add(clause);
@@ -232,7 +228,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             var explanation = new StringBuilder();
             for (var i = 0; i < discoveredClauses.Count; i++)
             {
-                var (clause1, clause2, unifier) = Steps[discoveredClauses[i]];
+                var resolution = Steps[discoveredClauses[i]];
 
                 string GetSource(CNFClause clause)
                 {
@@ -267,12 +263,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
 
                 explanation.AppendLine($"#{i:D2}: {formatter.Print(discoveredClauses[i])}");
-                explanation.AppendLine($"     From {GetSource(clause1)}: {formatter.Print(clause1)}");
-                explanation.AppendLine($"     And  {GetSource(clause2)}: {formatter.Print(clause2)} ");
+                explanation.AppendLine($"     From {GetSource(resolution.Clause1)}: {formatter.Print(resolution.Clause1)}");
+                explanation.AppendLine($"     And  {GetSource(resolution.Clause2)}: {formatter.Print(resolution.Clause2)} ");
                 explanation.Append("     Using   : {");
-                explanation.Append(string.Join(", ", unifier.Bindings.Select(s => $"{formatter.Print(s.Key)}/{formatter.Print(s.Value)}")));
+                explanation.Append(string.Join(", ", resolution.Substitution.Bindings.Select(s => $"{formatter.Print(s.Key)}/{formatter.Print(s.Value)}")));
                 explanation.AppendLine("}");
-                foreach (var term in FindNormalisationTerms(discoveredClauses[i], clause1, clause2))
+                foreach (var term in FindNormalisationTerms(discoveredClauses[i], resolution.Clause1, resolution.Clause2))
                 {
                     explanation.AppendLine($"     ..where {formatter.Print(term)} is {ExplainNormalisationTerm(term)}");
                 }
@@ -332,7 +328,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         private async Task EnqueueUnfilteredResolventsAsync(CNFClause clause, CancellationToken cancellationToken = default)
         {
-            await foreach (var (otherClause, resolution) in clauseStore.FindResolutions(clause, cancellationToken))
+            await foreach (var resolution in clauseStore.FindResolutions(clause, cancellationToken))
             {
                 // NB: Throwing away clauses returned by the unifier store has performance impact.
                 // Could instead/also use a store that knows to not look for certain clause pairings in the first place..
@@ -341,9 +337,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 // strategy in the form of the priority comparer. This feels a good compromise - there are of course
                 // alternatives (e.g. some kind of strategy object that encapsulates both) - but they felt like overkill
                 // for this simple implementation.
-                if (clausePairFilter((clause, otherClause)))
+                if (filter(resolution))
                 {
-                    queue.Enqueue((clause, otherClause, resolution));
+                    queue.Enqueue(resolution);
                 }
             }
         }

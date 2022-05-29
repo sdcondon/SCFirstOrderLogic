@@ -95,7 +95,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         /// <inheritdoc />
         /// <remarks>
-        /// Clauses that contain exactly the same collection of literals in the same order are considered equal.
+        /// Clauses that contain exactly the same collection of literals are considered equal.
         /// </remarks>
         public bool Equals(CNFClause other)
         {

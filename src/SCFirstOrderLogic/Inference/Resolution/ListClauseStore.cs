@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// Basic implementation of <see cref="IKnowledgeBaseClauseStore"/> that just maintains all known clauses in
-    /// an in-memory collection and iterates through them all to find resolvents.
+    /// an (un-indexed) in-memory collection and iterates through them all to find resolvents.
     /// </summary>
     public class ListClauseStore : IKnowledgeBaseClauseStore
     {
@@ -45,7 +45,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 #pragma warning restore CS1998
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<(CNFClause, ClauseResolution)> FindResolutions(
+        public async IAsyncEnumerable<ClauseResolution> FindResolutions(
             CNFClause clause,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
@@ -53,7 +53,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             {
                 foreach (var resolution in ClauseResolution.Resolve(clause, otherClause))
                 {
-                    yield return (otherClause, resolution);
+                    yield return resolution;
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 #pragma warning restore CS1998
 
             /// <inheritdoc />
-            public async IAsyncEnumerable<(CNFClause, ClauseResolution)> FindResolutions(
+            public async IAsyncEnumerable<ClauseResolution> FindResolutions(
                 CNFClause clause,
                 [EnumeratorCancellation] CancellationToken cancellationToken = default)
             {
@@ -107,7 +107,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 {
                     foreach (var resolution in ClauseResolution.Resolve(clause, otherClause))
                     {
-                        yield return (otherClause, resolution);
+                        yield return resolution;
                     }
                 }
             }

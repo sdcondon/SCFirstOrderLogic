@@ -6,15 +6,31 @@ using System.Linq;
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Container for information about the resolution of some CNF clauses.
+    /// Container for information about the (binary) resolution of some CNF clauses.
     /// </summary>
     public class ClauseResolution
     {
-        private ClauseResolution(VariableSubstitution substitution, CNFClause resolvent)
+        /// <remarks>
+        /// Private because it doesn't validate that the arguments actually represent a resolution.
+        /// Intention is for <see cref="ClauseResolution"/> instance creation to happen via the <see cref="Resolve"/> method.
+        /// </remarks>
+        private ClauseResolution(CNFClause clause1, CNFClause clause2, VariableSubstitution substitution, CNFClause resolvent)
         {
+            Clause1 = clause1;
+            Clause2 = clause2;
             Substitution = substitution;
             Resolvent = resolvent;
         }
+
+        /// <summary>
+        /// Gets the first of the two clauses that are resolved to give the resolvent clause (NB: for the moment at least, this class is specifically for binary resolution).
+        /// </summary>
+        public CNFClause Clause1 { get; }
+
+        /// <summary>
+        /// Gets the second of the two clauses that are resolved to give the resolvent clause (NB: for the moment at least, this class is specifically for binary resolution).
+        /// </summary>
+        public CNFClause Clause2 { get; }
 
         /// <summary>
         /// Gets the variable substitution that is applied to resolve the input clauses.
@@ -35,7 +51,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public static IEnumerable<ClauseResolution> Resolve(CNFClause clause1, CNFClause clause2)
         {
             // Yes, this is a slow implementation. It is simple, though - and thus will serve
-            // well as a baseline for improvements. (I'm thinking including LiteralUnifier creation tweak so that it accepts multiple
+            // well as a baseline for improvements. (I'm thinking including LiteralUnifier tweak so that it accepts multiple
             // literals and examines the tree for them all "simultaneously" - i.e. do full resolution, not binary).
             foreach (var literal1 in clause1.Literals)
             {
@@ -81,7 +97,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
                         if (!clauseIsTriviallyTrue)
                         {
-                            yield return new ClauseResolution(unifier, new CNFClause(unifiedLiterals));
+                            yield return new ClauseResolution(clause1, clause2, unifier, new CNFClause(unifiedLiterals));
                         }
                     }
                 }

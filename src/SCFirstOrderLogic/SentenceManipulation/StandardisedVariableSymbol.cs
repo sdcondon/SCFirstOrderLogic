@@ -29,7 +29,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// same quantification (reference) occurs twice as a child of a single sentence object, but there's no sentence type where distinguishing the two
         /// copies is important (and honestly when would that ever happen).
         /// <para/>
-        /// I have however decided in the end to go for an approach that is slightly lighter from a memory usage standpoint (no extra collectionon the heap),
+        /// I have however decided in the end to go for an approach that is slightly lighter from a memory usage standpoint (no extra collection on the heap),
         /// and very nearly as robust. Storing just the quantification and top-level sentence will only be potentially unclear when the exact same quantification
         /// (reference!) occurs more than once in a sentence. Not quite as strong as storing the full stack, but pretty strong (again, when would this ever happen).
         /// If needed though, we could always add some validation of the sentence here (a quick search through the sentence to ensure the quantification reference
