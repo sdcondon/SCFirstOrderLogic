@@ -3,7 +3,6 @@ using FluentAssertions.Equivalency;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SCFirstOrderLogic.TestUtilities
 {
@@ -12,7 +11,7 @@ namespace SCFirstOrderLogic.TestUtilities
         private static readonly Func<Function, bool> isSkolemFunction = f => f.Symbol is SkolemFunctionSymbol;
 
         /// <summary>
-        /// Applies equivalency rules that check only for consistency when examining variable referances and declarations.
+        /// Applies equivalency rules that check only for consistency when examining variable references and declarations.
         /// That is, we only care that the same (by equality) actual instance is encountered whenever the same instance 
         /// is encountered in the expectation.
         /// </summary>
@@ -29,7 +28,7 @@ namespace SCFirstOrderLogic.TestUtilities
         }
 
         /// <summary>
-        /// Applies equivalency rules that check only for consistency when examining variable referances, variable
+        /// Applies equivalency rules that check only for consistency when examining variable references, variable
         /// declarations and Skolem functions. That is, we only care that the same (by equality) actual instance is
         /// encountered whenever the same instance is encountered in the expectation.
         /// </summary>

@@ -11,9 +11,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
     {
         private static Term C => new Constant(nameof(C));
         private static Term D => new Constant(nameof(D));
-        private static Sentence S(Term t) => new Predicate(nameof(S), new[] { t });
-        private static Sentence T(Term t) => new Predicate(nameof(T), new[] { t });
-        private static Sentence U(Term t) => new Predicate(nameof(U), new[] { t });
+        private static Sentence S(Term t) => new Predicate(nameof(S), t);
+        private static Sentence T(Term t) => new Predicate(nameof(T), t);
+        private static Sentence U(Term t) => new Predicate(nameof(U), t);
 
         private record TestCase(CNFClause Clause1, CNFClause Clause2, params CNFClause[] ExpectedResolvents);
 

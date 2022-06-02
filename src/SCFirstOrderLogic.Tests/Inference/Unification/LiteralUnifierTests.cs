@@ -7,14 +7,14 @@ namespace SCFirstOrderLogic.Inference.Unification
 {
     public class LiteralUnifierTests
     {
-        private static Function Mother(Term child) => new("Mother", child);
+        private static Function Mother(Term child) => new(nameof(Mother), child);
 
-        private static Predicate Knows(Term knower, Term known) => new("Knows", knower, known);
+        private static Predicate Knows(Term knower, Term known) => new(nameof(Knows), knower, known);
 
         private static readonly Constant john = new("John");
         private static readonly Constant jane = new("Jane");
-        private static readonly VariableDeclaration x = new("x");
-        private static readonly VariableDeclaration y = new("y");
+        private static readonly VariableDeclaration x = new(nameof(x));
+        private static readonly VariableDeclaration y = new(nameof(y));
 
         private record TestCase(CNFLiteral Literal1, CNFLiteral Literal2, Dictionary<VariableReference, Term>? ExpectedSubstitutions = null, CNFLiteral? ExpectedUnified = null);
 
