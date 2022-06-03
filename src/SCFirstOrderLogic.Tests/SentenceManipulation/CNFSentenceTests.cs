@@ -104,7 +104,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 },
                 new
                 {
-                    // TODO: We don't remove the trivially true clauses (e.g. P ∨ ¬P) - none of the source material
+                    // BUG?: We don't remove the trivially true clauses (e.g. P ∨ ¬P) - none of the source material
                     // references this as being part of the normalisation process. But we probably should..
                     Sentence = Or(And(P, Q), And(Not(P), Not(Q))),
                     ExpectedCNF = new
