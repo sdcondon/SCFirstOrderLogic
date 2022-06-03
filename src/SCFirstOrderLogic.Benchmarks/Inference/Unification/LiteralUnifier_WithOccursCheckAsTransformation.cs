@@ -141,7 +141,7 @@ namespace SCFirstOrderLogic.Inference.Unification
                 if (variable.Equals(variableReference))
                 {
                     // Performance might be slightly better if overrode everything to stop as soon as IsFound is true.
-                    // This better achieved asin production version, though.
+                    // This better achieved as in production version, though.
                     IsFound = true;
                 }
 
