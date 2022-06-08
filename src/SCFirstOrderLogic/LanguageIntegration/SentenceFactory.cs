@@ -176,14 +176,14 @@ namespace SCFirstOrderLogic.LanguageIntegration
             if (typeof(TElement).IsAssignableFrom(expression.Type)) // Constants must be elements of the domain
             {
                 if (expression is MemberExpression memberExpr
-                    && typeof(TDomain).IsAssignableFrom(memberExpr.Expression.Type)) // TODO-ROBUSTNESS: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
+                    && typeof(TDomain).IsAssignableFrom(memberExpr.Expression.Type)) // BUG-MINOR: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                 {
                     // TElement-valued property access of the domain is interpreted as a constant.
                     term = new Constant(new MemberConstantSymbol(memberExpr.Member));
                     return true;
                 }
                 else if (expression is MethodCallExpression methodCallExpr
-                    && typeof(TDomain).IsAssignableFrom(methodCallExpr.Object.Type) // TODO-ROBUSTNESS: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
+                    && typeof(TDomain).IsAssignableFrom(methodCallExpr.Object.Type) // BUG-MINOR: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                     && methodCallExpr.Arguments.Count == 0)
                 {
                     // TElement-valued parameterless method call of the domain is interpreted as a constant.
@@ -420,7 +420,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
 
             if (expression is MemberExpression memberExpr && memberExpr.Expression != null) // Non-static field or property access
             {
-                if (memberExpr.Expression.Type == typeof(TDomain)) // TODO-ROBUSTNESS: no guarantee that this is the domain param of the original lambda... Make me robust! requires passing domain param down through the whole process..
+                if (memberExpr.Expression.Type == typeof(TDomain)) // BUG-MINOR: no guarantee that this is the domain param of the original lambda... requires passing domain param down through the whole process..
                 {
                     // Boolean-valued property access on the domain parameter is interpreted as a ground predicate
                     sentence = new Predicate(new MemberPredicateSymbol(memberExpr.Member), Array.Empty<Term>());
@@ -438,7 +438,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 var arguments = new List<Term>();
 
                 // If the method is not against the domain, the instance it is operating on is the first arg of the predicate:
-                if (methodCallExpr.Object.Type != typeof(TDomain)) // TODO-ROBUSTNESS: in theory objs of that type might also not be "the" domain param. requires passing domain param down through the whole process..
+                if (methodCallExpr.Object.Type != typeof(TDomain)) // BUG-MINOR: in theory objs of that type might also not be "the" domain param. requires passing domain param down through the whole process..
                 {
                     if (!TryCreateTerm<TDomain, TElement>(methodCallExpr.Object, out var arg))
                     {
