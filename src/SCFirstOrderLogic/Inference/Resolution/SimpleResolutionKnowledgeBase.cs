@@ -68,7 +68,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
-        /// Filters for use by <see cref="SimpleResolutionKnowledgeBase"/>.
+        /// Useful filters for use by <see cref="SimpleResolutionKnowledgeBase"/>.
         /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
         /// </summary>
         public class Filters
@@ -85,7 +85,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
-        /// Priority comparisons for use by <see cref="SimpleResolutionKnowledgeBase"/>.
+        /// Useful priority comparisons for use by <see cref="SimpleResolutionKnowledgeBase"/>.
         /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
         /// </summary>
         public class PriorityComparisons

@@ -8,8 +8,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <summary>
     /// Representation of an individual clause (i.e. a disjunction of <see cref="CNFLiteral"/>s) of a first-order logic sentence in conjunctive normal form.
     /// <para/>
-    /// NB: for now at least contains no logic for ordering literals (sentences will be explored depth-first and left to right) - and equality is based on there
-    /// being the same literals in the same order. This is because different algorithms may need different things.. TODO: May (probably should) be changed..
+    /// TODO: for now at least contains no logic for ordering literals (sentences will be explored depth-first and left to right) - and equality is based on there
+    /// being the same literals in the same order. This is because different algorithms may need different things.. May (probably should) be changed..
     /// </summary>
     public class CNFClause : IEquatable<CNFClause>
     {

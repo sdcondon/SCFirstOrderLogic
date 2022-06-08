@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     {
         /// <remarks>
         /// Private because it doesn't validate that the arguments actually represent a resolution.
-        /// Intention is for <see cref="ClauseResolution"/> instance creation to happen via the <see cref="Resolve"/> method.
+        /// The intention is for instance creation to happen via the <see cref="Resolve"/> method.
         /// </remarks>
         private ClauseResolution(CNFClause clause1, CNFClause clause2, VariableSubstitution substitution, CNFClause resolvent)
         {
