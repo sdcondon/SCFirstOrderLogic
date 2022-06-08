@@ -53,7 +53,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Applies this transformation to a <see cref="Disjunction"/> instance.
         /// The default implementation returns a <see cref="Disjunction"/> of the result of calling <see cref="ApplyTo"/> on both of the existing sub-sentences.
         /// </summary>
-        /// <param name="conjunction">The <see cref="Disjunction"/> instance to visit.</param>
+        /// <param name="disjunction">The <see cref="Disjunction"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
         protected virtual Sentence ApplyTo(Disjunction disjunction)
         {
