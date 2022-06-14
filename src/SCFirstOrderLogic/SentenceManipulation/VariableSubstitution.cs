@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// </summary>
     public class VariableSubstitution : SentenceTransformation
     {
-        private readonly Dictionary<VariableReference, Term> bindings = new Dictionary<VariableReference, Term>();
+        private readonly Dictionary<VariableReference, Term> bindings = new();
 
         /// <summary>
         /// Gets the substitions applied by this transformation.

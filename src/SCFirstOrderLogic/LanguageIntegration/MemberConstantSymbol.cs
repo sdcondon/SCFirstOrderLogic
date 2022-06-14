@@ -27,7 +27,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         public override string ToString() => MemberInfo.Name;
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is MemberConstantSymbol otherMemberConstantSymbol
                 && MemberInfoEqualityComparer.Instance.Equals(MemberInfo, otherMemberConstantSymbol.MemberInfo);

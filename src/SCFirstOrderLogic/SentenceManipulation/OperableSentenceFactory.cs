@@ -10,7 +10,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <code>using static SCFirstOrderLogic.SentenceManipulation.OperableSentenceFactory;</code>
     /// This class provides a compromise between <see cref="SentenceFactory"/> and the full language integration provided by the types in the LanguageIntegration namespace.
     /// The objects returned by this factory (are implicitly convertible to <see cref="Sentence"/>s and) override operators in a way that is perhaps intuitive: | for disjunctions, &amp; for conjunctions, ! for negations, and == for the equality predicate.
-    /// For domain-specific sentence elements (predicates, functions, constants etc), the recommendation is to create appropriate properties and methods to create them - declaring the type as Operable.. so that they can be operated on. For example:
+    /// For domain-specific sentence elements (predicates, functions &amp; constants), their operable surrogate is implicitly convertible FROM the regular type, so the recommendation is to create appropriate properties and methods to create them - declaring
+    /// the type as Operable.. so that they can be operated on. For example:
     /// <code>OperablePredicate MyBinaryPredicate(Term arg1, Term arg2) => new Predicate(nameof(MyBinaryPredicate), arg1, arg2);</code>
     /// ..which means you can then write things like:
     /// <code>ForAll(X, ThereExists(Y, !MyBinaryPredicate(X, Y) | MyOtherPredicate(Y)));</code>
@@ -106,132 +107,132 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "A".
         /// </summary>
-        public static OperableVariableDeclaration A => new OperableVariableDeclaration(nameof(A));
+        public static OperableVariableDeclaration A => new(nameof(A));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "B".
         /// </summary>
-        public static OperableVariableDeclaration B => new OperableVariableDeclaration(nameof(B));
+        public static OperableVariableDeclaration B => new(nameof(B));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "C".
         /// </summary>
-        public static OperableVariableDeclaration C => new OperableVariableDeclaration(nameof(C));
+        public static OperableVariableDeclaration C => new(nameof(C));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "D".
         /// </summary>
-        public static OperableVariableDeclaration D => new OperableVariableDeclaration(nameof(D));
+        public static OperableVariableDeclaration D => new(nameof(D));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "E".
         /// </summary>
-        public static OperableVariableDeclaration E => new OperableVariableDeclaration(nameof(E));
+        public static OperableVariableDeclaration E => new(nameof(E));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "F".
         /// </summary>
-        public static OperableVariableDeclaration F => new OperableVariableDeclaration(nameof(F));
+        public static OperableVariableDeclaration F => new(nameof(F));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "G".
         /// </summary>
-        public static OperableVariableDeclaration G => new OperableVariableDeclaration(nameof(G));
+        public static OperableVariableDeclaration G => new(nameof(G));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "H".
         /// </summary>
-        public static OperableVariableDeclaration H => new OperableVariableDeclaration(nameof(H));
+        public static OperableVariableDeclaration H => new(nameof(H));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "I".
         /// </summary>
-        public static OperableVariableDeclaration I => new OperableVariableDeclaration(nameof(I));
+        public static OperableVariableDeclaration I => new(nameof(I));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "J".
         /// </summary>
-        public static OperableVariableDeclaration J => new OperableVariableDeclaration(nameof(J));
+        public static OperableVariableDeclaration J => new(nameof(J));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "K".
         /// </summary>
-        public static OperableVariableDeclaration K => new OperableVariableDeclaration(nameof(K));
+        public static OperableVariableDeclaration K => new(nameof(K));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "L".
         /// </summary>
-        public static OperableVariableDeclaration L => new OperableVariableDeclaration(nameof(L));
+        public static OperableVariableDeclaration L => new(nameof(L));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "M".
         /// </summary>
-        public static OperableVariableDeclaration M => new OperableVariableDeclaration(nameof(M));
+        public static OperableVariableDeclaration M => new(nameof(M));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "N".
         /// </summary>
-        public static OperableVariableDeclaration N => new OperableVariableDeclaration(nameof(N));
+        public static OperableVariableDeclaration N => new(nameof(N));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "O".
         /// </summary>
-        public static OperableVariableDeclaration O => new OperableVariableDeclaration(nameof(O));
+        public static OperableVariableDeclaration O => new(nameof(O));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "P".
         /// </summary>
-        public static OperableVariableDeclaration P => new OperableVariableDeclaration(nameof(P));
+        public static OperableVariableDeclaration P => new(nameof(P));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "Q".
         /// </summary>
-        public static OperableVariableDeclaration Q => new OperableVariableDeclaration(nameof(Q));
+        public static OperableVariableDeclaration Q => new(nameof(Q));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "R".
         /// </summary>
-        public static OperableVariableDeclaration R => new OperableVariableDeclaration(nameof(R));
+        public static OperableVariableDeclaration R => new(nameof(R));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "S".
         /// </summary>
-        public static OperableVariableDeclaration S => new OperableVariableDeclaration(nameof(S));
+        public static OperableVariableDeclaration S => new(nameof(S));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "T".
         /// </summary>
-        public static OperableVariableDeclaration T => new OperableVariableDeclaration(nameof(T));
+        public static OperableVariableDeclaration T => new(nameof(T));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "U".
         /// </summary>
-        public static OperableVariableDeclaration U => new OperableVariableDeclaration(nameof(U));
+        public static OperableVariableDeclaration U => new(nameof(U));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "V".
         /// </summary>
-        public static OperableVariableDeclaration V => new OperableVariableDeclaration(nameof(V));
+        public static OperableVariableDeclaration V => new(nameof(V));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "W".
         /// </summary>
-        public static OperableVariableDeclaration W => new OperableVariableDeclaration(nameof(W));
+        public static OperableVariableDeclaration W => new(nameof(W));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "X".
         /// </summary>
-        public static OperableVariableDeclaration X => new OperableVariableDeclaration(nameof(X));
+        public static OperableVariableDeclaration X => new(nameof(X));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "Y".
         /// </summary>
-        public static OperableVariableDeclaration Y => new OperableVariableDeclaration(nameof(Y));
+        public static OperableVariableDeclaration Y => new(nameof(Y));
 
         /// <summary>
         /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "Z".
         /// </summary>
-        public static OperableVariableDeclaration Z => new OperableVariableDeclaration(nameof(Z));
+        public static OperableVariableDeclaration Z => new(nameof(Z));
 
         #endregion
 
@@ -287,7 +288,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             public object Symbol { get; }
 
-            public static implicit operator OperableConstant(Constant constant) => new OperableConstant(constant.Symbol);
+            public static implicit operator OperableConstant(Constant constant) => new(constant.Symbol);
         }
 
         /// <summary>
@@ -355,7 +356,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             public object Symbol { get; }
 
-            public static implicit operator OperableFunction(Function function) => new OperableFunction(function.Symbol, function.Arguments.Select(a => (OperableTerm)a).ToArray());
+            public static implicit operator OperableFunction(Function function) => new(function.Symbol, function.Arguments.Select(a => (OperableTerm)a).ToArray());
         }
 
         /// <summary>
@@ -407,7 +408,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             public object Symbol { get; }
 
-            public static implicit operator OperablePredicate(Predicate predicate) => new OperablePredicate(predicate.Symbol, predicate.Arguments.Select(a => (OperableTerm)a).ToArray());
+            public static implicit operator OperablePredicate(Predicate predicate) => new(predicate.Symbol, predicate.Arguments.Select(a => (OperableTerm)a).ToArray());
         }
 
         /// <summary>
@@ -461,11 +462,11 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             public object Symbol { get; }
 
-            public static implicit operator VariableDeclaration(OperableVariableDeclaration declaration) => new VariableDeclaration(declaration.Symbol);
+            public static implicit operator VariableDeclaration(OperableVariableDeclaration declaration) => new(declaration.Symbol);
 
-            public static implicit operator OperableVariableDeclaration(VariableDeclaration declaration) => new OperableVariableDeclaration(declaration.Symbol);
+            public static implicit operator OperableVariableDeclaration(VariableDeclaration declaration) => new(declaration.Symbol);
 
-            public static implicit operator OperableVariableReference(OperableVariableDeclaration declaration) => new OperableVariableReference(declaration);
+            public static implicit operator OperableVariableReference(OperableVariableDeclaration declaration) => new(declaration);
         }
 
         public sealed class OperableVariableReference : OperableTerm

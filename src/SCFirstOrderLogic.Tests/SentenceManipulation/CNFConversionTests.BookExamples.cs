@@ -10,8 +10,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
     {
         private static Predicate IsAnimal(Term term) => new(nameof(IsAnimal), term);
         private static Predicate Loves(Term term1, Term term2) => new(nameof(Loves), term1, term2);
-        private static VariableDeclaration X => new(nameof(X));
-        private static VariableDeclaration Y => new(nameof(Y));
 
         private static Function F(Term term) => new("Skm:F", term);
         private static Function G(Term term) => new("Skm:G", term);

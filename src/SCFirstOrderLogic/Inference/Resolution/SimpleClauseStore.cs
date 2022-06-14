@@ -13,8 +13,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// </summary>
     public class SimpleClauseStore : IKnowledgeBaseClauseStore
     {
-        private readonly ConcurrentBag<CNFClause> clauses = new ConcurrentBag<CNFClause>();
-        private readonly SemaphoreSlim addLock = new SemaphoreSlim(1);
+        private readonly ConcurrentBag<CNFClause> clauses = new();
+        private readonly SemaphoreSlim addLock = new(1);
 
         /// <inheritdoc />
         public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
@@ -78,7 +78,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private class QueryClauseStore : IQueryClauseStore
         {
             private readonly ConcurrentBag<CNFClause> clauses;
-            private readonly SemaphoreSlim addLock = new SemaphoreSlim(1);
+            private readonly SemaphoreSlim addLock = new(1);
 
             public QueryClauseStore(IEnumerable<CNFClause> clauses) => this.clauses = new ConcurrentBag<CNFClause>(clauses);
 

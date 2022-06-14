@@ -34,7 +34,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// we'll be wanting to deal with CNF - but the "raw" sentence tree structure still has value.. This conversion
         /// operator helps, but there's almost certainly more that could be done.
         /// </remarks>
-        public static implicit operator CNFSentence(Sentence sentence) => new CNFSentence(sentence);
+        public static implicit operator CNFSentence(Sentence sentence) => new(sentence);
 
         /// <summary>
         /// Sentence "Transformation" that constructs a set of <see cref="CNFClause"/> objects from a <see cref="Sentence"/> in CNF.

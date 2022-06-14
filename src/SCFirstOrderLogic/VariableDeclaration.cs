@@ -48,10 +48,10 @@ namespace SCFirstOrderLogic
         public object Symbol { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is VariableDeclaration otherVariableDeclaration && Equals(otherVariableDeclaration);
+        public override bool Equals(object? obj) => obj is VariableDeclaration otherVariableDeclaration && Equals(otherVariableDeclaration);
 
         /// <inheritdoc />
-        public bool Equals(VariableDeclaration other) => Symbol.Equals(other.Symbol);
+        public bool Equals(VariableDeclaration? other) => other != null && Symbol.Equals(other.Symbol);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Symbol);
@@ -60,6 +60,6 @@ namespace SCFirstOrderLogic
         /// Defines the implicit conversion operator from a variable declaration to a reference.
         /// </summary>
         /// <param name="declaration">The declaration to convert.</param>
-        public static implicit operator VariableReference(VariableDeclaration declaration) => new VariableReference(declaration);
+        public static implicit operator VariableReference(VariableDeclaration declaration) => new(declaration);
     }
 }

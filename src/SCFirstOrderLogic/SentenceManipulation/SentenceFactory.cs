@@ -144,132 +144,132 @@
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "A".
         /// </summary>
-        public static VariableDeclaration A => new VariableDeclaration(nameof(A));
+        public static VariableDeclaration A => new(nameof(A));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "B".
         /// </summary>
-        public static VariableDeclaration B => new VariableDeclaration(nameof(B));
+        public static VariableDeclaration B => new(nameof(B));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "C".
         /// </summary>
-        public static VariableDeclaration C => new VariableDeclaration(nameof(C));
+        public static VariableDeclaration C => new(nameof(C));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "D".
         /// </summary>
-        public static VariableDeclaration D => new VariableDeclaration(nameof(D));
+        public static VariableDeclaration D => new(nameof(D));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "E".
         /// </summary>
-        public static VariableDeclaration E => new VariableDeclaration(nameof(E));
+        public static VariableDeclaration E => new(nameof(E));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "F".
         /// </summary>
-        public static VariableDeclaration F => new VariableDeclaration(nameof(F));
+        public static VariableDeclaration F => new(nameof(F));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "G".
         /// </summary>
-        public static VariableDeclaration G => new VariableDeclaration(nameof(G));
+        public static VariableDeclaration G => new(nameof(G));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "H".
         /// </summary>
-        public static VariableDeclaration H => new VariableDeclaration(nameof(H));
+        public static VariableDeclaration H => new(nameof(H));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "I".
         /// </summary>
-        public static VariableDeclaration I => new VariableDeclaration(nameof(I));
+        public static VariableDeclaration I => new(nameof(I));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "J".
         /// </summary>
-        public static VariableDeclaration J => new VariableDeclaration(nameof(J));
+        public static VariableDeclaration J => new(nameof(J));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "K".
         /// </summary>
-        public static VariableDeclaration K => new VariableDeclaration(nameof(K));
+        public static VariableDeclaration K => new(nameof(K));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "L".
         /// </summary>
-        public static VariableDeclaration L => new VariableDeclaration(nameof(L));
+        public static VariableDeclaration L => new(nameof(L));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "M".
         /// </summary>
-        public static VariableDeclaration M => new VariableDeclaration(nameof(M));
+        public static VariableDeclaration M => new(nameof(M));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "N".
         /// </summary>
-        public static VariableDeclaration N => new VariableDeclaration(nameof(N));
+        public static VariableDeclaration N => new(nameof(N));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "O".
         /// </summary>
-        public static VariableDeclaration O => new VariableDeclaration(nameof(O));
+        public static VariableDeclaration O => new(nameof(O));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "P".
         /// </summary>
-        public static VariableDeclaration P => new VariableDeclaration(nameof(P));
+        public static VariableDeclaration P => new(nameof(P));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "Q".
         /// </summary>
-        public static VariableDeclaration Q => new VariableDeclaration(nameof(Q));
+        public static VariableDeclaration Q => new(nameof(Q));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "R".
         /// </summary>
-        public static VariableDeclaration R => new VariableDeclaration(nameof(R));
+        public static VariableDeclaration R => new(nameof(R));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "S".
         /// </summary>
-        public static VariableDeclaration S => new VariableDeclaration(nameof(S));
+        public static VariableDeclaration S => new(nameof(S));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "T".
         /// </summary>
-        public static VariableDeclaration T => new VariableDeclaration(nameof(T));
+        public static VariableDeclaration T => new(nameof(T));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "U".
         /// </summary>
-        public static VariableDeclaration U => new VariableDeclaration(nameof(U));
+        public static VariableDeclaration U => new(nameof(U));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "V".
         /// </summary>
-        public static VariableDeclaration V => new VariableDeclaration(nameof(V));
+        public static VariableDeclaration V => new(nameof(V));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "W".
         /// </summary>
-        public static VariableDeclaration W => new VariableDeclaration(nameof(W));
+        public static VariableDeclaration W => new(nameof(W));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "X".
         /// </summary>
-        public static VariableDeclaration X => new VariableDeclaration(nameof(X));
+        public static VariableDeclaration X => new(nameof(X));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "Y".
         /// </summary>
-        public static VariableDeclaration Y => new VariableDeclaration(nameof(Y));
+        public static VariableDeclaration Y => new(nameof(Y));
 
         /// <summary>
         /// Gets a new <see cref="VariableDeclaration"/> for a variable with the symbol "Z".
         /// </summary>
-        public static VariableDeclaration Z => new VariableDeclaration(nameof(Z));
+        public static VariableDeclaration Z => new(nameof(Z));
 
         #endregion
     }

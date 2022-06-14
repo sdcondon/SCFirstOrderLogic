@@ -47,7 +47,7 @@ namespace SCFirstOrderLogic.Inference
         /// <inheritdoc/>
         public async Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
-            await innerKnowledgeBase.TellAsync(sentence);
+            await innerKnowledgeBase.TellAsync(sentence, cancellationToken);
             predicateAndFunctionEqualityAxiomiser.ApplyTo(sentence);
         }
 
@@ -60,8 +60,8 @@ namespace SCFirstOrderLogic.Inference
         private class PredicateAndFunctionEqualityAxiomiser : SentenceTransformation
         {
             private readonly IKnowledgeBase innerKnowledgeBase;
-            private readonly HashSet<object> knownPredicateSymbols = new HashSet<object>();
-            private readonly HashSet<object> knownFunctionSymbols = new HashSet<object>();
+            private readonly HashSet<object> knownPredicateSymbols = new();
+            private readonly HashSet<object> knownFunctionSymbols = new();
 
             public PredicateAndFunctionEqualityAxiomiser(IKnowledgeBase innerKnowledgeBase)
             {

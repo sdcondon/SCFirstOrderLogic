@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SCFirstOrderLogic.SentenceManipulation;
+using System;
 
 namespace SCFirstOrderLogic
 {
@@ -26,7 +27,13 @@ namespace SCFirstOrderLogic
         public Sentence Right { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is Conjunction otherConjunction && Left.Equals(otherConjunction.Left) && Right.Equals(otherConjunction.Right);
+        public override void Accept(ISentenceVisitor visitor) => visitor.Visit(this);
+
+        /// <inheritdoc />
+        public override void Accept<T>(ISentenceVisitor<T> visitor, ref T state) => visitor.Visit(this, ref state);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is Conjunction otherConjunction && Left.Equals(otherConjunction.Left) && Right.Equals(otherConjunction.Right);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Left, Right);

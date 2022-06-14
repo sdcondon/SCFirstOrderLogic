@@ -24,9 +24,9 @@ namespace SCFirstOrderLogic.LanguageIntegration
 
         static SentenceFactory()
         {
-            IfMethod = typeof(Operators).GetMethod(nameof(Operators.If));
+            IfMethod = typeof(Operators).GetMethod(nameof(Operators.If)) ?? throw new NotSupportedException("Couldn't find 'If' method");
 
-            IffMethod = typeof(Operators).GetMethod(nameof(Operators.Iff));
+            IffMethod = typeof(Operators).GetMethod(nameof(Operators.Iff)) ?? throw new NotSupportedException("Couldn't find 'Iff' method");
 
             AnyMethod = typeof(Enumerable).GetMethod(
                 nameof(Enumerable.Any),
@@ -34,37 +34,41 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 {
                     typeof(IEnumerable<>).MakeGenericType(Type.MakeGenericMethodParameter(0)),
                     typeof(Func<,>).MakeGenericType(Type.MakeGenericMethodParameter(0), typeof(bool))
-                });
+                }) ?? throw new NotSupportedException("Couldn't find 'Any' method");
+
             ShorthandAnyMethod2 = typeof(IEnumerableExtensions).GetMethod(
                 nameof(IEnumerableExtensions.All),
                 new[]
                 {
                     typeof(IEnumerable<>).MakeGenericType(Type.MakeGenericMethodParameter(0)),
                     typeof(Func<,,>).MakeGenericType(Type.MakeGenericMethodParameter(0), Type.MakeGenericMethodParameter(0), typeof(bool))
-                });
+                }) ?? throw new NotSupportedException("Couldn't find 2-param 'Any' method");
+
             ShorthandAnyMethod3 = typeof(IEnumerableExtensions).GetMethod(
                 nameof(IEnumerableExtensions.All),
                 new[]
                 {
                     typeof(IEnumerable<>).MakeGenericType(Type.MakeGenericMethodParameter(0)),
                     typeof(Func<,,,>).MakeGenericType(Type.MakeGenericMethodParameter(0), Type.MakeGenericMethodParameter(0), Type.MakeGenericMethodParameter(0), typeof(bool))
-                });
+                }) ?? throw new NotSupportedException("Couldn't find 3-param 'Any' method");
 
-            AllMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.All));
+            AllMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.All)) ?? throw new Exception("Couldn't find 'All' method");
+
             ShorthandAllMethod2 = typeof(IEnumerableExtensions).GetMethod(
                 nameof(IEnumerableExtensions.All),
                 new[]
                 {
                     typeof(IEnumerable<>).MakeGenericType(Type.MakeGenericMethodParameter(0)),
                     typeof(Func<,,>).MakeGenericType(Type.MakeGenericMethodParameter(0), Type.MakeGenericMethodParameter(0), typeof(bool))
-                });
+                }) ?? throw new NotSupportedException("Couldn't find 2-param 'All' method");
+
             ShorthandAllMethod3 = typeof(IEnumerableExtensions).GetMethod(
                 nameof(IEnumerableExtensions.All),
                 new[]
                 {
                     typeof(IEnumerable<>).MakeGenericType(Type.MakeGenericMethodParameter(0)),
                     typeof(Func<,,,>).MakeGenericType(Type.MakeGenericMethodParameter(0), Type.MakeGenericMethodParameter(0), Type.MakeGenericMethodParameter(0), typeof(bool))
-                });
+                }) ?? throw new NotSupportedException("Couldn't find 3-param 'All' method");
         }
 
         /// <summary>
@@ -78,7 +82,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         {
             if (!TryCreate<TElement>(lambda, out var sentence))
             {
-                throw new ArgumentException("Expression is not convertible to a sentence of first order logic", nameof(sentence));
+                throw new ArgumentException("Expression is not convertible to a sentence of first order logic", nameof(lambda));
             }
 
             return sentence;
@@ -95,7 +99,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         {
             if (!TryCreate<TDomain, TElement>(lambda, out var sentence))
             {
-                throw new ArgumentException("Expression is not convertible to a sentence of first order logic", nameof(sentence));
+                throw new ArgumentException("Expression is not convertible to a sentence of first order logic", nameof(lambda));
             }
 
             return sentence;
@@ -176,14 +180,14 @@ namespace SCFirstOrderLogic.LanguageIntegration
             if (typeof(TElement).IsAssignableFrom(expression.Type)) // Constants must be elements of the domain
             {
                 if (expression is MemberExpression memberExpr
-                    && typeof(TDomain).IsAssignableFrom(memberExpr.Expression.Type)) // BUG-MINOR: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
+                    && typeof(TDomain).IsAssignableFrom(memberExpr.Expression?.Type)) // BUG-MINOR: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                 {
                     // TElement-valued property access of the domain is interpreted as a constant.
                     term = new Constant(new MemberConstantSymbol(memberExpr.Member));
                     return true;
                 }
                 else if (expression is MethodCallExpression methodCallExpr
-                    && typeof(TDomain).IsAssignableFrom(methodCallExpr.Object.Type) // BUG-MINOR: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
+                    && typeof(TDomain).IsAssignableFrom(methodCallExpr.Object?.Type) // BUG-MINOR: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                     && methodCallExpr.Arguments.Count == 0)
                 {
                     // TElement-valued parameterless method call of the domain is interpreted as a constant.
@@ -533,7 +537,8 @@ namespace SCFirstOrderLogic.LanguageIntegration
             where TDomain : IEnumerable<TElement>
         {
             if (expression is ParameterExpression parameterExpr
-                && typeof(TElement).IsAssignableFrom(parameterExpr.Type))
+                && typeof(TElement).IsAssignableFrom(parameterExpr.Type)
+                && parameterExpr.Name != null)
             {
                 variableDeclaration = new VariableDeclaration(parameterExpr.Name);
                 return true;
@@ -547,7 +552,8 @@ namespace SCFirstOrderLogic.LanguageIntegration
             where TDomain : IEnumerable<TElement>
         {
             if (expression is ParameterExpression parameterExpr
-                && typeof(TElement).IsAssignableFrom(parameterExpr.Type))
+                && typeof(TElement).IsAssignableFrom(parameterExpr.Type)
+                && parameterExpr.Name != null)
             {
                 // NB: doesn't refer to a singular variable declaration object - but since equality is correctly implemented, not a huge deal. Maybe revisit later?
                 term = new VariableReference(new VariableDeclaration(parameterExpr.Name));

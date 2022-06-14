@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SCFirstOrderLogic.SentenceManipulation;
+using System;
 
 namespace SCFirstOrderLogic
 {
@@ -33,7 +34,13 @@ namespace SCFirstOrderLogic
         public override bool IsGroundTerm => false;
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override void Accept(ITermVisitor visitor) => visitor.Visit(this);
+
+        /// <inheritdoc />
+        public override void Accept<T>(ITermVisitor<T> visitor, ref T state) => visitor.Visit(this, ref state);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
         {
             return obj is VariableReference otherVariable && Declaration.Equals(otherVariable.Declaration); 
         }

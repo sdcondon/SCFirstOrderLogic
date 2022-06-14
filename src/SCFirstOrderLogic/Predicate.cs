@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SCFirstOrderLogic.SentenceManipulation;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -79,7 +80,13 @@ namespace SCFirstOrderLogic
         public object Symbol { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override void Accept(ISentenceVisitor visitor) => visitor.Visit(this);
+
+        /// <inheritdoc />
+        public override void Accept<T>(ISentenceVisitor<T> visitor, ref T state) => visitor.Visit(this, ref state);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
         {
             if (!(obj is Predicate otherPredicate)
                 || !otherPredicate.Symbol.Equals(Symbol)

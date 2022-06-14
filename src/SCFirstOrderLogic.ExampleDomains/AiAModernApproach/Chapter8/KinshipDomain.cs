@@ -52,28 +52,28 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8
         }.AsReadOnly();
 
         //// Unary predicates:
-        public static Predicate IsMale(Term subject) => new Predicate(nameof(IsMale), subject);
-        public static Predicate IsFemale(Term subject) => new Predicate(nameof(IsFemale), subject);
+        public static Predicate IsMale(Term subject) => new(nameof(IsMale), subject);
+        public static Predicate IsFemale(Term subject) => new(nameof(IsFemale), subject);
 
         //// Binary predicates:
-        public static Predicate IsParent(Term subject, Term @object) => new Predicate(nameof(IsParent), subject, @object);
-        public static Predicate IsSibling(Term subject, Term @object) => new Predicate(nameof(IsSibling), subject, @object);
-        public static Predicate IsBrother(Term subject, Term @object) => new Predicate(nameof(IsBrother), subject, @object);
-        public static Predicate IsSister(Term subject, Term @object) => new Predicate(nameof(IsSister), subject, @object);
-        public static Predicate IsChild(Term subject, Term @object) => new Predicate(nameof(IsChild), subject, @object);
-        public static Predicate IsDaughter(Term subject, Term @object) => new Predicate(nameof(IsDaughter), subject, @object);
-        public static Predicate IsSon(Term subject, Term @object) => new Predicate(nameof(IsSon), subject, @object);
-        public static Predicate IsSpouse(Term subject, Term @object) => new Predicate(nameof(IsSpouse), subject, @object);
-        public static Predicate IsWife(Term subject, Term @object) => new Predicate(nameof(IsWife), subject, @object);
-        public static Predicate IsHusband(Term subject, Term @object) => new Predicate(nameof(IsHusband), subject, @object);
-        public static Predicate IsGrandparent(Term subject, Term @object) => new Predicate(nameof(IsGrandparent), subject, @object);
-        public static Predicate IsGrandchild(Term subject, Term @object) => new Predicate(nameof(IsGrandchild), subject, @object);
-        public static Predicate IsCousin(Term subject, Term @object) => new Predicate(nameof(IsCousin), subject, @object);
-        public static Predicate IsAunt(Term subject, Term @object) => new Predicate(nameof(IsAunt), subject, @object);
-        public static Predicate IsUncle(Term subject, Term @object) => new Predicate(nameof(IsUncle), subject, @object);
+        public static Predicate IsParent(Term subject, Term @object) => new(nameof(IsParent), subject, @object);
+        public static Predicate IsSibling(Term subject, Term @object) => new(nameof(IsSibling), subject, @object);
+        public static Predicate IsBrother(Term subject, Term @object) => new(nameof(IsBrother), subject, @object);
+        public static Predicate IsSister(Term subject, Term @object) => new(nameof(IsSister), subject, @object);
+        public static Predicate IsChild(Term subject, Term @object) => new(nameof(IsChild), subject, @object);
+        public static Predicate IsDaughter(Term subject, Term @object) => new(nameof(IsDaughter), subject, @object);
+        public static Predicate IsSon(Term subject, Term @object) => new(nameof(IsSon), subject, @object);
+        public static Predicate IsSpouse(Term subject, Term @object) => new(nameof(IsSpouse), subject, @object);
+        public static Predicate IsWife(Term subject, Term @object) => new(nameof(IsWife), subject, @object);
+        public static Predicate IsHusband(Term subject, Term @object) => new(nameof(IsHusband), subject, @object);
+        public static Predicate IsGrandparent(Term subject, Term @object) => new(nameof(IsGrandparent), subject, @object);
+        public static Predicate IsGrandchild(Term subject, Term @object) => new(nameof(IsGrandchild), subject, @object);
+        public static Predicate IsCousin(Term subject, Term @object) => new(nameof(IsCousin), subject, @object);
+        public static Predicate IsAunt(Term subject, Term @object) => new(nameof(IsAunt), subject, @object);
+        public static Predicate IsUncle(Term subject, Term @object) => new(nameof(IsUncle), subject, @object);
 
         //// Unary functions:
-        public static Function Mother(Term t) => new Function(nameof(Mother), t);
-        public static Function Father(Term t) => new Function(nameof(Father), t);
+        public static Function Mother(Term t) => new(nameof(Mother), t);
+        public static Function Father(Term t) => new(nameof(Father), t);
     }
 }

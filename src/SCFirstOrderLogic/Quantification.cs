@@ -20,7 +20,7 @@ namespace SCFirstOrderLogic
         public Sentence Sentence { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is Quantification quantification
                 && Variable.Equals(quantification.Variable)

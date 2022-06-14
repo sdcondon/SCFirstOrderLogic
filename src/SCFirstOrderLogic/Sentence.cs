@@ -1,4 +1,5 @@
 ﻿using SCFirstOrderLogic.SentenceFormatting;
+using SCFirstOrderLogic.SentenceManipulation;
 
 namespace SCFirstOrderLogic
 {
@@ -18,10 +19,19 @@ namespace SCFirstOrderLogic
     /// </summary>
     public abstract class Sentence
     {
-        // TODO: proper visitor pattern probably useful for transformations and others..
-        ////public abstract void Accept(ISentenceVisitor visitor);
-        // and perhaps even this, to avoid performance impact of return value accumulation:
-        ////public abstract T Accept<T>(ISentenceVisitor<T> visitor);
+        /// <summary>
+        /// Accepts a <see cref="ISentenceVisitor"/> instance.
+        /// </summary>
+        /// <param name="visitor">The visitor that is visiting the sentence.</param>
+        public abstract void Accept(ISentenceVisitor visitor);
+
+        /// <summary>
+        /// Accepts a <see cref="ISentenceVisitor{T}"/> instance.
+        /// </summary>
+        /// <param name="visitor">The visitor that is visiting the sentence.</param>
+        /// <param name="state">A reference to the state that the visitor is working with.</param>
+        /// <typeparam name="T">The type of state that the visitor works with.</typeparam>
+        public abstract void Accept<T>(ISentenceVisitor<T> visitor, ref T state);
 
         /// <summary>
         /// Returns a string that represents the current object.

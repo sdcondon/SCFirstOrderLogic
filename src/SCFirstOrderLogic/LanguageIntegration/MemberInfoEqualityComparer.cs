@@ -19,7 +19,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         public static MemberInfoEqualityComparer Instance { get; } = new MemberInfoEqualityComparer();
 
         /// <inheritdoc />
-        public bool Equals(MemberInfo x, MemberInfo y) => x.Module == y.Module && x.MetadataToken == y.MetadataToken;
+        public bool Equals(MemberInfo? x, MemberInfo? y) => x?.Module == y?.Module && x?.MetadataToken == y?.MetadataToken;
 
         /// <inheritdoc />
         public int GetHashCode(MemberInfo obj) => HashCode.Combine(obj.Module, obj.MetadataToken);

@@ -3,17 +3,7 @@ using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation
 {
-    /// <summary>
-    /// Implementation of <see cref="SentenceTransformation"/> that converts sentences to conjunctive normal form.
-    /// <para/>
-    /// TODO: Well.. It's arguable whether the output could be considered *completely* normalised, since it *won't* normalise the
-    /// order of evaluation of the clauses (i.e. the conjunctions found at the root of the output sentence),
-    /// or the literals within those clauses (i.e. disjunctions found below those top-level conjunctions).
-    /// The <see cref="CNFSentence"/> class does that. It is because of this (and because the half-job done by this class is of
-    /// limited use on its own) that this class should probably be internal - or not a transformation in that its output should
-    /// be the CNFSentence, not the transformed Sentence.
-    /// </summary>
-    public class CNFConversion : SentenceTransformation
+    public class CNFConversion_IsSentenceVisitor
     {
         private static readonly VariableStandardisation variableStandardisation = new();
         private static readonly ImplicationElimination implicationElimination = new();
@@ -25,10 +15,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Gets a singleton instance of the <see cref="CNFConversion"/> class.
         /// </summary>
-        public static CNFConversion Instance => new();
+        public static CNFConversion_IsSentenceVisitor Instance => new();
 
         /// <inheritdoc />
-        public override Sentence ApplyTo(Sentence sentence)
+        public Sentence ApplyTo(Sentence sentence)
         {
             // We do variable standardisation first, before altering the sentence in any
             // other way, so that we can easily store the context of the original variable in the new symbol. This
@@ -42,11 +32,11 @@ namespace SCFirstOrderLogic.SentenceManipulation
             // It might be possible to do some of these conversions at the same time, but for now
             // at least we do them sequentially - and in so doing favour maintainability over performance.
             // Perhaps revisit this later (but given that the main purpose of this library is learning, probably not).
-            sentence = implicationElimination.ApplyTo(sentence);
-            sentence = nnfConversion.ApplyTo(sentence);
+            sentence.Accept(implicationElimination, ref sentence);
+            sentence.Accept(nnfConversion, ref sentence);
             sentence = skolemisation.ApplyTo(sentence);
-            sentence = universalQuantifierElimination.ApplyTo(sentence);
-            sentence = disjunctionDistribution.ApplyTo(sentence);
+            sentence.Accept(universalQuantifierElimination, ref sentence);
+            sentence.Accept(disjunctionDistribution, ref sentence);
 
             return sentence;
         }
@@ -56,17 +46,19 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <para/>
         /// Public to allow callers to mess about with the normalisation process.
         /// </summary>
-        public class VariableStandardisation : SentenceTransformation
+        public class VariableStandardisation
         {
             /// <inheritdoc />
-            public override Sentence ApplyTo(Sentence sentence)
+            public Sentence ApplyTo(Sentence sentence)
             {
-                return new ScopedVariableStandardisation(sentence).ApplyTo(sentence);
+                Sentence transormedSentence = null;
+                sentence.Accept(new ScopedVariableStandardisation(sentence), ref transormedSentence);
+                return transormedSentence;
             }
 
             // Private inner class to hide necessarily short-lived object away from callers.
             // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
-            private class ScopedVariableStandardisation : SentenceTransformation
+            private class ScopedVariableStandardisation : SentenceTransformation_IsSentenceVisitor
             {
                 private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new();
                 private readonly Sentence rootSentence;
@@ -76,17 +68,25 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     this.rootSentence = rootSentence;
                 }
 
-                protected override Sentence ApplyTo(Quantification quantification)
+                public override void Visit(ExistentialQuantification existentialQuantification, ref Sentence transformedSentence)
                 {
-                    // Should we throw if the variable being standardised is already standardised? Or return it unchanged?
-                    // Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-                    mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification, rootSentence));
-                    return base.ApplyTo(quantification);
+                    /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
+                    /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
+                    mapping[existentialQuantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(existentialQuantification, rootSentence));
+                    base.Visit(existentialQuantification, ref transformedSentence);
                 }
 
-                protected override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
+                public override void Visit(UniversalQuantification universalQuantification, ref Sentence transformedSentence)
                 {
-                    return mapping[variableDeclaration];
+                    /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
+                    /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
+                    mapping[universalQuantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(universalQuantification, rootSentence));
+                    base.Visit(universalQuantification, ref transformedSentence);
+                }
+
+                public override void Visit(VariableDeclaration variableDeclaration, ref VariableDeclaration transformedSentence)
+                {
+                    transformedSentence = mapping[variableDeclaration];
                 }
             }
         }
@@ -94,30 +94,30 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Transformation that eliminates implications by replacing P ⇒ Q with ¬P ∨ Q and P ⇔ Q with (¬P ∨ Q) ∧ (P ∨ ¬Q)
         /// </summary>
-        public class ImplicationElimination : SentenceTransformation
+        public class ImplicationElimination : SentenceTransformation_IsSentenceVisitor
         {
             /// <inheritdoc />
-            protected override Sentence ApplyTo(Implication implication)
+            public override void Visit(Implication implication, ref Sentence transformedSentence)
             {
                 // Convert  P ⇒ Q to ¬P ∨ Q 
-                return ApplyTo(new Disjunction(
-                    new Negation(implication.Antecedent),
-                    implication.Consequent));
+                var replacement = new Disjunction(new Negation(implication.Antecedent), implication.Consequent);
+                replacement.Accept(this, ref transformedSentence);
             }
 
             /// <inheritdoc />
-            protected override Sentence ApplyTo(Equivalence equivalence)
+            public override void Visit(Equivalence equivalence, ref Sentence transformedSentence)
             {
                 // Convert P ⇔ Q to (¬P ∨ Q) ∧ (P ∨ ¬Q)
-                return ApplyTo(new Conjunction(
+                var replacement = new Conjunction(
                     new Disjunction(new Negation(equivalence.Left), equivalence.Right),
-                    new Disjunction(equivalence.Left, new Negation(equivalence.Right))));
+                    new Disjunction(equivalence.Left, new Negation(equivalence.Right)));
+                replacement.Accept(this, ref transformedSentence);
             }
 
-            protected override Sentence ApplyTo(Predicate predicate)
+            public override void Visit(Predicate predicate, ref Sentence transformedSentence)
             {
                 // There can't be any more implications once we've hit an atomic sentence, so just return.
-                return predicate;
+                transformedSentence = predicate;
             }
         }
 
@@ -125,54 +125,58 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Transformation that converts to Negation Normal Form by moving negations as far as possible from the root of the sentence tree.
         /// That is, directly applied to predicates.
         /// </summary>
-        public class NNFConversion : SentenceTransformation
+        public class NNFConversion : SentenceTransformation_IsSentenceVisitor
         {
             /// <inheritdoc />
-            protected override Sentence ApplyTo(Negation negation)
+            public override void Visit(Negation negation, ref Sentence transformedSentence)
             {
                 if (negation.Sentence is Negation n)
                 {
                     // Eliminate double negative: ¬(¬P) ≡ P
-                    return ApplyTo(n.Sentence);
+                    n.Sentence.Accept(this, ref transformedSentence);
                 }
                 else if (negation.Sentence is Conjunction c)
                 {
                     // Apply de Morgan: ¬(P ∧ Q) ≡ (¬P ∨ ¬Q)
-                    return ApplyTo(new Disjunction(
+                    var replacement = new Disjunction(
                         new Negation(c.Left),
-                        new Negation(c.Right)));
+                        new Negation(c.Right));
+                    replacement.Accept(this, ref transformedSentence);
                 }
                 else if (negation.Sentence is Disjunction d)
                 {
                     // Apply de Morgan: ¬(P ∨ Q) ≡ (¬P ∧ ¬Q)
-                    return ApplyTo(new Conjunction(
+                    var replacement = new Conjunction(
                         new Negation(d.Left),
-                        new Negation(d.Right)));
+                        new Negation(d.Right));
+                    replacement.Accept(this, ref transformedSentence);
                 }
                 else if (negation.Sentence is UniversalQuantification u)
                 {
                     // Apply ¬∀x, p ≡ ∃x, ¬p
-                    return ApplyTo(new ExistentialQuantification(
+                    var replacement = new ExistentialQuantification(
                         u.Variable,
-                        new Negation(u.Sentence)));
+                        new Negation(u.Sentence));
+                    replacement.Accept(this, ref transformedSentence);
                 }
                 else if (negation.Sentence is ExistentialQuantification e)
                 {
                     // Apply ¬∃x, p ≡ ∀x, ¬p
-                    return ApplyTo(new UniversalQuantification(
+                    var replacement = new UniversalQuantification(
                         e.Variable,
-                        new Negation(e.Sentence)));
+                        new Negation(e.Sentence));
+                    replacement.Accept(this, ref transformedSentence);
                 }
                 else
                 {
-                    return base.ApplyTo(negation);
+                    base.Visit(negation, ref transformedSentence);
                 }
             }
 
-            protected override Sentence ApplyTo(Predicate predicate)
+            public override void Visit(Predicate predicate, ref Sentence transformedSentence)
             {
                 // There can't be any more negations once we've hit an atomic sentence, so just return.
-                return predicate;
+                transformedSentence = predicate;
             }
         }
 
@@ -180,17 +184,19 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Transformation that eliminate existential quantification via the process of "Skolemisation". Replaces all existentially declared variables
         /// with a generated "Skolem" function that acts on all universally declared variables in scope when the existential variable was declared.
         /// </summary>
-        public class Skolemisation : SentenceTransformation
+        public class Skolemisation
         {
             /// <inheritdoc />
-            public override Sentence ApplyTo(Sentence sentence)
+            public Sentence ApplyTo(Sentence sentence)
             {
-                return new ScopedSkolemisation(sentence, Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>()).ApplyTo(sentence);
+                Sentence transformedSentence = null;
+                sentence.Accept(new ScopedSkolemisation(sentence, Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>()), ref transformedSentence);
+                return transformedSentence;
             }
 
             // Private inner class to hide necessarily short-lived object away from callers.
             // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
-            private class ScopedSkolemisation : SentenceTransformation
+            private class ScopedSkolemisation : SentenceTransformation_IsSentenceVisitor
             {
                 private readonly Sentence rootSentence;
                 private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
@@ -206,31 +212,37 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     this.existentialVariableMap = existentialVariableMap;
                 }
 
-                protected override Sentence ApplyTo(UniversalQuantification universalQuantification)
+                public override void Visit(UniversalQuantification universalQuantification, ref Sentence transformedSentence)
                 {
-                    return new UniversalQuantification(
-                        universalQuantification.Variable,
-                        new ScopedSkolemisation(rootSentence, universalVariablesInScope.Append(universalQuantification.Variable), existentialVariableMap).ApplyTo(universalQuantification.Sentence));
+                    Sentence sentence = null;
+
+                    universalQuantification.Sentence.Accept(new ScopedSkolemisation(
+                        rootSentence,
+                        universalVariablesInScope.Append(universalQuantification.Variable), existentialVariableMap), ref sentence);
+
+                    transformedSentence = new UniversalQuantification(universalQuantification.Variable, sentence);
                 }
 
-                protected override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
+                public override void Visit(ExistentialQuantification existentialQuantification, ref Sentence transformedSentence)
                 {
                     existentialVariableMap[existentialQuantification.Variable] = new Function(
                         new SkolemFunctionSymbol(existentialQuantification, rootSentence),
                         universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
 
-                    return ApplyTo(existentialQuantification.Sentence);
+                    existentialQuantification.Sentence.Accept(this, ref transformedSentence);
                 }
 
-                protected override Term ApplyTo(VariableReference variable)
+                public override void Visit(VariableReference variable, ref Term transformedTerm)
                 {
                     if (existentialVariableMap.TryGetValue(variable.Declaration, out var skolemFunction))
                     {
-                        return skolemFunction;
+                        transformedTerm = skolemFunction;
                     }
-
-                    // NB: if we didn't find it in the map, then its a universally quantified variable - and we leave it alone:
-                    return base.ApplyTo(variable);
+                    else
+                    {
+                        // NB: if we didn't find it in the map, then its a universally quantified variable - and we leave it alone:
+                        base.Visit(variable, ref transformedTerm);
+                    }
                 }
             }
         }
@@ -239,26 +251,26 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Transformation that simply removes all universal quantifications.
         /// All variables in CNF sentences are assumed to be universally quantified.
         /// </summary>
-        public class UniversalQuantifierElimination : SentenceTransformation
+        public class UniversalQuantifierElimination : SentenceTransformation_IsSentenceVisitor
         {
-            protected override Sentence ApplyTo(UniversalQuantification universalQuantification)
+            public override void Visit(UniversalQuantification universalQuantification, ref Sentence transformedSentence)
             {
-                return ApplyTo(universalQuantification.Sentence);
+                universalQuantification.Sentence.Accept(this, ref transformedSentence);
             }
 
-            protected override Sentence ApplyTo(Predicate predicate)
+            public override void Visit(Predicate predicate, ref Sentence transformedSentence)
             {
                 // There can't be any more quantifications once we've hit an atomic sentence, so just return.
-                return predicate;
+                transformedSentence = predicate;
             }
         }
 
         /// <summary>
         /// Transformation that recursively distributes disjunctions over conjunctions.
         /// </summary>
-        public class DisjunctionDistribution : SentenceTransformation
+        public class DisjunctionDistribution : SentenceTransformation_IsSentenceVisitor
         {
-            protected override Sentence ApplyTo(Disjunction disjunction)
+            public override void Visit(Disjunction disjunction, ref Sentence transformedSentence)
             {
                 Sentence sentence;
 
@@ -281,16 +293,17 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 }
                 else
                 {
-                    return base.ApplyTo(disjunction);
+                    base.Visit(disjunction, ref transformedSentence);
+                    return;
                 }
 
-                return ApplyTo(sentence);
+                sentence.Accept(this, ref transformedSentence);
             }
 
-            protected override Sentence ApplyTo(Predicate predicate)
+            public override void Visit(Predicate predicate, ref Sentence transformedSentence)
             {
                 // There can't be any more disjunctions once we've hit an atomic sentence, so just return.
-                return predicate;
+                transformedSentence = predicate;
             }
         }
     }

@@ -63,7 +63,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Constructs and returns a literal that is the negation of this one.
         /// </summary>
         /// <returns>A literal that is the negation of this one.</returns>
-        public CNFLiteral Negate() => new CNFLiteral(Predicate, !IsNegated);
+        public CNFLiteral Negate() => new(Predicate, !IsNegated);
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -77,12 +77,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public override string ToString() => new SentenceFormatter().Print(this);
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is CNFLiteral literal && Equals(literal);
+        public override bool Equals(object? obj) => obj is CNFLiteral literal && Equals(literal);
 
         /// <inheritdoc />
-        public bool Equals(CNFLiteral other)
+        public bool Equals(CNFLiteral? other)
         {
-            return other.Predicate.Equals(Predicate) && other.IsNegated.Equals(IsNegated);
+            return other != null && other.Predicate.Equals(Predicate) && other.IsNegated.Equals(IsNegated);
         }
 
         /// <summary>
@@ -117,6 +117,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="CNFLiteral"/>. NB: This conversion is implicit because it is always valid.
         /// </summary>
         /// <param name="sentence">The predicate to convert.</param>
-        public static implicit operator CNFLiteral(Predicate predicate) => new CNFLiteral(predicate);
+        public static implicit operator CNFLiteral(Predicate predicate) => new(predicate);
     }
 }

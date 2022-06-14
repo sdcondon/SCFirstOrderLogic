@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SCFirstOrderLogic.SentenceManipulation;
+using System;
 
 namespace SCFirstOrderLogic
 {
@@ -43,7 +44,13 @@ namespace SCFirstOrderLogic
         public object Symbol { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is Constant otherConstant && otherConstant.Symbol.Equals(Symbol);
+        public override void Accept(ITermVisitor visitor) => visitor.Visit(this);
+
+        /// <inheritdoc />
+        public override void Accept<T>(ITermVisitor<T> visitor, ref T state) => visitor.Visit(this, ref state);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is Constant otherConstant && otherConstant.Symbol.Equals(Symbol);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Symbol);

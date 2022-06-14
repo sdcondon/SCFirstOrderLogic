@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SCFirstOrderLogic.SentenceManipulation;
+using System;
 
 namespace SCFirstOrderLogic
 {
@@ -26,7 +27,13 @@ namespace SCFirstOrderLogic
         public Sentence Consequent { get; }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is Implication otherImplication
+        public override void Accept(ISentenceVisitor visitor) => visitor.Visit(this);
+
+        /// <inheritdoc />
+        public override void Accept<T>(ISentenceVisitor<T> visitor, ref T state) => visitor.Visit(this, ref state);
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is Implication otherImplication
             && Antecedent.Equals(otherImplication.Antecedent)
             && Consequent.Equals(otherImplication.Consequent);
 

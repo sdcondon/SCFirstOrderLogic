@@ -25,6 +25,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
             // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
             // its a super low-level class and I'd rather err on the side of using the simplest/smallest implementation possible.
             // Note that we order literals - important to justifiably consider the clause "normalised".
+            // BUG: Possible problems when hash code collisions occur. Probably worth a more robust approach at some point - but
+            // clause equality will be checked a LOT during resolution..
             Literals = ctor.Literals.OrderBy(l => l.GetHashCode()).ToArray();
         }
 
@@ -67,7 +69,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Gets a value indicating whether this is a goal clause - that is, whether none of its literals is positive.
         /// </summary>
-        public bool IsGoalClause => Literals.Count(l => l.IsPositive) == 0;
+        public bool IsGoalClause => !Literals.Any(l => l.IsPositive);
 
         /// <summary>
         /// Gets a value indicating whether this is a unit clause - that is, whether it contains exactly one literal.
@@ -91,15 +93,15 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public override string ToString() => new SentenceFormatter().Print(this);
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is CNFClause clause && Equals(clause);
+        public override bool Equals(object? obj) => obj is CNFClause clause && Equals(clause);
 
         /// <inheritdoc />
         /// <remarks>
         /// Clauses that contain exactly the same collection of literals are considered equal.
         /// </remarks>
-        public bool Equals(CNFClause other)
+        public bool Equals(CNFClause? other)
         {
-            if (Literals.Count != other.Literals.Count)
+            if (other == null || Literals.Count != other.Literals.Count)
             {
                 return false;
             }

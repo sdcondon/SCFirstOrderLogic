@@ -1,4 +1,5 @@
 ﻿using SCFirstOrderLogic.SentenceFormatting;
+using SCFirstOrderLogic.SentenceManipulation;
 
 namespace SCFirstOrderLogic
 {
@@ -7,10 +8,19 @@ namespace SCFirstOrderLogic
     /// </summary>
     public abstract class Term
     {
-        // TODO: proper visitor pattern probably useful for transformations and others..
-        ////public abstract void Accept(ISentenceVisitor visitor);
-        // and perhaps even this, to avoid performance impact of return value accumulation:
-        ////public abstract T Accept<T>(ISentenceVisitor<T> visitor);
+        /// <summary>
+        /// Accepts a <see cref="ITermVisitor"/> instance.
+        /// </summary>
+        /// <param name="visitor">The visitor that is visiting the term.</param>
+        public abstract void Accept(ITermVisitor visitor);
+
+        /// <summary>
+        /// Accepts a <see cref="ITermVisitor{T}"/> instance.
+        /// </summary>
+        /// <param name="visitor">The visitor that is visiting the term.</param>
+        /// <param name="state">A reference to the state that the visitor is working with.</param>
+        /// <typeparam name="T">The type of state that the visitor works with.</typeparam>
+        public abstract void Accept<T>(ITermVisitor<T> visitor, ref T state);
 
         /// <summary>
         /// Gets a value indicating whether the term is a ground term - that is, that it contains no variables.
