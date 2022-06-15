@@ -7,9 +7,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Representation of an individual clause (i.e. a disjunction of <see cref="CNFLiteral"/>s) of a first-order logic sentence in conjunctive normal form.
-    /// <para/>
-    /// TODO: for now at least contains no logic for ordering literals (sentences will be explored depth-first and left to right) - and equality is based on there
-    /// being the same literals in the same order. This is because different algorithms may need different things.. May (probably should) be changed..
     /// </summary>
     public class CNFClause : IEquatable<CNFClause>
     {
@@ -23,8 +20,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
             ctor.ApplyTo(sentence);
 
             // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
-            // its a super low-level class and I'd rather err on the side of using the simplest/smallest implementation possible.
-            // Note that we order literals - important to justifiably consider the clause "normalised".
+            // its a super low-level class and I'd rather err on the side of using the smallest & simplest implementation possible.
+            // Note that we order literals - which is important to justifiably consider the clause "normalised".
             // BUG: Possible problems when hash code collisions occur. Probably worth a more robust approach at some point - but
             // clause equality will be checked a LOT during resolution..
             Literals = ctor.Literals.OrderBy(l => l.GetHashCode()).ToArray();

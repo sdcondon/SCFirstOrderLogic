@@ -114,15 +114,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 
         private static bool Occurs(VariableReference variable, Term term)
         {
-            // TODO-PERFORMANCE: this is very low-level code, so need to think about the GC impact when creating a bunch of these..
-            // Caching? Mutability and pooling? Short-lived, so perhaps okay. Test me! E.g. vs just a method, and vs a method in Term class with callbacks.
-            // just a method could look like this:
-            ////return term switch
-            ////{
-            ////    Constant constant => false,
-            ////    VariableReference variableReference => variable.Equals(variableReference),
-            ////    Function function => function.Arguments.Any(a => Occurs(variable, a))
-            ////};
+            // Unlike the real version of this class (that uses a type switch), here we use a SentenceTransformation to carry out the occurs check:
             var occursCheck = new OccursCheck(variable);
             occursCheck.ApplyTo(term);
             return occursCheck.IsFound;

@@ -17,6 +17,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             var cnfSentence = new CNFConversion().ApplyTo(sentence);
             var clauses = new List<CNFClause>();
             new CNFClausesTransformation(clauses).ApplyTo(cnfSentence);
+            // BUG: Potential equality bug on hash code collision..
             Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
         }
 

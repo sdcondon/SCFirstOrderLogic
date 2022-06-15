@@ -20,7 +20,7 @@
         /// <summary>
         /// Visits a <see cref="VariableReference"/> instance.
         /// </summary>
-        /// <param name="term">The variable to visit.</param>
+        /// <param name="term">The variable reference to visit.</param>
         void Visit(VariableReference variable);
     }
 }
