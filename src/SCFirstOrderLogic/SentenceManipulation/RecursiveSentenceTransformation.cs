@@ -11,15 +11,13 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Applies this transformation to a <see cref="Sentence"/> instance.
         /// <para/>
-        /// The default implementation simply uses a pattern-matching switch to invoke the ApplyTo method appropriate to the actual type of the sentence.
-        /// For whatever reason (C# compiler wizardry, no doubt), this is faster than calling <see cref="Sentence.Accept(ISentenceVisitor)"/>.
+        /// The default implementation uses a pattern-matching switch expression to invoke the ApplyTo method appropriate to the actual type of the sentence.
+        /// For whatever reason (compilation wizardry, no doubt), this is faster than calling <see cref="Sentence.Accept(ISentenceVisitor)"/>.
         /// </summary>
         /// <param name="sentence">The sentence to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
         public virtual Sentence ApplyTo(Sentence sentence)
         {
-            // TODO-PERFORMANCE: Using "proper" visitor pattern (i.e. a virtual 'Accept' method on the Sentence & Term classes)
-            // would be (ever so slightly) faster than this - decide if its worth the extra complexity.
             return sentence switch
             {
                 Conjunction conjunction => ApplyTo(conjunction),
@@ -172,7 +170,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             {
                 ExistentialQuantification existentialQuantification => ApplyTo(existentialQuantification),
                 UniversalQuantification universalQuantification => ApplyTo(universalQuantification),
-                _ => throw new ArgumentException($"Unsupported Quantification type '{quantification.GetType()}'")
+                _ => throw new ArgumentException($"Unsupported Quantification type '{quantification.GetType()}'", nameof(quantification))
             };
         }
 
@@ -207,7 +205,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 Constant constant => ApplyTo(constant),
                 VariableReference variable => ApplyTo(variable),
                 Function function => ApplyTo(function),
-                _ => throw new ArgumentException($"Unsupported Term type '{term.GetType()}'")
+                _ => throw new ArgumentException($"Unsupported Term type '{term.GetType()}'", nameof(term))
             };
         }
 

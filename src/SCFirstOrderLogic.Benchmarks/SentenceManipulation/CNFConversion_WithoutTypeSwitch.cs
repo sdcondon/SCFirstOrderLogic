@@ -55,7 +55,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             // Private inner class to hide necessarily short-lived object away from callers.
             // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
-            private class ScopedVariableStandardisation : SentenceTransformation_WithoutTypeSwitch
+            private class ScopedVariableStandardisation : RecursiveSentenceTransformation_WithoutTypeSwitch
             {
                 private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new();
                 private readonly Sentence rootSentence;
@@ -91,7 +91,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Transformation that eliminates implications by replacing P ⇒ Q with ¬P ∨ Q and P ⇔ Q with (¬P ∨ Q) ∧ (P ∨ ¬Q)
         /// </summary>
-        public class ImplicationElimination : SentenceTransformation_WithoutTypeSwitch
+        public class ImplicationElimination : RecursiveSentenceTransformation_WithoutTypeSwitch
         {
             /// <inheritdoc />
             public override Sentence ApplyTo(Implication implication)
@@ -122,7 +122,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Transformation that converts to Negation Normal Form by moving negations as far as possible from the root of the sentence tree.
         /// That is, directly applied to predicates.
         /// </summary>
-        public class NNFConversion : SentenceTransformation_WithoutTypeSwitch
+        public class NNFConversion : RecursiveSentenceTransformation_WithoutTypeSwitch
         {
             /// <inheritdoc />
             public override Sentence ApplyTo(Negation negation)
@@ -191,7 +191,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             // Private inner class to hide necessarily short-lived object away from callers.
             // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
-            private class ScopedSkolemisation : SentenceTransformation_WithoutTypeSwitch
+            private class ScopedSkolemisation : RecursiveSentenceTransformation_WithoutTypeSwitch
             {
                 private readonly Sentence rootSentence;
                 private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
@@ -244,7 +244,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Transformation that simply removes all universal quantifications.
         /// All variables in CNF sentences are assumed to be universally quantified.
         /// </summary>
-        public class UniversalQuantifierElimination : SentenceTransformation_WithoutTypeSwitch
+        public class UniversalQuantifierElimination : RecursiveSentenceTransformation_WithoutTypeSwitch
         {
             public override Sentence ApplyTo(UniversalQuantification universalQuantification)
             {
@@ -261,7 +261,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Transformation that recursively distributes disjunctions over conjunctions.
         /// </summary>
-        public class DisjunctionDistribution : SentenceTransformation_WithoutTypeSwitch
+        public class DisjunctionDistribution : RecursiveSentenceTransformation_WithoutTypeSwitch
         {
             public override Sentence ApplyTo(Disjunction disjunction)
             {
