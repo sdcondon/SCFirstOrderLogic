@@ -50,6 +50,9 @@ namespace SCFirstOrderLogic
         public override void Accept<T>(ITermVisitor<T> visitor, ref T state) => visitor.Visit(this, ref state);
 
         /// <inheritdoc />
+        public override TOut Accept<TOut>(ITermTransformation<TOut> transformation) => transformation.ApplyTo(this);
+
+        /// <inheritdoc />
         public override bool Equals(object? obj) => obj is Constant otherConstant && otherConstant.Symbol.Equals(Symbol);
 
         /// <inheritdoc />

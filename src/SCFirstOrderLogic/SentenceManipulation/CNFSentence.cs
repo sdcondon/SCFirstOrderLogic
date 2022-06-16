@@ -40,7 +40,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Sentence "Transformation" that constructs a set of <see cref="CNFClause"/> objects from a <see cref="Sentence"/> in CNF.
         /// </summary>
-        private class CNFClausesTransformation : SentenceTransformation
+        private class CNFClausesTransformation : RecursiveSentenceTransformation
         {
             private readonly ICollection<CNFClause> clauses;
 

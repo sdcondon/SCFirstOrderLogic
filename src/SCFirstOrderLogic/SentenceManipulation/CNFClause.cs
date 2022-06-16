@@ -129,7 +129,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             return hash.ToHashCode();
         }
 
-        private class ClauseConstructor : SentenceTransformation
+        private class ClauseConstructor : RecursiveSentenceTransformation
         {
             public override Sentence ApplyTo(Sentence sentence)
             {

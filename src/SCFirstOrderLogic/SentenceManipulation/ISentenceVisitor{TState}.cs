@@ -4,8 +4,7 @@
     /// Interface for visitors of <see cref="Sentence"/> instances.
     /// <para/>
     /// NB: This interface (in comparison to the non-generic <see cref="ISentenceVisitor"/>) is specifically for visitors that facilitate
-    /// state accumulation outside of the visitor instance itself. This is potentially useful in low-level code for GC pressure minimisation
-    /// (because it allows for visitor re-use with different states - that can be value types).
+    /// state accumulation outside of the visitor instance itself.
     /// </summary>
     /// <typeparam name="TState">The type of state that this visitor works with.</typeparam>
     public interface ISentenceVisitor<TState>

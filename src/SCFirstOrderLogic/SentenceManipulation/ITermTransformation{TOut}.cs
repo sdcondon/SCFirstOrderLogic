@@ -1,30 +1,29 @@
 ﻿namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Interface for visitors of <see cref="Term"/> instances.
+    /// Interface for transformations of <see cref="Term"/> instances.
     /// <para/>
-    /// NB: This interface (in comparison to the non-generic <see cref="ITermVisitor"/>) is specifically for visitors that facilitate
-    /// state accumulation outside of the visitor instance itself.
+    /// NB: Essentially an interface for visitors with a return value. Nearly called it ITermQuery, but "query" already means something in FoL..
     /// </summary>
-    /// <typeparam name="TState">The type of state that this visitor works with.</typeparam>
-    public interface ITermVisitor<TState>
+    /// <typeparam name="TOut">The type that the transformation transforms the sentence to.</typeparam>
+    public interface ITermTransformation<out TOut>
     {
         /// <summary>
         /// Visits a <see cref="Constant"/> instance.
         /// </summary>
         /// <param name="term">The constant to visit.</param>
-        void Visit(Constant constant, ref TState state);
+        TOut ApplyTo(Constant constant);
 
         /// <summary>
         /// Visits a <see cref="Function"/> instance.
         /// </summary>
         /// <param name="function">The function to visit.</param>
-        void Visit(Function function, ref TState state);
+        TOut ApplyTo(Function function);
 
         /// <summary>
         /// Visits a <see cref="VariableReference"/> instance.
         /// </summary>
         /// <param name="term">The variable reference to visit.</param>
-        void Visit(VariableReference variable, ref TState state);
+        TOut ApplyTo(VariableReference variable);
     }
 }

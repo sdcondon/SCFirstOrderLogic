@@ -258,7 +258,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 OperableNegation negation => new Negation(negation.Sentence),
                 OperablePredicate predicate => new Predicate(predicate.Symbol, predicate.Arguments.Select(a => (Term)a).ToArray()),
                 OperableUniversalQuantification universalQuantification => new UniversalQuantification(universalQuantification.Variable, universalQuantification.Sentence),
-                _ => throw new ArgumentException()
+                _ => throw new ArgumentException($"Unsupported OperableSentence type '{sentence.GetType()}'", nameof(sentence))
             };
         }
 

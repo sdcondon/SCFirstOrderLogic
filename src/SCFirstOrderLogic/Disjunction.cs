@@ -33,6 +33,9 @@ namespace SCFirstOrderLogic
         public override void Accept<T>(ISentenceVisitor<T> visitor, ref T state) => visitor.Visit(this, ref state);
 
         /// <inheritdoc />
+        public override TOut Accept<TOut>(ISentenceTransformation<TOut> transformation) => transformation.ApplyTo(this);
+
+        /// <inheritdoc />
         public override bool Equals(object? obj) => obj is Disjunction otherDisjunction && Left.Equals(otherDisjunction.Left) && Right.Equals(otherDisjunction.Right);
 
         /// <inheritdoc />

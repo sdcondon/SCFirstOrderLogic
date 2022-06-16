@@ -176,7 +176,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         }
 
         // NB: Doesn't stop as soon as IsFound is true.
-        private class VariableFinder : SentenceTransformation
+        private class VariableFinder : RecursiveSentenceTransformation
         {
             private readonly VariableReference variableReference;
 
@@ -184,7 +184,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 
             public bool IsFound { get; private set; } = false;
 
-            protected override Term ApplyTo(VariableReference variable)
+            public override Term ApplyTo(VariableReference variable)
             {
                 if (variable.Equals(variableReference))
                 {
@@ -195,13 +195,13 @@ namespace SCFirstOrderLogic.Inference.Unification
             }
         }
 
-        private class VariableSubstituter : SentenceTransformation
+        private class VariableSubstituter : RecursiveSentenceTransformation
         {
             private readonly IDictionary<VariableReference, Term> variableSubstitutions;
 
             public VariableSubstituter(IDictionary<VariableReference, Term> variableSubstitutions) => this.variableSubstitutions = variableSubstitutions;
 
-            protected override Term ApplyTo(VariableReference variable)
+            public override Term ApplyTo(VariableReference variable)
             {
                 if (variableSubstitutions.TryGetValue(variable, out var substitutedTerm))
                 {

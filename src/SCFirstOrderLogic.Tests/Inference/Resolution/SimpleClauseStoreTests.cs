@@ -26,7 +26,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 store.AddAsync(new CNFClause(new Predicate("A"))).Wait();
                 store.AddAsync(new CNFClause(new Predicate("B"))).Wait();
 
-                // ..then has had an enumeration strarted but not completed..
+                // ..then has had an enumeration started but not completed..
                 var enumerator = store.GetAsyncEnumerator();
                 enumerator.MoveNextAsync().AsTask().Wait();
 

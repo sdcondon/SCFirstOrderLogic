@@ -4,10 +4,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Sentence transformation class that makes some substitutions for variable terms.
-    /// In addition to the <see cref="SentenceTransformation.ApplyTo(Sentence)"/> method
+    /// In addition to the <see cref="RecursiveSentenceTransformation.ApplyTo(Sentence)"/> method
     /// offered by the base class, this also offers an <see cref="ApplyTo(CNFLiteral)"/> method.
     /// </summary>
-    public class VariableSubstitution : SentenceTransformation
+    public class VariableSubstitution : RecursiveSentenceTransformation
     {
         private readonly Dictionary<VariableReference, Term> bindings = new();
 
@@ -38,7 +38,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             return new CNFLiteral(ApplyTo(literal.ToSentence()));
         }
 
-        protected override Term ApplyTo(VariableReference variable)
+        public override Term ApplyTo(VariableReference variable)
         {
             if (Bindings.TryGetValue(variable, out var substitutedTerm))
             {

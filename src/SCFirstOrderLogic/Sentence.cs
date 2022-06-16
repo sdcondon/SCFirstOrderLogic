@@ -20,18 +20,26 @@ namespace SCFirstOrderLogic
     public abstract class Sentence
     {
         /// <summary>
-        /// Accepts a <see cref="ISentenceVisitor"/> instance.
+        /// Accepts a <see cref="ISentenceVisitor"/> instance. Implementations should simply invoke the appropriate Visit method of the visitor.
         /// </summary>
         /// <param name="visitor">The visitor that is visiting the sentence.</param>
         public abstract void Accept(ISentenceVisitor visitor);
 
         /// <summary>
-        /// Accepts a <see cref="ISentenceVisitor{T}"/> instance.
+        /// Accepts a <see cref="ISentenceVisitor{TState}"/> instance. Implementations should simply invoke the appropriate Visit method of the visitor.
         /// </summary>
         /// <param name="visitor">The visitor that is visiting the sentence.</param>
         /// <param name="state">A reference to the state that the visitor is working with.</param>
         /// <typeparam name="T">The type of state that the visitor works with.</typeparam>
-        public abstract void Accept<T>(ISentenceVisitor<T> visitor, ref T state);
+        public abstract void Accept<TState>(ISentenceVisitor<TState> visitor, ref TState state);
+
+        /// <summary>
+        /// Accepts a <see cref="ISentenceTransformation{TOut}"/> instance. Implementations should simply invoke the appropriate ApplyTo method of the visitor.
+        /// </summary>
+        /// <typeparam name="T">the type that the transformation outputs.</typeparam>
+        /// <param name="transformation">The transformation that is being applied to the sentence.</param>
+        /// <returns>The result of the transformation.</returns>
+        public abstract TOut Accept<TOut>(ISentenceTransformation<TOut> transformation);
 
         /// <summary>
         /// Returns a string that represents the current object.

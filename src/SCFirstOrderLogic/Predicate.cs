@@ -86,9 +86,12 @@ namespace SCFirstOrderLogic
         public override void Accept<T>(ISentenceVisitor<T> visitor, ref T state) => visitor.Visit(this, ref state);
 
         /// <inheritdoc />
+        public override TOut Accept<TOut>(ISentenceTransformation<TOut> transformation) => transformation.ApplyTo(this);
+
+        /// <inheritdoc />
         public override bool Equals(object? obj)
         {
-            if (!(obj is Predicate otherPredicate)
+            if (obj is not Predicate otherPredicate
                 || !otherPredicate.Symbol.Equals(Symbol)
                 || otherPredicate.Arguments.Count != Arguments.Count)
             {

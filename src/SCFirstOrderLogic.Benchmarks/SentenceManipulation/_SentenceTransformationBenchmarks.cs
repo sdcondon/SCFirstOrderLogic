@@ -21,25 +21,13 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         [Benchmark]
-        public static Sentence DoCNFConversion_IsSentenceVisitor()
+        public static Sentence DoCNFConversion_WithoutTypeSwitch()
         {
             var sentence = ForAll(X, If(
                 ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
                 ThereExists(Y, Loves(Y, X))));
 
-            return new CNFConversion_IsSentenceVisitor().ApplyTo(sentence);
+            return CNFConversion_WithoutTypeSwitch.ApplyTo(sentence);
         }
-
-        [Benchmark]
-        public static Sentence DoCNFConversion_WithSentenceVisitor()
-        {
-            var sentence = ForAll(X, If(
-                ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
-                ThereExists(Y, Loves(Y, X))));
-
-            return new CNFConversion_WithSentenceVisitor().ApplyTo(sentence);
-        }
-
-
     }
 }

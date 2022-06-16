@@ -120,7 +120,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             return occursCheck.IsFound;
         }
 
-        private class OccursCheck : SentenceTransformation
+        private class OccursCheck : RecursiveSentenceTransformation
         {
             private readonly VariableReference variableReference;
 
@@ -128,7 +128,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 
             public bool IsFound { get; private set; } = false;
 
-            protected override Term ApplyTo(VariableReference variable)
+            public override Term ApplyTo(VariableReference variable)
             {
                 if (variable.Equals(variableReference))
                 {

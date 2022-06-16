@@ -57,7 +57,7 @@ namespace SCFirstOrderLogic.Inference
             return innerKnowledgeBase.CreateQueryAsync(query, cancellationToken);
         }
 
-        private class PredicateAndFunctionEqualityAxiomiser : SentenceTransformation
+        private class PredicateAndFunctionEqualityAxiomiser : RecursiveSentenceTransformation
         {
             private readonly IKnowledgeBase innerKnowledgeBase;
             private readonly HashSet<object> knownPredicateSymbols = new();
@@ -68,7 +68,7 @@ namespace SCFirstOrderLogic.Inference
                 this.innerKnowledgeBase = innerKnowledgeBase;
             }
 
-            protected override Sentence ApplyTo(Predicate predicate)
+            public override Sentence ApplyTo(Predicate predicate)
             {
                 // NB: we check only for the symbol, not for the symbol with the particular
                 // argument count. A fairly safe assumption that we could nevertheless eliminate at some point.
@@ -103,7 +103,7 @@ namespace SCFirstOrderLogic.Inference
                 return base.ApplyTo(predicate);
             }
 
-            protected override Term ApplyTo(Function function)
+            public override Term ApplyTo(Function function)
             {
                 // NB: we check only for the symbol, not for the symbol with the particular
                 // argument count. A fairly safe assumption that we could nevertheless eliminate at some point.
