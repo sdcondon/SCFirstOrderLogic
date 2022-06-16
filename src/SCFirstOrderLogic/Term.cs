@@ -23,7 +23,7 @@ namespace SCFirstOrderLogic
         public abstract void Accept<T>(ITermVisitor<T> visitor, ref T state);
 
         /// <summary>
-        /// Accepts a <see cref="ITermTransformation{TOut}"/> instance. Implementations should simply invoke the appropriate ApplyTo method of the visitor.
+        /// Accepts a <see cref="ITermTransformation{TOut}"/> instance. Implementations should simply invoke the appropriate ApplyTo method of the transformation.
         /// </summary>
         /// <typeparam name="TOut">the type that the transformation outputs.</typeparam>
         /// <param name="transformation">The transformation that is being applied to the term.</param>

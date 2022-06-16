@@ -21,7 +21,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             // We do variable standardisation first, before altering the sentence in any
             // other way, so that we can easily store the context of the original variable in the new symbol. This
             // facilitates explanations of the origins of a particular variable (or Skolem function) in query result explanations.
-            // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
+            // NOT-TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
             // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong.
             // Should we validate here..? Or handle on the assumption that they are universally quantified?
             // Also should probably complain when nested definitions uses the same symbol (i.e. symbols that are equal).
