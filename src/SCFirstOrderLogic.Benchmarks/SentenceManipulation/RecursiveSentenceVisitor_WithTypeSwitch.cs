@@ -3,16 +3,44 @@
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Base class for transformations of <see cref="Sentence"/> instances.
+    /// Base class for recursive visitors of <see cref="Sentence"/> instances.
     /// </summary>
-    public abstract class RecursiveSentenceVisitor_WithoutTypeSwitch : ISentenceVisitor, ITermVisitor
+    public abstract class RecursiveSentenceVisitor_WithTypeSwitch : ISentenceVisitor, ITermVisitor
     {
         /// <summary>
         /// Visits a <see cref="Sentence"/> instance.
         /// </summary>
         /// <param name="sentence">The sentence to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual void Visit(Sentence sentence) => sentence.Accept(this);
+        public virtual void Visit(Sentence sentence)
+        {
+            switch (sentence)
+            {
+                case Conjunction conjunction:
+                    Visit(conjunction);
+                    break;
+                case Disjunction disjunction:
+                    Visit(disjunction);
+                    break;
+                case Equivalence equivalence:
+                    Visit(equivalence);
+                    break;
+                case Implication implication:
+                    Visit(implication);
+                    break;
+                case Negation negation:
+                    Visit(negation);
+                    break;
+                case Predicate predicate:
+                    Visit(predicate);
+                    break;
+                case Quantification quantification:
+                    Visit(quantification);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported sentence type '{sentence.GetType()}'", nameof(sentence));
+            };
+        }
 
         /// <summary>
         /// Visits a <see cref="Conjunction"/> instance.
@@ -21,8 +49,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="conjunction">The conjunction instance to visit.</param>
         public virtual void Visit(Conjunction conjunction)
         {
-            conjunction.Left.Accept(this);
-            conjunction.Right.Accept(this);
+            Visit(conjunction.Left);
+            Visit(conjunction.Right);
         }
 
         /// <summary>
@@ -32,8 +60,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="disjunction">The <see cref="Disjunction"/> instance to visit.</param>
         public virtual void Visit(Disjunction disjunction)
         {
-            disjunction.Left.Accept(this);
-            disjunction.Right.Accept(this);
+            Visit(disjunction.Left);
+            Visit(disjunction.Right);
         }
 
         /// <summary>
@@ -43,8 +71,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
         public virtual void Visit(Equivalence equivalence)
         {
-            equivalence.Left.Accept(this);
-            equivalence.Right.Accept(this);
+            Visit(equivalence.Left);
+            Visit(equivalence.Right);
         }
 
         /// <summary>
@@ -55,7 +83,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public virtual void Visit(ExistentialQuantification existentialQuantification)
         {
             Visit(existentialQuantification.Variable);
-            existentialQuantification.Sentence.Accept(this);
+            Visit(existentialQuantification.Sentence);
         }
 
         /// <summary>
@@ -65,8 +93,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
         public virtual void Visit(Implication implication)
         {
-            implication.Antecedent.Accept(this);
-            implication.Consequent.Accept(this);
+            Visit(implication.Antecedent);
+            Visit(implication.Consequent);
         }
 
         /// <summary>
@@ -78,7 +106,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             foreach (var argument in predicate.Arguments)
             {
-                argument.Accept(this);
+                Visit(argument);
             }
         }
 
@@ -89,7 +117,27 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
         public virtual void Visit(Negation negation)
         {
-            negation.Sentence.Accept(this);
+            Visit(negation.Sentence);
+        }
+
+        /// <summary>
+        /// Visits a <see cref="Quantification"/> instance. 
+        /// The default implementation simply invokes the Visit method appropriate to the type of the quantification.
+        /// </summary>
+        /// <param name="quantification">The <see cref="Quantification"/> instance to visit.</param>
+        public virtual void Visit(Quantification quantification)
+        {
+            switch (quantification)
+            {
+                case ExistentialQuantification existentialQuantification:
+                    Visit(existentialQuantification);
+                    break;
+                case UniversalQuantification universalQuantification:
+                    Visit(universalQuantification);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported Quantification type '{quantification.GetType()}'", nameof(quantification));
+            }
         }
 
         /// <summary>
@@ -100,7 +148,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public virtual void Visit(UniversalQuantification universalQuantification)
         {
             Visit(universalQuantification.Variable);
-            universalQuantification.Sentence.Accept(this);
+            Visit(universalQuantification.Sentence);
         }
 
         /// <summary>
@@ -108,7 +156,23 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// The default implementation simply invokes the Visit method appropriate to the type of the term.
         /// </summary>
         /// <param name="term">The term to visit.</param>
-        public virtual void Visit(Term term) => term.Accept(this);
+        public virtual void Visit(Term term)
+        {
+            switch (term)
+            {
+                case Constant constant:
+                    Visit(constant);
+                    break;
+                case VariableReference variable:
+                    Visit(variable);
+                    break;
+                case Function function:
+                    Visit(function);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported Term type '{term.GetType()}'", nameof(term));
+            }
+        }
 
         /// <summary>
         /// Visits a <see cref="Constant"/> instance.
@@ -138,7 +202,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             foreach (var argument in function.Arguments)
             {
-                argument.Accept(this);
+                Visit(argument);
             }
         }
 

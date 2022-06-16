@@ -5,14 +5,42 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <summary>
     /// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state.
     /// </summary>
-    public abstract class RecursiveSentenceVisitor<TState> : ISentenceVisitor<TState>, ITermVisitor<TState>
+    public abstract class RecursiveSentenceVisitor_WithTypeSwitch<TState> : ISentenceVisitor<TState>, ITermVisitor<TState>
     {
         /// <summary>
-        /// Visits a <see cref="Sentence"/> instance.
+        /// Applies this transformation to a <see cref="Sentence"/> instance.
         /// </summary>
         /// <param name="sentence">The sentence to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
-        public virtual void Visit(Sentence sentence, ref TState state) => sentence.Accept(this, ref state);
+        public virtual void Visit(Sentence sentence, ref TState state)
+        {
+            switch (sentence)
+            {
+                case Conjunction conjunction:
+                    Visit(conjunction, ref state);
+                    break;
+                case Disjunction disjunction:
+                    Visit(disjunction, ref state);
+                    break;
+                case Equivalence equivalence:
+                    Visit(equivalence, ref state);
+                    break;
+                case Implication implication:
+                    Visit(implication, ref state);
+                    break;
+                case Negation negation:
+                    Visit(negation, ref state);
+                    break;
+                case Predicate predicate:
+                    Visit(predicate, ref state);
+                    break;
+                case Quantification quantification:
+                    Visit(quantification, ref state);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported sentence type '{sentence.GetType()}'", nameof(sentence));
+            };
+        }
 
         /// <summary>
         /// Visits a <see cref="Conjunction"/> instance.
@@ -97,20 +125,20 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// The default implementation simply invokes the Visit method appropriate to the type of the quantification.
         /// </summary>
         /// <param name="quantification">The <see cref="Quantification"/> instance to visit.</param>
-        ////public virtual void Visit(Quantification quantification, ref TState state)
-        ////{
-        ////    switch (quantification)
-        ////    {
-        ////        case ExistentialQuantification existentialQuantification:
-        ////            Visit(existentialQuantification, ref state);
-        ////            break;
-        ////        case UniversalQuantification universalQuantification:
-        ////            Visit(universalQuantification, ref state);
-        ////            break;
-        ////        default:
-        ////            throw new ArgumentException($"Unsupported Quantification type '{quantification.GetType()}'", nameof(quantification));
-        ////    }
-        ////}
+        public virtual void Visit(Quantification quantification, ref TState state)
+        {
+            switch (quantification)
+            {
+                case ExistentialQuantification existentialQuantification:
+                    Visit(existentialQuantification, ref state);
+                    break;
+                case UniversalQuantification universalQuantification:
+                    Visit(universalQuantification, ref state);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported Quantification type '{quantification.GetType()}'", nameof(quantification));
+            }
+        }
 
         /// <summary>
         /// Visits a <see cref="UniversalQuantification"/> instance. 
@@ -128,7 +156,23 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// The default implementation simply invokes the Visit method appropriate to the type of the term.
         /// </summary>
         /// <param name="term">The term to visit.</param>
-        public virtual void Visit(Term term, ref TState state) => term.Accept(this, ref state);
+        public virtual void Visit(Term term, ref TState state)
+        {
+            switch (term)
+            {
+                case Constant constant:
+                    Visit(constant, ref state);
+                    break;
+                case VariableReference variable:
+                    Visit(variable, ref state);
+                    break;
+                case Function function:
+                    Visit(function, ref state);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported Term type '{term.GetType()}'", nameof(term));
+            }
+        }
 
         /// <summary>
         /// Visits a <see cref="Constant"/> instance.

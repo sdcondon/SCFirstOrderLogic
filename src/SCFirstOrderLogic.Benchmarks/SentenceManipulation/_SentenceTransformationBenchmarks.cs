@@ -41,9 +41,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         [Benchmark]
-        public static CNFSentence_WithoutTypeSwitch DoCNFCtor_WithoutTypeSwitch()
+        public static CNFSentence_WithTypeSwitch DoCNFCtor_WithTypeSwitch()
         {
-            return new CNFSentence_WithoutTypeSwitch(NonTrivialSentence);
+            return new CNFSentence_WithTypeSwitch(NonTrivialSentence);
         }
     }
 }

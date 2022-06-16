@@ -13,9 +13,9 @@ namespace SCFirstOrderLogic.SentenceFormatting
     public class SentenceFormatter
     {
         private readonly IEnumerator<string> standardisedVariableLabels;
-        private readonly Dictionary<StandardisedVariableSymbol, string> labelsByStandardisedVariableSymbol = new Dictionary<StandardisedVariableSymbol, string>();
+        private readonly Dictionary<StandardisedVariableSymbol, string> labelsByStandardisedVariableSymbol = new();
         private readonly IEnumerator<string> skolemFunctionLabels;
-        private readonly Dictionary<SkolemFunctionSymbol, string> labelsBySkolemFunctionSymbol = new Dictionary<SkolemFunctionSymbol, string>();
+        private readonly Dictionary<SkolemFunctionSymbol, string> labelsBySkolemFunctionSymbol = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SentenceFormatter"/> class that uses the <see cref="DefaultStandardisedVariableLabelSet"/>

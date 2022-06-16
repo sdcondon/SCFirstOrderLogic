@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Applies this transformation to a <see cref="Sentence"/> instance.
         /// <para/>
         /// The default implementation uses a pattern-matching switch expression to invoke the ApplyTo method appropriate to the actual type of the sentence.
-        /// For whatever reason (compilation wizardry, no doubt), this is faster than calling <see cref="Sentence.Accept(ISentenceVisitor)"/>.
+        /// For whatever reason (switch expression compilation wizardry, no doubt), this is faster than calling <see cref="Sentence.Accept(ISentenceVisitor)"/>.
         /// </summary>
         /// <param name="sentence">The sentence to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
