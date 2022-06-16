@@ -116,11 +116,11 @@ namespace SCFirstOrderLogic.Inference.Unification
         {
             // Unlike the real version of this class (that uses a type switch), here we use a SentenceTransformation to carry out the occurs check:
             var occursCheck = new OccursCheck(variable);
-            occursCheck.ApplyTo(term);
+            occursCheck.Visit(term);
             return occursCheck.IsFound;
         }
 
-        private class OccursCheck : RecursiveSentenceTransformation
+        private class OccursCheck : RecursiveSentenceVisitor
         {
             private readonly VariableReference variableReference;
 
@@ -128,7 +128,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 
             public bool IsFound { get; private set; } = false;
 
-            public override Term ApplyTo(VariableReference variable)
+            public override void Visit(VariableReference variable)
             {
                 if (variable.Equals(variableReference))
                 {
@@ -136,8 +136,6 @@ namespace SCFirstOrderLogic.Inference.Unification
                     // This better achieved as in production version, though.
                     IsFound = true;
                 }
-
-                return variable;
             }
         }
     }

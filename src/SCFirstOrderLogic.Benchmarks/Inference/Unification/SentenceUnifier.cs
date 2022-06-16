@@ -171,12 +171,12 @@ namespace SCFirstOrderLogic.Inference.Unification
             // NB: This is very low-level, frequently called code.
             // Potentially avoidable GC pressure when creating a bunch of these.
             var finder = new VariableFinder(variable);
-            finder.ApplyTo(term);
+            finder.Visit(term);
             return finder.IsFound;
         }
 
         // NB: Doesn't stop as soon as IsFound is true.
-        private class VariableFinder : RecursiveSentenceTransformation
+        private class VariableFinder : RecursiveSentenceVisitor
         {
             private readonly VariableReference variableReference;
 
@@ -184,14 +184,12 @@ namespace SCFirstOrderLogic.Inference.Unification
 
             public bool IsFound { get; private set; } = false;
 
-            public override Term ApplyTo(VariableReference variable)
+            public override void Visit(VariableReference variable)
             {
                 if (variable.Equals(variableReference))
                 {
                     IsFound = true;
                 }
-
-                return variable;
             }
         }
 

@@ -48,7 +48,7 @@ namespace SCFirstOrderLogic.Inference
         public async Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
             await innerKnowledgeBase.TellAsync(sentence, cancellationToken);
-            predicateAndFunctionEqualityAxiomiser.ApplyTo(sentence);
+            predicateAndFunctionEqualityAxiomiser.Visit(sentence);
         }
 
         /// <inheritdoc/>
@@ -57,7 +57,7 @@ namespace SCFirstOrderLogic.Inference
             return innerKnowledgeBase.CreateQueryAsync(query, cancellationToken);
         }
 
-        private class PredicateAndFunctionEqualityAxiomiser : RecursiveSentenceTransformation
+        private class PredicateAndFunctionEqualityAxiomiser : RecursiveSentenceVisitor
         {
             private readonly IKnowledgeBase innerKnowledgeBase;
             private readonly HashSet<object> knownPredicateSymbols = new();
@@ -68,7 +68,7 @@ namespace SCFirstOrderLogic.Inference
                 this.innerKnowledgeBase = innerKnowledgeBase;
             }
 
-            public override Sentence ApplyTo(Predicate predicate)
+            public override void Visit(Predicate predicate)
             {
                 // NB: we check only for the symbol, not for the symbol with the particular
                 // argument count. A fairly safe assumption that we could nevertheless eliminate at some point.
@@ -100,10 +100,10 @@ namespace SCFirstOrderLogic.Inference
                     innerKnowledgeBase.TellAsync(sentence).Wait(); // potentially long-running..
                 }
 
-                return base.ApplyTo(predicate);
+                base.Visit(predicate);
             }
 
-            public override Term ApplyTo(Function function)
+            public override void Visit(Function function)
             {
                 // NB: we check only for the symbol, not for the symbol with the particular
                 // argument count. A fairly safe assumption that we could nevertheless eliminate at some point.
@@ -135,7 +135,7 @@ namespace SCFirstOrderLogic.Inference
                     innerKnowledgeBase.TellAsync(sentence).Wait(); // potentially long-running..
                 }
 
-                return base.ApplyTo(function);
+                base.Visit(function);
             }
         }
     }

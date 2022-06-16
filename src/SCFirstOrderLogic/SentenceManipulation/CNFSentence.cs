@@ -16,7 +16,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             var cnfSentence = new CNFConversion().ApplyTo(sentence);
             var clauses = new List<CNFClause>();
-            new CNFClausesTransformation(clauses).ApplyTo(cnfSentence);
+            new CNFClauseFinder(clauses).Visit(cnfSentence);
             // BUG: Potential equality bug on hash code collision..
             Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
         }
@@ -38,30 +38,28 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public static implicit operator CNFSentence(Sentence sentence) => new(sentence);
 
         /// <summary>
-        /// Sentence "Transformation" that constructs a set of <see cref="CNFClause"/> objects from a <see cref="Sentence"/> in CNF.
+        /// Sentence visitor that constructs a set of <see cref="CNFClause"/> objects from a <see cref="Sentence"/> in CNF.
         /// </summary>
-        private class CNFClausesTransformation : RecursiveSentenceTransformation
+        private class CNFClauseFinder : RecursiveSentenceVisitor
         {
             private readonly ICollection<CNFClause> clauses;
 
-            public CNFClausesTransformation(ICollection<CNFClause> clauses) => this.clauses = clauses;
+            public CNFClauseFinder(ICollection<CNFClause> clauses) => this.clauses = clauses;
 
             /// <inheritdoc />
-            public override Sentence ApplyTo(Sentence sentence)
+            public override void Visit(Sentence sentence)
             {
                 if (sentence is Conjunction conjunction)
                 {
                     // The expression is already in CNF - so the root down until the individual clauses will all be Conjunctions - we just skip past those.
-                    return ApplyTo(conjunction);
+                    Visit(conjunction);
                 }
                 else
                 {
                     // We've hit a clause.
+                    // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFClause ctor that
+                    // we invoke here does so to figure out the details of the clause). So we can just return rather than invoking base.Visit. 
                     clauses.Add(new CNFClause(sentence));
-
-                    // We don't need to look any further down the tree for the purposes of this class (though the CNFClause ctor, above,
-                    // does so to figure out the details of the clause). So we can just return sentence rather than invoking base.ApplyTo. 
-                    return sentence;
                 }
             }
         }

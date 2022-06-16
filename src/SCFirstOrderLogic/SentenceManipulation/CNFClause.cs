@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public CNFClause(Sentence sentence)
         {
             var ctor = new ClauseConstructor();
-            ctor.ApplyTo(sentence);
+            ctor.Visit(sentence);
 
             // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
             // its a super low-level class and I'd rather err on the side of using the smallest & simplest implementation possible.
@@ -129,27 +129,25 @@ namespace SCFirstOrderLogic.SentenceManipulation
             return hash.ToHashCode();
         }
 
-        private class ClauseConstructor : RecursiveSentenceTransformation
+        private class ClauseConstructor : RecursiveSentenceVisitor
         {
-            public override Sentence ApplyTo(Sentence sentence)
+            public HashSet<CNFLiteral> Literals { get; } = new HashSet<CNFLiteral>();
+
+            public override void Visit(Sentence sentence)
             {
                 if (sentence is Disjunction disjunction)
                 {
                     // The sentence is assumed to be a clause (i.e. a disjunction of literals) - so just skip past all the disjunctions at the root.
-                    return base.ApplyTo(disjunction);
+                    base.Visit(disjunction);
                 }
                 else
                 {
                     // Assume we've hit a literal. NB will throw if its not actually a literal.
+                    // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFLiteral ctor that
+                    // we invoke here does so to figure out the details of the literal). So we can just return rather than invoking base.Visit.
                     Literals.Add(new CNFLiteral(sentence));
-
-                    // We don't need to look any further down the tree for the purposes of this class (though the CNFLiteral ctor, above,
-                    // does so to figure out the details of the literal). So we can just return node rather than invoking base.ApplyTo. 
-                    return sentence;
                 }
             }
-
-            public HashSet<CNFLiteral> Literals { get; } = new HashSet<CNFLiteral>();
         }
     }
 }
