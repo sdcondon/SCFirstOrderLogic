@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Linq
     /// <code>
     /// ILinqKnowledgeBase&lt;CuriousityAndTheCatDomain.IDomain, CuriousityAndTheCatDomain.IElement&gt; kb = .. // a LINQ knowledge base implementation
     /// kb.Tell(CuriousityAndTheCatDomain.Axioms);
-    /// var answer = kb.Ask(d => d.Kills(d.Curiousity, d.Tuna));
+    /// var answer = kb.Ask(d => d.Kills(d.Curiousity, d.Tuna)); // should return true
     /// </code>
     /// </summary>
     public static class CuriousityAndTheCatDomain

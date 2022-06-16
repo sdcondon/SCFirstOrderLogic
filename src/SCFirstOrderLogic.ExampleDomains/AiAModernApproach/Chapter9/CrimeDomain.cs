@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9
     /// ..
     /// IKnowledgeBase kb = .. // a knowledge base implementation
     /// kb.Tell(Axioms);
-    /// var answer = kb.Ask(IsCriminal(West));
+    /// var answer = kb.Ask(IsCriminal(West)); // should return true
     /// </code>
     /// </summary>
     public static class CrimeDomain

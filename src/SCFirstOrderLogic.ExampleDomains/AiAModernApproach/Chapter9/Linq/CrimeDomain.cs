@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.Linq
     /// <code>
     /// ILinqKnowledgeBase&lt;CrimeDomain.IDomain, CrimeDomain.IElement&gt; kb = .. // a LINQ knowledge base implementation
     /// kb.Tell(CrimeDomain.Axioms);
-    /// var answer = kb.Ask(d => d.IsCriminal(d.West));
+    /// var answer = kb.Ask(d => d.IsCriminal(d.West)); // should return true
     /// </code>
     /// </summary>
     public static class CrimeDomain
