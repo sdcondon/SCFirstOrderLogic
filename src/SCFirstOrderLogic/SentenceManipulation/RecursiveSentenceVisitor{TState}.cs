@@ -3,7 +3,7 @@
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Base class for transformations of <see cref="Sentence"/> instances.
+    /// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state.
     /// </summary>
     public abstract class RecursiveSentenceVisitor<TState> : ISentenceVisitor<TState>, ITermVisitor<TState>
     {
@@ -41,7 +41,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     Visit(quantification, ref state);
                     break;
                 default:
-                    throw new ArgumentException("Unsupported sentence type '{quantification.GetType()}'", nameof(sentence));
+                    throw new ArgumentException($"Unsupported sentence type '{sentence.GetType()}'", nameof(sentence));
             };
         }
 

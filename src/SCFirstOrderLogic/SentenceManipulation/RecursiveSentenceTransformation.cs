@@ -4,7 +4,7 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Base class for transformations of <see cref="Sentence"/> instances to other <see cref="Sentence"/> instances.
+    /// Base class for recursive transformations of <see cref="Sentence"/> instances to other <see cref="Sentence"/> instances.
     /// </summary>
     public abstract class RecursiveSentenceTransformation : ISentenceTransformation<Sentence>
     {
