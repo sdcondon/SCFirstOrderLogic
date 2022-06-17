@@ -101,7 +101,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         };
 
         public string Print(Constant constant) =>
-            constant.Symbol.ToString();
+            constant.Symbol.ToString() ?? throw new ArgumentException("Cannot print constant because ToString of its symbol returned null", nameof(constant));
 
         public string Print(VariableReference variable) =>
             Print(variable.Declaration);
@@ -141,7 +141,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
             return variableDeclaration.Symbol switch
             {
                 StandardisedVariableSymbol std => Print(std),
-                _ => variableDeclaration.Symbol.ToString()
+                _ => variableDeclaration.Symbol.ToString() ?? throw new ArgumentException("Cannot print variable declaration because ToString of its symbol returned null", nameof(variableDeclaration))
             };
         }
 

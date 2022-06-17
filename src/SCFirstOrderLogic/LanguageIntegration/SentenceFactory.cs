@@ -320,6 +320,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
             if (typeof(TElement).IsAssignableFrom(expression.Type))
             {
                 if (expression is MemberExpression memberExpr
+                    && memberExpr.Expression != null
                     && TryCreateTerm<TDomain, TElement>(memberExpr.Expression, out var argument))
                 {
                     // TElement-valued property access is interpreted as a unary function.

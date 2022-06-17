@@ -25,9 +25,9 @@ namespace SCFirstOrderLogic.Inference.Unification
          *   else if VARIABLE?(x) then return UNIFY-VAR(x, y, θ)
          *   else if VARIABLE?(y) then return UNIFY-VAR(y, x, θ)
          *   else if COMPOUND?(x) and COMPOUND?(y) then
-         *     return UNIFY(x .ARGS, y.ARGS, UNIFY(x.OP, y.OP, θ))
+         *     return UNIFY(x.ARGS, y.ARGS, UNIFY(x.OP, y.OP, θ))
          *   else if LIST?(x) and LIST?(y) then
-         *     return UNIFY(x .REST, y.REST, UNIFY(x.FIRST, y.FIRST, θ))
+         *     return UNIFY(x.REST, y.REST, UNIFY(x.FIRST, y.FIRST, θ))
          *   else return failure
          *
          * Figure 9.1
@@ -155,7 +155,7 @@ namespace SCFirstOrderLogic.Inference.Unification
                 throw new ArgumentException("Arg is not a list");
             }
 
-            return l.FirstOrDefault();
+            return l.First();
         }
 
         private static object RestOf(object x)

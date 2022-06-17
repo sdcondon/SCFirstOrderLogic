@@ -1,5 +1,6 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace SCFirstOrderLogic.Inference.Unification
@@ -11,7 +12,7 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// </summary>
     public static class AltLiteralUnifier_OptimisedFromAIaMA
     {
-        public static bool TryUnify(Sentence x, Sentence y, out IDictionary<VariableReference, Term> unifier)
+        public static bool TryUnify(Sentence x, Sentence y, [NotNullWhen(returnValue: true)] out IDictionary<VariableReference, Term>? unifier)
         {
             unifier = new Dictionary<VariableReference, Term>();
 

@@ -56,7 +56,9 @@ namespace SCFirstOrderLogic.InternalUtilities
 
             BubbleDown(0, heap[--Count]);
 
-            heap[Count] = default; // To avoid memory leak for reference types
+            // To avoid memory leak for reference types:
+            // (usage of null-forgiving operator fine because it should never be retrieved)
+            heap[Count] = default!; 
 
             return element;
         }

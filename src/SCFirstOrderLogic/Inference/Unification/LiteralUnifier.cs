@@ -18,7 +18,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier (which can then be applied with <see cref="ApplyTo"/>).</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryCreate(CNFLiteral x, CNFLiteral y, [NotNullWhen(returnValue: true)] out VariableSubstitution? unifier)
+        public static bool TryCreate(CNFLiteral x, CNFLiteral y, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
         {
             var unifierAttempt = new VariableSubstitution();
 
