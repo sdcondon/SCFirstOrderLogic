@@ -8,8 +8,16 @@ namespace SCFirstOrderLogic.Inference.Resolution
     [InProcess]
     public class ResolutionBenchmarks
     {
+        [Benchmark(Baseline = true)]
+        public static bool CrimeExample_SimpleResolutionKnowledgeBase()
+        {
+            var kb = new SimpleResolutionKnowledgeBase(new SimpleClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+            kb.TellAsync(CrimeDomain.Axioms).Wait();
+            return kb.AskAsync(IsCriminal(West)).Result;
+        }
+
         [Benchmark]
-        public static bool CrimeExample_SimplestResolutionKnowledgeBase()
+        public static bool CrimeExample_SimplerResolutionKnowledgeBase()
         {
             var kb = new AltResolutionKnowledgeBase_Simpler(AltResolutionKnowledgeBase_Simpler.Filters.None, AltResolutionKnowledgeBase_Simpler.PriorityComparisons.UnitPreference);
             foreach (var axiom in CrimeDomain.Axioms)
@@ -17,14 +25,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 kb.Tell(axiom);
             }
             return kb.Ask(IsCriminal(West));
-        }
-
-        [Benchmark]
-        public static bool CrimeExample_SimpleResolutionKnowledgeBase()
-        {
-            var kb = new SimpleResolutionKnowledgeBase(new SimpleClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
-            kb.TellAsync(CrimeDomain.Axioms).Wait();
-            return kb.AskAsync(IsCriminal(West)).Result;
         }
     }
 }

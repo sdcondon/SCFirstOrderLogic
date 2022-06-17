@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
                 ThereExists(Y, Loves(Y, X))));
 
-        [Benchmark]
+        [Benchmark(Baseline = true)]
         public static Sentence DoCNFConversion_ProductionVersion()
         {
             var sentence = ForAll(X, If(
@@ -34,7 +34,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             return AltCNFConversion_WithoutTypeSwitch.ApplyTo(sentence);
         }
 
-        [Benchmark]
+        [Benchmark(Baseline = true)]
         public static CNFSentence DoCNFCtor_ProductionVersion()
         {
             return new CNFSentence(NonTrivialSentence);

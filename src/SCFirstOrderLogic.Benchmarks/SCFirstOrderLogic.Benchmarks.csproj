@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>SCFirstOrderLogic.Benchmarks</AssemblyName>
     <RootNamespace>SCFirstOrderLogic</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

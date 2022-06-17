@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace SCFirstOrderLogic.Inference.Unification
@@ -32,7 +33,7 @@ namespace SCFirstOrderLogic.Inference.Unification
          * Figure 9.1
          * Russell, Stuart; Norvig, Peter. Artificial Intelligence: A Modern Approach, Global Edition (p. 328). Pearson Education Limited. Kindle Edition. 
          */
-        public static Substitution Unify(object x, object y, Substitution θ)
+        public static Substitution Unify(object x, object y, Substitution? θ)
         {
             θ ??= new Substitution();
 
@@ -182,7 +183,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 
             public IDictionary<object, object> Mapping { get; } = new Dictionary<object, object>();
 
-            public bool TryGetValue(object x, out object val) => Mapping.TryGetValue(x, out val);
+            public bool TryGetValue(object x, [MaybeNullWhen(false)] out object val) => Mapping.TryGetValue(x, out val);
 
             public Substitution Add(object key, object value)
             {
@@ -206,7 +207,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 
             public object Symbol { get; }
 
-            public override bool Equals(object obj) => obj is Operator other && Symbol.Equals(other.Symbol);
+            public override bool Equals(object? obj) => obj is Operator other && Symbol.Equals(other.Symbol);
 
             public override int GetHashCode() => HashCode.Combine(Symbol);
         }
