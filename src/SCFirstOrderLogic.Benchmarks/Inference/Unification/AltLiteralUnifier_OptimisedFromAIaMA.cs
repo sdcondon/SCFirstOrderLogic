@@ -7,9 +7,9 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// <summary>
     /// Most general unifier logic - optimised from the version presented in the source material,
     /// but operating on entire sentences, as opposed to literals. More powerful, but slower.
-    /// This class is intended as a more realistic baseline than <see cref="SentenceUnifierRaw"/>.
+    /// This class is intended as a more realistic baseline than <see cref="AltLiteralUnifier_FromAIaMA"/>.
     /// </summary>
-    public static class SentenceUnifier
+    public static class AltLiteralUnifier_OptimisedFromAIaMA
     {
         public static bool TryUnify(Sentence x, Sentence y, out IDictionary<VariableReference, Term> unifier)
         {

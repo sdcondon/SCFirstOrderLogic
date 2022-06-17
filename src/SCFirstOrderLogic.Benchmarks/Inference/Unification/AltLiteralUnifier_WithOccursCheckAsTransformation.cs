@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// <para/>
     /// Differs from production version by using an occurs check that is a SentenceTransformation.
     /// </summary>
-    public static class LiteralUnifier_WithOccursCheckAsTransformation
+    public static class AltLiteralUnifier_WithOccursCheckAsTransformation
     {
         /// <summary>
         /// Attempts to create the most general unifier for two literals.

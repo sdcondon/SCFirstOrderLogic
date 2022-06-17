@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 {
     [MemoryDiagnoser]
     [InProcess]
-    public class _SentenceTransformationBenchmarks
+    public class SentenceTransformationBenchmarks
     {
         private static Predicate IsAnimal(Term term) => new(nameof(IsAnimal), term);
         private static Predicate Loves(Term term1, Term term2) => new(nameof(Loves), term1, term2);
@@ -31,7 +31,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
                 ThereExists(Y, Loves(Y, X))));
 
-            return CNFConversion_WithoutTypeSwitch.ApplyTo(sentence);
+            return AltCNFConversion_WithoutTypeSwitch.ApplyTo(sentence);
         }
 
         [Benchmark]
@@ -41,9 +41,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         [Benchmark]
-        public static CNFSentence_WithTypeSwitch DoCNFCtor_WithTypeSwitch()
+        public static AltCNFSentence_WithTypeSwitch DoCNFCtor_WithTypeSwitch()
         {
-            return new CNFSentence_WithTypeSwitch(NonTrivialSentence);
+            return new AltCNFSentence_WithTypeSwitch(NonTrivialSentence);
         }
     }
 }

@@ -6,12 +6,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     [MemoryDiagnoser]
     [InProcess]
-    public class _ResolutionBenchmarks
+    public class ResolutionBenchmarks
     {
         [Benchmark]
         public static bool CrimeExample_SimplestResolutionKnowledgeBase()
         {
-            var kb = new SimplerResolutionKnowledgeBase(SimplerResolutionKnowledgeBase.Filters.None, SimplerResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+            var kb = new AltResolutionKnowledgeBase_Simpler(AltResolutionKnowledgeBase_Simpler.Filters.None, AltResolutionKnowledgeBase_Simpler.PriorityComparisons.UnitPreference);
             foreach (var axiom in CrimeDomain.Axioms)
             {
                 kb.Tell(axiom);

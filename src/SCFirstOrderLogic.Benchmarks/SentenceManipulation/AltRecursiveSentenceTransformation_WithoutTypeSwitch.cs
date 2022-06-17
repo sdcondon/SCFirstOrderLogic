@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <summary>
     /// Alternative version of <see cref="RecursiveSentenceTransformation"/> that calls <see cref="Sentence.Accept{TOut}(ISentenceTransformation{TOut})"/> instead of using a pattern-matching type switch.
     /// </summary>
-    public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransformation<Sentence>, ITermTransformation<Term>
+    public class AltRecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransformation<Sentence>, ITermTransformation<Term>
     {
         /// <summary>
         /// Applies this transformation to a <see cref="Conjunction"/> instance.

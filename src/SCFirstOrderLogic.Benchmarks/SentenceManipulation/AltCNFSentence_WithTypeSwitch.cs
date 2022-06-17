@@ -6,16 +6,16 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <summary>
     /// Representation of a <see cref="Sentence"/> in conjunctive normal form (CNF).
     /// </summary>
-    public class CNFSentence_WithTypeSwitch
+    public class AltCNFSentence_WithTypeSwitch
     {
         /// <summary>
-        /// Initialises a new instance of the <see cref="CNFSentence_WithTypeSwitch"/> class, implicitly converting the provided sentence to CNF in the process.
+        /// Initialises a new instance of the <see cref="AltCNFSentence_WithTypeSwitch"/> class, implicitly converting the provided sentence to CNF in the process.
         /// </summary>
         /// <param name="sentence">The sentence to (convert and) represent.</param>
-        public CNFSentence_WithTypeSwitch(Sentence sentence)
+        public AltCNFSentence_WithTypeSwitch(Sentence sentence)
         {
             var cnfSentence = new CNFConversion().ApplyTo(sentence);
-            var clauses = new List<CNFClause_WithTypeSwitch>();
+            var clauses = new List<AltCNFClause_WithTypeSwitch>();
             new CNFClauseFinder(clauses).Visit(cnfSentence);
             // BUG: Potential equality bug on hash code collision..
             Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
@@ -24,7 +24,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Gets the collection of clauses that comprise this CNF sentence.
         /// </summary>
-        public IReadOnlyCollection<CNFClause_WithTypeSwitch> Clauses { get; }
+        public IReadOnlyCollection<AltCNFClause_WithTypeSwitch> Clauses { get; }
 
         /// <summary>
         /// Defines the (implicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFSentence_WithoutTypeSwitch"/> instance.
@@ -35,16 +35,16 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// we'll be wanting to deal with CNF - but the "raw" sentence tree structure still has value.. This conversion
         /// operator helps, but there's almost certainly more that could be done.
         /// </remarks>
-        public static implicit operator CNFSentence_WithTypeSwitch(Sentence sentence) => new(sentence);
+        public static implicit operator AltCNFSentence_WithTypeSwitch(Sentence sentence) => new(sentence);
 
         /// <summary>
         /// Sentence visitor that constructs a set of <see cref="CNFClause_WithoutTypeSwitch"/> objects from a <see cref="Sentence"/> in CNF.
         /// </summary>
         private class CNFClauseFinder : RecursiveSentenceVisitor
         {
-            private readonly ICollection<CNFClause_WithTypeSwitch> clauses;
+            private readonly ICollection<AltCNFClause_WithTypeSwitch> clauses;
 
-            public CNFClauseFinder(ICollection<CNFClause_WithTypeSwitch> clauses) => this.clauses = clauses;
+            public CNFClauseFinder(ICollection<AltCNFClause_WithTypeSwitch> clauses) => this.clauses = clauses;
 
             /// <inheritdoc />
             public override void Visit(Sentence sentence)
@@ -59,7 +59,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     // We've hit a clause.
                     // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFClause ctor that
                     // we invoke here does so to figure out the details of the clause). So we can just return rather than invoking base.Visit. 
-                    clauses.Add(new CNFClause_WithTypeSwitch(sentence));
+                    clauses.Add(new AltCNFClause_WithTypeSwitch(sentence));
                 }
             }
         }
