@@ -33,9 +33,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <returns>The unified version of the literal.</returns>
         public CNFLiteral ApplyTo(CNFLiteral literal)
         {
-            // TODO-PERFORMANCE vs TODO-MAINTAINABILITY: Avoidable converting to and from Sentence here.
-            // How much faster would it be to just make this class contain the logic itself - test me!
-            return new CNFLiteral(ApplyTo(literal.ToSentence()));
+            return new CNFLiteral((Predicate)base.ApplyTo(literal.Predicate), literal.IsNegated);
         }
 
         public override Term ApplyTo(VariableReference variable)

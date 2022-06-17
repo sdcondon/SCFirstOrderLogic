@@ -91,7 +91,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <returns>A representation of this literal as a <see cref="Sentence"/>.</returns>
         public Sentence ToSentence()
         {
-            return IsNegated ? (Sentence)new Negation(Predicate) : Predicate;
+            return IsNegated ? new Negation(Predicate) : Predicate;
         }
 
         /// <inheritdoc />

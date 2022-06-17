@@ -24,7 +24,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         private static readonly CNFLiteral YKnowsJane_Literal = new(Knows(y, jane));
         private static readonly CNFLiteral YKnowsMotherOfY_Literal = new(Knows(y, Mother(y)));
 
-        [Benchmark(Baseline = true)]
+        [Benchmark]
         public static bool Unify1_Actual() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);
 
         [Benchmark]
@@ -36,7 +36,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         [Benchmark]
         public static AltLiteralUnifier_FromAIaMA.Substitution Unify1_SentenceRaw() => AltLiteralUnifier_FromAIaMA.Unify(JohnKnowsX, JohnKnowsJane, null);
 
-        [Benchmark(Baseline = true)]
+        [Benchmark]
         public static bool Unify2_Actual() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
 
         [Benchmark]
@@ -48,7 +48,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         [Benchmark]
         public static AltLiteralUnifier_FromAIaMA.Substitution Unify2_SentenceRaw() => AltLiteralUnifier_FromAIaMA.Unify(JohnKnowsX, YKnowsJane, null);
 
-        [Benchmark(Baseline = true)]
+        [Benchmark]
         public static bool Unify3_Actual() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);
 
         [Benchmark]

@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <summary>
     /// Base class for recursive transformations of <see cref="Sentence"/> instances to other <see cref="Sentence"/> instances.
     /// </summary>
-    public abstract class RecursiveSentenceTransformation : ISentenceTransformation<Sentence>
+    public abstract class RecursiveSentenceTransformation : ISentenceTransformation<Sentence>, ITermTransformation<Term>
     {
         /// <summary>
         /// Applies this transformation to a <see cref="Sentence"/> instance.
