@@ -67,6 +67,10 @@ namespace SCFirstOrderLogic.Inference.Unification
                 new TestCase(
                     Literal1: Knows(john, x),
                     Literal2: Knows(x, jane)),
+
+                new TestCase(
+                    Literal1: Knows(john, x),
+                    Literal2: Knows(john, Mother(x))),
             })
             .When(tc =>
             {

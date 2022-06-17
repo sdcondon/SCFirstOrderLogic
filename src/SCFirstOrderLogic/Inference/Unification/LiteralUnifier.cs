@@ -118,7 +118,7 @@ namespace SCFirstOrderLogic.Inference.Unification
                 Constant c => false,
                 VariableReference v => variableReference.Equals(v),
                 Function f => f.Arguments.Any(a => Occurs(variableReference, a)),
-                _ => throw new ArgumentException("Unexpected term type encountered"),
+                _ => throw new ArgumentException($"Unexpected term type '{term.GetType()}' encountered"),
             };
         }
     }

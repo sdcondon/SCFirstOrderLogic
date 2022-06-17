@@ -57,7 +57,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     ExpectedResolvents: CNFClause.Empty),
 
                 // Unresolvable clauses
-                // TODO: Probably more test cases where it trivially looks like there should be resolvents, but no resolver will work. E.g. (but prob others too) occurs check failure.
                 new(
                     Clause1: new CNFClause(S(C)),
                     Clause2: new CNFClause(T(C)),
