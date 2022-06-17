@@ -17,8 +17,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
             .Given(() => new
             {
                 // NB these normalise to just D(X) and E(X) respectively
-                CNFSentence1 = new CNFConversion().ApplyTo(ForAll(X, D(X))),
-                CNFSentence2 = new CNFConversion().ApplyTo(ForAll(X, E(X)))
+                CNFSentence1 = CNFConversion.ApplyTo(ForAll(X, D(X))),
+                CNFSentence2 = CNFConversion.ApplyTo(ForAll(X, E(X)))
             })
             .When(g => ((Predicate)g.CNFSentence1).Arguments[0].Equals(((Predicate)g.CNFSentence2).Arguments[0]))
             .ThenReturns((_, retVal) => retVal.Should().BeFalse("standardised variables from different sentences shouldn't be equal, even if the underlying symbol is the same"));

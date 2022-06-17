@@ -12,9 +12,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Initialises a new instance of the <see cref="CNFSentence"/> class, implicitly converting the provided sentence to CNF in the process.
         /// </summary>
         /// <param name="sentence">The sentence to (convert and) represent.</param>
-        public CNFSentence(Sentence sentence)
+        internal CNFSentence(Sentence sentence)
         {
-            var cnfSentence = new CNFConversion().ApplyTo(sentence);
+            var cnfSentence = CNFConversion.ApplyTo(sentence);
             var clauses = new List<CNFClause>();
             new CNFClauseFinder(clauses).Visit(cnfSentence);
             // BUG: Potential equality bug on hash code collision..

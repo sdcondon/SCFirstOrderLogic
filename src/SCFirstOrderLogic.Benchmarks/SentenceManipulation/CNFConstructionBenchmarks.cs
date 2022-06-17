@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 {
     [MemoryDiagnoser]
     [InProcess]
-    public class cNFConstructionBenchmarks
+    public class CNFConstructionBenchmarks
     {
         private static Predicate IsAnimal(Term term) => new(nameof(IsAnimal), term);
         private static Predicate Loves(Term term1, Term term2) => new(nameof(Loves), term1, term2);
@@ -18,6 +18,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public static CNFSentence DoCNFCtor_ProductionVersion() => new(NonTrivialSentence);
 
         [Benchmark]
-        public static AltCNFSentence_WithTypeSwitch DoCNFCtor_WithTypeSwitch() => new(NonTrivialSentence);
+        public static AltCNFSentence_WithTypeSwitchCtorVisitors DoCNFCtor_WithTypeSwitch() => new(NonTrivialSentence);
     }
 }

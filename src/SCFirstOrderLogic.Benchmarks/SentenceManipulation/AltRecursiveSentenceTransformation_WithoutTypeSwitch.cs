@@ -8,6 +8,13 @@ namespace SCFirstOrderLogic.SentenceManipulation
     public class AltRecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransformation<Sentence>, ITermTransformation<Term>
     {
         /// <summary>
+        /// Applies this transformation to a <see cref="Sentence"/> instance.
+        /// </summary>
+        /// <param name="sentence">The sentence to visit.</param>
+        /// <returns>The transformed <see cref="Sentence"/>.</returns>
+        public virtual Sentence ApplyTo(Sentence sentence) => sentence.Accept(this);
+
+        /// <summary>
         /// Applies this transformation to a <see cref="Conjunction"/> instance.
         /// The default implementation returns a <see cref="Conjunction"/> of the result of calling <see cref="ApplyTo"/> on both of the existing sub-sentences.
         /// </summary>

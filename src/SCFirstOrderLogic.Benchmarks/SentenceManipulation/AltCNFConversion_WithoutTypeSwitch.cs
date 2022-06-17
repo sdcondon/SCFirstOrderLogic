@@ -3,17 +3,12 @@ using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation
 {
-    public class AltCNFConversion_WithoutTypeSwitch
+    internal static class AltCNFConversion_WithoutTypeSwitch
     {
         private static readonly ImplicationElimination implicationElimination = new();
         private static readonly NNFConversion nnfConversion = new();
         private static readonly UniversalQuantifierElimination universalQuantifierElimination = new();
         private static readonly DisjunctionDistribution disjunctionDistribution = new();
-
-        /// <summary>
-        /// Gets a singleton instance of the <see cref="AltCNFConversion_WithoutTypeSwitch"/> class.
-        /// </summary>
-        public static AltCNFConversion_WithoutTypeSwitch Instance => new();
 
         /// <inheritdoc />
         public static Sentence ApplyTo(Sentence sentence)
@@ -25,14 +20,14 @@ namespace SCFirstOrderLogic.SentenceManipulation
             // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong.
             // Should we validate here..? Or handle on the assumption that they are universally quantified?
             // Also should probably complain when nested definitions uses the same symbol (i.e. symbols that are equal).
-            sentence = VariableStandardisation.ApplyTo(sentence);
+            sentence = new VariableStandardisation(sentence).ApplyTo(sentence);
 
             // It might be possible to do some of these conversions at the same time, but for now
             // at least we do them sequentially - and in so doing favour maintainability over performance.
             // Perhaps revisit this later (but given that the main purpose of this library is learning, probably not).
             sentence = sentence.Accept(implicationElimination);
             sentence = sentence.Accept(nnfConversion);
-            sentence = Skolemisation.ApplyTo(sentence);
+            sentence = new Skolemisation(sentence).ApplyTo(sentence);
             sentence = sentence.Accept(universalQuantifierElimination);
             sentence = sentence.Accept(disjunctionDistribution);
 
@@ -44,47 +39,37 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <para/>
         /// Public to allow callers to mess about with the normalisation process.
         /// </summary>
-        public static class VariableStandardisation
+        // Private inner class to hide necessarily short-lived object away from callers.
+        // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
+        public class VariableStandardisation : AltRecursiveSentenceTransformation_WithoutTypeSwitch
         {
-            /// <inheritdoc />
-            public static Sentence ApplyTo(Sentence sentence)
+            private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new();
+            private readonly Sentence rootSentence;
+
+            public VariableStandardisation(Sentence rootSentence)
             {
-                Sentence transormedSentence = sentence.Accept(new ScopedVariableStandardisation(sentence));
-                return transormedSentence;
+                this.rootSentence = rootSentence;
             }
 
-            // Private inner class to hide necessarily short-lived object away from callers.
-            // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
-            private class ScopedVariableStandardisation : AltRecursiveSentenceTransformation_WithoutTypeSwitch
+            public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
             {
-                private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new();
-                private readonly Sentence rootSentence;
+                /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
+                /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
+                mapping[existentialQuantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(existentialQuantification, rootSentence));
+                return base.ApplyTo(existentialQuantification);
+            }
 
-                public ScopedVariableStandardisation(Sentence rootSentence)
-                {
-                    this.rootSentence = rootSentence;
-                }
+            public override Sentence ApplyTo(UniversalQuantification universalQuantification)
+            {
+                /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
+                /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
+                mapping[universalQuantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(universalQuantification, rootSentence));
+                return base.ApplyTo(universalQuantification);
+            }
 
-                public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
-                {
-                    /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
-                    /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-                    mapping[existentialQuantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(existentialQuantification, rootSentence));
-                    return base.ApplyTo(existentialQuantification);
-                }
-
-                public override Sentence ApplyTo(UniversalQuantification universalQuantification)
-                {
-                    /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
-                    /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-                    mapping[universalQuantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(universalQuantification, rootSentence));
-                    return base.ApplyTo(universalQuantification);
-                }
-
-                public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
-                {
-                    return mapping[variableDeclaration];
-                }
+            public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
+            {
+                return mapping[variableDeclaration];
             }
         }
 
@@ -181,61 +166,61 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Transformation that eliminate existential quantification via the process of "Skolemisation". Replaces all existentially declared variables
         /// with a generated "Skolem" function that acts on all universally declared variables in scope when the existential variable was declared.
         /// </summary>
-        public static class Skolemisation
+        // Private inner class to hide necessarily short-lived object away from callers.
+        // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
+        private class Skolemisation : AltRecursiveSentenceTransformation_WithoutTypeSwitch
         {
-            /// <inheritdoc />
-            public static Sentence ApplyTo(Sentence sentence)
+            private readonly Sentence rootSentence;
+            private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
+            private readonly Dictionary<VariableDeclaration, Function> existentialVariableMap;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ScopedSkolemisation"/> class.
+            /// </summary>
+            /// <param name="rootSentence">The root sentence being transformed. Stored against the resulting Skolem function symbols - for later explanations and the like.</param>
+            public Skolemisation(Sentence rootSentence)
+                : this(rootSentence, Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>())
             {
-                return sentence.Accept(new ScopedSkolemisation(sentence, Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>()));
             }
 
-            // Private inner class to hide necessarily short-lived object away from callers.
-            // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
-            private class ScopedSkolemisation : AltRecursiveSentenceTransformation_WithoutTypeSwitch
+            private Skolemisation(
+                Sentence rootSentence,
+                IEnumerable<VariableDeclaration> universalVariablesInScope,
+                Dictionary<VariableDeclaration, Function> existentialVariableMap)
             {
-                private readonly Sentence rootSentence;
-                private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
-                private readonly Dictionary<VariableDeclaration, Function> existentialVariableMap;
+                this.rootSentence = rootSentence;
+                this.universalVariablesInScope = universalVariablesInScope;
+                this.existentialVariableMap = existentialVariableMap;
+            }
 
-                public ScopedSkolemisation(
-                    Sentence rootSentence,
-                    IEnumerable<VariableDeclaration> universalVariablesInScope,
-                    Dictionary<VariableDeclaration, Function> existentialVariableMap)
+            public override Sentence ApplyTo(UniversalQuantification universalQuantification)
+            {
+                Sentence sentence = universalQuantification.Sentence.Accept(new Skolemisation(
+                    rootSentence,
+                    universalVariablesInScope.Append(universalQuantification.Variable), existentialVariableMap));
+
+                return new UniversalQuantification(universalQuantification.Variable, sentence);
+            }
+
+            public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
+            {
+                existentialVariableMap[existentialQuantification.Variable] = new Function(
+                    new SkolemFunctionSymbol(existentialQuantification, rootSentence),
+                    universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
+
+                return existentialQuantification.Sentence.Accept(this);
+            }
+
+            public override Term ApplyTo(VariableReference variable)
+            {
+                if (existentialVariableMap.TryGetValue(variable.Declaration, out var skolemFunction))
                 {
-                    this.rootSentence = rootSentence;
-                    this.universalVariablesInScope = universalVariablesInScope;
-                    this.existentialVariableMap = existentialVariableMap;
+                    return skolemFunction;
                 }
-
-                public override Sentence ApplyTo(UniversalQuantification universalQuantification)
+                else
                 {
-                    Sentence sentence = universalQuantification.Sentence.Accept(new ScopedSkolemisation(
-                        rootSentence,
-                        universalVariablesInScope.Append(universalQuantification.Variable), existentialVariableMap));
-
-                    return new UniversalQuantification(universalQuantification.Variable, sentence);
-                }
-
-                public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
-                {
-                    existentialVariableMap[existentialQuantification.Variable] = new Function(
-                        new SkolemFunctionSymbol(existentialQuantification, rootSentence),
-                        universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
-
-                    return existentialQuantification.Sentence.Accept(this);
-                }
-
-                public override Term ApplyTo(VariableReference variable)
-                {
-                    if (existentialVariableMap.TryGetValue(variable.Declaration, out var skolemFunction))
-                    {
-                        return skolemFunction;
-                    }
-                    else
-                    {
-                        // NB: if we didn't find it in the map, then its a universally quantified variable - and we leave it alone:
-                        return base.ApplyTo(variable);
-                    }
+                    // NB: if we didn't find it in the map, then its a universally quantified variable - and we leave it alone:
+                    return base.ApplyTo(variable);
                 }
             }
         }

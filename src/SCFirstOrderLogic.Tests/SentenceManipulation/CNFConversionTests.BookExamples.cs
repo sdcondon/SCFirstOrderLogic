@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
                 ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
                 ThereExists(Y, Loves(Y, X)))))
             // When converted to CNF..
-            .When(sentence => new CNFConversion().ApplyTo(sentence))
+            .When(sentence => CNFConversion.ApplyTo(sentence))
             // Then gives [Animal(F(x)) ∨ Loves(G(x), x)] ∧ [¬Loves(x, F(x)) ∨ Loves(G(x), x)]
             .ThenReturns((_, sentence) =>
             {
