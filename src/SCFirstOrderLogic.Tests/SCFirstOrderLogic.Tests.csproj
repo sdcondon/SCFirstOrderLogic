@@ -9,13 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="6.5.1" />
-    <PackageReference Include="FlUnit" Version="1.1.0-pre.1" />
-    <PackageReference Include="FlUnit.VS.TestAdapter" Version="1.1.0-pre.1">
+    <PackageReference Include="FluentAssertions" Version="6.7.0" />
+    <PackageReference Include="FlUnit" Version="1.1.1" />
+    <PackageReference Include="FlUnit.VS.TestAdapter" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
     <PackageReference Include="coverlet.collector" Version="3.1.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
