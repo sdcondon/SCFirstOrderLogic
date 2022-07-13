@@ -223,7 +223,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="VariableReference"/> instance.
-        /// The default implementation returns a <see cref="VariableReference"/> of the result of calling <see cref="ApplyTo"/> on the current declaration.
+        /// The default implementation returns a <see cref="VariableReference"/> referring to the variable that is the result of calling <see cref="ApplyTo"/> on the current declaration.
         /// </summary>
         /// <param name="term">The variable to visit.</param>
         /// <returns>The transformed term.</returns>

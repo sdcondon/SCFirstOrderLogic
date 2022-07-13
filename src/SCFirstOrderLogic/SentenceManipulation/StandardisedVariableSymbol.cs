@@ -11,8 +11,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// (which only sentence formatting logic, not the symbol itself, should care about).
     /// <para/>
     /// This is however slightly awkward to to test, and has shortcomings when serialization is involved.
-    /// Also can cause inconsistent behaviour across runs when anything relies on hash code (like ClausePairPriorityComparers.UnitPreference)
-    /// Might be nice to implement value semantics for equality. Same variable in same (normalised) sentence is the same.
+    /// Also can cause inconsistent behaviour across runs when anything relies on hash code (like ClausePairPriorityComparers.UnitPreference).
+    /// As such, it might be nice to implement value semantics for equality. Same variable in same (normalised) sentence is the same.
     /// Equality would need to avoid infinite loop though, and couldn't work on output of CNFConversion as-is since this
     /// class doesn't completely normalise. Definitely doable though.
     /// </summary>
