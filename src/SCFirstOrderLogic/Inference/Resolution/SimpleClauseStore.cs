@@ -47,7 +47,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
-            foreach (var clause in clauses) // nb: will currently explode if changed..
+            foreach (var clause in clauses)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 yield return clause;

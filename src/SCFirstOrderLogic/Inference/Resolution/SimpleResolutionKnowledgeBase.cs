@@ -58,7 +58,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
-        /// Creates an <see cref="IResolutionQuery"/> instance for fine-grained execution and examination of a query.
+        /// Creates an <see cref="SimpleResolutionQuery"/> instance for fine-grained execution and examination of a query.
         /// </summary>
         /// <param name="sentence">The query sentence.</param>
         /// <returns>An <see cref="SimpleResolutionQuery"/> instance that can be used to execute and examine the query.</returns>

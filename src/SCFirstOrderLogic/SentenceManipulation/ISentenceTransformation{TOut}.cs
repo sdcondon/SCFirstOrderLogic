@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface for transformations of <see cref="Sentence"/> instances.
     /// <para/>
-    /// NB: Essentially an interface for visitors with a return value. Nearly called it ISentenceQuery, but "query" already means something in FoL..
+    /// NB: Essentially an interface for visitors with a return value.
     /// </summary>
     /// <typeparam name="TOut">The type that the transformation transforms the sentence to.</typeparam>
     public interface ISentenceTransformation<out TOut>
