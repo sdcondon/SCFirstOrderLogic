@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 
 namespace SCFirstOrderLogic.Inference
 {
@@ -9,19 +8,13 @@ namespace SCFirstOrderLogic.Inference
     public static class IQueryExtensions
     {
         /// <summary>
-        /// Continuously executes the next step of a query until it completes.
+        /// Gets an awaiter used to await a given <see cref="IQuery"/>
         /// </summary>
-        /// <param name="query">The query to execute to completion.</param>
-        /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        /// <returns>The result of the query.</returns>
-        public static async Task<bool> CompleteAsync(this IQuery query, CancellationToken cancellationToken = default)
+        /// <param name="query">The query to get an awaiter for.</param>
+        /// <returns>An awaiter instance.</returns>
+        public static TaskAwaiter<bool> GetAwaiter(this IQuery query)
         {
-            while (!query.IsComplete)
-            {
-                await query.NextStepAsync(cancellationToken);
-            }
-
-            return query.Result;
+            return query.ExecuteAsync().GetAwaiter();
         }
     }
 }

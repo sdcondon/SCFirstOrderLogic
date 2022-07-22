@@ -21,8 +21,8 @@ namespace SCFirstOrderLogic.Inference
         /// Initiates a new query against the knowledge base.
         /// <para/>
         /// NB: We don't define an Ask(Async) method directly on the knowledge base interface because of this library's
-        /// focus on learning outcomes. Knowledge bases MUST use the <see cref="IQuery"/> interface to allow for fine-grained
-        /// execution, and examination of the steps that lead to the result. Note that "Ask" extension methods do exist,
+        /// focus on learning outcomes. The <see cref="IQuery"/> interface allows for implementations that support step-by-step
+        /// execution and/or examination of the steps that lead to the result. Note that "Ask" extension methods do exist,
         /// though (which create queries and immediately execute them to completion).
         /// </summary>
         /// <param name="query">The query sentence.</param>

@@ -19,13 +19,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// <item/>Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
     /// </list>  
     /// </summary>
-    public class SimpleResolutionQuery : IQuery
+    public class SimpleResolutionQuery : SteppableQuery
     {
         private readonly IQueryClauseStore clauseStore;
         private readonly Func<ClauseResolution, bool> filter;
         private readonly MaxPriorityQueue<ClauseResolution> queue;
         private readonly Dictionary<CNFClause, ClauseResolution> steps;
 
+        private bool isComplete;
         private bool result;
 
         private SimpleResolutionQuery(
@@ -48,10 +49,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public CNFSentence NegatedQuery { get; }
 
         /// <inheritdoc/>
-        public bool IsComplete { get; private set; } = false;
+        public override bool IsComplete => isComplete;
 
         /// <inheritdoc/>
-        public bool Result
+        public override bool Result
         {
             get
             {
@@ -105,7 +106,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <inheritdoc/>
-        public async Task NextStepAsync(CancellationToken cancellationToken = default)
+        public override async Task NextStepAsync(CancellationToken cancellationToken = default)
         {
             if (IsComplete)
             {
@@ -120,7 +121,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             if (resolution.Resolvent.Equals(CNFClause.Empty))
             {
                 result = true;
-                IsComplete = true;
+                isComplete = true;
                 return;
             }
 
@@ -143,12 +144,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
             if (queue.Count == 0)
             {
                 result = false;
-                IsComplete = true;
+                isComplete = true;
             }
         }
 
         /// <inheritdoc/>
-        public void Dispose()
+        public override void Dispose()
         {
             clauseStore.Dispose();
         }

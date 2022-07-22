@@ -45,7 +45,7 @@ namespace SCFirstOrderLogic
         /// <para/>
         /// Aside: I have wondered if it would perhaps better to just enforce explicit SentenceFormatter use. That would however be a PITA if you
         /// just want to print out your nice, simple sentence. It may even be non-normalised - in which case you definitely won't want to be
-        /// messing around with sets of labels. So its important that this stays - to avoid a "barrier to entry" for the library.
+        /// messing around with sets of labels. So its important that this stays - to avoid a barrier to entry for the library.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
         public override string ToString() => new SentenceFormatter().Print(this);

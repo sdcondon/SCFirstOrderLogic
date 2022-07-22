@@ -44,7 +44,7 @@ namespace SCFirstOrderLogic.Inference
         public static async Task<bool> AskAsync(this IKnowledgeBase knowledgeBase, Sentence sentence, CancellationToken cancellationToken = default)
         {
             using var query = await knowledgeBase.CreateQueryAsync(sentence, cancellationToken);
-            return await query.CompleteAsync(cancellationToken);
+            return await query.ExecuteAsync(cancellationToken);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace SCFirstOrderLogic.Inference
         public static bool Ask(this IKnowledgeBase knowledgeBase, Sentence sentence)
         {
             using var query = knowledgeBase.CreateQueryAsync(sentence).Result;
-            return query.CompleteAsync().Result;
+            return query.ExecuteAsync().Result;
         }
     }
 }
