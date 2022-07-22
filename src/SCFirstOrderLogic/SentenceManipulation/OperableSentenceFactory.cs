@@ -242,12 +242,33 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// </summary>
         public abstract class OperableSentence
         {
+            /// <summary>
+            /// Composes two <see cref="OperableSentence"/> instances together by forming a conjunction from them.
+            /// </summary>
+            /// <param name="left">The left-hand operand of the conjunction.</param>
+            /// <param name="right">The right-hand operand of the conjunction.</param>
+            /// <returns>A new <see cref="OperableConjunction"/> instance.</returns>
             public static OperableSentence operator &(OperableSentence left, OperableSentence right) => new OperableConjunction(left, right);
 
+            /// <summary>
+            /// Composes two <see cref="OperableSentence"/> instances together by forming a disjunction from them.
+            /// </summary>
+            /// <param name="left">The left-hand operand of the disjunction.</param>
+            /// <param name="right">The right-hand operand of the disjunction.</param>
+            /// <returns>A new <see cref="OperableDisjunction"/> instance.</returns>
             public static OperableSentence operator |(OperableSentence left, OperableSentence right) => new OperableDisjunction(left, right);
 
+            /// <summary>
+            /// Creates the negation of an <see cref="OperableSentence"/> instance.
+            /// </summary>
+            /// <param name="operand">The sentence to negate.</param>
+            /// <returns>A new <see cref="OperableNegation"/> instance.</returns>
             public static OperableSentence operator !(OperableSentence operand) => new OperableNegation(operand);
 
+            /// <summary>
+            /// Implicitly converts an <see cref="OperableSentence"/> instance to an equivalent <see cref="Sentence"/>.
+            /// </summary>
+            /// <param name="sentence">The sentence to convert.</param>
             public static implicit operator Sentence(OperableSentence sentence) => sentence switch
             {
                 OperableConjunction conjunction => new Conjunction(conjunction.Left, conjunction.Right),
@@ -271,9 +292,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             internal OperableConjunction(OperableSentence left, OperableSentence right) => (Left, Right) = (left, right);
 
-            public OperableSentence Left { get; }
+            internal OperableSentence Left { get; }
 
-            public OperableSentence Right { get; }
+            internal OperableSentence Right { get; }
         }
 
         /// <summary>
@@ -286,8 +307,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             internal OperableConstant(object symbol) => Symbol = symbol;
 
-            public object Symbol { get; }
+            internal object Symbol { get; }
 
+            /// <summary>
+            /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableConstant"/>.
+            /// </summary>
+            /// <param name="constant">The constant to convert.</param>
             public static implicit operator OperableConstant(Constant constant) => new(constant.Symbol);
         }
 
@@ -300,9 +325,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             internal OperableDisjunction(OperableSentence left, OperableSentence right) => (Left, Right) = (left, right);
 
-            public OperableSentence Left { get; }
+            internal OperableSentence Left { get; }
 
-            public OperableSentence Right { get; }
+            internal OperableSentence Right { get; }
         }
 
         /// <summary>
@@ -314,9 +339,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             internal OperableEquivalence(OperableSentence left, OperableSentence right) => (Left, Right) = (left, right);
 
-            public OperableSentence Left { get; }
+            internal OperableSentence Left { get; }
 
-            public OperableSentence Right { get; }
+            internal OperableSentence Right { get; }
         }
 
         /// <summary>
@@ -328,9 +353,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             internal OperableExistentialQuantification(OperableVariableDeclaration variable, OperableSentence sentence) => (Variable, Sentence) = (variable, sentence);
 
-            public OperableVariableDeclaration Variable { get; }
+            internal OperableVariableDeclaration Variable { get; }
 
-            public OperableSentence Sentence { get; }
+            internal OperableSentence Sentence { get; }
         }
 
         /// <summary>
@@ -352,10 +377,14 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 Arguments = new ReadOnlyCollection<OperableTerm>(arguments);
             }
 
-            public ReadOnlyCollection<OperableTerm> Arguments { get; }
+            internal ReadOnlyCollection<OperableTerm> Arguments { get; }
 
-            public object Symbol { get; }
+            internal object Symbol { get; }
 
+            /// <summary>
+            /// Implicitly converts a <see cref="Function"/> instance to an equivalent <see cref="OperableFunction"/>.
+            /// </summary>
+            /// <param name="function">The function to convert.</param>
             public static implicit operator OperableFunction(Function function) => new(function.Symbol, function.Arguments.Select(a => (OperableTerm)a).ToArray());
         }
 
@@ -368,9 +397,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             internal OperableImplication(OperableSentence antecedent, OperableSentence consequent) => (Antecedent, Consequent) = (antecedent, consequent);
 
-            public OperableSentence Antecedent { get; }
+            internal OperableSentence Antecedent { get; }
 
-            public OperableSentence Consequent { get; }
+            internal OperableSentence Consequent { get; }
         }
 
         /// <summary>
@@ -380,9 +409,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// </summary>
         public sealed class OperableNegation : OperableSentence
         {
-            public OperableNegation(OperableSentence sentence) => Sentence = sentence;
+            internal OperableNegation(OperableSentence sentence) => Sentence = sentence;
 
-            public OperableSentence Sentence { get; }
+            internal OperableSentence Sentence { get; }
         }
 
         /// <summary>
@@ -398,16 +427,20 @@ namespace SCFirstOrderLogic.SentenceManipulation
             {
             }
 
-            public OperablePredicate(object symbol, IList<OperableTerm> arguments)
+            internal OperablePredicate(object symbol, IList<OperableTerm> arguments)
             {
                 Symbol = symbol;
                 Arguments = new ReadOnlyCollection<OperableTerm>(arguments);
             }
 
-            public ReadOnlyCollection<OperableTerm> Arguments { get; }
+            internal ReadOnlyCollection<OperableTerm> Arguments { get; }
 
-            public object Symbol { get; }
+            internal object Symbol { get; }
 
+            /// <summary>
+            /// Implicitly converts a <see cref="Predicate"/> instance to an equivalent <see cref="OperablePredicate"/>.
+            /// </summary>
+            /// <param name="predicate">The predicate to convert.</param>
             public static implicit operator OperablePredicate(Predicate predicate) => new(predicate.Symbol, predicate.Arguments.Select(a => (OperableTerm)a).ToArray());
         }
 
@@ -420,10 +453,26 @@ namespace SCFirstOrderLogic.SentenceManipulation
         // hopefully a good example of why I want to keep this approach to creating sentences well away from the actual sentence classes..
         public abstract class OperableTerm
         {
+            /// <summary>
+            /// Composes two <see cref="OperableTerm"/> instances together by creating an equality predicate. That is, an <see cref="OperablePredicate"/> with the <see cref="EqualitySymbol.Instance"/> symbol.
+            /// </summary>
+            /// <param name="left">The left-hand side of the equality.</param>
+            /// <param name="right">The right-hand side of the equality.</param>
+            /// <returns>A new <see cref="OperablePredicate"/> instance.</returns>
             public static OperableSentence operator ==(OperableTerm left, OperableTerm right) => new OperablePredicate(EqualitySymbol.Instance, left, right);
 
+            /// <summary>
+            /// Composes two <see cref="OperableTerm"/> instances together by creating a negation of the equality predicate. That is, an <see cref="OperableNegation"/> acting on an <see cref="OperablePredicate"/> with the <see cref="EqualitySymbol.Instance"/> symbol.
+            /// </summary>
+            /// <param name="left">The left-hand side of the inequality.</param>
+            /// <param name="right">The right-hand side of the inequality.</param>
+            /// <returns>A new <see cref="OperableNegation"/> instance.</returns>
             public static OperableSentence operator !=(OperableTerm left, OperableTerm right) => new OperableNegation(new OperablePredicate(EqualitySymbol.Instance, left, right));
 
+            /// <summary>
+            /// Implicitly converts a <see cref="OperableTerm"/> instance to an equivalent <see cref="Term"/>.
+            /// </summary>
+            /// <param name="term">The term to convert.</param>
             public static implicit operator Term(OperableTerm term) => term switch
             {
                 OperableConstant constant => new Constant(constant.Symbol),
@@ -432,6 +481,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 _ => throw new ArgumentException("Unsupported TermSurrogate type"),
             };
 
+            /// <summary>
+            /// Implicitly converts a <see cref="OperableTerm"/> instance to an equivalent <see cref="Term"/>.
+            /// </summary>
+            /// <param name="term">The term to convert.</param>
             public static implicit operator OperableTerm(Term term) => term switch
             {
                 Constant constant => new OperableConstant(constant.Symbol),
@@ -451,33 +504,52 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             internal OperableUniversalQuantification(OperableVariableDeclaration variable, OperableSentence sentence) => (Variable, Sentence) = (variable, sentence);
 
-            public OperableVariableDeclaration Variable { get; }
+            internal OperableVariableDeclaration Variable { get; }
 
-            public OperableSentence Sentence { get; }
+            internal OperableSentence Sentence { get; }
         }
 
+        /// <summary>
+        /// Surrogate for <see cref="VariableDeclaration"/> instances.
+        /// </summary>
         public sealed class OperableVariableDeclaration
         {
             internal OperableVariableDeclaration(object symbol) => Symbol = symbol;
 
-            public object Symbol { get; }
+            internal object Symbol { get; }
 
+            /// <summary>
+            /// Implicitly converts an <see cref="OperableVariableDeclaration"/> instance to an equivalent <see cref="VariableDeclaration"/>.
+            /// </summary>
+            /// <param name="declaration">The declaration to convert.</param>
             public static implicit operator VariableDeclaration(OperableVariableDeclaration declaration) => new(declaration.Symbol);
 
+            /// <summary>
+            /// Implicitly converts a <see cref="VariableDeclaration"/> instance to an equivalent <see cref="OperableVariableDeclaration"/>.
+            /// </summary>
+            /// <param name="declaration">The declaration to convert.</param>
             public static implicit operator OperableVariableDeclaration(VariableDeclaration declaration) => new(declaration.Symbol);
 
+            /// <summary>
+            /// Implicitly converts an <see cref="OperableVariableDeclaration"/> instance to an <see cref="OperableVariableReference"/> referring to that variable.
+            /// </summary>
+            /// <param name="declaration">The declaration to convert.</param>
             public static implicit operator OperableVariableReference(OperableVariableDeclaration declaration) => new(declaration);
         }
 
+        /// <summary>
+        /// Surrogate for <see cref="VariableReference"/> instances that derives from <see cref="OperableTerm"/> and can thus be operated on with the == and != operators
+        /// to create equality and negation of equality respectively.
+        /// </summary>
         public sealed class OperableVariableReference : OperableTerm
         {
             internal OperableVariableReference(OperableVariableDeclaration declaration) => Declaration = declaration;
 
-            public OperableVariableReference(object symbol) => Declaration = new OperableVariableDeclaration(symbol);
+            internal OperableVariableReference(object symbol) => Declaration = new OperableVariableDeclaration(symbol);
 
-            public OperableVariableDeclaration Declaration { get; }
+            internal OperableVariableDeclaration Declaration { get; }
 
-            public object Symbol => Declaration.Symbol;
+            internal object Symbol => Declaration.Symbol;
         }
     }
 }
