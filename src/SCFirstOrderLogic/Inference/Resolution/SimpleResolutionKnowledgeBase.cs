@@ -125,7 +125,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
             };
 
-            // Not mentioned in source material, but I figured it was a logical variant of unit preference.
+            /// <summary>
+            /// Comparison that gives priority to pairs with a lower total literal count.
+            /// <para/>
+            /// Not mentioned in source material, but I figured it was a logical variant of unit preference.
+            /// </summary>
             public static Comparison<ClauseResolution> TotalLiteralCountMinimisation { get; } = (x, y) =>
             {
                 var xTotalClauseCount = x.Clause1.Literals.Count + x.Clause2.Literals.Count;
