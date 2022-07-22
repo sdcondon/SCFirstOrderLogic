@@ -72,7 +72,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         }
 
         /// <summary>
-        /// Creates and returns the <see cref="Sentence{TDomain, TElement}"/> instance that is logically equivalent to
+        /// Creates and returns the <see cref="Sentence"/> instance that is logically equivalent to
         /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
         /// </summary>
         /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
@@ -106,7 +106,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         }
 
         /// <summary>
-        /// Tries to create the <see cref="FOLSentence{TDomain, TElement}"/> instance that is logically equivalent to
+        /// Tries to create the <see cref="Sentence"/> instance that is logically equivalent to
         /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
         /// </summary>
         /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
@@ -124,10 +124,11 @@ namespace SCFirstOrderLogic.LanguageIntegration
         }
 
         /// <summary>
-        /// Tries to create the <see cref="Sentence{TDomain, TElement}"/> instance that is logically equivalent to
+        /// Tries to create the <see cref="Sentence"/> instance that is logically equivalent to
         /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
         /// </summary>
-        ///  <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
+        /// <typeparam name="TDomain">The type of the domain. The domain must be modelled as an <see cref="IEnumerable{T}"/> of TElement instances.</typeparam>
+        /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
         /// <param name="lambda">The lambda expression.</param>
         /// <param name="sentence">The created sentence, or <see langword="null"/> on failure.</param>
         /// <returns>A value indicating whether or not creation was successful.</returns>

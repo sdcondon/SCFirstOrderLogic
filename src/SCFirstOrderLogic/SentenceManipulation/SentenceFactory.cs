@@ -135,6 +135,12 @@
         public static Sentence Not(Sentence sentence) => 
             new Negation(sentence);
 
+        /// <summary>
+        /// Shorthand factory method for a new <see cref="Predicate"/> instance with the <see cref="EqualitySymbol.Instance"/> symbol.
+        /// </summary>
+        /// <param name="left">The left-hand operand of the equality.</param>
+        /// <param name="right">The right-hand operand of the equality.</param>
+        /// <returns>A new <see cref="Predicate"/> instance.</returns>
         public static Sentence AreEqual(Term left, Term right) =>
             new Predicate(EqualitySymbol.Instance, left, right);
 

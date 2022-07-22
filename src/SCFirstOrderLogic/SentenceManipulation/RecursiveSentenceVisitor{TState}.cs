@@ -97,12 +97,12 @@
             Visit(negation.Sentence, ref state);
         }
 
-        /// <summary>
-        /// Visits a <see cref="Quantification"/> instance. 
-        /// The default implementation simply invokes the Visit method appropriate to the type of the quantification.
-        /// </summary>
-        /// <param name="quantification">The <see cref="Quantification"/> instance to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
+        /////// <summary>
+        /////// Visits a <see cref="Quantification"/> instance. 
+        /////// The default implementation simply invokes the Visit method appropriate to the type of the quantification.
+        /////// </summary>
+        /////// <param name="quantification">The <see cref="Quantification"/> instance to visit.</param>
+        /////// <param name="state">A reference to the state of this visitation.</param>
         ////public virtual void Visit(Quantification quantification, ref TState state)
         ////{
         ////    switch (quantification)

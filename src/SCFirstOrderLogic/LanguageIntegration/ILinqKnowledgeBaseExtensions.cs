@@ -14,7 +14,9 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// <summary>
         /// Inform a knowledge base that a given enumerable of expressions about the domain are all true for all models that it will be asked about.
         /// </summary>
-        /// <param name="sentence">The expressions that are always true.</param>
+        /// <param name="knowledgeBase">The knowledge base to tell.</param>
+        /// <param name="sentences">The expressions that are always true.</param>
+        /// <param name="cancellationToken">A cancellation token for the operation.</param>
         public static async Task Tell<TDomain, TElement>(this ILinqKnowledgeBase<TDomain, TElement> knowledgeBase, IEnumerable<Expression<Predicate<TDomain>>> sentences, CancellationToken cancellationToken)
             where TDomain : IEnumerable<TElement>
         {

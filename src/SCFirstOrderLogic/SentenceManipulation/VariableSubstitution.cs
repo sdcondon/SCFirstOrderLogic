@@ -36,6 +36,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             return new CNFLiteral((Predicate)base.ApplyTo(literal.Predicate), literal.IsNegated);
         }
 
+        /// <inheritdoc />
         public override Term ApplyTo(VariableReference variable)
         {
             if (Bindings.TryGetValue(variable, out var substitutedTerm))

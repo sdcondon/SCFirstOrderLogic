@@ -30,13 +30,13 @@ namespace SCFirstOrderLogic
         /// </summary>
         /// <param name="visitor">The visitor that is visiting the sentence.</param>
         /// <param name="state">A reference to the state that the visitor is working with.</param>
-        /// <typeparam name="T">The type of state that the visitor works with.</typeparam>
+        /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
         public abstract void Accept<TState>(ISentenceVisitor<TState> visitor, ref TState state);
 
         /// <summary>
         /// Accepts a <see cref="ISentenceTransformation{TOut}"/> instance. Implementations should simply invoke the appropriate ApplyTo method of the transformation.
         /// </summary>
-        /// <typeparam name="T">the type that the transformation outputs.</typeparam>
+        /// <typeparam name="TOut">the type that the transformation outputs.</typeparam>
         /// <param name="transformation">The transformation that is being applied to the sentence.</param>
         /// <returns>The result of the transformation.</returns>
         public abstract TOut Accept<TOut>(ISentenceTransformation<TOut> transformation);

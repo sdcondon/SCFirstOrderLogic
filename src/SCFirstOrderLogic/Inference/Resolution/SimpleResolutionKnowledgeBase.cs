@@ -61,6 +61,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// Creates an <see cref="SimpleResolutionQuery"/> instance for fine-grained execution and examination of a query.
         /// </summary>
         /// <param name="sentence">The query sentence.</param>
+        /// <param name="cancellationToken">A cancellation token for the operation. Optional, defaults (effectively) to <see cref="CancellationToken.None"/>.</param>
         /// <returns>An <see cref="SimpleResolutionQuery"/> instance that can be used to execute and examine the query.</returns>
         public async Task<SimpleResolutionQuery> CreateQueryAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {

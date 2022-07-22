@@ -15,12 +15,12 @@ namespace SCFirstOrderLogic
         public abstract void Accept(ITermVisitor visitor);
 
         /// <summary>
-        /// Accepts a <see cref="ITermVisitor{T}"/> instance.
+        /// Accepts a <see cref="ITermVisitor{TState}"/> instance.
         /// </summary>
         /// <param name="visitor">The visitor that is visiting the term.</param>
         /// <param name="state">A reference to the state that the visitor is working with.</param>
-        /// <typeparam name="T">The type of state that the visitor works with.</typeparam>
-        public abstract void Accept<T>(ITermVisitor<T> visitor, ref T state);
+        /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
+        public abstract void Accept<TState>(ITermVisitor<TState> visitor, ref TState state);
 
         /// <summary>
         /// Accepts a <see cref="ITermTransformation{TOut}"/> instance. Implementations should simply invoke the appropriate ApplyTo method of the transformation.
@@ -28,7 +28,7 @@ namespace SCFirstOrderLogic
         /// <typeparam name="TOut">the type that the transformation outputs.</typeparam>
         /// <param name="transformation">The transformation that is being applied to the term.</param>
         /// <returns>The result of the transformation.</returns>
-        public abstract T Accept<T>(ITermTransformation<T> transformation);
+        public abstract TOut Accept<TOut>(ITermTransformation<TOut> transformation);
 
         /// <summary>
         /// Gets a value indicating whether the term is a ground term - that is, that it contains no variables.

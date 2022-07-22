@@ -7,6 +7,11 @@ namespace SCFirstOrderLogic
     /// </summary>
     public abstract class Quantification : Sentence
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Quantification"/> class.
+        /// </summary>
+        /// <param name="variable">The variable declared by this quantification.</param>
+        /// <param name="sentence">The sentence that this quantification applies to.</param>
         protected Quantification(VariableDeclaration variable, Sentence sentence) => (Variable, Sentence) = (variable, sentence);
 
         /// <summary>

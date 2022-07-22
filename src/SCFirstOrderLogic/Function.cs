@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic
     public sealed class Function : Term
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MemberFunction"/> class.
+        /// Initializes a new instance of the <see cref="Function"/> class.
         /// </summary>
         /// <param name="symbol">
         /// An object representing the symbol of the function.
