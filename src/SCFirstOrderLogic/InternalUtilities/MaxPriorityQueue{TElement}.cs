@@ -30,7 +30,6 @@ namespace SCFirstOrderLogic.InternalUtilities
         /// Enqueues an item.
         /// </summary>
         /// <param name="element">The item to enqueue.</param>
-        /// <param name="priority">The priority of the item.</param>
         public void Enqueue(TElement element)
         {
             if (Count >= heap.Length)

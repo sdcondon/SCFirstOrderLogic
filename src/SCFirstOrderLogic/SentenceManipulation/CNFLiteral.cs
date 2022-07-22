@@ -114,9 +114,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
-        /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="CNFLiteral"/>. NB: This conversion is implicit because it is always valid.
+        /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="CNFLiteral"/>. NB: This conversion is implicit because it is always valid and results in no loss of information.
         /// </summary>
-        /// <param name="sentence">The predicate to convert.</param>
+        /// <param name="predicate">The predicate to convert.</param>
         public static implicit operator CNFLiteral(Predicate predicate) => new(predicate);
     }
 }

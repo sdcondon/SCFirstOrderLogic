@@ -114,7 +114,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Visits a <see cref="Constant"/> instance.
         /// The default implementation doesn't do anything.
         /// </summary>
-        /// <param name="term">The constant to visit.</param>
+        /// <param name="constant">The constant to visit.</param>
         public virtual void Visit(Constant constant)
         {
         }

@@ -11,13 +11,13 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableReference"/> class.
         /// </summary>
-        /// <param name="name">The declaration of the variable.</param>
+        /// <param name="declaration">The declaration of the variable.</param>
         public VariableReference(VariableDeclaration declaration) => Declaration = declaration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableReference"/> class.
         /// </summary>
-        /// <param name="name">The symbol of the variable. Equality of symbols should indicate that it is the same variable in the domain, and ToString of the symbol should be appropriate for rendering in FoL syntax.</param>
+        /// <param name="symbol">The symbol of the variable. Equality of symbols should indicate that it is the same variable in the domain, and ToString of the symbol should be appropriate for rendering in FoL syntax.</param>
         public VariableReference(object symbol) => Declaration = new VariableDeclaration(symbol);
 
         /// <summary>

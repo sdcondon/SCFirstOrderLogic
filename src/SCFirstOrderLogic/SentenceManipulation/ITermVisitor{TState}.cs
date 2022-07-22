@@ -12,19 +12,22 @@
         /// <summary>
         /// Visits a <see cref="Constant"/> instance.
         /// </summary>
-        /// <param name="term">The constant to visit.</param>
+        /// <param name="constant">The constant to visit.</param>
+        /// <param name="state">A reference to the state for this visitation.</param>
         void Visit(Constant constant, ref TState state);
 
         /// <summary>
         /// Visits a <see cref="Function"/> instance.
         /// </summary>
         /// <param name="function">The function to visit.</param>
+        /// <param name="state">A reference to the state for this visitation.</param>
         void Visit(Function function, ref TState state);
 
         /// <summary>
         /// Visits a <see cref="VariableReference"/> instance.
         /// </summary>
-        /// <param name="term">The variable reference to visit.</param>
+        /// <param name="variable">The variable reference to visit.</param>
+        /// <param name="state">A reference to the state for this visitation.</param>
         void Visit(VariableReference variable, ref TState state);
     }
 }

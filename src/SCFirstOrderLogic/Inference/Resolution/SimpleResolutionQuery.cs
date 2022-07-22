@@ -76,10 +76,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// and this method exists.
         /// </summary>
         /// <param name="clauseStore">A knowledge base clause store to use to create the clause store for this query.</param>
-        /// <param name="clausePairFilter">A filter to apply to clause pairings during this query.</param>
-        /// <param name="clausePairPriorityComparison">A comparison delegate to use to prioritise clause pairings during this query.</param>
+        /// <param name="filter">A filter to apply to clause pairings during this query.</param>
+        /// <param name="priorityComparison">A comparison delegate to use to prioritise clause pairings during this query.</param>
         /// <param name="querySentence">The query itself.</param>
-        /// <param name="querySentence">The cancellation token for this operation.</param>
+        /// <param name="cancellationToken">The cancellation token for this operation.</param>
         /// <returns>A new query instance.</returns>
         internal static async Task<SimpleResolutionQuery> CreateAsync(
             IKnowledgeBaseClauseStore clauseStore,

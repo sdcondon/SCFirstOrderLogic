@@ -11,7 +11,7 @@
         /// <summary>
         /// Visits a <see cref="Constant"/> instance.
         /// </summary>
-        /// <param name="term">The constant to visit.</param>
+        /// <param name="constant">The constant to visit.</param>
         TOut ApplyTo(Constant constant);
 
         /// <summary>
@@ -23,7 +23,7 @@
         /// <summary>
         /// Visits a <see cref="VariableReference"/> instance.
         /// </summary>
-        /// <param name="term">The variable reference to visit.</param>
+        /// <param name="variable">The variable reference to visit.</param>
         TOut ApplyTo(VariableReference variable);
     }
 }

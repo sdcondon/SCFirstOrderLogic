@@ -22,12 +22,14 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// Inform the knowledge base that a given expression acting on the domain can be assumed to evaluate to true when answering queries.
         /// </summary>
         /// <param name="sentence">The expression that can be assumed to evaluate to true when answering queries.</param>
+        /// <param name="cancellationToken">The cancellation token for this operation. Optional, defaults (effectively) to <see cref="CancellationToken.None"/>.</param>
         Task TellAsync(Expression<Predicate<TDomain>> sentence, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Ask the knowledge base whether a given expression acting on the domain must be true, given what it knows.
         /// </summary>
         /// <param name="query">The sentence to ask about.</param>
+        /// <param name="cancellationToken">The cancellation token for this operation. Optional, defaults (effectively) to <see cref="CancellationToken.None"/>.</param>
         /// <returns>True if the sentence is known to be true, false if it is known to be false or cannot be determined.</returns>
         Task<bool> AskAsync(Expression<Predicate<TDomain>> query, CancellationToken cancellationToken = default);
 
