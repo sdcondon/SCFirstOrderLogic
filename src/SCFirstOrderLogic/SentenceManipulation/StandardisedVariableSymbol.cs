@@ -75,6 +75,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
         ////}
 
         /// <inheritdoc/>
-        public override string ToString() => new SentenceFormatter().Print(this);
+        public override string ToString() => new SentenceFormatter().Format(this);
     }
 }

@@ -43,6 +43,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public StandardisedVariableSymbol StandardisedVariableSymbol => (StandardisedVariableSymbol)OriginalVariableScope.Variable.Symbol;
 
         /// <inheritdoc/>
-        public override string ToString() => new SentenceFormatter().Print(this);
+        public override string ToString() => new SentenceFormatter().Format(this);
     }
 }

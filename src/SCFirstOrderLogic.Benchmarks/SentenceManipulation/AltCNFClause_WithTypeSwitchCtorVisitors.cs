@@ -81,7 +81,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Returns a string that represents the current object.
         /// <para/>
-        /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to print the clause.
+        /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to format the clause.
         /// Note that this will not guarantee unique labelling of normalisation terms (standardised variables or Skolem functions)
         /// across multiple calls, or provide any choice as to the sets of labels used for normalisation terms. If you want either
         /// of these things, instantiate your own <see cref="SentenceFormatter"/> instance.

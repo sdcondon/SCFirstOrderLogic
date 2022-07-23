@@ -251,11 +251,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 {
                     if (term is Function function && function.Symbol is SkolemFunctionSymbol skolemFunctionSymbol)
                     {
-                        return $"some {formatter.Print(skolemFunctionSymbol.StandardisedVariableSymbol)} from {formatter.Print(skolemFunctionSymbol.OriginalSentence)}";
+                        return $"some {formatter.Format(skolemFunctionSymbol.StandardisedVariableSymbol)} from {formatter.Format(skolemFunctionSymbol.OriginalSentence)}";
                     }
                     else if (term is VariableReference variable && variable.Symbol is StandardisedVariableSymbol standardisedVariableSymbol)
                     {
-                        return $"a standardisation of {standardisedVariableSymbol.OriginalSymbol} from {formatter.Print(standardisedVariableSymbol.OriginalSentence)}";
+                        return $"a standardisation of {standardisedVariableSymbol.OriginalSymbol} from {formatter.Format(standardisedVariableSymbol.OriginalSentence)}";
                     }
                     else
                     {
@@ -263,15 +263,15 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     }
                 }
 
-                explanation.AppendLine($"#{i:D2}: {formatter.Print(discoveredClauses[i])}");
-                explanation.AppendLine($"     From {GetSource(resolution.Clause1)}: {formatter.Print(resolution.Clause1)}");
-                explanation.AppendLine($"     And  {GetSource(resolution.Clause2)}: {formatter.Print(resolution.Clause2)} ");
+                explanation.AppendLine($"#{i:D2}: {formatter.Format(discoveredClauses[i])}");
+                explanation.AppendLine($"     From {GetSource(resolution.Clause1)}: {formatter.Format(resolution.Clause1)}");
+                explanation.AppendLine($"     And  {GetSource(resolution.Clause2)}: {formatter.Format(resolution.Clause2)} ");
                 explanation.Append("     Using   : {");
-                explanation.Append(string.Join(", ", resolution.Substitution.Bindings.Select(s => $"{formatter.Print(s.Key)}/{formatter.Print(s.Value)}")));
+                explanation.Append(string.Join(", ", resolution.Substitution.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
                 explanation.AppendLine("}");
                 foreach (var term in FindNormalisationTerms(discoveredClauses[i], resolution.Clause1, resolution.Clause2))
                 {
-                    explanation.AppendLine($"     ..where {formatter.Print(term)} is {ExplainNormalisationTerm(term)}");
+                    explanation.AppendLine($"     ..where {formatter.Format(term)} is {ExplainNormalisationTerm(term)}");
                 }
 
                 explanation.AppendLine();

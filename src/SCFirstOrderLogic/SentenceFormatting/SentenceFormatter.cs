@@ -56,30 +56,30 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="clause">The clause to be formatted.</param>
         /// <returns>A string representation of the given clause.</returns>
-        public string Print(CNFClause clause) => string.Join(" ∨ ", clause.Literals.Select(l => Print(l)));
+        public string Format(CNFClause clause) => string.Join(" ∨ ", clause.Literals.Select(l => Format(l)));
 
         /// <summary>
         /// Returns a string representation of a given <see cref="CNFLiteral"/> instance.
         /// </summary>
         /// <param name="literal">The literal to be formatted.</param>
         /// <returns>A string representation of the given literal.</returns>
-        public string Print(CNFLiteral literal) => $"{(literal.IsNegated ? "¬" : "")}{Print(literal.Predicate)}";
+        public string Format(CNFLiteral literal) => $"{(literal.IsNegated ? "¬" : "")}{Format(literal.Predicate)}";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Sentence"/> instance.
         /// </summary>
         /// <param name="sentence">The sentence to be formatted.</param>
         /// <returns>A string representation of the given sentence.</returns>
-        public string Print(Sentence sentence) => sentence switch
+        public string Format(Sentence sentence) => sentence switch
         {
-            Conjunction conjunction => Print(conjunction),
-            Disjunction disjunction => Print(disjunction),
-            Equivalence equivalence => Print(equivalence),
-            ExistentialQuantification existentialQuantification => Print(existentialQuantification),
-            Implication implication => Print(implication),
-            Negation negation => Print(negation),
-            Predicate predicate => Print(predicate),
-            UniversalQuantification universalQuantification => Print(universalQuantification),
+            Conjunction conjunction => Format(conjunction),
+            Disjunction disjunction => Format(disjunction),
+            Equivalence equivalence => Format(equivalence),
+            ExistentialQuantification existentialQuantification => Format(existentialQuantification),
+            Implication implication => Format(implication),
+            Negation negation => Format(negation),
+            Predicate predicate => Format(predicate),
+            UniversalQuantification universalQuantification => Format(universalQuantification),
             _ => throw new ArgumentException("Unsupported sentence type")
         };
 
@@ -88,75 +88,75 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="conjunction">The conjunction to be formatted.</param>
         /// <returns>A string representation of the given conjunction.</returns>
-        private string Print(Conjunction conjunction) =>
-            $"[{Print(conjunction.Left)} ∧ {Print(conjunction.Right)}]";
+        private string Format(Conjunction conjunction) =>
+            $"[{Format(conjunction.Left)} ∧ {Format(conjunction.Right)}]";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Disjunction"/> instance.
         /// </summary>
         /// <param name="disjunction">The disjunction to be formatted.</param>
         /// <returns>A string representation of the given disjunction.</returns>
-        public string Print(Disjunction disjunction) =>
-            $"[{Print(disjunction.Left)} ∨ {Print(disjunction.Right)}]";
+        public string Format(Disjunction disjunction) =>
+            $"[{Format(disjunction.Left)} ∨ {Format(disjunction.Right)}]";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Equivalence"/> instance.
         /// </summary>
         /// <param name="equivalence">The equivalence to be formatted.</param>
         /// <returns>A string representation of the given equivalence.</returns>
-        public string Print(Equivalence equivalence) =>
-            $"[{Print(equivalence.Left)} ⇔ {Print(equivalence.Right)}]";
+        public string Format(Equivalence equivalence) =>
+            $"[{Format(equivalence.Left)} ⇔ {Format(equivalence.Right)}]";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="ExistentialQuantification"/> instance.
         /// </summary>
         /// <param name="existentialQuantification">The existential quantification to be formatted.</param>
         /// <returns>A string representation of the given existential quantification.</returns>
-        public string Print(ExistentialQuantification existentialQuantification) =>
-            $"[∃ {Print(existentialQuantification.Variable)}, {Print(existentialQuantification.Sentence)}]";
+        public string Format(ExistentialQuantification existentialQuantification) =>
+            $"[∃ {Format(existentialQuantification.Variable)}, {Format(existentialQuantification.Sentence)}]";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Implication"/> instance.
         /// </summary>
         /// <param name="implication">The implication to be formatted.</param>
         /// <returns>A string representation of the given implication.</returns>
-        public string Print(Implication implication) =>
-            $"[{Print(implication.Antecedent)} ⇒ {Print(implication.Consequent)}]";
+        public string Format(Implication implication) =>
+            $"[{Format(implication.Antecedent)} ⇒ {Format(implication.Consequent)}]";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Negation"/> instance.
         /// </summary>
         /// <param name="negation">The negation to be formatted.</param>
         /// <returns>A string representation of the given negation.</returns>
-        public string Print(Negation negation) =>
-            $"¬{Print(negation.Sentence)}";
+        public string Format(Negation negation) =>
+            $"¬{Format(negation.Sentence)}";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Predicate"/> instance.
         /// </summary>
         /// <param name="predicate">The predicate to be formatted.</param>
         /// <returns>A string representation of the given predicate.</returns>
-        public string Print(Predicate predicate) =>
-            $"{predicate.Symbol}({string.Join(", ", predicate.Arguments.Select(a => Print(a)))})";
+        public string Format(Predicate predicate) =>
+            $"{predicate.Symbol}({string.Join(", ", predicate.Arguments.Select(a => Format(a)))})";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="UniversalQuantification"/> instance.
         /// </summary>
         /// <param name="universalQuantification">The universal quantification to be formatted.</param>
         /// <returns>A string representation of the given universal quantification.</returns>
-        public string Print(UniversalQuantification universalQuantification) =>
-            $"[∀ {Print(universalQuantification.Variable)}, {Print(universalQuantification.Sentence)}]";
+        public string Format(UniversalQuantification universalQuantification) =>
+            $"[∀ {Format(universalQuantification.Variable)}, {Format(universalQuantification.Sentence)}]";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Term"/> instance.
         /// </summary>
         /// <param name="term">The term to be formatted.</param>
         /// <returns>A string representation of the given term.</returns>
-        public string Print(Term term) => term switch
+        public string Format(Term term) => term switch
         {
-            Constant constant => Print(constant),
-            VariableReference variable => Print(variable),
-            Function function => Print(function),
+            Constant constant => Format(constant),
+            VariableReference variable => Format(variable),
+            Function function => Format(function),
             _ => throw new ArgumentException($"Unsupported Term type '{term.GetType()}'")
         };
 
@@ -165,26 +165,26 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="constant">The constant to be formatted.</param>
         /// <returns>A string representation of the given constant.</returns>
-        public string Print(Constant constant) =>
-            constant.Symbol.ToString() ?? throw new ArgumentException("Cannot print constant because ToString of its symbol returned null", nameof(constant));
+        public string Format(Constant constant) =>
+            constant.Symbol.ToString() ?? throw new ArgumentException("Cannot format constant because ToString of its symbol returned null", nameof(constant));
 
         /// <summary>
         /// Returns a string representation of a given <see cref="VariableReference"/> instance.
         /// </summary>
         /// <param name="variableReference">The variable reference to be formatted.</param>
         /// <returns>A string representation of the given variable reference.</returns>
-        public string Print(VariableReference variableReference) =>
-            Print(variableReference.Declaration);
+        public string Format(VariableReference variableReference) =>
+            Format(variableReference.Declaration);
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Function"/> instance.
         /// </summary>
         /// <param name="function">The function to be formatted.</param>
         /// <returns>A string representation of the given function.</returns>
-        public string Print(Function function)
+        public string Format(Function function)
         {
-            var label = function.Symbol is SkolemFunctionSymbol skm ? Print(skm) : function.Symbol.ToString();
-            return $"{label}({string.Join(", ", function.Arguments.Select(a => Print(a)))})";
+            var label = function.Symbol is SkolemFunctionSymbol skm ? Format(skm) : function.Symbol.ToString();
+            return $"{label}({string.Join(", ", function.Arguments.Select(a => Format(a)))})";
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="symbol">The symbol to be formatted.</param>
         /// <returns>A string representation of the given symbol.</returns>
-        public string Print(SkolemFunctionSymbol symbol)
+        public string Format(SkolemFunctionSymbol symbol)
         {
             if (labelsBySkolemFunctionSymbol.TryGetValue(symbol, out var label))
             {
@@ -221,12 +221,12 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="variableDeclaration">The variable declaration to be formatted.</param>
         /// <returns>A string representation of the given variable declaration.</returns>
-        public string Print(VariableDeclaration variableDeclaration)
+        public string Format(VariableDeclaration variableDeclaration)
         {
             return variableDeclaration.Symbol switch
             {
-                StandardisedVariableSymbol std => Print(std),
-                _ => variableDeclaration.Symbol.ToString() ?? throw new ArgumentException("Cannot print variable declaration because ToString of its symbol returned null", nameof(variableDeclaration))
+                StandardisedVariableSymbol std => Format(std),
+                _ => variableDeclaration.Symbol.ToString() ?? throw new ArgumentException("Cannot format variable declaration because ToString of its symbol returned null", nameof(variableDeclaration))
             };
         }
 
@@ -235,7 +235,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="symbol">The symbol to be formatted.</param>
         /// <returns>A string representation of the given standardised variable symbol.</returns>
-        public string Print(StandardisedVariableSymbol symbol)
+        public string Format(StandardisedVariableSymbol symbol)
         {
             if (labelsByStandardisedVariableSymbol.TryGetValue(symbol, out var label))
             {

@@ -38,7 +38,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Returns a string that represents the current object.
         /// <para/>
-        /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to print the term.
+        /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to format the term.
         /// If the term is from a normalised sentence, its worth noting that this will not guarantee unique labelling of any normalisation terms
         /// (standardised variables or Skolem functions) across a set of sentences, or provide any choice as to the sets of labels used for
         /// normalisation terms. If you want either of these things, instantiate your own <see cref="SentenceFormatter"/> instance.
@@ -48,6 +48,6 @@ namespace SCFirstOrderLogic
         /// messing around with sets of labels. So its important that this stays - to avoid a barrier to entry for the library.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
-        public override string ToString() => new SentenceFormatter().Print(this);
+        public override string ToString() => new SentenceFormatter().Format(this);
     }
 }
