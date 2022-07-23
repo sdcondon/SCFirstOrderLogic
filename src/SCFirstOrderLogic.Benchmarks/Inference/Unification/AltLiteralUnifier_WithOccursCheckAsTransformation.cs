@@ -40,7 +40,7 @@ namespace SCFirstOrderLogic.Inference.Unification
                 return false;
             }
 
-            // BUG?: Makes the assumption that same symbol means same number of arguments.
+            // WOULD-BE-A-BUG-IF-THIS-WERE-PROD-CODE?: Makes the assumption that same symbol means same number of arguments.
             // It is possible to confuse this algorithm by passing literals where that isn't true
             foreach (var args in x.Predicate.Arguments.Zip(y.Predicate.Arguments, (x, y) => (x, y)))
             {

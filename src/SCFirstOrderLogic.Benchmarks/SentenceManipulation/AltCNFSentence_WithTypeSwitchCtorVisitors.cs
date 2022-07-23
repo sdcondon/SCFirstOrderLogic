@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             var cnfSentence = CNFConversion.ApplyTo(sentence);
             var clauses = new List<AltCNFClause_WithTypeSwitchCtorVisitors>();
             new CNFClauseFinder(clauses).Visit(cnfSentence);
-            // BUG: Potential equality bug on hash code collision..
+            // WOULD-BE-A-BUG-IF-THIS-WERE-PROD-CODE: Potential equality bug on hash code collision..
             Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
         }
 

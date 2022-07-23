@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
             // its a super low-level class and I'd rather err on the side of using the smallest & simplest implementation possible.
             // Note that we order literals - which is important to justifiably consider the clause "normalised".
-            // BUG: Possible problems when hash code collisions occur. Probably worth a more robust approach at some point - but
+            // WOULD-BE-A-BUG-IF-THIS-WERE-PROD-CODE: Possible problems when hash code collisions occur. Probably worth a more robust approach at some point - but
             // clause equality will be checked a LOT during resolution..
             Literals = ctor.Literals.OrderBy(l => l.GetHashCode()).ToArray();
         }
