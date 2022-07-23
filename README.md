@@ -2,7 +2,7 @@
 
 # SCFirstOrderLogic
 
-Basic but fully documented and extensible [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) implementations.
+Basic but fully documented and extensible [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) implementations. Includes language integration features.
 
 Created just for fun while reading chapters 8 and 9 of _Artificial Intelligence: A Modern Approach_ (3rd Edition - [ISBN 978-1292153964](https://www.google.com/search?q=isbn+978-1292153964)) - so may prove interesting to the .NET-inclined reading the same book.
 The ["official" C# repository](https://github.com/aimacode/aima-csharp/tree/master/aima-csharp) for the book does of course cover these chapters, but given that what I've found there isn't (IMHO) very useful, here we are.
