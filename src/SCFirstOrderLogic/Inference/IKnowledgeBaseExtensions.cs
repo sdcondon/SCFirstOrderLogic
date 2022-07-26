@@ -25,6 +25,16 @@ namespace SCFirstOrderLogic.Inference
         }
 
         /// <summary>
+        /// Inform a knowledge base that a given enumerable of sentences can all be assumed to hold true when answering queries.
+        /// </summary>
+        /// <param name="knowledgeBase">The knowledge base to tell.</param>
+        /// <param name="sentences">The sentences that can be assumed to hold true when answering queries.</param>
+        public static void Tell(this IKnowledgeBase knowledgeBase, IEnumerable<Sentence> sentences)
+        {
+            knowledgeBase.TellAsync(sentences).Wait();
+        }
+
+        /// <summary>
         /// Inform a knowledge base that a given sentence can all be assumed to hold true when answering queries.
         /// </summary>
         /// <param name="knowledgeBase">The knowledge base to tell.</param>
@@ -32,6 +42,22 @@ namespace SCFirstOrderLogic.Inference
         public static void Tell(this IKnowledgeBase knowledgeBase, Sentence sentence)
         {
             knowledgeBase.TellAsync(sentence).Wait();
+        }
+
+        /// <summary>
+        /// Initiates a new query against the knowledge base.
+        /// <para/>
+        /// NB: We don't define an Ask(Async) method directly on the knowledge base interface because of this library's
+        /// focus on learning outcomes. The <see cref="IQuery"/> interface allows for implementations that support step-by-step
+        /// execution and/or examination of the steps that lead to the result. Note that "Ask" extension methods do exist,
+        /// though (which create queries and immediately execute them to completion).
+        /// </summary>
+        /// <param name="knowledgeBase">The knowledge base to create the query of.</param>
+        /// <param name="sentence">The query sentence.</param>
+        /// <returns>An <see cref="IQuery"/> implementation representing the query, that can then be used </returns>
+        public static IQuery CreateQuery(this IKnowledgeBase knowledgeBase, Sentence sentence)
+        {
+            return knowledgeBase.CreateQueryAsync(sentence).Result;
         }
 
         /// <summary>
