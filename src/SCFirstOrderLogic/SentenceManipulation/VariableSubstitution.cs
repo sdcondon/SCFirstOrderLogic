@@ -9,7 +9,33 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// </summary>
     public class VariableSubstitution : RecursiveSentenceTransformation
     {
-        private readonly Dictionary<VariableReference, Term> bindings = new();
+        private readonly Dictionary<VariableReference, Term> bindings;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VariableSubstitution"/> class that is empty.
+        /// </summary>
+        public VariableSubstitution()
+        {
+            bindings = new();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VariableSubstitution"/> class that is a clone of another.
+        /// </summary>
+        /// <param name="substitution">The substitution to clone.</param>
+        public VariableSubstitution(VariableSubstitution substitution)
+            : this(substitution.bindings)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VariableSubstitution"/> class that uses a given set of bindings.
+        /// </summary>
+        /// <param name="bindings">The bindings to use.</param>
+        internal VariableSubstitution(IReadOnlyDictionary<VariableReference, Term> bindings)
+        {
+            this.bindings = new (bindings);
+        }
 
         /// <summary>
         /// Gets the substitions applied by this transformation.

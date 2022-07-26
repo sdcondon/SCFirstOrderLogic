@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         {
             var unifierAttempt = new VariableSubstitution();
 
-            if (!TryUnify(x, y, unifierAttempt))
+            if (!TryUpdate(x, y, unifierAttempt))
             {
                 unifier = null;
                 return false;
@@ -32,7 +32,14 @@ namespace SCFirstOrderLogic.Inference.Unification
             return true;
         }
 
-        private static bool TryUnify(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
+        /// <summary>
+        /// Attempts to update a unifier so that it (also) unifies two given literals.
+        /// </summary>
+        /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
+        /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
+        /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure. This behaviour is to facilitate efficiency. Copy the unifier before invocation if you need to avoid this.</param>
+        /// <returns>True if the two literals can be unified, otherwise false.</returns>
+        public static bool TryUpdate(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
         {
             if (x.IsNegated != y.IsNegated || !x.Predicate.Symbol.Equals(y.Predicate.Symbol))
             {
@@ -43,7 +50,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             // It is possible to confuse this algorithm by passing literals where that isn't true
             foreach (var args in x.Predicate.Arguments.Zip(y.Predicate.Arguments, (x, y) => (x, y)))
             {
-                if (!TryUnify(args.x, args.y, unifier))
+                if (!TryUpdate(args.x, args.y, unifier))
                 {
                     return false;
                 }
@@ -52,32 +59,32 @@ namespace SCFirstOrderLogic.Inference.Unification
             return true;
         }
 
-        private static bool TryUnify(Term x, Term y, VariableSubstitution unifier)
+        private static bool TryUpdate(Term x, Term y, VariableSubstitution unifier)
         {
             return (x, y) switch
             {
-                (VariableReference variable, _) => TryUnify(variable, y, unifier),
-                (_, VariableReference variable) => TryUnify(variable, x, unifier),
-                (Function functionX, Function functionY) => TryUnify(functionX, functionY, unifier),
+                (VariableReference variable, _) => TryUpdate(variable, y, unifier),
+                (_, VariableReference variable) => TryUpdate(variable, x, unifier),
+                (Function functionX, Function functionY) => TryUpdate(functionX, functionY, unifier),
                 // only potential for equality is if they're both constants. Perhaps worth testing this vs that explicitly and a default that just returns false.
                 // Very similar from a performace perspective (constant equality does type check)
                 _ => x.Equals(y),
             };
         }
 
-        private static bool TryUnify(VariableReference variable, Term other, VariableSubstitution unifier)
+        private static bool TryUpdate(VariableReference variable, Term other, VariableSubstitution unifier)
         {
             if (unifier.Bindings.TryGetValue(variable, out var value))
             {
                 // The variable is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.
-                return TryUnify(value, other, unifier);
+                return TryUpdate(value, other, unifier);
             }
             else if (other is VariableReference otherVariable && unifier.Bindings.TryGetValue(otherVariable, out value))
             {
                 // The other value is also a variable that is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.
-                return TryUnify(variable, value, unifier);
+                return TryUpdate(variable, value, unifier);
             }
             else if (Occurs(variable, other))
             {
@@ -93,7 +100,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             }
         }
 
-        private static bool TryUnify(Function x, Function y, VariableSubstitution unifier)
+        private static bool TryUpdate(Function x, Function y, VariableSubstitution unifier)
         {
             if (!x.Symbol.Equals(y.Symbol))
             {
@@ -102,7 +109,7 @@ namespace SCFirstOrderLogic.Inference.Unification
 
             foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
             {
-                if (!TryUnify(args.x, args.y, unifier))
+                if (!TryUpdate(args.x, args.y, unifier))
                 {
                     return false;
                 }
