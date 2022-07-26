@@ -32,7 +32,7 @@ namespace SCFirstOrderLogic.Inference
         /// NB: This is an asynchronous method ultimately because "real" knowledge bases will often need to do IO to retrieve knowledge.
         /// </summary>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        /// <returns>The result of the query.</returns>
+        /// <returns>A task, the result of which is the result of the query.</returns>
         Task<bool> ExecuteAsync(CancellationToken cancellationToken = default);
     }
 }

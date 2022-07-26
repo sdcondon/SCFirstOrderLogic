@@ -16,5 +16,15 @@ namespace SCFirstOrderLogic.Inference
         {
             return query.ExecuteAsync().GetAwaiter();
         }
+
+        /// <summary>
+        /// Executes a query to completion.
+        /// </summary>
+        /// <param name="query">The query to execute.</param>
+        /// <returns>The result of the query.</returns>
+        public static bool Execute(this IQuery query)
+        {
+            return query.ExecuteAsync().Result;
+        }
     }
 }
