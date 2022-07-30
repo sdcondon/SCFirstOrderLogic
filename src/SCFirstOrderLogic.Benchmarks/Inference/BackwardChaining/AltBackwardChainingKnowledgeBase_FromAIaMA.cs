@@ -1,5 +1,4 @@
-﻿using SCFirstOrderLogic.Inference;
-using SCFirstOrderLogic.Inference.Unification;
+﻿using SCFirstOrderLogic.Inference.Unification;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
@@ -7,13 +6,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SCFirstOrderLogic.Benchmarks.Inference.BackwardChaining
+namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm. This one is implemented as close as possible to the
     /// implementation in figure 9.6 of "Artificial Intelligence: A Modern Approach" - for reference purposes.
     /// </summary>
-    public class BackwardChainingKnowledgeBase_FromAIaMA : IKnowledgeBase
+    public class AltBackwardChainingKnowledgeBase_FromAIaMA : IKnowledgeBase
     {
         private readonly Dictionary<object, List<CNFClause>> clausesByConsequentSymbol = new ();
 
@@ -66,7 +65,7 @@ namespace SCFirstOrderLogic.Benchmarks.Inference.BackwardChaining
         }
 
         /// <summary>
-        /// Query implementation used by <see cref="BackwardChainingKnowledgeBase_FromAIaMA"/>.
+        /// Query implementation used by <see cref="AltBackwardChainingKnowledgeBase_FromAIaMA"/>.
         /// </summary>
         public class Query : IQuery
         {
