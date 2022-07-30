@@ -8,8 +8,11 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
-    /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm. For now just an
-    /// implementation of what is found in figure 9.6 of "Artificial Intelligence: A Modern Approach".
+    /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm.
+    /// <para/>
+    /// For now just an implementation of what is found in figure 9.6 of "Artificial Intelligence: A Modern Approach".
+    /// Ultimately would be nice to at least expose the and-or tree for examination - probably also an "Explain" method to
+    /// 
     /// </summary>
     public class SimpleBackwardChainingKnowledgeBase : IKnowledgeBase
     {
@@ -18,6 +21,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// <inheritdoc />
         public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
+            // Normalize, then verify that the sentence consists only of definite clauses:
             var cnfSentence = new CNFSentence(sentence);
 
             if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))
@@ -25,6 +29,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));
             }
 
+            // Store clauses indexed by their consequent symbol:
             foreach (var clause in cnfSentence.Clauses)
             {
                 var consequentSymbol = clause.Literals.Single(l => l.IsPositive).Predicate.Symbol;
@@ -51,12 +56,12 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             if (query is not Predicate p)
             {
-                throw new ArgumentException("This knowledge base supports only queries that are propositions");
+                throw new ArgumentException("This knowledge base supports only queries that are predicates");
             }
 
-            // Doesn't hurt to not standardise here - wont clash because all of the KB rules *are* standardised
+            // Doesn't hurt to not standardise variables here - wont clash because all of the KB rules *are* standardised
             // (assuming the symbols in the query don't have weird equality rules)..
-            // ..and in any case our standardisation logic assumes all variables to be quantified, otherwise it crashes..
+            // ..and in any case our standardisation logic (is within CNFConversion for the moment and) assumes all variables to be quantified..
             //var standardisation = new VariableStandardisation(query);
             //p = (Predicate)standardisation.ApplyTo(p);
 
