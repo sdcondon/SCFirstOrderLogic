@@ -3,7 +3,7 @@ using FlUnit;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {

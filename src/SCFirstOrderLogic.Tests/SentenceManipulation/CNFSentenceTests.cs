@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {

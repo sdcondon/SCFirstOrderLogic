@@ -1,4 +1,4 @@
-﻿namespace SCFirstOrderLogic.SentenceManipulation
+﻿namespace SCFirstOrderLogic.SentenceCreation
 {
     /// <summary>
     /// Shorthand static factory methods for <see cref="Sentence"/> instances. Intended to be used with a 'using static' directive to make method invocations acceptably succinct:
@@ -27,7 +27,7 @@
         /// <param name="variableDeclaration2">The second variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variables.</param>
         /// <returns>A new <see cref="UniversalQuantification"/> instance.</returns>
-        public static Sentence ForAll(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, Sentence sentence) => 
+        public static Sentence ForAll(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, Sentence sentence) =>
             new UniversalQuantification(variableDeclaration1, new UniversalQuantification(variableDeclaration2, sentence));
 
         /// <summary>
@@ -38,7 +38,7 @@
         /// <param name="variableDeclaration3">The third variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variables.</param>
         /// <returns>A new <see cref="UniversalQuantification"/> instance.</returns>
-        public static Sentence ForAll(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, VariableDeclaration variableDeclaration3, Sentence sentence) => 
+        public static Sentence ForAll(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, VariableDeclaration variableDeclaration3, Sentence sentence) =>
             new UniversalQuantification(variableDeclaration1, new UniversalQuantification(variableDeclaration2, new UniversalQuantification(variableDeclaration3, sentence)));
 
         /// <summary>
@@ -47,7 +47,7 @@
         /// <param name="variableDeclaration">The variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variable.</param>
         /// <returns>A new <see cref="ExistentialQuantification"/> instance.</returns>
-        public static Sentence ThereExists(VariableDeclaration variableDeclaration, Sentence sentence) => 
+        public static Sentence ThereExists(VariableDeclaration variableDeclaration, Sentence sentence) =>
             new ExistentialQuantification(variableDeclaration, sentence);
 
         /// <summary>
@@ -57,7 +57,7 @@
         /// <param name="variableDeclaration2">The second variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variables.</param>
         /// <returns>A new <see cref="ExistentialQuantification"/> instance.</returns>
-        public static Sentence ThereExists(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, Sentence sentence) => 
+        public static Sentence ThereExists(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, Sentence sentence) =>
             new ExistentialQuantification(variableDeclaration1, new UniversalQuantification(variableDeclaration2, sentence));
 
         /// <summary>
@@ -115,7 +115,7 @@
         /// <param name="antecedent">The antecedent sentence of the implication.</param>
         /// <param name="consequent">The consequent sentence of the implication.</param>
         /// <returns>A new <see cref="Implication"/> instance.</returns>
-        public static Sentence If(Sentence antecedent, Sentence consequent) => 
+        public static Sentence If(Sentence antecedent, Sentence consequent) =>
             new Implication(antecedent, consequent);
 
         /// <summary>
@@ -124,7 +124,7 @@
         /// <param name="left">The left-hand operand of the equivalence.</param>
         /// <param name="right">The right-hand operand of the equivalence.</param>
         /// <returns>A new <see cref="Equivalence"/> instance.</returns>
-        public static Sentence Iff(Sentence left, Sentence right) => 
+        public static Sentence Iff(Sentence left, Sentence right) =>
             new Equivalence(left, right);
 
         /// <summary>
@@ -132,7 +132,7 @@
         /// </summary>
         /// <param name="sentence">The negated sentence.</param>
         /// <returns>A new <see cref="Negation"/> instance.</returns>
-        public static Sentence Not(Sentence sentence) => 
+        public static Sentence Not(Sentence sentence) =>
             new Negation(sentence);
 
         /// <summary>

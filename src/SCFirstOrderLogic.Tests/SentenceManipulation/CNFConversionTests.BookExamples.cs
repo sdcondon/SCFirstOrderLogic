@@ -2,7 +2,7 @@
 using FluentAssertions.Equivalency;
 using FlUnit;
 using SCFirstOrderLogic.TestUtilities;
-using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
 {

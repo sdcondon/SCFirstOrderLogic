@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic.SentenceCreation
 {
     /// <summary>
     /// Shorthand static factory methods for <see cref="Sentence"/> instances. Intended to be used with a 'using static' directive to make method invocations acceptably succinct:
@@ -39,7 +39,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="variableDeclaration2">The second variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variables.</param>
         /// <returns>A new <see cref="OperableUniversalQuantification"/> instance.</returns>
-        public static OperableSentence ForAll(OperableVariableDeclaration variableDeclaration1, OperableVariableDeclaration variableDeclaration2, OperableSentence sentence) => 
+        public static OperableSentence ForAll(OperableVariableDeclaration variableDeclaration1, OperableVariableDeclaration variableDeclaration2, OperableSentence sentence) =>
             new OperableUniversalQuantification(variableDeclaration1, new OperableUniversalQuantification(variableDeclaration2, sentence));
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="variableDeclaration3">The third variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variables.</param>
         /// <returns>A new <see cref="OperableUniversalQuantification"/> instance.</returns>
-        public static OperableSentence ForAll(OperableVariableDeclaration variableDeclaration1, OperableVariableDeclaration variableDeclaration2, OperableVariableDeclaration variableDeclaration3, OperableSentence sentence) => 
+        public static OperableSentence ForAll(OperableVariableDeclaration variableDeclaration1, OperableVariableDeclaration variableDeclaration2, OperableVariableDeclaration variableDeclaration3, OperableSentence sentence) =>
             new OperableUniversalQuantification(variableDeclaration1, new OperableUniversalQuantification(variableDeclaration2, new OperableUniversalQuantification(variableDeclaration3, sentence)));
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="variableDeclaration">The variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variable.</param>
         /// <returns>A new <see cref="OperableExistentialQuantification"/> instance.</returns>
-        public static OperableSentence ThereExists(OperableVariableDeclaration variableDeclaration, OperableSentence sentence) => 
+        public static OperableSentence ThereExists(OperableVariableDeclaration variableDeclaration, OperableSentence sentence) =>
             new OperableExistentialQuantification(variableDeclaration, sentence);
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="variableDeclaration2">The second variable declaration.</param>
         /// <param name="sentence">The body sentence that refers to the declared variables.</param>
         /// <returns>A new <see cref="OperableExistentialQuantification"/> instance.</returns>
-        public static OperableSentence ThereExists(OperableVariableDeclaration variableDeclaration1, OperableVariableDeclaration variableDeclaration2, OperableSentence sentence) => 
+        public static OperableSentence ThereExists(OperableVariableDeclaration variableDeclaration1, OperableVariableDeclaration variableDeclaration2, OperableSentence sentence) =>
             new OperableExistentialQuantification(variableDeclaration1, new OperableUniversalQuantification(variableDeclaration2, sentence));
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="antecedent">The antecedent sentence of the implication.</param>
         /// <param name="consequent">The consequent sentence of the implication.</param>
         /// <returns>A new <see cref="OperableImplication"/> instance.</returns>
-        public static OperableSentence If(OperableSentence antecedent, OperableSentence consequent) => 
+        public static OperableSentence If(OperableSentence antecedent, OperableSentence consequent) =>
             new OperableImplication(antecedent, consequent);
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="left">The left-hand operand of the equivalence.</param>
         /// <param name="right">The right-hand operand of the equivalence.</param>
         /// <returns>A new <see cref="OperableEquivalence"/> instance.</returns>
-        public static OperableSentence Iff(OperableSentence left, OperableSentence right) => 
+        public static OperableSentence Iff(OperableSentence left, OperableSentence right) =>
             new OperableEquivalence(left, right);
 
         #region VariableDeclarations
@@ -333,7 +333,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Surrogate for <see cref="Equivalence"/> instances that derives from <see cref="OperableSentence"/> and can thus be operated on with |, &amp; and ! operators
         /// to create disjunctions, conjunctions and negations respectively. N.B. constructor is intentionally not public - should only be created via the
-        /// <see cref="OperableSentenceFactory.Iff"/> method.
+        /// <see cref="Iff"/> method.
         /// </summary>
         public sealed class OperableEquivalence : OperableSentence
         {
@@ -347,7 +347,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Surrogate for <see cref="ExistentialQuantification"/> instances that derives from <see cref="OperableSentence"/> and can thus be operated on with |, &amp; and ! operators
         /// to create disjunctions, conjunctions and negations respectively. N.B. constructor is intentionally not public - should only be created via the
-        /// <see cref="OperableSentenceFactory.ThereExists(OperableVariableDeclaration, OperableSentence)"/> method (or its overrides).
+        /// <see cref="ThereExists(OperableVariableDeclaration, OperableSentence)"/> method (or its overrides).
         /// </summary>
         public sealed class OperableExistentialQuantification : OperableSentence
         {
@@ -391,7 +391,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Surrogate for <see cref="Implication"/> instances that derives from <see cref="OperableSentence"/> and can thus be operated on with |, &amp; and ! operators
         /// to create disjunctions, conjunctions and negations respectively. N.B. constructor is intentionally not public - should only be created via the
-        /// <see cref="OperableSentenceFactory.If"/> method.
+        /// <see cref="If"/> method.
         /// </summary>
         public sealed class OperableImplication : OperableSentence
         {
@@ -498,7 +498,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Surrogate for <see cref="UniversalQuantification"/> instances that derives from <see cref="OperableSentence"/> and can thus be operated on with |, &amp; and ! operators
         /// to create disjunctions, conjunctions and negations respectively. N.B. constructor is intentionally not public - should only be created via the
-        /// <see cref="OperableSentenceFactory.ForAll(OperableVariableDeclaration, OperableSentence)"/> method (or its overrides).
+        /// <see cref="ForAll(OperableVariableDeclaration, OperableSentence)"/> method (or its overrides).
         /// </summary>
         public sealed class OperableUniversalQuantification : OperableSentence
         {

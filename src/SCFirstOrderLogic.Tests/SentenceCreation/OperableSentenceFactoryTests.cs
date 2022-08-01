@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using System;
-using static SCFirstOrderLogic.SentenceManipulation.OperableSentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic.SentenceCreation
 {
     public class OperableSentenceFactoryTests
     {
