@@ -1,4 +1,5 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.Inference.Resolution;
+using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,9 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm.
     /// <para/>
-    /// For now just an implementation of what is found in figure 9.6 of "Artificial Intelligence: A Modern Approach".
-    /// Ultimately would be nice to at least expose the and-or tree for examination - probably also an "Explain" method to
-    /// 
+    /// For now this is VERY basic - just an implementation of what is found in figure 9.6 of "Artificial Intelligence: A Modern Approach".
+    /// Would be nice to at least bring it up to comparability with the <see cref="SimpleResolutionKnowledgeBase"/> implementation - 
+    /// with explanation methods and perhaps a little configurability.
     /// </summary>
     public class SimpleBackwardChainingKnowledgeBase : IKnowledgeBase
     {

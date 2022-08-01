@@ -14,8 +14,14 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Linq
     /// ILinqKnowledgeBase&lt;IPerson&gt; kb = .. // a LINQ knowledge base implementation
     /// kb.Tell(KinshipDomain.Axioms);
     /// kb.Tell(..facts about the specific problem..);
-    /// // ..though the real value of language integration would be in KBs that support something like kb.Bind(domainAdapter, opts),
-    /// // where domainAdapter is an IEnumerable&lt;IPerson&gt;, to specify known constants in a way that easily integrates with the rest of the app
+    /// // ..though its worth noting that language integration allows for KBs that include stuff like
+    /// // BindConstants(domainAdapter, options), where domainAdapter is an IEnumerable&lt;IPerson&gt;,
+    /// // to specify known constants (i.e. their relationships/functions) in an OO way that easily integrates
+    /// // with the rest of the app. Note how you'd *need* some kind of "options" to set how unspecified
+    /// // predicates and functions involving constants are expressed. Thrown exceptions? Null return values
+    /// // (for functions)? etc. And there are some subtleties and complications here (particularly once you 
+    /// // start thinking about non-unary predicates and functions) that don't necessairly have any, let alone
+    /// // easy, answers. So, no such KBs written just yet.
     /// var answer = kb.Ask(..my query..);
     /// </code>
     /// </summary>

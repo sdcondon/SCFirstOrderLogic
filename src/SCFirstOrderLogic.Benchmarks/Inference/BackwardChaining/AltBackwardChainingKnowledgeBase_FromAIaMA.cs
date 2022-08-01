@@ -52,7 +52,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             if (query is not Predicate p)
             {
-                throw new ArgumentException("This knowledge base supports only queries that are propositions");
+                throw new ArgumentException("This knowledge base supports only queries that are predicates");
             }
 
             // Doesn't hurt to not standardise here - wont clash because all of the KB rules *are* standardised
