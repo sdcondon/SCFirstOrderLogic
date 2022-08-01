@@ -45,7 +45,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public static CNFClause Empty { get; } = new CNFClause(Array.Empty<CNFLiteral>());
 
         /// <summary>
-        /// Gets the collection of literals that comprise this clause.
+        /// Gets the collection of literals that comprise this clause (ordered by hash code).
         /// </summary>
         public IReadOnlyCollection<CNFLiteral> Literals { get; }
 
@@ -119,7 +119,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         /// <inheritdoc />
         /// <remarks>
-        /// Clauses that contain exactly the same collection of literals in the same order are considered equal.
+        /// Clauses that contain exactly the same collection of literals are considered equal.
         /// </remarks>
         public override int GetHashCode()
         {
