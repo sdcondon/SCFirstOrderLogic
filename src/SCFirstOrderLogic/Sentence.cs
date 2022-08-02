@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic
     /// <summary>
     /// Representation of a sentence of first order logic.
     /// <para/>
-    /// NB: There are no "intuitive" operator overloads (&amp; for conjunctions, | for disjunctions etc) here,
+    /// NB: There are no "intuitive" operator definitions (&amp; for conjunctions, | for disjunctions etc) here,
     /// to keep the core sentence classes as lean and mean as possible. C# / FoL syntax mapping
     /// is better achieved with LINQ - see the types in the LanguageIntegration namespace. Or, if you're
     /// really desperate for sentence operators, also see the <see cref="SentenceCreation.OperableSentenceFactory"/> class,
@@ -50,7 +50,7 @@ namespace SCFirstOrderLogic
         /// of sentences, or provide any choice as to the sets of labels used for them. If you want either of these behaviours,
         /// instantiate your own <see cref="SentenceFormatter"/> instance.
         /// <para/>
-        /// Aside: I have wondered if it would perhaps better to just enforce explicit SentenceFormatter use by not defining an overload here.
+        /// Aside: I have wondered if it would perhaps better to just enforce explicit SentenceFormatter use by not defining an override here.
         /// That would however be a PITA if you just want to print out your nice, simple sentence. It may even be non-normalised - in which
         /// case you definitely won't want to be messing around with sets of labels. So its important that this stays - to avoid a barrier to
         /// entry for the library.
