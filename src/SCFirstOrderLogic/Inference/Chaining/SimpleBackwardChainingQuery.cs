@@ -1,5 +1,6 @@
 ﻿using SCFirstOrderLogic.Inference.Unification;
 using SCFirstOrderLogic.SentenceManipulation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,6 +16,8 @@ namespace SCFirstOrderLogic.Inference.Chaining
         private readonly Predicate query;
         private readonly IReadOnlyDictionary<object, List<CNFClause>> clausesByConsequentSymbol;
 
+        private IEnumerable<VariableSubstitution>? substitutions;
+
         internal SimpleBackwardChainingQuery(Predicate query, IReadOnlyDictionary<object, List<CNFClause>> clausesByConsequentSymbol)
         {
             this.query = query;
@@ -22,12 +25,16 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         /// <inheritdoc />
-        public bool IsComplete { get; private set; }
+        public bool IsComplete => substitutions != null;
 
         /// <inheritdoc />
-        public bool Result { get; private set; }
+        public bool Result => substitutions?.Any() ?? throw new InvalidOperationException("Query is not yet complete");
 
-        public IEnumerable<VariableSubstitution> Substitutions { get; private set; }
+        /// <summary>
+        /// Gets the set of variable substitutions that can be made to satisfy the query.
+        /// Result will be empty if and only if the query returned a negative result.
+        /// </summary>
+        public IEnumerable<VariableSubstitution> Substitutions => substitutions ?? throw new InvalidOperationException("Query is not yet complete");
 
         /// <inheritdoc />
         public void Dispose()
@@ -37,11 +44,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// <inheritdoc />
         public Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
-            Substitutions = FOL_BC_OR(query, new VariableSubstitution());
-
-            Result = Substitutions.Count() > 0;
-            IsComplete = true;
-
+            substitutions = FOL_BC_OR(query, new VariableSubstitution());
             return Task.FromResult(Result);
         }
 
