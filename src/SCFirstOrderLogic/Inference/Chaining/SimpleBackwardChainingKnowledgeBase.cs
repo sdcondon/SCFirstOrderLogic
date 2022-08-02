@@ -30,7 +30,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));
             }
 
-            // Store clauses indexed by their consequent symbol:
+            // Store clauses just in memory, but indexed by their consequent symbol:
             foreach (var clause in cnfSentence.Clauses)
             {
                 var consequentSymbol = clause.Literals.Single(l => l.IsPositive).Predicate.Symbol;

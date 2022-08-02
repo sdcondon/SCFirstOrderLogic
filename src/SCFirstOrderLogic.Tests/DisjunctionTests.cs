@@ -37,7 +37,6 @@ namespace SCFirstOrderLogic
             .And(g => g.Representation2.Equals(g.Representation1).Should().BeFalse());
 
         // Difficult to do this without normalisation, so we don't.
-        // Given this, is there any real value in accounting for commutations..?
         public static Test OrderChangeComparison => TestThat
             .When(() => new
             {
