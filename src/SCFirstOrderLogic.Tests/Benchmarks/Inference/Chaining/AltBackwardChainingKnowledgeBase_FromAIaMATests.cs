@@ -1,18 +1,20 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
+using SCFirstOrderLogic.Inference;
+using SCFirstOrderLogic.Inference.Chaining;
 using System.Collections.Generic;
 using System.Linq;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 
-namespace SCFirstOrderLogic.Inference.BackwardChaining
+namespace SCFirstOrderLogic.Benchmarks.Inference.Chaining
 {
-    public static class SimpleBackwardChainingKnowledgeBaseTests
+    public static class AltBackwardChainingKnowledgeBase_FromAIaMATests
     {
         public static Test CrimeDomainExample => TestThat
             .Given(() =>
             {
-                var kb = new SimpleBackwardChainingKnowledgeBase();
+                var kb = new AltBackwardChainingKnowledgeBase_FromAIaMA();
                 kb.Tell(CrimeDomain.Axioms);
 
                 return kb.CreateQueryAsync(IsCriminal(West)).Result;
@@ -27,7 +29,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             {
                 static Predicate IsPerson(Term term) => new Predicate(nameof(IsPerson), term);
 
-                var kb = new SimpleBackwardChainingKnowledgeBase();
+                var kb = new AltBackwardChainingKnowledgeBase_FromAIaMA();
                 kb.Tell(IsPerson(new Constant("John")));
                 kb.Tell(IsPerson(new Constant("Richard")));
 

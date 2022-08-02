@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SCFirstOrderLogic.Inference.BackwardChaining
+namespace SCFirstOrderLogic.Inference.Chaining
 {
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm.

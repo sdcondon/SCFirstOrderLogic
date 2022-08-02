@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SCFirstOrderLogic.Inference.BackwardChaining
+namespace SCFirstOrderLogic.Inference.Chaining
 {
     /// <summary>
     /// Query implementation used by <see cref="SimpleBackwardChainingKnowledgeBase"/>.

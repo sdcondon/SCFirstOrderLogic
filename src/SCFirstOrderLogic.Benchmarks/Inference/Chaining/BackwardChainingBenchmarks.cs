@@ -2,7 +2,7 @@
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 
-namespace SCFirstOrderLogic.Inference.BackwardChaining
+namespace SCFirstOrderLogic.Inference.Chaining
 {
     [MemoryDiagnoser]
     [InProcess]
