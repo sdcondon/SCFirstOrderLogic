@@ -50,7 +50,7 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, And(I
 Things to notice about this one:
 * The factory provides ForAll and ThereExists methods for creating quantifications. There are overloads for declaring multiple variables at once.
 * The factory provides `A` through `Z` as properties that return variable definitions with these letters as their symbol.
-* The factory provides methods for conjunctions (`And`). Disjunctions ('Or') and negations ('Not') also. See the next two examples if you really want to use C# operators for these.
+* The factory provides methods for conjunctions (`And`). Disjunctions (`Or`) and negations (`Not`) also. See the next two examples if you really want to use C# operators for these.
 * The supporting methods here are the recommended approach for Predicates (similarly for Functions and Constants).
 
 ### Writing Sentences with OperableSentenceFactory
@@ -78,7 +78,7 @@ implicitly convertible from the normal equivalents.
 ### Writing Sentences with LanguageIntegration
 
 Finally, there are the types to be found in the `LanguageIntegration` namespace. The `SentenceFactory` in this namespace is based on the idea of
-modelling the domain as an IEnumerable<T>, then expressing our sentence as a LINQ expression. Like this:
+modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as a LINQ expression. Like this:
 
 ```csharp
 using SCFirstOrderLogic.LanguageIntegration;
@@ -103,7 +103,95 @@ Things to notice about this one:
 
 ## Storing Knowledge and Making Inferences
 
+Once you have some sentences, storing them and making inferences is done with the aid of the types in the `Inference` namespace.
+The lowest common denominator here is the `IKnowledgeBase` interface. The library includes a few very simple knowledge bases - one that
+uses forward chaining, one that uses backward chaining, and one that uses resolution. Some examples follow, but first, here's our domain,
+taken from section 9.3 of 'Artificial Intelligence: A Modern Approach':
+
+```csharp
+using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+
 ..
+
+Constant America = new Constant(nameof(America));
+Constant Nono = new Constant(nameof(Nono));
+Constant West = new Constant(nameof(West));
+
+Predicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
+Predicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
+Predicate IsCriminal(Term t) => new Predicate(nameof(IsCriminal), t);
+Predicate IsWeapon(Term t) => new Predicate(nameof(IsWeapon), t);
+Predicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
+Predicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
+Predicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
+Predicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
+
+..
+
+var axioms = new List<Sentence>()
+{
+    // "... it is a crime for an American to sell weapons to hostile nations":
+    // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x).
+    ForAll(X, Y, Z, If(IsAmerican(X) & IsWeapon(Y) & Sells(X, Y, Z) & IsHostile(Z), IsCriminal(X))),
+
+    // "Nono... has some missiles."
+    // ∃x IsMissile(x) ∧ Owns(Nono, x)
+    ThereExists(X, IsMissile(X) & Owns(Nono, X)),
+
+    // "All of its missiles were sold to it by Colonel West":
+    // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
+    ForAll(X, If(IsMissile(X) & Owns(Nono, X), Sells(West, X, Nono))),
+
+    // We will also need to know that missiles are weapons: 
+    ForAll(X, If(IsMissile(X), IsWeapon(X))),
+
+    // And we must know that an enemy of America counts as “hostile”:
+    // Enemy(x, America) ⇒ Hostile(x)
+    ForAll(X, If(IsEnemyOf(X, America), IsHostile(X))),
+
+    // "West, who is American..": American(West)
+    IsAmerican(West),
+
+    // "The country Nono, an enemy of America..": Enemy(Nono, America).
+    IsEnemyOf(Nono, America),
+
+}.AsReadOnly();
+
+```
+
+Using forward chaining:
+
+```
+using SCFirstOrderLogic.Inference.Chaining;
+
+var kb = new SimpleForwardChainingKnowledgeBase();
+kb.Tell(axioms);
+var result = kb.Ask(IsCriminal(West)); // will be true
+```
+
+Using backward chaining:
+
+```
+using SCFirstOrderLogic.Inference.Chaining;
+
+var kb = new SimpleBackwardChainingKnowledgeBase();
+kb.Tell(axioms);
+var result = kb.Ask(IsCriminal(West)); // will be true
+```
+
+Using resolution:
+
+```
+using SCFirstOrderLogic.Inference.Chaining;
+
+var kb = new SimpleBackwardChainingKnowledgeBase();
+kb.Tell(axioms);
+var result = kb.Ask(IsCriminal(West)); // will be true
+```
+
+Some things to note:
+* The synchronous `Tell` and `Ask` methods used above are actually extension methods. The library has deep async support - because "real-world" KBs will tend to need to do IO. At the time of writing, the only implementation that currently supports this meaningfully is the resolution one, though.
+
 
 ## Examples
 
