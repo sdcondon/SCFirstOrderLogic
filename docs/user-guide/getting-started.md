@@ -17,18 +17,25 @@ Obviously the first challenge is to write sentences. This can be done in several
 The most basic way to express this is to manually compose a bunch of instances of the types found in the top-level `SCFirstOrderLogic` namespace, like this:
 
 ```csharp
-var g = new VariableDefinition("g");
-var c = new VariableDefinition("c");
-var p = new VariableDefinition("p");
+using static SCFirstOrderLogic;
+
+..
+
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
+..
+
+var g = new VariableDefinition("g");
+var c = new VariableDefinition("c");
+var p = new VariableDefinition("p");
 var equivalenceLHS = IsGrandparent(g, c);
 var equivalenceRHS = new ExistentialQuantification(p, new Conjunction(IsParent(g, p), IsParent(p, c)));
 Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantification(c, new Equivalence(equivalenceLHS, equivalenceRHS));
 ```
 
-This is very direct, but obviously far too verbose to be workable. So there are a few alternatives.
+Things to notice:
+* This is very direct, but obviously far too verbose to be workable. Hence the alternatives we discuss below.
 
 ### Writing Sentences with SentenceFactory
 
