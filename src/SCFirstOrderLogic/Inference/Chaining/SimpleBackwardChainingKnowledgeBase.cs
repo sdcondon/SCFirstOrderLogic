@@ -17,12 +17,13 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// </summary>
     public class SimpleBackwardChainingKnowledgeBase : IKnowledgeBase
     {
-        private readonly Dictionary<object, List<CNFClause>> clausesByConsequentSymbol = new();
+        private readonly Dictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol = new();
 
         /// <inheritdoc />
         public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
-            // Normalize, then verify that the sentence consists only of definite clauses:
+            // Normalize, then verify that the sentence consists only of definite clauses
+            // before indexing any of them:
             var cnfSentence = new CNFSentence(sentence);
 
             if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))
@@ -33,14 +34,14 @@ namespace SCFirstOrderLogic.Inference.Chaining
             // Store clauses just in memory, but indexed by their consequent symbol:
             foreach (var clause in cnfSentence.Clauses)
             {
-                var consequentSymbol = clause.Literals.Single(l => l.IsPositive).Predicate.Symbol;
+                var definiteClause = new CNFDefiniteClause(clause);
 
-                if (!clausesByConsequentSymbol.TryGetValue(consequentSymbol, out var clausesWithThisConsequentSymbol))
+                if (!clausesByConsequentSymbol.TryGetValue(definiteClause.Consequent.Symbol, out var clausesWithThisConsequentSymbol))
                 {
-                    clausesWithThisConsequentSymbol = clausesByConsequentSymbol[consequentSymbol] = new List<CNFClause>();
+                    clausesWithThisConsequentSymbol = clausesByConsequentSymbol[definiteClause.Consequent.Symbol] = new List<CNFDefiniteClause>();
                 }
 
-                clausesWithThisConsequentSymbol.Add(clause);
+                clausesWithThisConsequentSymbol.Add(definiteClause);
             }
 
             return Task.CompletedTask;

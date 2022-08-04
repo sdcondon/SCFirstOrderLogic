@@ -28,20 +28,17 @@ namespace SCFirstOrderLogic.Inference.Chaining
             // * Means we don't have to do existential instantiation - since thats essentially done for us via Skolemisation
             var cnfSentence = new CNFSentence(sentence);
 
-            // For each clause of the sentence..
+            // Now we need to verify that it consists only of definite clauses before adding anything to the store:
+            if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))
+            {
+                throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));
+            }
+
+            // Finally just add each clause to a (simple in-memory) list of known clauses.
+            // Of course, in a production scenario we'd want some indexing. More on this in the implementation below.
             foreach (var clause in cnfSentence.Clauses)
             {
-                // ..verify that it is a definite clause..
-                if (!clause.IsDefiniteClause)
-                {
-                    throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));
-                }
-
-                var definiteClause = new CNFDefiniteClause(clause);
-
-                // ..add it to a (simple in-memory) list of known clauses..
-                // (of course, in a production scenario we'd probably want to index by conjunct symbol - but this is intended as a very simple example, so we don't)
-                clauses.Add(definiteClause);
+                clauses.Add(new CNFDefiniteClause(clause));
             }
 
             return Task.CompletedTask;
@@ -78,6 +75,9 @@ namespace SCFirstOrderLogic.Inference.Chaining
             private readonly Predicate α;
             private readonly List<CNFDefiniteClause> kb;
 
+            private bool? result;
+            private VariableSubstitution? substitution;
+
             internal Query(Predicate α, List<CNFDefiniteClause> clauses)
             {
                 this.α = α;
@@ -85,12 +85,31 @@ namespace SCFirstOrderLogic.Inference.Chaining
             }
 
             /// <inheritdoc />
-            public bool IsComplete { get; private set; }
+            public bool IsComplete => result != null;
 
             /// <inheritdoc />
-            public bool Result { get; private set; }
+            public bool Result => result ?? throw new InvalidOperationException("Query is not yet complete");
 
-            public VariableSubstitution Substitution { get; private set; }
+            /// <summary>
+            /// Gets the variable substitution that is carried out to resolve the query. Throws an exception if the query is not complete or returned a negative result.
+            /// </summary>
+            public VariableSubstitution Substitution
+            {
+                get
+                {
+                    if (!IsComplete)
+                    {
+                        throw new InvalidOperationException("Query is not yet complete");
+                    }
+
+                    if (!Result)
+                    {
+                        throw new InvalidOperationException("Query returned a negative result");
+                    }
+
+                    return substitution!;
+                }
+            }
 
             /// <inheritdoc />
             public void Dispose()
@@ -124,9 +143,8 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
                                 if (LiteralUnifier.TryCreate(qDash, α, out var φ))
                                 {
-                                    Result = true;
-                                    Substitution = φ;
-                                    IsComplete = true;
+                                    result = true;
+                                    substitution = φ;
                                     return Task.FromResult(true);
                                 }
                             }
@@ -137,8 +155,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 }
                 while (@new.Count > 0);
 
-                Result = false;
-                IsComplete = true;
+                result = false;
                 return Task.FromResult(false);
             }
 
@@ -172,67 +189,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         }
                     }
                 }
-            }
-        }
-
-        // Decorator type that adds methods and properties appropriate for definite clauses.
-        // A useful class, no doubt, and one that at some point might get "promoted" to live in the SentenceManipulation namespace.
-        // HOWEVER, not quite sure how I want to deal with it just yet, so internal for now.
-        // e.g. should it derive from CNFClause as well/instead of being composed of one?
-        internal class CNFDefiniteClause
-        {
-            private readonly CNFClause clause;
-
-            public CNFDefiniteClause(CNFClause clause)
-            {
-                // If this were public we'd need to validate here..
-                this.clause = clause;
-            }
-
-            public CNFDefiniteClause(Predicate predicate)
-            {
-                this.clause = new CNFClause(new CNFLiteral[] { predicate });;
-            }
-
-            /// <summary>
-            /// Gets the consequent of this clause (that is, the C of A₁ ∧ A₂ ∧ .. ∧ Aₙ ⇒ C)
-            /// </summary>
-            public Predicate Consequent => clause.Literals.Single(l => l.IsPositive).Predicate;
-
-            /// <summary>
-            /// Gets the conjuncts that combine to form the antecedent of this clause (that is, the A₁, .. Aₙ of A₁ ∧ A₂ ∧ .. ∧ Aₙ ⇒ C)
-            /// </summary>
-            public IEnumerable<Predicate> Conjuncts => clause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
-
-            public bool IsUnitClause => clause.IsUnitClause;
-
-            // NB: not specific to definite clauses..
-            public bool UnifiesWithAnyOf(IEnumerable<CNFDefiniteClause> clauses)
-            {
-                return clauses.Any(c => TryUnify(c, this, out var _));
-            }
-
-            // NB: not specific to definite clauses..
-            private static bool TryUnify(CNFDefiniteClause clause1, CNFDefiniteClause clause2, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
-            {
-                if (clause1.clause.Literals.Count != clause2.clause.Literals.Count)
-                {
-                    unifier = null;
-                    return false;
-                }
-
-                unifier = new VariableSubstitution();
-
-                foreach (var (literal1, literal2) in clause1.clause.Literals.Zip(clause2.clause.Literals))
-                {
-                    if (!LiteralUnifier.TryUpdate(literal1, literal2, unifier))
-                    {
-                        unifier = null;
-                        return false;
-                    }
-                }
-
-                return true;
             }
         }
     }

@@ -1,18 +1,16 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
-using SCFirstOrderLogic.Inference;
-using SCFirstOrderLogic.Inference.Chaining;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 
-namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.Chaining
 {
-    public static class ForwardChainingKnowledgeBase_FromAIaMATests
+    public static class SimpleForwardChainingKnowledgeBaseTests
     {
         public static Test CrimeDomainExample => TestThat
             .Given(() =>
             {
-                var kb = new ForwardChainingKnowledgeBase_FromAIaMA();
+                var kb = new SimpleForwardChainingKnowledgeBase();
                 kb.Tell(CrimeDomain.Axioms);
 
                 return kb.CreateQueryAsync(IsCriminal(West)).Result;

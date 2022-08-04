@@ -2,11 +2,12 @@
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
 using SCFirstOrderLogic.Inference;
+using SCFirstOrderLogic.Inference.Chaining;
 using System.Collections.Generic;
 using System.Linq;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
 {
     public static class BackwardChainingKnowledgeBase_FromAIaMATests
     {

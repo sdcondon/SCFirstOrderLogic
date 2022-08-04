@@ -19,9 +19,15 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// <inheritdoc />
         public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
-            // Normalize, then verify that the sentence consists only of definite clauses:
+            // First things first - normalise the sentence. Yes, the book hasn't talked about CNF for first-order logic by this point,
+            // but this accomplishes a few things nice and easily:
+            // * Puts it into a form where we can easily verify that it is all definite clauses
+            // * Standardises variables for us
+            // * Means we don't have to do existential instantiation - since thats essentially done for us via Skolemisation
             var cnfSentence = new CNFSentence(sentence);
 
+            // Normalize, then verify that the sentence consists only of definite clauses
+            // before indexing any of them:
             if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))
             {
                 throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));

@@ -14,11 +14,11 @@ namespace SCFirstOrderLogic.Inference.Chaining
     public class SimpleBackwardChainingQuery : IQuery
     {
         private readonly Predicate query;
-        private readonly IReadOnlyDictionary<object, List<CNFClause>> clausesByConsequentSymbol;
+        private readonly IReadOnlyDictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol;
 
         private IEnumerable<VariableSubstitution>? substitutions;
 
-        internal SimpleBackwardChainingQuery(Predicate query, IReadOnlyDictionary<object, List<CNFClause>> clausesByConsequentSymbol)
+        internal SimpleBackwardChainingQuery(Predicate query, IReadOnlyDictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol)
         {
             this.query = query;
             this.clausesByConsequentSymbol = clausesByConsequentSymbol;
@@ -52,13 +52,11 @@ namespace SCFirstOrderLogic.Inference.Chaining
         {
             foreach (var clause in clausesByConsequentSymbol[goal.Symbol])
             {
-                var lhs = clause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
-                var rhs = clause.Literals.Single(l => l.IsPositive);
                 var unifier = new VariableSubstitution(θ);
 
-                if (LiteralUnifier.TryUpdate(rhs, goal, unifier))
+                if (LiteralUnifier.TryUpdate(clause.Consequent, goal, unifier))
                 {
-                    foreach (var θ2 in FOL_BC_AND(lhs, unifier))
+                    foreach (var θ2 in FOL_BC_AND(clause.Conjuncts, unifier))
                     {
                         yield return θ2;
                     }
