@@ -40,7 +40,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 var definiteClause = new CNFDefiniteClause(clause);
 
                 // ..add it to a (simple in-memory) list of known clauses..
-                // (of course, in a production scenario we'd probably want to index by antecedent symbol - but this is intended as a very simple example, so we don't)
+                // (of course, in a production scenario we'd probably want to index by conjunct symbol - but this is intended as a very simple example, so we don't)
                 clauses.Add(definiteClause);
             }
 
@@ -145,27 +145,27 @@ namespace SCFirstOrderLogic.Inference.Chaining
             private IEnumerable<VariableSubstitution> MatchWithKnownFacts(CNFDefiniteClause clause)
             {
                 // NB: no specific conjunct ordering here - just look at them in the order they happen to fall.
-                // In a production scenario, we'd at least TRY to order the antecedents in a way that minimises
+                // In a production scenario, we'd at least TRY to order the conjuncts in a way that minimises
                 // the amount of work we have to do.
-                return MatchWithKnownFacts(clause.Antecedents, new VariableSubstitution());
+                return MatchWithKnownFacts(clause.Conjuncts, new VariableSubstitution());
             }
 
             // I'm not a huge fan of recursion when trying to write reference code but I'll admit it is handy here.. May revisit this..
-            private IEnumerable<VariableSubstitution> MatchWithKnownFacts(IEnumerable<Predicate> antecedents, VariableSubstitution unifier)
+            private IEnumerable<VariableSubstitution> MatchWithKnownFacts(IEnumerable<Predicate> conjuncts, VariableSubstitution unifier)
             {
-                if (!antecedents.Any())
+                if (!conjuncts.Any())
                 {
                     yield return unifier;
                 }
                 else
                 {
-                    // Here we just iterate through ALL known predicates trying to find something that unifies with the first antecedent.
+                    // Here we just iterate through ALL known predicates trying to find something that unifies with the first conjunct.
                     // We'd use an index here in anything approaching a production scenario:
                     foreach (var knownClause in kb.Where(k => k.IsUnitClause)) 
                     {
-                        if (LiteralUnifier.TryUpdate(knownClause.Consequent, antecedents.First(), unifier))
+                        if (LiteralUnifier.TryUpdate(knownClause.Consequent, conjuncts.First(), unifier))
                         {
-                            foreach(var substitution in MatchWithKnownFacts(antecedents.Skip(1), new VariableSubstitution(unifier)))
+                            foreach(var substitution in MatchWithKnownFacts(conjuncts.Skip(1), new VariableSubstitution(unifier)))
                             {
                                 yield return substitution;
                             }
@@ -200,9 +200,9 @@ namespace SCFirstOrderLogic.Inference.Chaining
             public Predicate Consequent => clause.Literals.Single(l => l.IsPositive).Predicate;
 
             /// <summary>
-            /// Gets the antecedents of this clause (that is, the A₁, .. Aₙ of A₁ ∧ A₂ ∧ .. ∧ Aₙ ⇒ C)
+            /// Gets the conjuncts that combine to form the antecedent of this clause (that is, the A₁, .. Aₙ of A₁ ∧ A₂ ∧ .. ∧ Aₙ ⇒ C)
             /// </summary>
-            public IEnumerable<Predicate> Antecedents => clause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
+            public IEnumerable<Predicate> Conjuncts => clause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
 
             public bool IsUnitClause => clause.IsUnitClause;
 
