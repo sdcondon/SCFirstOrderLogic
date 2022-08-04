@@ -12,7 +12,9 @@ Obviously the first challenge is to write sentences. This can be done in several
 
 ..that is, the definition of a grandparent. We use this example because its very straightforward but includes a good cross-section of FoL elements.
 
-**Manual:** The most basic way to express this is to manually compose a bunch of instances of the types found in the top-level `SCFirstOrderLogic` namespace, like this:
+### Writing Sentences Manually
+
+The most basic way to express this is to manually compose a bunch of instances of the types found in the top-level `SCFirstOrderLogic` namespace, like this:
 
 ```csharp
 var g = new VariableDefinition("g");
@@ -28,7 +30,9 @@ Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantific
 
 This is very direct, but obviously far too verbose to be workable. So there are a few alternatives.
 
-**SentenceFactory:** First, we have the `SentenceFactory` static class in the `SentenceCreation` namespace. Here's how the example looks with this one:
+### Writing Sentences with SentenceFactory
+
+First, we have the `SentenceFactory` static class in the `SentenceCreation` namespace. Here's how the example looks with this one:
 
 ```csharp
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
@@ -49,7 +53,9 @@ Things to notice about this one:
 * The factory provides methods for conjunctions (`And`). Disjunctions ('Or') and negations ('Not') also. See the next two examples if you really want to use C# operators for these.
 * The supporting methods here are the recommended approach for Predicates (similarly for Functions and Constants).
 
-**OperableSentenceFactory:** Next, you'll also find `OperableSentenceFactory` in `SentenceCreation`. It works similarly to `SentenceFactory`, but lets you use operators:
+### Writing Sentences with OperableSentenceFactory
+
+Next, you'll also find `OperableSentenceFactory` in `SentenceCreation`. It works similarly to `SentenceFactory`, but lets you use operators:
 
 ```csharp
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
@@ -69,7 +75,9 @@ Things to notice about this one:
 * The only proviso is that the supporting methods for domain specific elements now need to use `Operable..` as their return type - which is easy as these types are 
 implicitly convertible from the normal equivalents.
 
-**LanguageIntegration:** Finally, there are the types to be found in the `LanguageIntegration` namespace. The `SentenceFactory` in this namespace is based on the idea of
+### Writing Sentences with LanguageIntegration
+
+Finally, there are the types to be found in the `LanguageIntegration` namespace. The `SentenceFactory` in this namespace is based on the idea of
 modelling the domain as an IEnumerable<T>, then expressing our sentence as a LINQ expression. Like this:
 
 ```csharp
