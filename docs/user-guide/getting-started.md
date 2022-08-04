@@ -116,38 +116,38 @@ uses forward chaining, one that uses backward chaining, and one that uses resolu
 taken from section 9.3 of 'Artificial Intelligence: A Modern Approach':
 
 ```csharp
-using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 ..
 
-OperableConstant America = new Constant(nameof(America));
-OperableConstant Nono = new Constant(nameof(Nono));
-OperableConstant West = new Constant(nameof(West));
+Constant America = new Constant(nameof(America));
+Constant Nono = new Constant(nameof(Nono));
+Constant West = new Constant(nameof(West));
 
-OperablePredicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
-OperablePredicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
-OperablePredicate IsCriminal(Term t) => new Predicate(nameof(IsCriminal), t);
-OperablePredicate IsWeapon(Term t) => new Predicate(nameof(IsWeapon), t);
-OperablePredicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
-OperablePredicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
-OperablePredicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
-OperablePredicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
+Predicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
+Predicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
+Predicate IsCriminal(Term t) => new Predicate(nameof(IsCriminal), t);
+Predicate IsWeapon(Term t) => new Predicate(nameof(IsWeapon), t);
+Predicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
+Predicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
+Predicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
+Predicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
 
 ..
 
-var axioms = new List<Sentence>()
+var axioms = new Sentence[]
 {
     // "... it is a crime for an American to sell weapons to hostile nations":
     // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x).
-    ForAll(X, Y, Z, If(IsAmerican(X) & IsWeapon(Y) & Sells(X, Y, Z) & IsHostile(Z), IsCriminal(X))),
+    ForAll(X, Y, Z, If(And(IsAmerican(X), IsWeapon(Y), Sells(X, Y, Z), IsHostile(Z)), IsCriminal(X))),
 
     // "Nono... has some missiles."
     // ∃x IsMissile(x) ∧ Owns(Nono, x)
-    ThereExists(X, IsMissile(X) & Owns(Nono, X)),
+    ThereExists(X, And(IsMissile(X), Owns(Nono, X))),
 
     // "All of its missiles were sold to it by Colonel West":
     // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
-    ForAll(X, If(IsMissile(X) & Owns(Nono, X), Sells(West, X, Nono))),
+    ForAll(X, If(And(IsMissile(X), Owns(Nono, X)), Sells(West, X, Nono))),
 
     // We will also need to know that missiles are weapons: 
     ForAll(X, If(IsMissile(X), IsWeapon(X))),
@@ -162,7 +162,7 @@ var axioms = new List<Sentence>()
     // "The country Nono, an enemy of America..": Enemy(Nono, America).
     IsEnemyOf(Nono, America),
 
-}.AsReadOnly();
+};
 
 ```
 
