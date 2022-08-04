@@ -189,16 +189,19 @@ var result = kb.Ask(IsCriminal(West)); // will be true
 Using resolution:
 
 ```csharp
-using SCFirstOrderLogic.Inference.Chaining;
+using SCFirstOrderLogic.Inference.Resolution;
 
-var kb = new SimpleBackwardChainingKnowledgeBase();
+var kb = new new SimpleResolutionKnowledgeBase(
+    new SimpleClauseStore(),
+    SimpleResolutionKnowledgeBase.Filters.None,
+    SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+
 kb.Tell(axioms);
 var result = kb.Ask(IsCriminal(West)); // will be true
 ```
 
 Some things to note:
 * The synchronous `Tell` and `Ask` methods used above are actually extension methods. The library has deep async support - because "real-world" KBs will tend to need to do IO. At the time of writing, the only implementation that currently supports this meaningfully is the resolution one, though.
-
 
 ## Examples
 
