@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <summary>
     /// Base class for recursive visitors of <see cref="Sentence"/> instances.
     /// </summary>
-    public abstract class AltRecursiveSentenceVisitor_WithTypeSwitch : ISentenceVisitor, ITermVisitor
+    public abstract class RecursiveSentenceVisitor_WithTypeSwitch : ISentenceVisitor, ITermVisitor
     {
         /// <summary>
         /// Visits a <see cref="Sentence"/> instance.

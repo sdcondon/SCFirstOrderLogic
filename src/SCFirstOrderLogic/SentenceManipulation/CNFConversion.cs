@@ -57,7 +57,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             private readonly Sentence rootSentence;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="ScopedVariableStandardisation"/> class.
+            /// Initializes a new instance of the <see cref="VariableStandardisation"/> class.
             /// </summary>
             /// <param name="rootSentence">
             /// The root sentence being transformed. Stored against symbols of the new standardised versions of the variables, for later use in explanations and the like.
@@ -177,7 +177,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             private readonly Dictionary<VariableDeclaration, Function> existentialVariableMap;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="ScopedSkolemisation"/> class.
+            /// Initializes a new instance of the <see cref="Skolemisation"/> class.
             /// </summary>
             /// <param name="rootSentence">The root sentence being transformed. Stored against the resulting Skolem function symbols - for later explanations and the like.</param>
             public Skolemisation(Sentence rootSentence)

@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm. This one is implemented as close as possible to the
     /// implementation in figure 9.6 of "Artificial Intelligence: A Modern Approach" - for reference purposes.
     /// </summary>
-    public class AltBackwardChainingKnowledgeBase_FromAIaMA : IKnowledgeBase
+    public class BackwardChainingKnowledgeBase_FromAIaMA : IKnowledgeBase
     {
         private readonly Dictionary<object, List<CNFClause>> clausesByConsequentSymbol = new ();
 

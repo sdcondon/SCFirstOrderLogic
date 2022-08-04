@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// but operating on entire sentences, as opposed to literals. More powerful, but slower.
     /// This class is intended as a more realistic baseline than <see cref="AltLiteralUnifier_FromAIaMA"/>.
     /// </summary>
-    public static class AltLiteralUnifier_OptimisedFromAIaMA
+    public static class LiteralUnifier_OptimisedFromAIaMA
     {
         public static bool TryUnify(Sentence x, Sentence y, [NotNullWhen(returnValue: true)] out IDictionary<VariableReference, Term>? unifier)
         {

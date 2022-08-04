@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// For learning and benchmarking only - obviously this is a terrible way to 
     /// implement this in C#.
     /// </summary>
-    public static class AltLiteralUnifier_FromAIaMA
+    public static class LiteralUnifier_FromAIaMA
     {
         /*
          * function UNIFY(x, y, θ) returns a substitution to make x and y identical

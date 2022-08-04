@@ -8,13 +8,13 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <summary>
     /// Representation of an individual clause (i.e. a disjunction of <see cref="CNFLiteral"/>s) of a first-order logic sentence in conjunctive normal form.
     /// </summary>
-    public class AltCNFClause_WithTypeSwitchCtorVisitors : IEquatable<AltCNFClause_WithTypeSwitchCtorVisitors>
+    public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTypeSwitchCtorVisitors>
     {
         /// <summary>
         /// Initialises a new instance of the <see cref="AltCNFClause_WithTypeSwitch"/> class from a sentence that is a disjunction of literals (a literal being a predicate or a negated predicate).
         /// </summary>
         /// <param name="sentence">The clause, represented as a <see cref="Sentence"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a disjunction of literals.</param>
-        public AltCNFClause_WithTypeSwitchCtorVisitors(Sentence sentence)
+        public CNFClause_WithTypeSwitchCtorVisitors(Sentence sentence)
         {
             var ctor = new ClauseConstructor();
             ctor.Visit(sentence);
@@ -28,10 +28,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="CNFClause_WithoutTypeSwitch"/> class from an enumerable of literals (removing any mutually-negating literals and duplicates as it does so).
+        /// Initialises a new instance of the <see cref="CNFClause_WithTypeSwitchCtorVisitors"/> class from an enumerable of literals (removing any mutually-negating literals and duplicates as it does so).
         /// </summary>
         /// <param name="literals">The set of literals to be included in the clause.</param>
-        public AltCNFClause_WithTypeSwitchCtorVisitors(IEnumerable<AltCNFLiteral_WithTypeSwitchCtorVisitors> literals)
+        public CNFClause_WithTypeSwitchCtorVisitors(IEnumerable<CNFLiteral_WithTypeSwitchCtorVisitors> literals)
         {
             // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
             // its a super low-level class and I'd rather err on the side of using the simplest/smallest implementation possible.
@@ -42,12 +42,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <summary>
         /// Gets an instance of the empty clause.
         /// </summary>
-        public static AltCNFClause_WithTypeSwitchCtorVisitors Empty { get; } = new AltCNFClause_WithTypeSwitchCtorVisitors(Array.Empty<AltCNFLiteral_WithTypeSwitchCtorVisitors>());
+        public static CNFClause_WithTypeSwitchCtorVisitors Empty { get; } = new CNFClause_WithTypeSwitchCtorVisitors(Array.Empty<CNFLiteral_WithTypeSwitchCtorVisitors>());
 
         /// <summary>
         /// Gets the collection of literals that comprise this clause.
         /// </summary>
-        public IReadOnlyCollection<AltCNFLiteral_WithTypeSwitchCtorVisitors> Literals { get; }
+        public IReadOnlyCollection<CNFLiteral_WithTypeSwitchCtorVisitors> Literals { get; }
 
         /// <summary>
         /// Gets a value indicating whether this is a Horn clause - that is, whether at most one of its literals is positive.
@@ -90,13 +90,13 @@ namespace SCFirstOrderLogic.SentenceManipulation
         ////public override string ToString() => new SentenceFormatter().Print(this);
 
         /// <inheritdoc />
-        public override bool Equals(object? obj) => obj is AltCNFClause_WithTypeSwitchCtorVisitors clause && Equals(clause);
+        public override bool Equals(object? obj) => obj is CNFClause_WithTypeSwitchCtorVisitors clause && Equals(clause);
 
         /// <inheritdoc />
         /// <remarks>
         /// Clauses that contain exactly the same collection of literals are considered equal.
         /// </remarks>
-        public bool Equals(AltCNFClause_WithTypeSwitchCtorVisitors? other)
+        public bool Equals(CNFClause_WithTypeSwitchCtorVisitors? other)
         {
             if (other == null || Literals.Count != other.Literals.Count)
             {
@@ -129,9 +129,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
             return hash.ToHashCode();
         }
 
-        private class ClauseConstructor : AltRecursiveSentenceVisitor_WithTypeSwitch
+        private class ClauseConstructor : RecursiveSentenceVisitor_WithTypeSwitch
         {
-            public HashSet<AltCNFLiteral_WithTypeSwitchCtorVisitors> Literals { get; } = new();
+            public HashSet<CNFLiteral_WithTypeSwitchCtorVisitors> Literals { get; } = new();
 
             public override void Visit(Sentence sentence)
             {
@@ -145,7 +145,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     // Assume we've hit a literal. NB will throw if its not actually a literal.
                     // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFLiteral ctor that
                     // we invoke here does so to figure out the details of the literal). So we can just return rather than invoking base.Visit.
-                    Literals.Add(new AltCNFLiteral_WithTypeSwitchCtorVisitors(sentence));
+                    Literals.Add(new CNFLiteral_WithTypeSwitchCtorVisitors(sentence));
                 }
             }
         }

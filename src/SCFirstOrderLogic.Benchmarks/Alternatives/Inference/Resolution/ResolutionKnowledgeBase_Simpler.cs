@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
     /// Even simpler than <see cref="SimpleResolutionKnowledgeBase"/> in that it doesn't use a clause store.
     /// </summary>
-    public sealed class AltResolutionKnowledgeBase_Simpler
+    public sealed class ResolutionKnowledgeBase_Simpler
     {
         private readonly List<CNFSentence> sentences = new(); // To be replaced with clause store
         private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
@@ -21,7 +21,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// </summary>
         /// <param name="clausePairFilter">A delegate to use to filter the pairs of clauses to be queued for a unification attempt. A true value indicates that the pair should be enqueued.</param>
         /// <param name="clausePairPriorityComparison">A delegate to use to compare the pairs of clauses to be queued for a unification attempt.</param>
-        public AltResolutionKnowledgeBase_Simpler(Func<(CNFClause, CNFClause), bool> clausePairFilter, Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison)
+        public ResolutionKnowledgeBase_Simpler(Func<(CNFClause, CNFClause), bool> clausePairFilter, Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison)
         {
             // NB: Throwing away clauses returned by the unifier store has performance impact. Could instead/also use a store that knows to not look for certain clause pairings in the first place..
             // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is then a mix of implementation (how unifiers are stored/indexed) and strategy,
@@ -53,7 +53,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             private bool result;
 
-            public Query(AltResolutionKnowledgeBase_Simpler knowledgeBase, Sentence sentence)
+            public Query(ResolutionKnowledgeBase_Simpler knowledgeBase, Sentence sentence)
             {
                 this.NegatedQuery = new CNFSentence(new Negation(sentence));
 

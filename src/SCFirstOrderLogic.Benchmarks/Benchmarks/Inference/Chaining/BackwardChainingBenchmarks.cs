@@ -19,7 +19,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         [Benchmark]
         public static bool CrimeExample_BackwardChainingKnowledgeBase_FromAIaMA()
         {
-            var kb = new AltBackwardChainingKnowledgeBase_FromAIaMA();
+            var kb = new BackwardChainingKnowledgeBase_FromAIaMA();
             kb.TellAsync(CrimeDomain.Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).Result;
         }
