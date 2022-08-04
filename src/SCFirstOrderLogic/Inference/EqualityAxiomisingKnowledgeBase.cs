@@ -31,7 +31,8 @@ namespace SCFirstOrderLogic.Inference
         /// <para/>
         /// This method exists and the constructor for <see cref="EqualityAxiomisingKnowledgeBase"/> is private
         /// because complete initialisation here involves telling the knowledge base some things. Telling is asynchronous
-        /// because it is potentially long-running, and including potentially long-running operations in a constructor is generally a bad idea.
+        /// because it is potentially long-running (because in "real" clause stores it could easily involve IO), and
+        /// including potentially long-running operations in a constructor is generally a bad idea.
         /// </summary>
         /// <returns>A task that returns a new <see cref="EqualityAxiomisingKnowledgeBase"/> instance.</returns>
         public static async Task<EqualityAxiomisingKnowledgeBase> CreateAsync(IKnowledgeBase innerKnowledgeBase)

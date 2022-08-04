@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     {
         /// <summary>
         /// Visits a <see cref="Sentence"/> instance.
-        /// The default implementation simply invokes the Visit method appropriate to the type of the sentence (via <see cref="Sentence.Accept(ISentenceVisitor)"/>).
+        /// The default implementation just invokes the Visit method appropriate to the type of the sentence (via <see cref="Sentence.Accept(ISentenceVisitor)"/>).
         /// </summary>
         /// <param name="sentence">The sentence to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
@@ -106,7 +106,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         /// <summary>
         /// Visits a <see cref="Term"/> instance.
-        /// The default implementation simply invokes the Visit method appropriate to the type of the term (via <see cref="Term.Accept(ITermVisitor)"/>).
+        /// The default implementation just invokes the Visit method appropriate to the type of the term (via <see cref="Term.Accept(ITermVisitor)"/>).
         /// </summary>
         /// <param name="term">The term to visit.</param>
         public virtual void Visit(Term term) => term.Accept(this);

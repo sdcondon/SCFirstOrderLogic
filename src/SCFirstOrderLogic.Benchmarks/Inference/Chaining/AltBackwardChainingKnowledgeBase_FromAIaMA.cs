@@ -19,6 +19,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// <inheritdoc />
         public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
+            // Normalize, then verify that the sentence consists only of definite clauses:
             var cnfSentence = new CNFSentence(sentence);
 
             if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))
@@ -26,6 +27,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));
             }
 
+            // Store clauses just in memory, but indexed by their consequent symbol:
             foreach (var clause in cnfSentence.Clauses)
             {
                 var consequentSymbol = clause.Literals.Single(l => l.IsPositive).Predicate.Symbol;

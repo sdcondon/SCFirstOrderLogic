@@ -10,8 +10,8 @@
     /// a bunch of stuff to do with normalisation easier because it means there's a singular <see cref="Sentence"/> subtype for atomic sentences.
     /// <para/>
     /// This does of course mean that the way we render these in FoL syntax ("Equals(x, y)") doesn't match the usual FoL syntax for equality
-    /// ("x = y"). Easy enough to resolve, either specifically (by accounting specifically for this symbol in formatting logic) or in general (an ISymbol 
-    /// interface and an IsRenderedInfix property?). Haven't done that yet because its not a big deal, is not worth the complexity, and I'm not yet sure
+    /// ("x = y"). Easy enough to resolve, either specifically (by accounting specifically for this symbol in formatting logic) or in general (an IPredicateSymbol 
+    /// interface with an IsRenderedInfix property?). Haven't done that yet because its not a big deal, is not worth the complexity, and I'm not yet sure
     /// how I want to deal with rendering in FoL syntax going forwards.
     /// </summary>
     public sealed class EqualitySymbol
