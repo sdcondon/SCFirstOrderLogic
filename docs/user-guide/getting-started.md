@@ -120,18 +120,18 @@ using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
 ..
 
-Constant America = new Constant(nameof(America));
-Constant Nono = new Constant(nameof(Nono));
-Constant West = new Constant(nameof(West));
+OperableConstant America = new Constant(nameof(America));
+OperableConstant Nono = new Constant(nameof(Nono));
+OperableConstant West = new Constant(nameof(West));
 
-Predicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
-Predicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
-Predicate IsCriminal(Term t) => new Predicate(nameof(IsCriminal), t);
-Predicate IsWeapon(Term t) => new Predicate(nameof(IsWeapon), t);
-Predicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
-Predicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
-Predicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
-Predicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
+OperablePredicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
+OperablePredicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
+OperablePredicate IsCriminal(Term t) => new Predicate(nameof(IsCriminal), t);
+OperablePredicate IsWeapon(Term t) => new Predicate(nameof(IsWeapon), t);
+OperablePredicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
+OperablePredicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
+OperablePredicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
+OperablePredicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
 
 ..
 
@@ -168,7 +168,7 @@ var axioms = new List<Sentence>()
 
 Using forward chaining:
 
-```
+```csharp
 using SCFirstOrderLogic.Inference.Chaining;
 
 var kb = new SimpleForwardChainingKnowledgeBase();
@@ -178,7 +178,7 @@ var result = kb.Ask(IsCriminal(West)); // will be true
 
 Using backward chaining:
 
-```
+```csharp
 using SCFirstOrderLogic.Inference.Chaining;
 
 var kb = new SimpleBackwardChainingKnowledgeBase();
@@ -188,7 +188,7 @@ var result = kb.Ask(IsCriminal(West)); // will be true
 
 Using resolution:
 
-```
+```csharp
 using SCFirstOrderLogic.Inference.Chaining;
 
 var kb = new SimpleBackwardChainingKnowledgeBase();
