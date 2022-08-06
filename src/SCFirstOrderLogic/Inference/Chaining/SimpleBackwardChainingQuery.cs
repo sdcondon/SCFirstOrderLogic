@@ -44,41 +44,53 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// <inheritdoc />
         public Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
-            substitutions = FOL_BC_OR(query, new VariableSubstitution());
-            return Task.FromResult(Result);
+            substitutions = VisitPredicate(query, new VariableSubstitution());
+            return Task.Run(() => Result, cancellationToken);
         }
 
-        private IEnumerable<VariableSubstitution> FOL_BC_OR(Predicate goal, VariableSubstitution θ)
+        /// <summary>
+        /// Attempt to verify the truth of a predicate by (recursively) attempting to verify the truth of at least one of the clauses for which it is a consequent -
+        /// making only variable substitutions that do not conflict with substitutions already made.
+        /// </summary>
+        /// <param name="goal">The predicate in question.</param>
+        /// <param name="unifier">The current unifier.</param>
+        /// <returns></returns>
+        private IEnumerable<VariableSubstitution> VisitPredicate(Predicate goal, VariableSubstitution unifier)
         {
             foreach (var clause in clausesByConsequentSymbol[goal.Symbol])
             {
-                var unifier = new VariableSubstitution(θ);
+                var updatedUnifier = new VariableSubstitution(unifier);
 
-                if (LiteralUnifier.TryUpdate(clause.Consequent, goal, unifier))
+                if (LiteralUnifier.TryUpdate(clause.Consequent, goal, updatedUnifier))
                 {
-                    foreach (var θ2 in FOL_BC_AND(clause.Conjuncts, unifier))
+                    foreach (var result in VisitConjuncts(clause.Conjuncts, updatedUnifier))
                     {
-                        yield return θ2;
+                        yield return result;
                     }
                 }
             }
         }
 
-        private IEnumerable<VariableSubstitution> FOL_BC_AND(IEnumerable<Predicate> goals, VariableSubstitution θ)
+        /// <summary>
+        /// Attempt to verify the truth of all a set of conjoined predicates in a particular clause by (recursively) attempting to verify each conjunct -
+        /// making only variable substitutions that do not conflict with substitutions already made.
+        /// </summary>
+        /// <param name="conjuncts">The conjuncts in question.</param>
+        /// <param name="unifier">The current unifier.</param>
+        /// <returns></returns>
+        private IEnumerable<VariableSubstitution> VisitConjuncts(IEnumerable<Predicate> conjuncts, VariableSubstitution unifier)
         {
-            if (!goals.Any())
+            if (!conjuncts.Any())
             {
-                yield return θ;
+                yield return unifier;
             }
             else
             {
-                var first = goals.First();
-                var rest = goals.Skip(1);
-                foreach (var θ2 in FOL_BC_OR(θ.ApplyTo(first).Predicate, θ))
+                foreach (var firstPredicateResult in VisitPredicate(unifier.ApplyTo(conjuncts.First()).Predicate, unifier))
                 {
-                    foreach (var θ3 in FOL_BC_AND(rest, θ2))
+                    foreach (var result in VisitConjuncts(conjuncts.Skip(1), firstPredicateResult))
                     {
-                        yield return θ3;
+                        yield return result;
                     }
                 }
             }
