@@ -21,6 +21,7 @@ using static SCFirstOrderLogic;
 
 ..
 
+// Helper methods for your predicates (and functions) are recommended:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
@@ -35,17 +36,18 @@ Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantific
 ```
 
 Things to notice:
-* This is very direct, but obviously far too verbose to be workable. Hence the alternatives.
+* This is very simple in that it involves nothing other than the sentence types themselves, but is obviously far too verbose to be workable. Hence the alternatives.
 
 ### Writing Sentences with SentenceFactory
 
-First, we have the `SentenceFactory` static class in the `SentenceCreation` namespace. Here's how the example looks with this one:
+First, we have the `SentenceFactory` static class in the `SentenceCreation` namespace. It is intended to be used via a `using static` directive. Here's how the example looks with this one:
 
 ```csharp
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 ..
 
+// Helper methods for your predicates (and functions) are recommended:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
@@ -57,8 +59,7 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, And(I
 Things to notice about this one:
 * The factory provides ForAll and ThereExists methods for creating quantifications. There are overloads for declaring multiple variables at once.
 * The factory provides `A` through `Z` as properties that return variable definitions with these letters as their symbol.
-* The factory provides methods for conjunctions (`And`). Not used here but also present are `Or` for disjunctions and `Not` for negations. See the next two examples if you really want to use C# operators for these.
-* The supporting methods here are the recommended approach for Predicates (and also for Functions and Constants).
+* The factory provides methods for conjunctions (`And`), disjunctions (`Or`) and negations (`Not`). See the next two examples if you really want to use C# operators for these.
 
 ### Writing Sentences with OperableSentenceFactory
 
@@ -69,6 +70,7 @@ using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
 ..
 
+// Helper methods for your predicates (and functions) are recommended:
 OperablePredicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 OperablePredicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
@@ -93,6 +95,7 @@ using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff an
 
 ..
 
+// The helper methods recommended for the other approaches become full interfaces when language integration is used:
 interface IPerson
 {
     bool IsParentOf(IPerson person);
