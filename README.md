@@ -5,8 +5,8 @@
 Basic [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) implementations. Includes:
 
 * Fully XML-documented implementations of both raw and CNF sentence representation.
-* Fully XML-documented sentence formatting logic that allows for (customisable) unique labelling of standardised variables and Skolem functions across a set of sentences.
 * Fully XML-documented knowledge base implementations that, while using very simple versions of their respective algorithms, do expose properties for the retrieval of proof details.
+* Fully XML-documented sentence formatting logic that allows for (customisable) unique labelling of standardised variables and Skolem functions across a set of sentences.
 * Language integration features that allow (the domain to be modelled as an IEnumerable<T> and) sentences to be provided as lambda expressions.
 
 Created just for fun while reading chapters 8 and 9 of _Artificial Intelligence: A Modern Approach_ (3rd Edition - [ISBN 978-1292153964](https://www.google.com/search?q=isbn+978-1292153964)) - so may prove interesting to the C#-inclined reading the same book.
