@@ -79,7 +79,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// Initiates a new query against the knowledge base.
         /// </summary>
         /// <param name="query">The query sentence.</param>
-        /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>An <see cref="SimpleBackwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
         public SimpleBackwardChainingQuery CreateQuery(Sentence query)
         {

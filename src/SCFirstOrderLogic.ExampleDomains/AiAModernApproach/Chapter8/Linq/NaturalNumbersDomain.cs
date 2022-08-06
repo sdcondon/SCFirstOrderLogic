@@ -20,7 +20,7 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Linq
     /// // with the rest of the app. Note how you'd *need* some kind of "options" to set how unspecified
     /// // predicates and functions involving constants are expressed. Thrown exceptions? Null return values
     /// // (for functions)? etc. And there are some subtleties and complications here (particularly once you 
-    /// // start thinking about non-unary predicates and functions) that don't necessairly have any, let alone
+    /// // start thinking about non-unary predicates and functions) that don't necessarily have any, let alone
     /// // easy, answers. So, no such KBs written just yet.
     /// var answer = kb.Ask(..my query..);
     /// </code>
