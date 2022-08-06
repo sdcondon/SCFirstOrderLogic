@@ -54,7 +54,7 @@ namespace SCFirstOrderLogic.Inference
         /// </summary>
         /// <param name="knowledgeBase">The knowledge base to create the query of.</param>
         /// <param name="sentence">The query sentence.</param>
-        /// <returns>An <see cref="IQuery"/> implementation representing the query, that can then be used </returns>
+        /// <returns>An <see cref="IQuery"/> implementation that can be used to execute the query.</returns>
         public static IQuery CreateQuery(this IKnowledgeBase knowledgeBase, Sentence sentence)
         {
             return knowledgeBase.CreateQueryAsync(sentence).Result;

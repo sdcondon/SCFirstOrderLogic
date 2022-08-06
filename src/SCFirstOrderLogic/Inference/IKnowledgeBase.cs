@@ -27,7 +27,7 @@ namespace SCFirstOrderLogic.Inference
         /// </summary>
         /// <param name="query">The query sentence.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        /// <returns>A task that returns an <see cref="IQuery"/> implementation representing the query, that can then be used to execute the query and examine the details of the result.</returns>
+        /// <returns>A task that returns an <see cref="IQuery"/> implementation that can be used to execute the query.</returns>
         Task<IQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default);
     }
 }

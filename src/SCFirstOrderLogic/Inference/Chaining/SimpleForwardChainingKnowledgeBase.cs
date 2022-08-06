@@ -44,7 +44,12 @@ namespace SCFirstOrderLogic.Inference.Chaining
             return await CreateQueryAsync(sentence, cancellationToken);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Initiates a new query against the knowledge base.
+        /// </summary>
+        /// <param name="query">The query sentence.</param>
+        /// <param name="cancellationToken">A cancellation token for the operation.</param>
+        /// <returns>A task that returns an <see cref="SimpleForwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
         public Task<SimpleForwardChainingQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default)
         {
             if (query is not Predicate p)
@@ -59,6 +64,16 @@ namespace SCFirstOrderLogic.Inference.Chaining
             //p = (Predicate)standardisation.ApplyTo(p);
 
             return Task.FromResult(new SimpleForwardChainingQuery(p, clauses));
+        }
+
+        /// <summary>
+        /// Initiates a new query against the knowledge base.
+        /// </summary>
+        /// <param name="query">The query sentence.</param>
+        /// <returns>An <see cref="SimpleForwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
+        public SimpleForwardChainingQuery CreateQuery(Sentence query)
+        {
+            return CreateQueryAsync(query).Result;
         }
     }
 }

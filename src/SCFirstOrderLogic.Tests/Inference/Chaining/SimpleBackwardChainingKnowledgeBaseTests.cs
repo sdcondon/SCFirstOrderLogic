@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 var kb = new SimpleBackwardChainingKnowledgeBase();
                 kb.Tell(CrimeDomain.Axioms);
 
-                return kb.CreateQueryAsync(IsCriminal(West)).Result;
+                return kb.CreateQuery(IsCriminal(West));
             })
             .When(query => query.Execute())
             .ThenReturns()
@@ -31,7 +31,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 kb.Tell(IsPerson(new Constant("John")));
                 kb.Tell(IsPerson(new Constant("Richard")));
 
-                return kb.CreateQueryAsync(IsPerson(new VariableReference("x"))).Result;
+                return kb.CreateQuery(IsPerson(new VariableReference("x")));
             })
             .When(query => query.Execute())
             .ThenReturns()

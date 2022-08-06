@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 var kb = new SimpleForwardChainingKnowledgeBase();
                 kb.Tell(CrimeDomain.Axioms);
 
-                return kb.CreateQueryAsync(IsCriminal(West)).Result;
+                return kb.CreateQuery(IsCriminal(West));
             })
             .When(query => query.Execute())
             .ThenReturns()

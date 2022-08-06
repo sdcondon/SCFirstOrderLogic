@@ -19,9 +19,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .When(_ =>
             {
                 var kb = new SimpleResolutionKnowledgeBase(new SimpleClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
-                kb.TellAsync(CrimeDomain.Axioms).Wait();
-                var query = kb.CreateQueryAsync(IsCriminal(West)).Result;
-                query.ExecuteAsync().Wait();
+                kb.Tell(CrimeDomain.Axioms);
+                var query = kb.CreateQuery(IsCriminal(West));
+                query.Execute();
                 return query;
             })
             .ThenReturns()
@@ -33,9 +33,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .When(_ =>
             {
                 var kb = new SimpleResolutionKnowledgeBase(new SimpleClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
-                kb.TellAsync(CuriousityAndTheCatDomain.Axioms).Wait();
-                var query = kb.CreateQueryAsync(Kills(Curiousity, Tuna)).Result;
-                query.ExecuteAsync().Wait();
+                kb.Tell(CuriousityAndTheCatDomain.Axioms);
+                var query = kb.CreateQuery(Kills(Curiousity, Tuna));
+                query.Execute();
                 return query;
             })
             .ThenReturns()
