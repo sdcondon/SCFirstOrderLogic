@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// <summary>
     /// Most general unifier logic - optimised from the version presented in the source material,
     /// but operating on entire sentences, as opposed to literals. More powerful, but slower.
-    /// This class is intended as a more realistic baseline than <see cref="AltLiteralUnifier_FromAIaMA"/>.
+    /// This class is intended as a more realistic baseline than <see cref="LiteralUnifier_FromAIaMA"/>.
     /// </summary>
     public static class LiteralUnifier_OptimisedFromAIaMA
     {

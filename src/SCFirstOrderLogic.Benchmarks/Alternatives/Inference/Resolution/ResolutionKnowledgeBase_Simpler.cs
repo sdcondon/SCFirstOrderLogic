@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// </summary>
     public sealed class ResolutionKnowledgeBase_Simpler
     {
-        private readonly List<CNFSentence> sentences = new(); // To be replaced with clause store
+        private readonly List<CNFSentence> sentences = new(); // ..instead of a clause store
         private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
         private readonly Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison;
 
@@ -160,7 +160,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
-        /// Clause pair filters for use by <see cref="AltResolutionKnowledgeBase_Simpler"/>.
+        /// Clause pair filters for use by <see cref="ResolutionKnowledgeBase_Simpler"/>.
         /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
         /// </summary>
         public class Filters
@@ -177,7 +177,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
-        /// Clause pair priority comparisons for use by <see cref="AltResolutionKnowledgeBase_Simpler"/>.
+        /// Clause pair priority comparisons for use by <see cref="ResolutionKnowledgeBase_Simpler"/>.
         /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
         /// </summary>
         public class PriorityComparisons
