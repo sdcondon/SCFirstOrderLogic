@@ -26,16 +26,16 @@ Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), p
 
 ..
 
-var g = new VariableDefinition("g");
-var c = new VariableDefinition("c");
-var p = new VariableDefinition("p");
+var g = new VariableDeclaration("g");
+var c = new VariableDeclaration("c");
+var p = new VariableDeclaration("p");
 var equivalenceLHS = IsGrandparent(g, c);
 var equivalenceRHS = new ExistentialQuantification(p, new Conjunction(IsParent(g, p), IsParent(p, c)));
 Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantification(c, new Equivalence(equivalenceLHS, equivalenceRHS));
 ```
 
 Things to notice:
-* This is very direct, but obviously far too verbose to be workable. Hence the alternatives we discuss below.
+* This is very direct, but obviously far too verbose to be workable. Hence the alternatives.
 
 ### Writing Sentences with SentenceFactory
 
@@ -57,8 +57,8 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, And(I
 Things to notice about this one:
 * The factory provides ForAll and ThereExists methods for creating quantifications. There are overloads for declaring multiple variables at once.
 * The factory provides `A` through `Z` as properties that return variable definitions with these letters as their symbol.
-* The factory provides methods for conjunctions (`And`). Disjunctions (`Or`) and negations (`Not`) also. See the next two examples if you really want to use C# operators for these.
-* The supporting methods here are the recommended approach for Predicates (similarly for Functions and Constants).
+* The factory provides methods for conjunctions (`And`). Not used here but also present are `Or` for disjunctions and `Not` for negations. See the next two examples if you really want to use C# operators for these.
+* The supporting methods here are the recommended approach for Predicates (and also for Functions and Constants).
 
 ### Writing Sentences with OperableSentenceFactory
 
@@ -106,7 +106,7 @@ SentenceFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d
 ```
 
 Things to notice about this one:
-* This is obviously non trivial - more info can be found on the [language integration](./language-integration.md) page.
+* This is obviously non-trivial - more info can be found on the [language integration](./language-integration.md) page.
 
 ## Storing Knowledge and Making Inferences
 
@@ -135,14 +135,14 @@ Predicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, o
 
 ..
 
-var axioms = new Sentence[]
+var rules = new Sentence[]
 {
     // "... it is a crime for an American to sell weapons to hostile nations":
     // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x).
     ForAll(X, Y, Z, If(And(IsAmerican(X), IsWeapon(Y), Sells(X, Y, Z), IsHostile(Z)), IsCriminal(X))),
 
     // "Nono... has some missiles."
-    // ∃x IsMissile(x) ∧ Owns(Nono, x)
+    // ∃x Missile(x) ∧ Owns(Nono, x)
     ThereExists(X, And(IsMissile(X), Owns(Nono, X))),
 
     // "All of its missiles were sold to it by Colonel West":
@@ -150,18 +150,20 @@ var axioms = new Sentence[]
     ForAll(X, If(And(IsMissile(X), Owns(Nono, X)), Sells(West, X, Nono))),
 
     // We will also need to know that missiles are weapons: 
+    // Missile(x) ⇒ Weapon(x)
     ForAll(X, If(IsMissile(X), IsWeapon(X))),
 
     // And we must know that an enemy of America counts as “hostile”:
     // Enemy(x, America) ⇒ Hostile(x)
     ForAll(X, If(IsEnemyOf(X, America), IsHostile(X))),
 
-    // "West, who is American..": American(West)
+    // "West, who is American..":
+    // American(West)
     IsAmerican(West),
 
-    // "The country Nono, an enemy of America..": Enemy(Nono, America).
+    // "The country Nono, an enemy of America..":
+    // Enemy(Nono, America)
     IsEnemyOf(Nono, America),
-
 };
 
 ```
@@ -172,7 +174,7 @@ Using forward chaining:
 using SCFirstOrderLogic.Inference.Chaining;
 
 var kb = new SimpleForwardChainingKnowledgeBase();
-kb.Tell(axioms);
+kb.Tell(rules);
 var result = kb.Ask(IsCriminal(West)); // will be true
 ```
 
@@ -182,7 +184,7 @@ Using backward chaining:
 using SCFirstOrderLogic.Inference.Chaining;
 
 var kb = new SimpleBackwardChainingKnowledgeBase();
-kb.Tell(axioms);
+kb.Tell(rules);
 var result = kb.Ask(IsCriminal(West)); // will be true
 ```
 
@@ -196,7 +198,7 @@ var kb = new new SimpleResolutionKnowledgeBase(
     SimpleResolutionKnowledgeBase.Filters.None,
     SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
 
-kb.Tell(axioms);
+kb.Tell(rules);
 var result = kb.Ask(IsCriminal(West)); // will be true
 ```
 
@@ -207,3 +209,15 @@ Some things to note:
 
 For initial usage examples, see the [example domains](../../src/SCFirstOrderLogic.ExampleDomains) project (and, to a lesser extent, the [tests](../../src/SCFirstOrderLogic.Tests)).
 Beyond that, see the XML documentation against the classes - which I hope is fairly decent.
+
+## Beyond Getting Started
+
+There are a number of things we've not touched on here, but are worth noting:
+
+* **Equality:** The top-level namespace `SCFirstOrderLogic` includes [`EqualitySymbol`](../../src/SCFirstOrderLogic/EqualitySymbol.cs), intended to be used as the symbol for the equality predicate.
+The various sentence creation methods make use of this in created sentences where appropriate.
+None of the knowledge bases here use particular techniques (demodulation etc) to handle equality. However, the `Inference` namespace does include [`EqualityAxiomisingKnowledgeBase`](../../src/SCFirstOrderLogic/EqualityAxiomisingKnowledgeBase.cs), which is a decorator applied to an inner knowledge base - and adds rules pertaining to equality as knowledge is added.
+* **Knowledge Base Functionality:** The examples here only used the most basic of knowledge base functionality. Result details (steps taken, substitutions made etc.) can be examined by creating a query (`CreateQueryAsync` / `CreateQuery`), executing it, then interrogating its properties.
+* **Sentence Formatting:** There is some sentence formatting logic to be found in the `SentenceFormatting` namespace - which includes support for ensuring unique labelling of symbols for standardised variables and Skolem function across a set of sentences.
+The sets of labels used can be specified by the caller (but defaults do exist).
+* **Sentence Manipulation and CNF:** While it wasn't explicity mentioned above, the knoweledges bases referenced above do of course make use of conjunctive normal form. Classes for conversion to and representation of CNF can be found in the `SentenceManipulation` namespace, alongside more general interfaces and base classes for sentence [visitor](https://en.wikipedia.org/wiki/Visitor_pattern) logic

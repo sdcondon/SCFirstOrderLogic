@@ -59,7 +59,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// <summary>
         /// Checks whether this clause unifies with any of an enumeration of other definite clauses.
         /// <para/>
-        /// NB: not specific to definite clauses - so perhaps belongs elsewhere?
+        /// NB: this logic is not specific to definite clauses - so perhaps belongs elsewhere?
         /// </summary>
         /// <param name="clauses">The clauses to check for unification with.</param>
         /// <returns>True if this clause unifies with any of the provided clauses; otherwise false.</returns>
