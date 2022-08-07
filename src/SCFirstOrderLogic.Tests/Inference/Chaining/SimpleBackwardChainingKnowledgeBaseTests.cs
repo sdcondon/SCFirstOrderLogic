@@ -42,5 +42,26 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 new() { [new VariableReference("x")] = new Constant("John") },
                 new() { [new VariableReference("x")] = new Constant("Richard") },
             }, opts => opts.RespectingRuntimeTypes()));
+
+        public record NegativeTestCase(SimpleBackwardChainingKnowledgeBase KB, Predicate Query);
+
+        public static Test NegativeExample => TestThat
+            .GivenEachOf(() => new NegativeTestCase[]
+            {
+            })
+            .When(tc =>
+            {
+                var query = tc.KB.CreateQuery(tc.Query);
+                query.Execute();
+                return query;
+            })
+            .ThenReturns()
+            .And((_, rv) => rv.Should().BeFalse())
+            .And((query, _) => query.Result.Should().BeFalse())
+            .And((query, _) => query.Substitutions.Select(s => s.Bindings).Should().BeEquivalentTo(new Dictionary<VariableReference, Term>[]
+            {
+                new() { [new VariableReference("x")] = new Constant("John") },
+                new() { [new VariableReference("x")] = new Constant("Richard") },
+            }, opts => opts.RespectingRuntimeTypes()));
     }
 }
