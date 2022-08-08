@@ -114,17 +114,20 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
             private IEnumerable<VariableSubstitution> FOL_BC_OR(Predicate goal, VariableSubstitution θ)
             {
-                foreach (var clause in clausesByConsequentSymbol[goal.Symbol])
+                if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
                 {
-                    var lhs = clause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
-                    var rhs = clause.Literals.Single(l => l.IsPositive);
-                    var unifier = new VariableSubstitution(θ);
-
-                    if (LiteralUnifier.TryUpdate(rhs, goal, unifier))
+                    foreach (var clause in clausesWithThisGoal)
                     {
-                        foreach (var θ2 in FOL_BC_AND(lhs, unifier))
+                        var lhs = clause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
+                        var rhs = clause.Literals.Single(l => l.IsPositive);
+                        var unifier = new VariableSubstitution(θ);
+
+                        if (LiteralUnifier.TryUpdate(rhs, goal, unifier))
                         {
-                            yield return θ2;
+                            foreach (var θ2 in FOL_BC_AND(lhs, unifier))
+                            {
+                                yield return θ2;
+                            }
                         }
                     }
                 }

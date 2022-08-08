@@ -62,15 +62,18 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// <returns></returns>
         private IEnumerable<VariableSubstitution> VisitPredicate(Predicate goal, VariableSubstitution unifier)
         {
-            foreach (var clause in clausesByConsequentSymbol[goal.Symbol])
+            if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
             {
-                var updatedUnifier = new VariableSubstitution(unifier);
-
-                if (LiteralUnifier.TryUpdate(clause.Consequent, goal, updatedUnifier))
+                foreach (var clause in clausesWithThisGoal)
                 {
-                    foreach (var result in VisitConjuncts(clause.Conjuncts, updatedUnifier))
+                    var updatedUnifier = new VariableSubstitution(unifier);
+
+                    if (LiteralUnifier.TryUpdate(clause.Consequent, goal, updatedUnifier))
                     {
-                        yield return result;
+                        foreach (var result in VisitConjuncts(clause.Conjuncts, updatedUnifier))
+                        {
+                            yield return result;
+                        }
                     }
                 }
             }
