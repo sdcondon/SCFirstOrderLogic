@@ -31,7 +31,7 @@ namespace SCFirstOrderLogic.Inference
         /// <param name="sentences">The sentences that can be assumed to hold true when answering queries.</param>
         public static void Tell(this IKnowledgeBase knowledgeBase, IEnumerable<Sentence> sentences)
         {
-            knowledgeBase.TellAsync(sentences).Wait();
+            knowledgeBase.TellAsync(sentences).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace SCFirstOrderLogic.Inference
         /// <param name="sentence">The sentence that can be assumed to hold true when answering queries.</param>
         public static void Tell(this IKnowledgeBase knowledgeBase, Sentence sentence)
         {
-            knowledgeBase.TellAsync(sentence).Wait();
+            knowledgeBase.TellAsync(sentence).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace SCFirstOrderLogic.Inference
         /// <returns>An <see cref="IQuery"/> implementation that can be used to execute the query.</returns>
         public static IQuery CreateQuery(this IKnowledgeBase knowledgeBase, Sentence sentence)
         {
-            return knowledgeBase.CreateQueryAsync(sentence).Result;
+            return knowledgeBase.CreateQueryAsync(sentence).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace SCFirstOrderLogic.Inference
         /// <param name="sentence">The query sentence.</param>
         public static bool Ask(this IKnowledgeBase knowledgeBase, Sentence sentence)
         {
-            using var query = knowledgeBase.CreateQueryAsync(sentence).Result;
-            return query.ExecuteAsync().Result;
+            using var query = knowledgeBase.CreateQueryAsync(sentence).GetAwaiter().GetResult();
+            return query.ExecuteAsync().GetAwaiter().GetResult();
         }
     }
 }

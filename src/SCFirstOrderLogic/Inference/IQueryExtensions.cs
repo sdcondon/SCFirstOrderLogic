@@ -24,7 +24,7 @@ namespace SCFirstOrderLogic.Inference
         /// <returns>The result of the query.</returns>
         public static bool Execute(this IQuery query)
         {
-            return query.ExecuteAsync().Result;
+            return query.ExecuteAsync().GetAwaiter().GetResult();
         }
     }
 }
