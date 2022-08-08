@@ -135,9 +135,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
             private IEnumerable<VariableSubstitution> FOL_BC_AND(IEnumerable<Predicate> goals, VariableSubstitution θ)
             {
-                // TODO: WRONG! wont fail if a conjunct fails. Ultimately because of the different way you've done literal unification..
-                // Probably just use LiteralUnifier_FromAIaMA here.. Tests first though.
-
                 if (!goals.Any())
                 {
                     yield return θ;

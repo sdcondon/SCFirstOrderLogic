@@ -53,22 +53,22 @@ namespace SCFirstOrderLogic.Inference.Chaining
             OperableConstant john = new OperableConstant(nameof(john));
             OperableConstant richard = new OperableConstant(nameof(richard));
 
-            // no matching clause
-            var kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsKing(john));
-            kb.Tell(IsGreedy(john));
-            yield return kb.CreateQuery(IsEvil(X));
+            ////// no matching clause
+            ////var kb = new SimpleBackwardChainingKnowledgeBase();
+            ////kb.Tell(IsKing(john));
+            ////kb.Tell(IsGreedy(john));
+            ////yield return kb.CreateQuery(IsEvil(X));
 
-            // clause with not all conjuncts satisfied
-            kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsKing(john));
-            kb.Tell(ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X))));
-            yield return kb.CreateQuery(IsEvil(X));
+            ////// clause with not all conjuncts satisfied
+            ////kb = new SimpleBackwardChainingKnowledgeBase();
+            ////kb.Tell(IsKing(john));
+            ////kb.Tell(ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X))));
+            ////yield return kb.CreateQuery(IsEvil(X));
 
             // no unifier will work - x is either John or Richard - it can't be both:
-            kb = new SimpleBackwardChainingKnowledgeBase();
+            var kb = new SimpleBackwardChainingKnowledgeBase();
             kb.Tell(IsKing(john));
-            kb.Tell(IsEvil(richard));
+            kb.Tell(IsGreedy(richard));
             kb.Tell(ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X))));
             yield return kb.CreateQuery(IsEvil(X));
         }

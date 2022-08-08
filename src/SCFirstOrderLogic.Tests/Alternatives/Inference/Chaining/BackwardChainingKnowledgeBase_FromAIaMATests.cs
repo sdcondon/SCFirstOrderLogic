@@ -70,7 +70,7 @@ namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
             // no unifier will work - x is either John or Richard - it can't be both:
             kb = new SimpleBackwardChainingKnowledgeBase();
             kb.Tell(IsKing(john));
-            kb.Tell(IsEvil(richard));
+            kb.Tell(IsGreedy(richard));
             kb.Tell(ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X))));
             yield return kb.CreateQuery(IsEvil(X));
         }

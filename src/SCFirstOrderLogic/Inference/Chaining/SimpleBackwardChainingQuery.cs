@@ -88,8 +88,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// <returns></returns>
         private IEnumerable<VariableSubstitution> VisitConjuncts(IEnumerable<Predicate> conjuncts, VariableSubstitution unifier)
         {
-            // TODO: WRONG! wont fail if a conjunct fails. Tests first, then change.
-
             if (!conjuncts.Any())
             {
                 yield return unifier;
