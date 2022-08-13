@@ -212,8 +212,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <returns>A (very raw) explanation of the steps that led to the result of the query.</returns>
         public string Explain()
         {
-            var formatter = new SentenceFormatter();
-
             if (!IsComplete)
             {
                 throw new InvalidOperationException("Query is not yet complete");
@@ -223,6 +221,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
             }
 
+            var formatter = new SentenceFormatter();
+            var cnfExplainer = new CNFExplainer(formatter);
             var discoveredClauses = GetDiscoveredClauses();
 
             // Now build the explanation string.
@@ -247,84 +247,22 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     }
                 }
 
-                string ExplainNormalisationTerm(Term term)
-                {
-                    if (term is Function function && function.Symbol is SkolemFunctionSymbol skolemFunctionSymbol)
-                    {
-                        return $"some {formatter.Format(skolemFunctionSymbol.StandardisedVariableSymbol)} from {formatter.Format(skolemFunctionSymbol.OriginalSentence)}";
-                    }
-                    else if (term is VariableReference variable && variable.Symbol is StandardisedVariableSymbol standardisedVariableSymbol)
-                    {
-                        return $"a standardisation of {standardisedVariableSymbol.OriginalSymbol} from {formatter.Format(standardisedVariableSymbol.OriginalSentence)}";
-                    }
-                    else
-                    {
-                        return $"something unrecognised. Something has gone wrong..";
-                    }
-                }
-
                 explanation.AppendLine($"#{i:D2}: {formatter.Format(discoveredClauses[i])}");
                 explanation.AppendLine($"     From {GetSource(resolution.Clause1)}: {formatter.Format(resolution.Clause1)}");
                 explanation.AppendLine($"     And  {GetSource(resolution.Clause2)}: {formatter.Format(resolution.Clause2)} ");
                 explanation.Append("     Using   : {");
                 explanation.Append(string.Join(", ", resolution.Substitution.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
                 explanation.AppendLine("}");
-                foreach (var term in FindNormalisationTerms(discoveredClauses[i], resolution.Clause1, resolution.Clause2))
+
+                foreach (var term in CNFExplainer.FindNormalisationTerms(discoveredClauses[i], resolution.Clause1, resolution.Clause2))
                 {
-                    explanation.AppendLine($"     ..where {formatter.Format(term)} is {ExplainNormalisationTerm(term)}");
+                    explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
                 }
 
                 explanation.AppendLine();
             }
 
             return explanation.ToString();
-        }
-
-        /// <summary>
-        /// Returns an enumeration of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
-        /// That is, standardised variables and Skolem functions. Intended to be useful in creating a "legend" of such terms.
-        /// </summary>
-        /// <returns></returns>
-        private static IEnumerable<Term> FindNormalisationTerms(params CNFClause[] clauses)
-        {
-            var returnedAlready = new List<Term>();
-
-            foreach (var literal in clauses.SelectMany(c => c.Literals))
-            {
-                foreach (var topLevelTerm in literal.Predicate.Arguments)
-                {
-                    var stack = new Stack<Term>();
-                    stack.Push(topLevelTerm);
-                    while (stack.Count > 0)
-                    {
-                        var term = stack.Pop();
-                        switch (term)
-                        {
-                            case Function function:
-                                if (function.Symbol is SkolemFunctionSymbol && !returnedAlready.Contains(function))
-                                {
-                                    returnedAlready.Add(function);
-                                    yield return function;
-                                }
-
-                                foreach (var argument in function.Arguments)
-                                {
-                                    stack.Push(argument);
-                                }
-
-                                break;
-                            case VariableReference variable:
-                                if (variable.Symbol is StandardisedVariableSymbol && !returnedAlready.Contains(variable))
-                                {
-                                    returnedAlready.Add(variable);
-                                    yield return variable;
-                                }
-
-                                break;
-                        }
-                    }
-                }
-            }
         }
 
         private async Task EnqueueUnfilteredResolventsAsync(CNFClause clause, CancellationToken cancellationToken = default)

@@ -12,9 +12,9 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// <para/>
     /// A useful class, no doubt, and one that at some point might get "promoted" to live in the SentenceManipulation namespace
     /// alongside the other CNF representation types. HOWEVER, not quite sure how I want to deal with it just yet, so leaving it
-    /// here for now. e.g. should it derive from CNFClause as well/instead of being composed of one?
+    /// here for now.
     /// </summary>
-    public class CNFDefiniteClause
+    public class CNFDefiniteClause : CNFClause
     {
         private readonly CNFClause clause;
 
@@ -23,6 +23,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// </summary>
         /// <param name="definiteClause">The definite clause.</param>
         public CNFDefiniteClause(CNFClause definiteClause)
+            : base(definiteClause.Literals)
         {
             if (!definiteClause.IsDefiniteClause)
             {
@@ -37,6 +38,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// </summary>
         /// <param name="predicate">The predicate of the unit clause.</param>
         public CNFDefiniteClause(Predicate predicate)
+            : base(predicate)
         {
             this.clause = new CNFClause(new CNFLiteral[] { predicate });
         }

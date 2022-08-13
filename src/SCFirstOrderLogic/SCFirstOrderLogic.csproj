@@ -6,9 +6,9 @@
     <RootNamespace>SCFirstOrderLogic</RootNamespace>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>First-order logic inference engine. Includes some language integration features.</Description>
+    <Description>Basic first-order logic inference engine, primarily for learning and experimentation. Includes some language integration features.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageTags>inference-engine first-order-logic knowledge-base linq</PackageTags>
+    <PackageTags>first order logic inference engine knowledge base linq</PackageTags>
     <Product>SCFirstOrderLogic</Product>
     <PackageId>SCFirstOrderLogic</PackageId>
     <Nullable>enable</Nullable>
