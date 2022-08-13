@@ -22,14 +22,14 @@ namespace SCFirstOrderLogic.Inference.Unification
         {
             var unifierAttempt = new VariableSubstitution();
 
-            if (!TryUpdate(x, y, unifierAttempt))
+            if (TryUpdate(x, y, unifierAttempt))
             {
-                unifier = null;
-                return false;
+                unifier = unifierAttempt;
+                return true;
             }
 
-            unifier = unifierAttempt;
-            return true;
+            unifier = null;
+            return false;
         }
 
         /// <summary>
@@ -37,7 +37,27 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// </summary>
         /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
-        /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure. This behaviour is to facilitate efficiency. Copy the unifier before invocation if you need to avoid this.</param>
+        /// <param name="unifier">The unifier to update. Will be uodated to refer to a new unifier on success, or be unchanged on failure.</param>
+        /// <returns>True if the two literals can be unified, otherwise false.</returns>
+        public static bool TryUpdate(CNFLiteral x, CNFLiteral y, ref VariableSubstitution unifier)
+        {
+            var updatedUnifier = new VariableSubstitution(unifier);
+
+            if (TryUpdate(x, y, unifier))
+            {
+                unifier = updatedUnifier;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to update a unifier (in place) so that it (also) unifies two given literals.
+        /// </summary>
+        /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
+        /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
+        /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure. This behaviour is to facilitate efficiency. Use the overload if you need to avoid this.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
         public static bool TryUpdate(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
         {
