@@ -77,6 +77,9 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
                             // ..then check if we've reached our goal.
                             // TODO: this final substitution not included in proof. Fix me.
+                            // TODO: structure (taken from book) fails if you ask a predicate already in the KB. Easy
+                            // to fix (by acting on rule, not inferred predicate, and doing this check at outset of foreach),
+                            // but of course makes it slower still.. Then again, already v slow, so...
                             if (LiteralUnifier.TryCreate(proofStep.InferredPredicate, α, out var φ))
                             {
                                 result = true;
