@@ -120,13 +120,13 @@ namespace SCFirstOrderLogic.Inference.Chaining
             {
                 // Here we just iterate through ALL known predicates trying to find something that unifies with the first conjunct.
                 // We'd use an index here in anything approaching a production scenario:
-                foreach (var knownClause in kb.Where(k => k.IsUnitClause))
+                foreach (var knownUnitClause in kb.Where(k => k.IsUnitClause))
                 {
                     var updatedUnifier = new VariableSubstitution(proofStep.Unifier);
 
-                    if (LiteralUnifier.TryUpdate(knownClause.Consequent, conjuncts.First(), updatedUnifier))
+                    if (LiteralUnifier.TryUpdate(knownUnitClause.Consequent, conjuncts.First(), updatedUnifier))
                     {
-                        foreach (var substitution in MatchWithKnownFacts(conjuncts.Skip(1), new ProofStep(proofStep, knownClause.Consequent, updatedUnifier)))
+                        foreach (var substitution in MatchWithKnownFacts(conjuncts.Skip(1), new ProofStep(proofStep, knownUnitClause.Consequent, updatedUnifier)))
                         {
                             yield return substitution;
                         }
@@ -136,11 +136,11 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         /// <summary>
-        /// Retrieves a list of the (useful) clauses discovered by a query that has returned a positive result.
-        /// Starts with clauses that were discovered using only clauses from the knowledge base or negated
-        /// query, and ends with the empty clause.
+        /// Retrieves a list of the (useful) predicates discovered by a query that has returned a positive result.
+        /// Starts with predicates that were discovered using only predicates from the knowledge base or negated, and ends
+        /// with the goal predicate.
         /// </summary>
-        /// <returns>A list of the discovered clauses of the given query.</returns>
+        /// <returns>A list of the discovered predicates of the given query.</returns>
         /// <exception cref="InvalidOperationException">If the query is not complete, or returned a negative result.</exception>
         public ReadOnlyCollection<Predicate> GetDiscoveredPredicates()
         {
@@ -153,7 +153,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
             }
 
-            // Walk back through the DAG of clauses, starting from the goal, breadth-first:
+            // Walk back through the DAG of predicates, starting from the goal, breadth-first:
             var orderedSteps = new List<Predicate>();
             var queue = new Queue<Predicate>(new[] { α });
             while (queue.Count > 0)
@@ -161,9 +161,9 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 var predicate = queue.Dequeue();
                 if (orderedSteps.Contains(predicate))
                 {
-                    // We have found the same clause "earlier" than another encounter of it.
+                    // We have found the same predicate "earlier" than another encounter of it.
                     // Remove the "later" one so that once we reverse the list, there are no
-                    // references to clauses we've not seen yet.
+                    // references to predicates we've not seen yet.
                     orderedSteps.Remove(predicate);
                 }
 
@@ -261,16 +261,16 @@ namespace SCFirstOrderLogic.Inference.Chaining
             }
 
             /// <summary>
-            /// Extends a proof step with an additional 
+            /// Extends a proof step with an additional predicate and updated unifier.
             /// </summary>
             /// <param name="parent">The existing proof step.</param>
-            /// <param name="predicate">The predicate to add.</param>
-            /// <param name="unifier">The updated unifier.</param>
-            internal ProofStep(ProofStep parent, Predicate predicate, VariableSubstitution unifier)
+            /// <param name="additionalPredicate">The predicate to add.</param>
+            /// <param name="updatedUnifier">The updated unifier.</param>
+            internal ProofStep(ProofStep parent, Predicate additionalPredicate, VariableSubstitution updatedUnifier)
             {
                 Rule = parent.Rule;
-                KnownPredicates = parent.KnownPredicates.Append(predicate); // Hmm. Nesting.. Though we can probably realise it lazily, given the usage.
-                Unifier = unifier;
+                KnownPredicates = parent.KnownPredicates.Append(additionalPredicate); // Hmm. Nesting.. Though we can probably realise it lazily, given the usage.
+                Unifier = updatedUnifier;
             }
 
             /// <summary>

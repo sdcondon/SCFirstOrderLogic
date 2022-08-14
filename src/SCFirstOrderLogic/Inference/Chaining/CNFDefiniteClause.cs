@@ -16,10 +16,8 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// </summary>
     public class CNFDefiniteClause : CNFClause
     {
-        private readonly CNFClause clause;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="CNFDefiniteClause"/> that refers to a given existing definite <see cref="CNFClause"/>.
+        /// Initializes a new instance of the <see cref="CNFDefiniteClause"/> that is a copy of an existing <see cref="CNFClause"/>.
         /// </summary>
         /// <param name="definiteClause">The definite clause.</param>
         public CNFDefiniteClause(CNFClause definiteClause)
@@ -29,8 +27,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
             {
                 throw new ArgumentException("Provided clause must be a definite clause", nameof(definiteClause));
             }
-
-            this.clause = definiteClause;
         }
 
         /// <summary>
@@ -40,23 +36,17 @@ namespace SCFirstOrderLogic.Inference.Chaining
         public CNFDefiniteClause(Predicate predicate)
             : base(predicate)
         {
-            this.clause = new CNFClause(new CNFLiteral[] { predicate });
         }
 
         /// <summary>
         /// Gets the consequent of this clause (that is, the Q in P₁ ∧ P₂ ∧ .. ∧ Pₙ ⇒ Q).
         /// </summary>
-        public Predicate Consequent => clause.Literals.Single(l => l.IsPositive).Predicate;
+        public Predicate Consequent => Literals.Single(l => l.IsPositive).Predicate;
 
         /// <summary>
         /// Gets the conjuncts that combine to form the antecedent of this clause (that is, the P₁, .. Pₙ in P₁ ∧ P₂ ∧ .. ∧ Pₙ ⇒ Q).
         /// </summary>
-        public IEnumerable<Predicate> Conjuncts => clause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
-
-        /// <summary>
-        /// Gets a value indicating whether this is a unit clause (that is, is just a predicate).
-        /// </summary>
-        public bool IsUnitClause => clause.IsUnitClause;
+        public IEnumerable<Predicate> Conjuncts => Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
 
         /// <summary>
         /// Checks whether this clause unifies with any of an enumeration of other definite clauses.
@@ -73,7 +63,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         // NB: not specific to definite clauses - so perhaps belongs elsewhere?
         private static bool TryUnify(CNFDefiniteClause clause1, CNFDefiniteClause clause2, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
         {
-            if (clause1.clause.Literals.Count != clause2.clause.Literals.Count)
+            if (clause1.Literals.Count != clause2.Literals.Count)
             {
                 unifier = null;
                 return false;
@@ -81,7 +71,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
             unifier = new VariableSubstitution();
 
-            foreach (var (literal1, literal2) in clause1.clause.Literals.Zip(clause2.clause.Literals))
+            foreach (var (literal1, literal2) in clause1.Literals.Zip(clause2.Literals))
             {
                 if (!LiteralUnifier.TryUpdate(literal1, literal2, unifier))
                 {
