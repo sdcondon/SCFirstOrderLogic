@@ -77,7 +77,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public bool IsUnitClause => Literals.Count == 1;
 
         /// <summary>
-        /// Gets a value indicating whether this is an empty clause (that implicitly evaluates to false). Can occur as a result of resolution.
+        /// Gets a value indicating whether this is an empty clause (that by convention evaluates to false). Can occur as a result of resolution.
         /// </summary>
         public bool IsEmpty => Literals.Count == 0;
 

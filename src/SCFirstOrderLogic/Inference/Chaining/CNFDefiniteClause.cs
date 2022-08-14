@@ -8,11 +8,11 @@ using System.Linq;
 namespace SCFirstOrderLogic.Inference.Chaining
 {
     /// <summary>
-    /// Decorator type that adds methods and properties appropriate for definite clauses.
+    /// Sub-type of <see cref="CNFClause"/> that adds methods and properties appropriate for definite clauses.
     /// <para/>
     /// A useful class, no doubt, and one that at some point might get "promoted" to live in the SentenceManipulation namespace
-    /// alongside the other CNF representation types. HOWEVER, not quite sure how I want to deal with it just yet, so leaving it
-    /// here for now.
+    /// alongside the other CNF representation types. HOWEVER, not 100% sure I'm happy with it just yet, so leaving it here for now.
+    /// 
     /// </summary>
     public class CNFDefiniteClause : CNFClause
     {
