@@ -2,7 +2,6 @@
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.Chaining
 {
     /// <summary>
-    /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm. This one is implemented as close as possible
+    /// An implementation of <see cref="IKnowledgeBase"/> that uses a forward chaining algorithm. This one is implemented as close as possible
     /// (including variable and field naming, hence the naming that prioritises brevity over clarity) to the implementation in figure 9.6 of
     /// "Artificial Intelligence: A Modern Approach" - for reference and baselining purposes.
     /// </summary>

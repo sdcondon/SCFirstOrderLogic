@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.Chaining
 {
     /// <summary>
-    /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm. This one is implemented as close as possible
-    /// (including variable and field naming, hence the naming that prioritises brevity over clarity) to the implementation in figure 9.6 of
-    /// "Artificial Intelligence: A Modern Approach" - for reference and baselining purposes.
+    /// An implementation of <see cref="IKnowledgeBase"/> that uses a forward chaining algorithm.
+    /// <para/>
+    /// VERY simple (read - inefficient) implementation that differs from the implementation in figure 9.6 of
+    /// "Artificial Intelligence: A Modern Approach" only by the inclusion of proof tree retrieval.
     /// </summary>
     public sealed class SimpleForwardChainingKnowledgeBase : IKnowledgeBase
     {
