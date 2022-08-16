@@ -284,7 +284,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             public IEnumerable<Predicate> KnownPredicates { get; }
 
             /// <summary>
-            /// The substitution that is applied to the rules conjuncts to make the match the known predicates.
+            /// The substitution that is applied to the rule's conjuncts to make them match the known predicates.
             /// <para/>
             /// TODO: Make VariableSubstitution readonly, and add MutableVariableSubstitution.
             /// </summary>
