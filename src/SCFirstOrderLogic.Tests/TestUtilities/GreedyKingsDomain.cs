@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.TestUtilities
 
         public static OperableSentence AllGreedyAreEvil { get; } = ForAll(X, If(IsGreedy(X), IsEvil(X)));
         public static OperableSentence AllGreedyKingsAreEvil { get; } = ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X)));
-        public static OperableSentence AllGreedyQueensAreEvil { get; } = ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X)));
+        public static OperableSentence AllGreedyQueensAreEvil { get; } = ForAll(X, If(IsQueen(X) & IsGreedy(X), IsEvil(X)));
 
         public static OperablePredicate IsKing(OperableTerm term) => new Predicate(nameof(IsKing), term);
         public static OperablePredicate IsQueen(OperableTerm term) => new Predicate(nameof(IsQueen), term);
