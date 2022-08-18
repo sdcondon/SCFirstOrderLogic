@@ -75,7 +75,7 @@ namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
             .ThenReturns()
             .And((_, _, rv) => rv.Should().BeTrue())
             .And((_, query, _) => query.Result.Should().BeTrue())
-            .And((cxt, query, _) => WriteSubstitutionsToOutput(cxt, query)); // Going to replace with full proof trees, so no point asserting on subs for now.
+            .And((cxt, query, _) => cxt.WriteOutputLine(query.Explain())); // Going to replace with full proof trees, so no point asserting on subs for now.
 
         public static Test NegativeTestCases => TestThat
             .GivenEachOf(() => new BackwardChainingKnowledgeBase_FromAIaMA.Query[]
@@ -118,15 +118,6 @@ namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
             var knowledgeBase = new BackwardChainingKnowledgeBase_FromAIaMA();
             knowledgeBase.Tell(kb);
             return knowledgeBase.CreateQueryAsync(query).GetAwaiter().GetResult();
-        }
-
-        private static void WriteSubstitutionsToOutput(ITestContext cxt, BackwardChainingKnowledgeBase_FromAIaMA.Query query)
-        {
-            var formatter = new SentenceFormatter();
-            foreach (var substitution in query.Substitutions)
-            {
-                cxt.WriteOutputLine(string.Join(", ", substitution.Bindings.Select(kvp => $"{formatter.Format(kvp.Key)}: {formatter.Format(kvp.Value)}")));
-            }
         }
     }
 }

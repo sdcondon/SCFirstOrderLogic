@@ -1,8 +1,10 @@
 ﻿using SCFirstOrderLogic.Inference.Unification;
+using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -103,6 +105,23 @@ namespace SCFirstOrderLogic.Inference.Chaining
             /// <inheritdoc />
             public void Dispose()
             {
+            }
+
+            /// <summary>
+            /// Returns a human-readable explanation of the query result.
+            /// </summary>
+            /// <returns>A human-readable explanation of the query result</returns>
+            public string Explain()
+            {
+                var formatter = new SentenceFormatter();
+                var stringBuilder = new StringBuilder();
+
+                foreach (var substitution in Substitutions)
+                {
+                    stringBuilder.AppendLine(string.Join(", ", substitution.Bindings.Select(kvp => $"{formatter.Format(kvp.Key)}: {formatter.Format(kvp.Value)}")));
+                }
+
+                return stringBuilder.ToString();
             }
 
             /// <inheritdoc />
