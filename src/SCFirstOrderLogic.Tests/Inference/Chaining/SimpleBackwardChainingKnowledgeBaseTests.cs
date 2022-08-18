@@ -1,119 +1,132 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
+using SCFirstOrderLogic.Inference;
+using SCFirstOrderLogic.Inference.Chaining;
+using SCFirstOrderLogic.SentenceFormatting;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
+using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
 {
     public static class SimpleBackwardChainingKnowledgeBaseTests
     {
-        // An enumeration of simple queries that are expected to succeed
-        public static IEnumerable<SimpleBackwardChainingQuery> BasicPositiveQueries()
-        {
-            static OperablePredicate IsKing(OperableTerm term) => new Predicate(nameof(IsKing), term);
-            static OperablePredicate IsGreedy(OperableTerm term) => new Predicate(nameof(IsGreedy), term);
-            static OperablePredicate IsEvil(OperableTerm term) => new Predicate(nameof(IsEvil), term);
-            OperableConstant john = new OperableConstant(nameof(john));
-            OperableConstant richard = new OperableConstant(nameof(richard));
-
-            // trivial
-            var kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsKing(john));
-            yield return kb.CreateQuery(IsKing(john));
-
-            // single conjunct, single step
-            kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsGreedy(john));
-            kb.Tell(ForAll(X, If(IsGreedy(X), IsEvil(X))));
-            yield return kb.CreateQuery(IsEvil(john));
-
-            // two conjuncts, single step
-            kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsGreedy(john));
-            kb.Tell(IsKing(john));
-            kb.Tell(ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X))));
-            yield return kb.CreateQuery(IsEvil(john));
-        }
-
-        public static Test BasicPositiveTestCases => TestThat
+        public static Test PositiveTestCases => TestThat
             .GivenTestContext()
-            .AndEachOf(BasicPositiveQueries)
+            .AndEachOf(() => new SimpleBackwardChainingQuery[]
+            {
+                // trivial
+                MakeQuery(
+                    query: IsKing(John),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John)
+                    }),
+
+                // single conjunct, single step
+                MakeQuery(
+                    query: IsEvil(John),
+                    kb: new Sentence[]
+                    {
+                        IsGreedy(John),
+                        AllGreedyAreEvil
+                    }),
+
+                // two conjuncts, single step
+                MakeQuery(
+                    query: IsEvil(John),
+                    kb: new Sentence[]
+                    {
+                        IsGreedy(John),
+                        IsKing(John),
+                        AllGreedyKingsAreEvil
+                    }),
+
+                // Two applicable rules, each with two conjuncts, single step
+                MakeQuery(
+                    query: IsEvil(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        IsGreedy(Mary),
+                        IsQueen(Mary),
+                        AllGreedyKingsAreEvil,
+                        AllGreedyQueensAreEvil,
+                    }),
+
+                // Simple multiple substitutions
+                MakeQuery(
+                    query: IsKing(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        IsKing(Richard),
+                    }),
+
+                // More complex - Crime example domain
+                MakeQuery(
+                    query: IsCriminal(West),
+                    kb: CrimeDomain.Axioms),
+            })
             .When((cxt, query) => query.Execute())
             .ThenReturns()
             .And((_, _, rv) => rv.Should().BeTrue())
-            .And((_, query, _) => query.Result.Should().BeTrue());
+            .And((_, query, _) => query.Result.Should().BeTrue())
+            .And((cxt, query, _) => WriteSubstitutionsToOutput(cxt, query)); // Going to replace with full proof trees, so no point asserting on subs for now.
 
-        // An enumeration of queries that are expected to fail
-        public static IEnumerable<SimpleBackwardChainingQuery> BasicNegativeQueries()
-        {
-            static OperablePredicate IsKing(OperableTerm term) => new Predicate(nameof(IsKing), term);
-            static OperablePredicate IsGreedy(OperableTerm term) => new Predicate(nameof(IsGreedy), term);
-            static OperablePredicate IsEvil(OperableTerm term) => new Predicate(nameof(IsEvil), term);
-            OperableConstant john = new OperableConstant(nameof(john));
-            OperableConstant richard = new OperableConstant(nameof(richard));
+        public static Test NegativeTestCases => TestThat
+            .GivenEachOf(() => new SimpleBackwardChainingQuery[]
+            {
+                // no matching clause
+                MakeQuery(
+                    query: IsEvil(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        IsGreedy(John),
+                    }),
 
-            // no matching clause
-            var kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsKing(john));
-            kb.Tell(IsGreedy(john));
-            yield return kb.CreateQuery(IsEvil(X));
+                // clause with not all conjuncts satisfied
+                MakeQuery(
+                    query: IsEvil(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        AllGreedyKingsAreEvil,
+                    }),
 
-            // clause with not all conjuncts satisfied
-            kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsKing(john));
-            kb.Tell(ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X))));
-            yield return kb.CreateQuery(IsEvil(X));
-
-            // no unifier will work - x is either John or Richard - it can't be both:
-            kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsKing(john));
-            kb.Tell(IsGreedy(richard));
-            kb.Tell(ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X))));
-            yield return kb.CreateQuery(IsEvil(X));
-        }
-
-        public static Test BasicNegativeTestCases => TestThat
-            .GivenEachOf(BasicNegativeQueries)
+                // no unifier will work - x is either John or Richard - it can't be both:
+                MakeQuery(
+                    query: IsEvil(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        IsGreedy(Richard),
+                        AllGreedyKingsAreEvil,
+                    }),
+            })
             .When(query => query.Execute())
             .ThenReturns()
             .And((_, rv) => rv.Should().BeFalse())
             .And((query, _) => query.Result.Should().BeFalse());
 
-        public static Test CrimeDomainExample => TestThat
-            .Given(() =>
+        private static SimpleBackwardChainingQuery MakeQuery(Sentence query, IEnumerable<Sentence> kb)
+        {
+            var knowledgeBase = new SimpleBackwardChainingKnowledgeBase();
+            knowledgeBase.Tell(kb);
+            return knowledgeBase.CreateQueryAsync(query).GetAwaiter().GetResult();
+        }
+
+        private static void WriteSubstitutionsToOutput(ITestContext cxt, SimpleBackwardChainingQuery query)
+        {
+            var formatter = new SentenceFormatter();
+            foreach (var substitution in query.Substitutions)
             {
-                var kb = new SimpleBackwardChainingKnowledgeBase();
-                kb.Tell(CrimeDomain.Axioms);
-
-                return kb.CreateQuery(IsCriminal(West));
-            })
-            .When(query => query.Execute())
-            .ThenReturns()
-            .And((_, rv) => rv.Should().BeTrue())
-            .And((query, _) => query.Result.Should().BeTrue());
-
-        public static Test MultipleSubstitutions => TestThat
-            .Given(() =>
-            {
-                static Predicate IsPerson(Term term) => new Predicate(nameof(IsPerson), term);
-
-                var kb = new SimpleBackwardChainingKnowledgeBase();
-                kb.Tell(IsPerson(new Constant("John")));
-                kb.Tell(IsPerson(new Constant("Richard")));
-
-                return kb.CreateQuery(IsPerson(new VariableReference("x")));
-            })
-            .When(query => query.Execute())
-            .ThenReturns()
-            .And((_, rv) => rv.Should().BeTrue())
-            .And((query, _) => query.Result.Should().BeTrue())
-            .And((query, _) => query.Substitutions.Select(s => s.Bindings).Should().BeEquivalentTo(new Dictionary<VariableReference, Term>[]
-            {
-                new() { [new VariableReference("x")] = new Constant("John") },
-                new() { [new VariableReference("x")] = new Constant("Richard") },
-            }, opts => opts.RespectingRuntimeTypes()));
+                cxt.WriteOutputLine(string.Join(", ", substitution.Bindings.Select(kvp => $"{formatter.Format(kvp.Key)}: {formatter.Format(kvp.Value)}")));
+            }
+        }
     }
 }

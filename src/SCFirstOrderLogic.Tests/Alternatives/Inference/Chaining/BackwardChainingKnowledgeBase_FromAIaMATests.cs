@@ -3,83 +3,130 @@ using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
 using SCFirstOrderLogic.Inference;
 using SCFirstOrderLogic.Inference.Chaining;
+using SCFirstOrderLogic.SentenceFormatting;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
+using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
 namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
 {
     public static class BackwardChainingKnowledgeBase_FromAIaMATests
     {
-        public static Test CrimeDomainExample => TestThat
-            .Given(() =>
+        public static Test PositiveTestCases => TestThat
+            .GivenTestContext()
+            .AndEachOf(() => new BackwardChainingKnowledgeBase_FromAIaMA.Query[]
             {
-                var kb = new BackwardChainingKnowledgeBase_FromAIaMA();
-                kb.Tell(CrimeDomain.Axioms);
+                // trivial
+                MakeQuery(
+                    query: IsKing(John),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John)
+                    }),
 
-                return kb.CreateQueryAsync(IsCriminal(West)).Result;
+                // single conjunct, single step
+                MakeQuery(
+                    query: IsEvil(John),
+                    kb: new Sentence[]
+                    {
+                        IsGreedy(John),
+                        AllGreedyAreEvil
+                    }),
+
+                // two conjuncts, single step
+                MakeQuery(
+                    query: IsEvil(John),
+                    kb: new Sentence[]
+                    {
+                        IsGreedy(John),
+                        IsKing(John),
+                        AllGreedyKingsAreEvil
+                    }),
+
+                // Two applicable rules, each with two conjuncts, single step
+                MakeQuery(
+                    query: IsEvil(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        IsGreedy(Mary),
+                        IsQueen(Mary),
+                        AllGreedyKingsAreEvil,
+                        AllGreedyQueensAreEvil,
+                    }),
+
+                // Simple multiple substitutions
+                MakeQuery(
+                    query: IsKing(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        IsKing(Richard),
+                    }),
+
+                // More complex - Crime example domain
+                MakeQuery(
+                    query: IsCriminal(West),
+                    kb: CrimeDomain.Axioms),
             })
-            .When(query => query.Execute())
+            .When((cxt, query) => query.Execute())
             .ThenReturns()
-            .And((_, rv) => rv.Should().BeTrue())
-            .And((query, _) => query.Result.Should().BeTrue());
-
-        public static Test BasicExample => TestThat
-            .Given(() =>
-            {
-                static Predicate IsPerson(Term term) => new Predicate(nameof(IsPerson), term);
-
-                var kb = new BackwardChainingKnowledgeBase_FromAIaMA();
-                kb.Tell(IsPerson(new Constant("John")));
-                kb.Tell(IsPerson(new Constant("Richard")));
-
-                return kb.CreateQueryAsync(IsPerson(new VariableReference("x"))).Result;
-            })
-            .When(query => query.Execute())
-            .ThenReturns()
-            .And((_, rv) => rv.Should().BeTrue())
-            .And((query, _) => query.Result.Should().BeTrue())
-            .And((query, _) => query.Substitutions.Select(s => s.Bindings).Should().BeEquivalentTo(new Dictionary<VariableReference, Term>[]
-            {
-                new() { [new VariableReference("x")] = new Constant("John") },
-                new() { [new VariableReference("x")] = new Constant("Richard") },
-            }, opts => opts.RespectingRuntimeTypes()));
-
-        // An enumeration of queries that are expected to fail
-        public static IEnumerable<SimpleBackwardChainingQuery> NegativeQueries()
-        {
-            static OperablePredicate IsKing(OperableTerm term) => new Predicate(nameof(IsKing), term);
-            static OperablePredicate IsGreedy(OperableTerm term) => new Predicate(nameof(IsGreedy), term);
-            static OperablePredicate IsEvil(OperableTerm term) => new Predicate(nameof(IsEvil), term);
-            OperableConstant john = new OperableConstant(nameof(john));
-            OperableConstant richard = new OperableConstant(nameof(richard));
-
-            // no matching clause
-            var kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsKing(john));
-            kb.Tell(IsGreedy(john));
-            yield return kb.CreateQuery(IsEvil(X));
-
-            // clause with not all conjuncts satisfied
-            kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsKing(john));
-            kb.Tell(ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X))));
-            yield return kb.CreateQuery(IsEvil(X));
-
-            // no unifier will work - x is either John or Richard - it can't be both:
-            kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.Tell(IsKing(john));
-            kb.Tell(IsGreedy(richard));
-            kb.Tell(ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X))));
-            yield return kb.CreateQuery(IsEvil(X));
-        }
+            .And((_, _, rv) => rv.Should().BeTrue())
+            .And((_, query, _) => query.Result.Should().BeTrue())
+            .And((cxt, query, _) => WriteSubstitutionsToOutput(cxt, query)); // Going to replace with full proof trees, so no point asserting on subs for now.
 
         public static Test NegativeTestCases => TestThat
-            .GivenEachOf(NegativeQueries)
+            .GivenEachOf(() => new BackwardChainingKnowledgeBase_FromAIaMA.Query[]
+            {
+                // no matching clause
+                MakeQuery(
+                    query: IsEvil(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        IsGreedy(John),
+                    }),
+
+                // clause with not all conjuncts satisfied
+                MakeQuery(
+                    query: IsEvil(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        AllGreedyKingsAreEvil,
+                    }),
+
+                // no unifier will work - x is either John or Richard - it can't be both:
+                MakeQuery(
+                    query: IsEvil(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        IsGreedy(Richard),
+                        AllGreedyKingsAreEvil,
+                    }),
+            })
             .When(query => query.Execute())
             .ThenReturns()
             .And((_, rv) => rv.Should().BeFalse())
             .And((query, _) => query.Result.Should().BeFalse());
+
+        private static BackwardChainingKnowledgeBase_FromAIaMA.Query MakeQuery(Sentence query, IEnumerable<Sentence> kb)
+        {
+            var knowledgeBase = new BackwardChainingKnowledgeBase_FromAIaMA();
+            knowledgeBase.Tell(kb);
+            return knowledgeBase.CreateQueryAsync(query).GetAwaiter().GetResult();
+        }
+
+        private static void WriteSubstitutionsToOutput(ITestContext cxt, BackwardChainingKnowledgeBase_FromAIaMA.Query query)
+        {
+            var formatter = new SentenceFormatter();
+            foreach (var substitution in query.Substitutions)
+            {
+                cxt.WriteOutputLine(string.Join(", ", substitution.Bindings.Select(kvp => $"{formatter.Format(kvp.Key)}: {formatter.Format(kvp.Value)}")));
+            }
+        }
     }
 }
