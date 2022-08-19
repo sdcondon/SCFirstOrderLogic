@@ -25,6 +25,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private readonly Func<ClauseResolution, bool> filter;
         private readonly MaxPriorityQueue<ClauseResolution> queue;
         private readonly Dictionary<CNFClause, ClauseResolution> steps;
+        private readonly Lazy<ReadOnlyCollection<CNFClause>> discoveredClauses;
 
         private bool isComplete;
         private bool result;
@@ -39,6 +40,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             this.filter = filter;
             queue = new MaxPriorityQueue<ClauseResolution>(priorityComparison);
             steps = new Dictionary<CNFClause, ClauseResolution>();
+            discoveredClauses = new(MakeDiscoveredClauses);
 
             NegatedQuery = new CNFSentence(new Negation(query));
         }
@@ -64,6 +66,74 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 return result;
             }
         }
+
+        /// <summary>
+        /// Gets a (very raw) explanation of the steps that led to the result of the query.
+        /// </summary>
+        public string ResultExplanation
+        {
+            get
+            {
+                if (!IsComplete)
+                {
+                    throw new InvalidOperationException("Query is not yet complete");
+                }
+                else if (!Result)
+                {
+                    throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
+                }
+
+                var formatter = new SentenceFormatter();
+                var cnfExplainer = new CNFExplainer(formatter);
+
+                // Now build the explanation string.
+                var explanation = new StringBuilder();
+                for (var i = 0; i < DiscoveredClauses.Count; i++)
+                {
+                    var resolution = Steps[DiscoveredClauses[i]];
+
+                    string GetSource(CNFClause clause)
+                    {
+                        if (DiscoveredClauses.Contains(clause))
+                        {
+                            return $"#{DiscoveredClauses.IndexOf(clause):D2}";
+                        }
+                        else if (NegatedQuery.Clauses.Contains(clause))
+                        {
+                            return " ¬Q";
+                        }
+                        else
+                        {
+                            return " KB";
+                        }
+                    }
+
+                    explanation.AppendLine($"#{i:D2}: {formatter.Format(DiscoveredClauses[i])}");
+                    explanation.AppendLine($"     From {GetSource(resolution.Clause1)}: {formatter.Format(resolution.Clause1)}");
+                    explanation.AppendLine($"     And  {GetSource(resolution.Clause2)}: {formatter.Format(resolution.Clause2)} ");
+                    explanation.Append("     Using   : {");
+                    explanation.Append(string.Join(", ", resolution.Substitution.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
+                    explanation.AppendLine("}");
+
+                    foreach (var term in CNFExplainer.FindNormalisationTerms(DiscoveredClauses[i], resolution.Clause1, resolution.Clause2))
+                    {
+                        explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
+                    }
+
+                    explanation.AppendLine();
+                }
+
+                return explanation.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Gets a list of the (useful) clauses discovered by a query that has returned a positive result.
+        /// Starts with clauses that were discovered using only clauses from the knowledge base or negated
+        /// query, and ends with the empty clause.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">If the query is not complete, or returned a negative result.</exception>
+        public ReadOnlyCollection<CNFClause> DiscoveredClauses => discoveredClauses.Value;
 
         /// <summary>
         /// Gets a mapping from a clause to the resolution from which it was inferred.
@@ -154,14 +224,25 @@ namespace SCFirstOrderLogic.Inference.Resolution
             clauseStore.Dispose();
         }
 
-        /// <summary>
-        /// Retrieves a list of the (useful) clauses discovered by a query that has returned a positive result.
-        /// Starts with clauses that were discovered using only clauses from the knowledge base or negated
-        /// query, and ends with the empty clause.
-        /// </summary>
-        /// <returns>A list of the discovered clauses of the given query.</returns>
-        /// <exception cref="InvalidOperationException">If the query is not complete, or returned a negative result.</exception>
-        public ReadOnlyCollection<CNFClause> GetDiscoveredClauses()
+        private async Task EnqueueUnfilteredResolventsAsync(CNFClause clause, CancellationToken cancellationToken = default)
+        {
+            await foreach (var resolution in clauseStore.FindResolutions(clause, cancellationToken))
+            {
+                // NB: Throwing away clauses returned by the unifier store has performance impact.
+                // Could instead/also use a store that knows to not look for certain clause pairings in the first place..
+                // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is
+                // then a mix of implementation (how unifiers are stored/indexed) and strategy, plus there's a bit more
+                // strategy in the form of the priority comparer. This feels a good compromise - there are of course
+                // alternatives (e.g. some kind of strategy object that encapsulates both) - but they felt like overkill
+                // for this simple implementation.
+                if (filter(resolution))
+                {
+                    queue.Enqueue(resolution);
+                }
+            }
+        }
+
+        private ReadOnlyCollection<CNFClause> MakeDiscoveredClauses()
         {
             if (!IsComplete)
             {
@@ -204,83 +285,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
             orderedSteps.Reverse();
 
             return orderedSteps.AsReadOnly();
-        }
-
-        /// <summary>
-        /// Produces a (very raw) explanation of the steps that led to the result of the query.
-        /// </summary>
-        /// <returns>A (very raw) explanation of the steps that led to the result of the query.</returns>
-        public string Explain()
-        {
-            if (!IsComplete)
-            {
-                throw new InvalidOperationException("Query is not yet complete");
-            }
-            else if (!Result)
-            {
-                throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
-            }
-
-            var formatter = new SentenceFormatter();
-            var cnfExplainer = new CNFExplainer(formatter);
-            var discoveredClauses = GetDiscoveredClauses();
-
-            // Now build the explanation string.
-            var explanation = new StringBuilder();
-            for (var i = 0; i < discoveredClauses.Count; i++)
-            {
-                var resolution = Steps[discoveredClauses[i]];
-
-                string GetSource(CNFClause clause)
-                {
-                    if (discoveredClauses.Contains(clause))
-                    {
-                        return $"#{discoveredClauses.IndexOf(clause):D2}";
-                    }
-                    else if (NegatedQuery.Clauses.Contains(clause))
-                    {
-                        return " ¬Q";
-                    }
-                    else
-                    {
-                        return " KB";
-                    }
-                }
-
-                explanation.AppendLine($"#{i:D2}: {formatter.Format(discoveredClauses[i])}");
-                explanation.AppendLine($"     From {GetSource(resolution.Clause1)}: {formatter.Format(resolution.Clause1)}");
-                explanation.AppendLine($"     And  {GetSource(resolution.Clause2)}: {formatter.Format(resolution.Clause2)} ");
-                explanation.Append("     Using   : {");
-                explanation.Append(string.Join(", ", resolution.Substitution.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
-                explanation.AppendLine("}");
-
-                foreach (var term in CNFExplainer.FindNormalisationTerms(discoveredClauses[i], resolution.Clause1, resolution.Clause2))
-                {
-                    explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
-                }
-
-                explanation.AppendLine();
-            }
-
-            return explanation.ToString();
-        }
-
-        private async Task EnqueueUnfilteredResolventsAsync(CNFClause clause, CancellationToken cancellationToken = default)
-        {
-            await foreach (var resolution in clauseStore.FindResolutions(clause, cancellationToken))
-            {
-                // NB: Throwing away clauses returned by the unifier store has performance impact.
-                // Could instead/also use a store that knows to not look for certain clause pairings in the first place..
-                // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is
-                // then a mix of implementation (how unifiers are stored/indexed) and strategy, plus there's a bit more
-                // strategy in the form of the priority comparer. This feels a good compromise - there are of course
-                // alternatives (e.g. some kind of strategy object that encapsulates both) - but they felt like overkill
-                // for this simple implementation.
-                if (filter(resolution))
-                {
-                    queue.Enqueue(resolution);
-                }
-            }
         }
     }
 }

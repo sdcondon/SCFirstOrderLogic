@@ -25,8 +25,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 return query;
             })
             .ThenReturns()
-            .And((_, retVal) => retVal.Result.Should().Be(true))
-            .And((ctx, retVal) => ctx.WriteOutputLine(retVal.Explain()));
+            .And((_, query) => query.Result.Should().Be(true))
+            .And((ctx, query) => ctx.WriteOutputLine(query.ResultExplanation));
 
         public static Test CuriousityAndTheCatExample => TestThat
             .GivenTestContext()
@@ -39,8 +39,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 return query;
             })
             .ThenReturns()
-            .And((_, retVal) => retVal.Result.Should().Be(true))
-            .And((ctx, retVal) => ctx.WriteOutputLine(retVal.Explain()));
+            .And((_, query) => query.Result.Should().Be(true))
+            .And((ctx, query) => ctx.WriteOutputLine(query.ResultExplanation));
 
         // This one needs equality (so not really a test of this KB alone), and in practice doesn't terminate in any reasonable time frame.
         // Would need smarter clause prioritisation, and possibly smarter treatment of equality (e.g. demodulation)

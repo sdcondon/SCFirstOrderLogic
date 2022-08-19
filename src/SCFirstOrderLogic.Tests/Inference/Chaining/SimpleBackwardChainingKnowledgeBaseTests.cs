@@ -3,9 +3,7 @@ using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
 using SCFirstOrderLogic.Inference;
 using SCFirstOrderLogic.Inference.Chaining;
-using SCFirstOrderLogic.SentenceFormatting;
 using System.Collections.Generic;
-using System.Linq;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
@@ -75,7 +73,7 @@ namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
             .ThenReturns()
             .And((_, _, rv) => rv.Should().BeTrue())
             .And((_, query, _) => query.Result.Should().BeTrue())
-            .And((cxt, query, _) => cxt.WriteOutputLine(query.Explain()));
+            .And((cxt, query, _) => cxt.WriteOutputLine(query.ResultExplanation));
 
         public static Test NegativeTestCases => TestThat
             .GivenEachOf(() => new SimpleBackwardChainingQuery[]

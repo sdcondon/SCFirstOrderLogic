@@ -44,7 +44,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             .ThenReturns()
             .And((_, _, rv) => rv.Should().BeTrue())
             .And((_, query, _) => query.Result.Should().BeTrue())
-            .And((cxt, query, _) => cxt.WriteOutput(query.Explain()));
+            .And((cxt, query, _) => cxt.WriteOutput(query.ResultExplanation));
 
         // An enumeration of queries that are expected to fail
         public static IEnumerable<SimpleForwardChainingQuery> BasicNegativeQueries()
@@ -94,6 +94,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
             .ThenReturns()
             .And((_, rv) => rv.Should().BeTrue())
             .And((given, _) => given.query.Result.Should().BeTrue())
-            .And((given, _) => given.cxt.WriteOutput(given.query.Explain()));
+            .And((given, _) => given.cxt.WriteOutput(given.query.ResultExplanation));
     }
 }

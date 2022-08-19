@@ -19,6 +19,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         private readonly Predicate α;
         private readonly List<CNFDefiniteClause> kb;
         private readonly Dictionary<Predicate, ProofStep> proof = new();
+        private readonly Lazy<ReadOnlyCollection<Predicate>> discoveredPredicates;
 
         private bool? result;
 
@@ -26,6 +27,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         {
             this.α = α;
             this.kb = new List<CNFDefiniteClause>(clauses);
+            this.discoveredPredicates = new Lazy<ReadOnlyCollection<Predicate>>(MakeDiscoveredPredicates);
         }
 
         /// <inheritdoc />
@@ -35,9 +37,79 @@ namespace SCFirstOrderLogic.Inference.Chaining
         public bool Result => result ?? throw new InvalidOperationException("Query is not yet complete");
 
         /// <summary>
+        /// Gets a (very raw) explanation of the steps that led to the result of the query.
+        /// </summary>
+        public string ResultExplanation
+        {
+            get
+            {
+                if (!IsComplete)
+                {
+                    throw new InvalidOperationException("Query is not yet complete");
+                }
+                else if (!Result)
+                {
+                    throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
+                }
+
+                var formatter = new SentenceFormatter();
+                var cnfExplainer = new CNFExplainer(formatter);
+
+                // Now build the explanation string.
+                var explanation = new StringBuilder();
+                for (var i = 0; i < DiscoveredPredicates.Count; i++)
+                {
+                    var proofStep = Proof[DiscoveredPredicates[i]];
+
+                    string GetSource(Predicate predicate)
+                    {
+                        if (DiscoveredPredicates.Contains(predicate))
+                        {
+                            return $"#{DiscoveredPredicates.IndexOf(predicate):D2}";
+                        }
+                        else
+                        {
+                            return " KB";
+                        }
+                    }
+
+                    explanation.AppendLine($"#{i:D2}: {formatter.Format(DiscoveredPredicates[i])}");
+                    explanation.AppendLine($"     By Rule : {formatter.Format(proofStep.Rule)}");
+
+                    foreach (var knownUnitClause in proofStep.KnownPredicates)
+                    {
+                        explanation.AppendLine($"     From {GetSource(knownUnitClause)}: {formatter.Format(knownUnitClause)}");
+                    }
+
+                    explanation.Append("     Using   : {");
+                    explanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
+                    explanation.AppendLine("}");
+
+                    foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.KnownPredicates.Select(p => new CNFClause(new CNFLiteral[] { p })).Append(new CNFClause(new CNFLiteral[] { DiscoveredPredicates[i] })).ToArray())) // TODO: UGH, awful. More type fluidity.
+                    {
+                        explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
+                    }
+
+                    explanation.AppendLine();
+                }
+
+                return explanation.ToString();
+            }
+        }
+
+        /// <summary>
         /// Gets the proof tree generated during execution of the query.
         /// </summary>
         public IReadOnlyDictionary<Predicate, ProofStep> Proof => proof;
+
+        /// <summary>
+        /// Gets a list of the (useful) predicates discovered by a query that has returned a positive result.
+        /// Starts with predicates that were discovered using only predicates from the knowledge base or negated, and ends
+        /// with the goal predicate.
+        /// </summary>
+        /// <returns>A list of the discovered predicates of the given query.</returns>
+        /// <exception cref="InvalidOperationException">If the query is not complete, or returned a negative result.</exception>
+        public ReadOnlyCollection<Predicate> DiscoveredPredicates => discoveredPredicates.Value;
 
         /// <inheritdoc />
         public void Dispose()
@@ -135,14 +207,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             }
         }
 
-        /// <summary>
-        /// Retrieves a list of the (useful) predicates discovered by a query that has returned a positive result.
-        /// Starts with predicates that were discovered using only predicates from the knowledge base or negated, and ends
-        /// with the goal predicate.
-        /// </summary>
-        /// <returns>A list of the discovered predicates of the given query.</returns>
-        /// <exception cref="InvalidOperationException">If the query is not complete, or returned a negative result.</exception>
-        public ReadOnlyCollection<Predicate> GetDiscoveredPredicates()
+        private ReadOnlyCollection<Predicate> MakeDiscoveredPredicates()
         {
             if (!IsComplete)
             {
@@ -186,66 +251,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
             orderedSteps.Reverse();
 
             return orderedSteps.AsReadOnly();
-        }
-
-        /// <summary>
-        /// Produces a (very raw) explanation of the steps that led to the result of the query.
-        /// </summary>
-        /// <returns>A (very raw) explanation of the steps that led to the result of the query.</returns>
-        public string Explain()
-        {
-            if (!IsComplete)
-            {
-                throw new InvalidOperationException("Query is not yet complete");
-            }
-            else if (!Result)
-            {
-                throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
-            }
-
-            var formatter = new SentenceFormatter();
-            var cnfExplainer = new CNFExplainer(formatter);
-            var discoveredPredicates = GetDiscoveredPredicates();
-
-            // Now build the explanation string.
-            var explanation = new StringBuilder();
-            for (var i = 0; i < discoveredPredicates.Count; i++)
-            {
-                var proofStep = Proof[discoveredPredicates[i]];
-
-                string GetSource(Predicate predicate)
-                {
-                    if (discoveredPredicates.Contains(predicate))
-                    {
-                        return $"#{discoveredPredicates.IndexOf(predicate):D2}";
-                    }
-                    else
-                    {
-                        return " KB";
-                    }
-                }
-
-                explanation.AppendLine($"#{i:D2}: {formatter.Format(discoveredPredicates[i])}");
-                explanation.AppendLine($"     By Rule : {formatter.Format(proofStep.Rule)}");
-
-                foreach (var knownUnitClause in proofStep.KnownPredicates)
-                {
-                    explanation.AppendLine($"     From {GetSource(knownUnitClause)}: {formatter.Format(knownUnitClause)}");
-                }
-
-                explanation.Append("     Using   : {");
-                explanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
-                explanation.AppendLine("}");
-
-                foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.KnownPredicates.Select(p => new CNFClause(new CNFLiteral[] { p })).Append(new CNFClause(new CNFLiteral[] { discoveredPredicates[i] })).ToArray())) // TODO: UGH, awful. More type fluidity.
-                {
-                    explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
-                }
-
-                explanation.AppendLine();
-            }
-
-            return explanation.ToString();
         }
 
         /// <summary>

@@ -34,6 +34,26 @@ namespace SCFirstOrderLogic.Inference.Chaining
         public bool Result => substitutions?.Any() ?? throw new InvalidOperationException("Query is not yet complete");
 
         /// <summary>
+        /// Gets a human-readable explanation of the query result.
+        /// </summary>
+        public string ResultExplanation
+        {
+            get
+            {
+                // Don't bother lazy.. Won't be critical path - not worth the complexity hit. Might revisit.
+                var formatter = new SentenceFormatter();
+                var stringBuilder = new StringBuilder();
+
+                foreach (var substitution in Substitutions)
+                {
+                    stringBuilder.AppendLine(string.Join(", ", substitution.Bindings.Select(kvp => $"{formatter.Format(kvp.Key)}: {formatter.Format(kvp.Value)}")));
+                }
+
+                return stringBuilder.ToString();
+            }
+        }
+
+        /// <summary>
         /// Gets the proof tree generated during execution of the query.
         /// </summary>
         ////public IReadOnlyDictionary<Predicate, ProofStep> Proof => proof;
@@ -54,23 +74,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
         {
             substitutions = VisitPredicate(query, new VariableSubstitution());
             return Task.Run(() => Result, cancellationToken);
-        }
-
-        /// <summary>
-        /// Returns a human-readable explanation of the query result.
-        /// </summary>
-        /// <returns>A human-readable explanation of the query result</returns>
-        public string Explain()
-        {
-            var formatter = new SentenceFormatter();
-            var stringBuilder = new StringBuilder();
-
-            foreach (var substitution in Substitutions)
-            {
-                stringBuilder.AppendLine(string.Join(", ", substitution.Bindings.Select(kvp => $"{formatter.Format(kvp.Key)}: {formatter.Format(kvp.Value)}")));
-            }
-
-            return stringBuilder.ToString();
         }
 
         /// <summary>
