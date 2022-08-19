@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
 {
     public static class BackwardChainingKnowledgeBase_FromAIaMATests
     {
-        public static Test PositiveTestCases => TestThat
+        public static Test PositiveScenarios => TestThat
             .GivenTestContext()
             .AndEachOf(() => new BackwardChainingKnowledgeBase_FromAIaMA.Query[]
             {
@@ -77,7 +77,7 @@ namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
             .And((_, query, _) => query.Result.Should().BeTrue())
             .And((cxt, query, _) => cxt.WriteOutputLine(query.Explain())); // Going to replace with full proof trees, so no point asserting on subs for now.
 
-        public static Test NegativeTestCases => TestThat
+        public static Test NegativeScenarios => TestThat
             .GivenEachOf(() => new BackwardChainingKnowledgeBase_FromAIaMA.Query[]
             {
                 // no matching clause

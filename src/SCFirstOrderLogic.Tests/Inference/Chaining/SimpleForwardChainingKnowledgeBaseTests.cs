@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
 {
     public static class SimpleForwardChainingKnowledgeBaseTests
     {
-        public static Test BasicPositiveScenarios => TestThat
+        public static Test PositiveScenarios => TestThat
             .GivenTestContext()
             .AndEachOf(() => new SimpleForwardChainingQuery[]
             {
@@ -73,7 +73,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             .And((_, query, _) => query.Result.Should().BeTrue())
             .And((cxt, query, _) => cxt.WriteOutput(query.ResultExplanation));
 
-        public static Test BasicNegativeScenarios => TestThat
+        public static Test NegativeScenarios => TestThat
             .GivenEachOf(() => new SimpleForwardChainingQuery[]
             {
                 // no matching clause

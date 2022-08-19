@@ -140,6 +140,10 @@ namespace SCFirstOrderLogic.Inference.Chaining
                             {
                                 @new.Add(qDashAsClause);
 
+                                // WOULD-BE-A-BUG-IF-THIS-WERE-PRODUCTION-CODE: Only doing this when we have something "new" means that
+                                // the KB will fail to confirm a sentence that is in the KB directly. Of course the fix (doing this out the
+                                // outset of the outer foreach) has a significant performance impact, so I can KIND OF see why they've written
+                                // this way in the book. Then again, they should have at least made a note about this.. Meh, never mind.
                                 if (LiteralUnifier.TryCreate(qDash, α, out var φ))
                                 {
                                     result = true;

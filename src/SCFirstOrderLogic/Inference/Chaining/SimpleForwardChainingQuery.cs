@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static SCFirstOrderLogic.Inference.Chaining.SimpleForwardChainingQuery;
 
 namespace SCFirstOrderLogic.Inference.Chaining
 {
@@ -108,7 +109,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// with the goal predicate.
         /// </summary>
         /// <returns>A list of the discovered predicates of the given query.</returns>
-        /// <exception cref="InvalidOperationException">If the query is not complete, or returned a negative result.</exception>
+        /// <exception cref="InvalidOperationException">The query is not complete, or returned a negative result.</exception>
         public ReadOnlyCollection<Predicate> DiscoveredPredicates => discoveredPredicates.Value;
 
         /// <inheritdoc />
@@ -125,14 +126,21 @@ namespace SCFirstOrderLogic.Inference.Chaining
             {
                 @new.Clear();
 
-                foreach (var rule in kb)
+                foreach (var fact in kb)
                 {
+                    // First check if we've found our goal
+                    if (fact.IsUnitClause && LiteralUnifier.TryCreate(fact.Consequent, α, out var φ))
+                    {
+                        result = true;
+                        return Task.FromResult(true);
+                    }
+
                     // NB: we don't need the variable standardisation line from the book because that's already
                     // happened as part of the conversion to CNF that is carried out when the KB is told things.
                     // So all we do is call the consequent 'q' to match the book listing:
-                    var q = rule.Consequent;
+                    var q = fact.Consequent;
 
-                    foreach (var proofStep in MatchWithKnownFacts(rule))
+                    foreach (var proofStep in MatchWithKnownFacts(fact))
                     {
                         // Need the inferred predicate as a clause - worth looking into a bit more type fluidity at some point
                         // so that this line is unecessary
@@ -146,17 +154,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
                             
                             // ..and to the list of new conclusions of this iteration..
                             @new.Add(inferredClause);
-
-                            // ..then check if we've reached our goal.
-                            // TODO: this final substitution not included in proof. Fix me.
-                            // TODO: structure (taken from book) fails if you ask a predicate already in the KB. Easy
-                            // to fix (by acting on rule, not inferred predicate, and doing this check at outset of foreach),
-                            // but of course makes it slower still.. Then again, already v slow, so...
-                            if (LiteralUnifier.TryCreate(proofStep.InferredPredicate, α, out var φ))
-                            {
-                                result = true;
-                                return Task.FromResult(true);
-                            }
                         }
                     }
                 }
@@ -254,7 +251,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         /// <summary>
-        /// Container for an attempt to apply a specific rule from the knowledge base, given what we've already discerned.
+        /// Container for information about an attempt to apply a specific rule from the knowledge base, given what we've already discerned.
         /// </summary>
         public class ProofStep
         {

@@ -90,7 +90,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         new CNFClause(Or(T(C), Not(T(C))))
                     }),
             })
-            .When<System.Collections.Generic.IEnumerable<ClauseResolution>>(g => ClauseResolution.Resolve(g.Clause1, g.Clause2))
+            .When(g => ClauseResolution.Resolve(g.Clause1, g.Clause2))
             .ThenReturns(((g, r) => r.Select(u => u.Resolvent).Should().BeEquivalentTo(g.ExpectedResolvents)));
     }
 }
