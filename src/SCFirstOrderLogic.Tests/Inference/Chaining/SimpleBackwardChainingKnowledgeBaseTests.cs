@@ -1,52 +1,50 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
-using SCFirstOrderLogic.Inference;
-using SCFirstOrderLogic.Inference.Chaining;
 using System.Collections.Generic;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
-namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.Chaining
 {
     public static class SimpleBackwardChainingKnowledgeBaseTests
     {
-        public static Test PositiveTestCases => TestThat
+        public static Test PositiveScenarios => TestThat
             .GivenTestContext()
-            .AndEachOf(() => new SimpleBackwardChainingQuery[]
+            .AndEachOf(() => new TestCase[]
             {
-                // trivial
-                MakeQuery(
-                    query: IsKing(John),
-                    kb: new Sentence[]
+                new(
+                    Label: "Trivial",
+                    Query: IsKing(John),
+                    Knowledge: new Sentence[]
                     {
                         IsKing(John)
                     }),
 
-                // single conjunct, single step
-                MakeQuery(
-                    query: IsEvil(John),
-                    kb: new Sentence[]
+                new(
+                    Label: "single conjunct, single step",
+                    Query: IsEvil(John),
+                    Knowledge: new Sentence[]
                     {
                         IsGreedy(John),
                         AllGreedyAreEvil
                     }),
 
-                // two conjuncts, single step
-                MakeQuery(
-                    query: IsEvil(John),
-                    kb: new Sentence[]
+                new(
+                    Label: "Two conjuncts, single step",
+                    Query: IsEvil(John),
+                    Knowledge: new Sentence[]
                     {
                         IsGreedy(John),
                         IsKing(John),
                         AllGreedyKingsAreEvil
                     }),
 
-                // Two applicable rules, each with two conjuncts, single step
-                MakeQuery(
-                    query: IsEvil(X),
-                    kb: new Sentence[]
+                new(
+                    Label: "Two applicable rules, each with two conjuncts, single step",
+                    Query: IsEvil(X),
+                    Knowledge: new Sentence[]
                     {
                         IsKing(John),
                         IsGreedy(Mary),
@@ -55,67 +53,81 @@ namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
                         AllGreedyQueensAreEvil,
                     }),
 
-                // Simple multiple substitutions
-                MakeQuery(
-                    query: IsKing(X),
-                    kb: new Sentence[]
+                new(
+                    Label: "Simple multiple subsitutions",
+                    Query: IsKing(X),
+                    Knowledge: new Sentence[]
                     {
                         IsKing(John),
                         IsKing(Richard),
                     }),
 
-                // More complex - Crime example domain
-                MakeQuery(
-                    query: IsCriminal(West),
-                    kb: CrimeDomain.Axioms),
+                new(
+                    Label: "Crime example domain",
+                    Query: IsCriminal(West),
+                    Knowledge: CrimeDomain.Axioms),
             })
-            .When((cxt, query) => query.Execute())
-            .ThenReturns()
-            .And((_, _, rv) => rv.Should().BeTrue())
-            .And((_, query, _) => query.Result.Should().BeTrue())
-            .And((cxt, query, _) => cxt.WriteOutputLine(query.ResultExplanation));
-
-        public static Test NegativeTestCases => TestThat
-            .GivenEachOf(() => new SimpleBackwardChainingQuery[]
+            .When((_, tc) =>
             {
-                // no matching clause
-                MakeQuery(
-                    query: IsEvil(X),
-                    kb: new Sentence[]
+                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase();
+                knowledgeBase.Tell(tc.Knowledge);
+
+                var query = knowledgeBase.CreateQuery(tc.Query);
+                query.Execute();
+
+                return query;
+            })
+            .ThenReturns()
+            .And((_, _, query) => query.Result.Should().BeTrue())
+            .And((cxt, _, query) => cxt.WriteOutputLine(query.ResultExplanation));
+
+        public static Test NegativeScenarios => TestThat
+            .GivenEachOf(() => new TestCase[]
+            {
+                new(
+                    Label: "No matching clause",
+                    Query: IsEvil(X),
+                    Knowledge: new Sentence[]
                     {
                         IsKing(John),
                         IsGreedy(John),
                     }),
 
-                // clause with not all conjuncts satisfied
-                MakeQuery(
-                    query: IsEvil(X),
-                    kb: new Sentence[]
+                new(
+                    Label: "clause with not all conjuncts satisfied",
+                    Query: IsEvil(X),
+                    Knowledge: new Sentence[]
                     {
                         IsKing(John),
                         AllGreedyKingsAreEvil,
                     }),
 
-                // no unifier will work - x is either John or Richard - it can't be both:
-                MakeQuery(
-                    query: IsEvil(X),
-                    kb: new Sentence[]
+                new(
+                    Label: "No unifier will work - x is either John or Richard - it can't be both",
+                    Query: IsEvil(X),
+                    Knowledge: new Sentence[]
                     {
                         IsKing(John),
                         IsGreedy(Richard),
                         AllGreedyKingsAreEvil,
                     }),
             })
-            .When(query => query.Execute())
-            .ThenReturns()
-            .And((_, rv) => rv.Should().BeFalse())
-            .And((query, _) => query.Result.Should().BeFalse());
+            .When(tc =>
+            {
+                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase();
+                knowledgeBase.Tell(tc.Knowledge);
 
-        private static SimpleBackwardChainingQuery MakeQuery(Sentence query, IEnumerable<Sentence> kb)
+                var query = knowledgeBase.CreateQuery(tc.Query);
+                query.Execute();
+
+                return query;
+            })
+            .ThenReturns()
+            .And((_, query) => query.Result.Should().BeFalse());
+
+        private record TestCase(string Label, Sentence Query, IEnumerable<Sentence> Knowledge)
         {
-            var knowledgeBase = new SimpleBackwardChainingKnowledgeBase();
-            knowledgeBase.Tell(kb);
-            return knowledgeBase.CreateQueryAsync(query).GetAwaiter().GetResult();
+            public override string ToString() => Label;
         }
     }
 }
