@@ -54,7 +54,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     }),
 
                 new(
-                    Label: "Simple multiple subsitutions",
+                    Label: "Simple multiple possible substitutions",
                     Query: IsKing(X),
                     Knowledge: new Sentence[]
                     {

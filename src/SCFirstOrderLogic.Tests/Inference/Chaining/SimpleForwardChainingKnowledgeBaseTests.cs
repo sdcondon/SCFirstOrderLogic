@@ -53,7 +53,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         AllGreedyQueensAreEvil,
                     }),
 
-                // Multiple substitutions
+                // Multiple possible substitutions
                 MakeQuery(
                     query: IsKing(X),
                     kb: new Sentence[]
