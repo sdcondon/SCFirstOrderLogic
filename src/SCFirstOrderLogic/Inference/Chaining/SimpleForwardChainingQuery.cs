@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static SCFirstOrderLogic.Inference.Chaining.SimpleForwardChainingQuery;
 
 namespace SCFirstOrderLogic.Inference.Chaining
 {
@@ -20,7 +19,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         private readonly Predicate α;
         private readonly List<CNFDefiniteClause> kb;
         private readonly Dictionary<Predicate, ProofStep> proof = new();
-        private readonly Lazy<ReadOnlyCollection<Predicate>> discoveredPredicates;
+        private readonly Lazy<ReadOnlyCollection<Predicate>> usefulPredicates;
 
         private bool? result;
 
@@ -28,7 +27,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         {
             this.α = α;
             this.kb = new List<CNFDefiniteClause>(clauses);
-            this.discoveredPredicates = new Lazy<ReadOnlyCollection<Predicate>>(MakeDiscoveredPredicates);
+            this.usefulPredicates = new Lazy<ReadOnlyCollection<Predicate>>(MakeUsefulPredicates);
         }
 
         /// <inheritdoc />
@@ -58,15 +57,15 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
                 // Now build the explanation string.
                 var explanation = new StringBuilder();
-                for (var i = 0; i < DiscoveredPredicates.Count; i++)
+                for (var i = 0; i < UsefulPredicates.Count; i++)
                 {
-                    var proofStep = Proof[DiscoveredPredicates[i]];
+                    var proofStep = Proof[UsefulPredicates[i]];
 
                     string GetSource(Predicate predicate)
                     {
-                        if (DiscoveredPredicates.Contains(predicate))
+                        if (UsefulPredicates.Contains(predicate))
                         {
-                            return $"#{DiscoveredPredicates.IndexOf(predicate):D2}";
+                            return $"#{UsefulPredicates.IndexOf(predicate):D2}";
                         }
                         else
                         {
@@ -74,7 +73,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         }
                     }
 
-                    explanation.AppendLine($"#{i:D2}: {formatter.Format(DiscoveredPredicates[i])}");
+                    explanation.AppendLine($"#{i:D2}: {formatter.Format(UsefulPredicates[i])}");
                     explanation.AppendLine($"     By Rule : {formatter.Format(proofStep.Rule)}");
 
                     foreach (var knownUnitClause in proofStep.KnownPredicates)
@@ -86,7 +85,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     explanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
                     explanation.AppendLine("}");
 
-                    foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.KnownPredicates.Select(p => new CNFClause(new CNFLiteral[] { p })).Append(new CNFClause(new CNFLiteral[] { DiscoveredPredicates[i] })).ToArray())) // TODO: UGH, awful. More type fluidity.
+                    foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.KnownPredicates.Select(p => new CNFClause(new CNFLiteral[] { p })).Append(new CNFClause(new CNFLiteral[] { UsefulPredicates[i] })).ToArray())) // TODO: UGH, awful. More type fluidity.
                     {
                         explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
                     }
@@ -99,18 +98,18 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         /// <summary>
-        /// Gets the proof tree generated during execution of the query.
+        /// Gets the proof tree generated during execution of the query. Each discovered fact (not including those from the knowledge
+        /// base) is present as a key. The value associated with each is information about the step used to discover it.
         /// </summary>
         public IReadOnlyDictionary<Predicate, ProofStep> Proof => proof;
 
         /// <summary>
-        /// Gets a list of the (useful) predicates discovered by a query that has returned a positive result.
-        /// Starts with predicates that were discovered using only predicates from the knowledge base or negated, and ends
-        /// with the goal predicate.
+        /// Gets a list of the useful (in that they led to the result) predicates discovered by a query that has returned a positive result.
+        /// Starts with predicates that were discovered using only predicates from the knowledge base, and ends with the goal predicate.
         /// </summary>
         /// <returns>A list of the discovered predicates of the given query.</returns>
         /// <exception cref="InvalidOperationException">The query is not complete, or returned a negative result.</exception>
-        public ReadOnlyCollection<Predicate> DiscoveredPredicates => discoveredPredicates.Value;
+        public ReadOnlyCollection<Predicate> UsefulPredicates => usefulPredicates.Value;
 
         /// <inheritdoc />
         public void Dispose()
@@ -204,7 +203,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             }
         }
 
-        private ReadOnlyCollection<Predicate> MakeDiscoveredPredicates()
+        private ReadOnlyCollection<Predicate> MakeUsefulPredicates()
         {
             if (!IsComplete)
             {
