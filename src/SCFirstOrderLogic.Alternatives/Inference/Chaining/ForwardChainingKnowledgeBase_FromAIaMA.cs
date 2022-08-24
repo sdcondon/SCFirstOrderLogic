@@ -1,10 +1,5 @@
 ﻿using SCFirstOrderLogic.Inference.Unification;
 using SCFirstOrderLogic.SentenceManipulation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.Inference.Chaining
 {
