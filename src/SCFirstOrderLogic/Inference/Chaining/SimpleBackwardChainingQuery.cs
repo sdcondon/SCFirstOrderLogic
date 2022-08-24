@@ -3,6 +3,7 @@ using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,23 +16,21 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// </summary>
     public class SimpleBackwardChainingQuery : IQuery
     {
-        private readonly Predicate query;
+        private readonly Predicate goal;
         private readonly IReadOnlyDictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol;
-        ////private readonly Dictionary<Predicate, ProofStep> proof = new();
+        private IEnumerable<Tree>? proofs;
 
-        private IEnumerable<VariableSubstitution>? substitutions;
-
-        internal SimpleBackwardChainingQuery(Predicate query, IReadOnlyDictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol)
+        internal SimpleBackwardChainingQuery(Predicate goal, IReadOnlyDictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol)
         {
-            this.query = query;
+            this.goal = goal;
             this.clausesByConsequentSymbol = clausesByConsequentSymbol;
         }
 
         /// <inheritdoc />
-        public bool IsComplete => substitutions != null;
+        public bool IsComplete => proofs != null; // todo - nope - will be true immediately..
 
         /// <inheritdoc />
-        public bool Result => substitutions?.Any() ?? throw new InvalidOperationException("Query is not yet complete");
+        public bool Result => proofs?.Any() ?? throw new InvalidOperationException("Query is not yet complete");
 
         /// <summary>
         /// Gets a human-readable explanation of the query result.
@@ -41,28 +40,64 @@ namespace SCFirstOrderLogic.Inference.Chaining
             get
             {
                 // Don't bother lazy.. Won't be critical path - not worth the complexity hit. Might revisit.
-                var formatter = new SentenceFormatter();
-                var stringBuilder = new StringBuilder();
+                var proofExplanation = new StringBuilder();
 
-                foreach (var substitution in Substitutions)
+                var formatter = new SentenceFormatter();
+                var cnfExplainer = new CNFExplainer(formatter);
+
+                // Now build the explanation string.
+                var proofStepsByPredicate = Tree.Flatten(proofs);
+                var usefulPredicates = proofStepsByPredicate.Keys.ToList();
+
+                for (var i = 0; i < proofStepsByPredicate.Count; i++)
                 {
-                    stringBuilder.AppendLine(string.Join(", ", substitution.Bindings.Select(kvp => $"{formatter.Format(kvp.Key)}: {formatter.Format(kvp.Value)}")));
+                    var predicate = usefulPredicates[i];
+                    var proofSteps = proofStepsByPredicate[predicate];
+
+                    string GetSource(Predicate predicate)
+                    {
+                        if (usefulPredicates.Contains(predicate))
+                        {
+                            return $"#{usefulPredicates.IndexOf(predicate):D2}";
+                        }
+                        else
+                        {
+                            return " KB";
+                        }
+                    }
+
+                    proofExplanation.AppendLine($"#{i:D2}: {formatter.Format(predicate)}");
+
+                    foreach (var proofStep in proofSteps)
+                    {
+                        proofExplanation.AppendLine($"     By Rule : {formatter.Format(proofStep.Rule)}");
+
+                        foreach (var childPredicate in proofStep.SubTrees.Keys)
+                        {
+                            proofExplanation.AppendLine($"       From {GetSource(childPredicate)}: {formatter.Format(childPredicate)}");
+                        }
+
+                        proofExplanation.Append("       Using   : {");
+                        proofExplanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
+                        proofExplanation.AppendLine("}");
+
+                        foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.SubTrees.Keys.Select(p => new CNFClause(new CNFLiteral[] { p })).Append(new CNFClause(new CNFLiteral[] { predicate })).ToArray())) // TODO: UGH, awful. More type fluidity.
+                        {
+                            proofExplanation.AppendLine($"       ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
+                        }
+                    }
+
+                    proofExplanation.AppendLine();
                 }
 
-                return stringBuilder.ToString();
+                return proofExplanation.ToString();
             }
         }
 
         /// <summary>
-        /// Gets the proof tree generated during execution of the query.
+        /// Gets the proof trees (or rather, the roots of each) generated during execution of the query.
         /// </summary>
-        ////public IReadOnlyDictionary<Predicate, ProofStep> Proof => proof;
-
-        /// <summary>
-        /// Gets the set of variable substitutions that can be made to satisfy the query.
-        /// Result will be empty if and only if the query returned a negative result.
-        /// </summary>
-        public IEnumerable<VariableSubstitution> Substitutions => substitutions ?? throw new InvalidOperationException("Query is not yet complete");
+        public IEnumerable<Tree> Proofs => proofs ?? throw new InvalidOperationException("Query is not yet complete");
 
         /// <inheritdoc />
         public void Dispose()
@@ -72,107 +107,143 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// <inheritdoc />
         public Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
-            substitutions = VisitPredicate(query, new VariableSubstitution());
-            return Task.Run(() => Result, cancellationToken);
+            proofs = VisitPredicate(goal, Path.Empty, new VariableSubstitution(), cancellationToken);
+            return Task.FromResult(Result); // Would be nice to make this async-y at some point - enven if just via task.run (but better via iterator method - though IsComplete then becomes a tricky concept..).
         }
 
-        /// <summary>
-        /// Attempt to verify the truth of a predicate by (recursively) attempting to verify the truth of at least one of the clauses for which it is a consequent -
-        /// making only variable substitutions that do not conflict with substitutions already made.
-        /// </summary>
-        /// <param name="goal">The predicate in question.</param>
-        /// <param name="unifier">The current unifier.</param>
-        /// <returns></returns>
-        private IEnumerable<VariableSubstitution> VisitPredicate(Predicate goal, VariableSubstitution unifier)
+        private IEnumerable<Tree> VisitPredicate(Predicate predicate, Path path, VariableSubstitution unifier, CancellationToken ct)
         {
-            if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
+            ct.ThrowIfCancellationRequested();
+
+            List<Tree> trees = new();
+
+            if (path.Contains(predicate))
             {
-                foreach (var clause in clausesWithThisGoal)
+                return trees;
+            }
+
+            path = path.Prepend(predicate);
+
+            if (clausesByConsequentSymbol.TryGetValue(predicate.Symbol, out var clausesWithThisGoal))
+            {
+                foreach (var applicableClause in clausesWithThisGoal)
                 {
                     var updatedUnifier = new VariableSubstitution(unifier);
 
-                    if (LiteralUnifier.TryUpdate(clause.Consequent, goal, updatedUnifier))
+                    if (LiteralUnifier.TryUpdate(applicableClause.Consequent, predicate, updatedUnifier))
                     {
-                        foreach (var result in VisitConjuncts(clause.Conjuncts, updatedUnifier))
+                        var subTrees = VisitRule(applicableClause, path, updatedUnifier, ct);
+                        if (subTrees != null)
                         {
-                            yield return result;
+                            trees.Add(new Tree(predicate, applicableClause, updatedUnifier, subTrees));
                         }
                     }
                 }
             }
+
+            return trees;
         }
 
-        /// <summary>
-        /// Attempt to verify the truth of all a set of conjoined predicates in a particular clause by (recursively) attempting to verify each conjunct -
-        /// making only variable substitutions that do not conflict with substitutions already made.
-        /// </summary>
-        /// <param name="conjuncts">The conjuncts in question.</param>
-        /// <param name="unifier">The current unifier.</param>
-        /// <returns></returns>
-        private IEnumerable<VariableSubstitution> VisitConjuncts(IEnumerable<Predicate> conjuncts, VariableSubstitution unifier)
+        // Visits a node that actually represents a set of conjoined edges of a "real" node (assuming the usual representation of and-or graphs).
+        private IReadOnlyDictionary<Predicate, IEnumerable<Tree>>? VisitRule(CNFDefiniteClause rule, Path path, VariableSubstitution unifier, CancellationToken ct)
         {
-            if (!conjuncts.Any())
+            var subTrees = new Dictionary<Predicate, IEnumerable<Tree>>();
+
+            foreach (var conjunct in rule.Conjuncts)
             {
-                yield return unifier;
-            }
-            else
-            {
-                foreach (var firstPredicateResult in VisitPredicate(unifier.ApplyTo(conjuncts.First()).Predicate, unifier))
+                var outcome = VisitPredicate(unifier.ApplyTo(conjunct).Predicate, path, unifier, ct);
+
+                if (!outcome.Any())
                 {
-                    foreach (var result in VisitConjuncts(conjuncts.Skip(1), firstPredicateResult))
+                    return null; // means failure (as opposed to empty dictionary, which indicates that a target node is reached).
+                }
+
+                subTrees[conjunct] = outcome;
+            }
+
+            return subTrees;
+        }
+
+        public class Tree
+        {
+            internal Tree(Predicate consequent, CNFDefiniteClause rule, VariableSubstitution unifier, IReadOnlyDictionary<Predicate, IEnumerable<Tree>> subTreesByConjunct)
+            {
+                Consequent = consequent;
+                Rule = rule ?? throw new ArgumentNullException(nameof(rule));
+                Unifier = unifier;
+                SubTrees = subTreesByConjunct ?? throw new ArgumentNullException(nameof(subTreesByConjunct));
+            }
+
+            /// <summary>
+            /// Gets the consequent proved by the step.
+            /// </summary>
+            public Predicate Consequent { get; }
+
+            /// <summary>
+            /// Gets the root edge of the tree.
+            /// </summary>
+            public CNFDefiniteClause Rule { get; }
+
+            /// <summary>
+            /// Gets the unifier substitution applied to the consequent of the rule to give what we are looking to prove.
+            /// </summary>
+            public VariableSubstitution Unifier { get; }
+
+            /// <summary>
+            /// Gets the sub-trees that follow the root edge, keyed by node that they connect from. There will be more than one if the root edge actually represents a set of more than one coinjoined ("and") edges.
+            /// </summary>
+            public IReadOnlyDictionary<Predicate, IEnumerable<Tree>> SubTrees { get; }
+
+            /// <summary>
+            /// Flattens the tree out into a single mapping from the current node to the edge that should be followed to ultimately reach only target nodes.
+            /// Intended to make trees easier to work with in certain situations (e.g. assertions in tests).
+            /// <para/>
+            /// Each node will occur at most once in the entire tree, so we can always safely do this.
+            /// </summary>
+            /// <returns>A mapping from the current node to the edge that should be followed to ultimately reach only target nodes.</returns>
+            public static IReadOnlyDictionary<Predicate, IEnumerable<Tree>> Flatten(IEnumerable<Tree> trees)
+            {
+                var flattened = new Dictionary<Predicate, IEnumerable<Tree>>();
+
+                void Visit(Predicate predicate, IEnumerable<Tree> trees)
+                {
+                    if (!flattened.ContainsKey(predicate))
                     {
-                        yield return result;
+                        flattened[predicate] = Enumerable.Empty<Tree>();
+                    }
+
+                    flattened[predicate] = flattened[predicate].Concat(trees);
+                    foreach (var tree in trees)
+                    {
+                        foreach (var kvp in tree.SubTrees)
+                        {
+                            Visit(kvp.Key, kvp.Value);
+                        }
                     }
                 }
+
+                foreach (var tree in trees)
+                {
+                    Visit(tree.Consequent, new[] { tree });
+                }
+
+                return flattened;
             }
         }
 
-        /// <summary>
-        /// Container for an attempt to apply a specific rule from the knowledge base, given what we've already discerned.
-        /// </summary>
-        ////public class ProofStep
-        ////{
-        ////    internal ProofStep(Predicate consequent)
-        ////    {
-        ////        //Rule = rule;
-        ////        KnownPredicates = Enumerable.Empty<Predicate>();
-        ////        Unifier = new VariableSubstitution();
-        ////    }
+        private class Path
+        {
+            private Path(Predicate first, Path rest) => (First, Rest) = (first, rest);
 
-        ////    /// <summary>
-        ////    /// Extends a proof step with an additional 
-        ////    /// </summary>
-        ////    /// <param name="parent">The existing proof step.</param>
-        ////    /// <param name="predicate">The predicate to add.</param>
-        ////    /// <param name="unifier">The updated unifier.</param>
-        ////    internal ProofStep(ProofStep parent, Predicate predicate, VariableSubstitution unifier)
-        ////    {
-        ////        Rule = parent.Rule;
-        ////        KnownPredicates = parent.KnownPredicates.Append(predicate); // Hmm. Nesting.. Though we can probably realise it lazily, given the usage.
-        ////        Unifier = unifier;
-        ////    }
+            public static Path Empty { get; } = new Path(default, null);
 
-        ////    /// <summary>
-        ////    /// The rule that was applied by this step.
-        ////    /// </summary>
-        ////    public CNFDefiniteClause Rule { get; }
+            public Predicate First { get; }
 
-        ////    /// <summary>
-        ////    /// The known unit clauses that were used to make this step.
-        ////    /// </summary>
-        ////    public IEnumerable<Predicate> KnownPredicates { get; }
+            public Path Rest { get; }
 
-        ////    /// <summary>
-        ////    /// The substitution that is applied to the rules conjuncts to make the match the known predicates.
-        ////    /// <para/>
-        ////    /// TODO: Make VariableSubstitution readonly, and add MutableVariableSubstitution.
-        ////    /// </summary>
-        ////    public VariableSubstitution Unifier { get; }
+            public Path Prepend(Predicate predicate) => new Path(predicate, this);
 
-        ////    /// <summary>
-        ////    /// Gets the predicate that was inferred by this step by the application of the rule to the known unit clauses.
-        ////    /// </summary>
-        ////    public Predicate Consequent { get; }
-        ////}
+            public bool Contains(Predicate predicate) => (First?.Equals(predicate) ?? false) || (Rest?.Contains(predicate) ?? false);
+        }
     }
 }

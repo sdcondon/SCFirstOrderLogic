@@ -8,6 +8,9 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm. This one is implemented as close as possible to the
     /// implementation in figure 9.6 of "Artificial Intelligence: A Modern Approach" - for reference purposes.
+    /// <para/>
+    /// NB: "production" version doesn't use quite this approach because it (specifically, using the same recursion for the tree of clauses and the
+    /// conjuncts of a single clause) doesn't lend itself well to persisting the (potential multiple separate) proof trees for later explanations.
     /// </summary>
     public class BackwardChainingKnowledgeBase_FromAIaMA : IKnowledgeBase
     {
