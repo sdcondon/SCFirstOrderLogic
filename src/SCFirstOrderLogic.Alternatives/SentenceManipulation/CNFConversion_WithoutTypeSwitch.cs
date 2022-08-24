@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation
 {
-    internal static class CNFConversion_WithoutTypeSwitch
+    public static class CNFConversion_WithoutTypeSwitch
     {
         private static readonly ImplicationElimination implicationElimination = new();
         private static readonly NNFConversion nnfConversion = new();
