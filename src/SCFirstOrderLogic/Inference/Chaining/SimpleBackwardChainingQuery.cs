@@ -81,7 +81,17 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         proofExplanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
                         proofExplanation.AppendLine("}");
 
-                        foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.SubTrees.Keys.Select(p => new CNFClause(new CNFLiteral[] { p })).Append(new CNFClause(new CNFLiteral[] { predicate })).ToArray())) // TODO: UGH, awful. More type fluidity.
+                        // TODO: UGH, awful. More type fluidity.
+                        var normalisationTermsToExplain = CNFExplainer.FindNormalisationTerms(
+                            proofStep.SubTrees.Keys.Select(p => new CNFClause(new CNFLiteral[] { p }))
+                                .Append(new CNFClause(new CNFLiteral[] { predicate })).ToArray());
+
+                        foreach (var term in normalisationTermsToExplain) 
+                        {
+                            proofExplanation.AppendLine($"       ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
+                        }
+
+                        foreach (var term in proofStep.Unifier.Bindings.SelectMany(kvp => new[] { kvp.Key, kvp.Value }).Where(t => t is VariableReference vr && vr.Symbol is StandardisedVariableSymbol && !normalisationTermsToExplain.Contains(t)))
                         {
                             proofExplanation.AppendLine($"       ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
                         }
@@ -130,11 +140,10 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 {
                     if (LiteralUnifier.TryUpdateUnsafe(clause.Consequent, predicate, unifier))
                     {
-                        var ruleUnifier = new VariableSubstitution(unifier);
-                        var subTrees = VisitRule(clause, path, ruleUnifier, ct);
+                        var subTrees = VisitRule(clause, path, unifier, ct);
                         if (subTrees != null)
                         {
-                            trees.Add(new Tree(predicate, clause, ruleUnifier, subTrees));
+                            trees.Add(new Tree(predicate, clause, unifier, subTrees));
                         }
                     }
                 }
@@ -145,6 +154,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
         private IReadOnlyDictionary<Predicate, IEnumerable<Tree>>? VisitRule(CNFDefiniteClause rule, Path path, VariableSubstitution unifier, CancellationToken ct)
         {
+            unifier = new VariableSubstitution(unifier);
             var subTrees = new Dictionary<Predicate, IEnumerable<Tree>>();
 
             foreach (var conjunct in rule.Conjuncts)

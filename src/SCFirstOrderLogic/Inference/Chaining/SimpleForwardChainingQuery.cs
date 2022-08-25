@@ -74,7 +74,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     }
 
                     explanation.AppendLine($"#{i:D2}: {formatter.Format(UsefulPredicates[i])}");
-                    explanation.AppendLine($"     By Rule : {formatter.Format(proofStep.Rule)}");
+                    explanation.AppendLine($"     By Rule : {proofStep.Rule.Format(formatter)}");
 
                     foreach (var knownUnitClause in proofStep.KnownPredicates)
                     {
