@@ -180,7 +180,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     {
                         var updatedUnifier = new VariableSubstitution(unifier);
 
-                        if (LiteralUnifier.TryUpdate(knownClause.Consequent, conjuncts.First(), updatedUnifier))
+                        if (LiteralUnifier.TryUpdateUnsafe(knownClause.Consequent, conjuncts.First(), updatedUnifier))
                         {
                             foreach(var substitution in MatchWithKnownFacts(conjuncts.Skip(1), updatedUnifier))
                             {

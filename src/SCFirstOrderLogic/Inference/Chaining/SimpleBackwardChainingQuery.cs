@@ -47,18 +47,18 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
                 // Now build the explanation string.
                 var proofStepsByPredicate = Tree.Flatten(proofs);
-                var usefulPredicates = proofStepsByPredicate.Keys.ToList();
+                var orderedPredicates = proofStepsByPredicate.Keys.ToList();
 
                 for (var i = 0; i < proofStepsByPredicate.Count; i++)
                 {
-                    var predicate = usefulPredicates[i];
+                    var predicate = orderedPredicates[i];
                     var proofSteps = proofStepsByPredicate[predicate];
 
                     string GetSource(Predicate predicate)
                     {
-                        if (usefulPredicates.Contains(predicate))
+                        if (orderedPredicates.Contains(predicate))
                         {
-                            return $"#{usefulPredicates.IndexOf(predicate):D2}";
+                            return $"#{orderedPredicates.IndexOf(predicate):D2}";
                         }
                         else
                         {
@@ -70,7 +70,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
                     foreach (var proofStep in proofSteps)
                     {
-                        proofExplanation.AppendLine($"     By Rule : {formatter.Format(proofStep.Rule)}");
+                        proofExplanation.AppendLine($"     By Rule : {proofStep.Rule.Format(formatter)}");
 
                         foreach (var childPredicate in proofStep.SubTrees.Keys)
                         {
@@ -108,7 +108,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         public Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
             proofs = VisitPredicate(goal, Path.Empty, new VariableSubstitution(), cancellationToken);
-            return Task.FromResult(Result); // Would be nice to make this async-y at some point - enven if just via task.run (but better via iterator method - though IsComplete then becomes a tricky concept..).
+            return Task.FromResult(Result); // Would be nice to make this async-y at some point - even if just via task.run (but better via iterator method - though IsComplete then becomes a tricky concept..).
         }
 
         private IEnumerable<Tree> VisitPredicate(Predicate predicate, Path path, VariableSubstitution unifier, CancellationToken ct)
@@ -124,18 +124,18 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
             path = path.Prepend(predicate);
 
-            if (clausesByConsequentSymbol.TryGetValue(predicate.Symbol, out var clausesWithThisGoal))
+            if (clausesByConsequentSymbol.TryGetValue(predicate.Symbol, out var clausesWithMatchingConsequentSymbol))
             {
-                foreach (var applicableClause in clausesWithThisGoal)
+                foreach (var clause in clausesWithMatchingConsequentSymbol)
                 {
                     var updatedUnifier = new VariableSubstitution(unifier);
 
-                    if (LiteralUnifier.TryUpdate(applicableClause.Consequent, predicate, updatedUnifier))
+                    if (LiteralUnifier.TryUpdateUnsafe(clause.Consequent, predicate, updatedUnifier))
                     {
-                        var subTrees = VisitRule(applicableClause, path, updatedUnifier, ct);
+                        var subTrees = VisitRule(clause, path, updatedUnifier, ct);
                         if (subTrees != null)
                         {
-                            trees.Add(new Tree(predicate, applicableClause, updatedUnifier, subTrees));
+                            trees.Add(new Tree(predicate, clause, updatedUnifier, subTrees));
                         }
                     }
                 }
@@ -144,21 +144,21 @@ namespace SCFirstOrderLogic.Inference.Chaining
             return trees;
         }
 
-        // Visits a node that actually represents a set of conjoined edges of a "real" node (assuming the usual representation of and-or graphs).
         private IReadOnlyDictionary<Predicate, IEnumerable<Tree>>? VisitRule(CNFDefiniteClause rule, Path path, VariableSubstitution unifier, CancellationToken ct)
         {
             var subTrees = new Dictionary<Predicate, IEnumerable<Tree>>();
 
             foreach (var conjunct in rule.Conjuncts)
             {
-                var outcome = VisitPredicate(unifier.ApplyTo(conjunct).Predicate, path, unifier, ct);
+                var unifiedConjunct = unifier.ApplyTo(conjunct).Predicate;
+                var outcome = VisitPredicate(unifiedConjunct, path, unifier, ct);
 
                 if (!outcome.Any())
                 {
                     return null; // means failure (as opposed to empty dictionary, which indicates that a target node is reached).
                 }
 
-                subTrees[conjunct] = outcome;
+                subTrees[unifiedConjunct] = outcome;
             }
 
             return subTrees;

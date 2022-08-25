@@ -1,4 +1,5 @@
 ﻿using SCFirstOrderLogic.Inference.Unification;
+using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,18 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// </summary>
         public IEnumerable<Predicate> Conjuncts => Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
 
+        public string Format(SentenceFormatter formatter)
+        {
+            if (IsUnitClause)
+            {
+                return formatter.Format(Consequent);
+            }
+            else
+            {
+                return $"{string.Join(" ∧ ", Conjuncts.Select(c => formatter.Format(c)))} ⇒ {formatter.Format(Consequent)}";
+            }
+        }
+
         /// <summary>
         /// Checks whether this clause unifies with any of an enumeration of other definite clauses.
         /// <para/>
@@ -72,7 +85,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
             foreach (var (literal1, literal2) in clause1.Literals.Zip(clause2.Literals))
             {
-                if (!LiteralUnifier.TryUpdate(literal1, literal2, unifier))
+                if (!LiteralUnifier.TryUpdateUnsafe(literal1, literal2, unifier))
                 {
                     unifier = null;
                     return false;

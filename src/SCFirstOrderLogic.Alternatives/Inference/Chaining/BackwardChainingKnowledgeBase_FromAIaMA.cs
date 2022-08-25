@@ -139,7 +139,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         var rhs = clause.Literals.Single(l => l.IsPositive);
                         var unifier = new VariableSubstitution(θ);
 
-                        if (LiteralUnifier.TryUpdate(rhs, goal, unifier))
+                        if (LiteralUnifier.TryUpdateUnsafe(rhs, goal, unifier))
                         {
                             foreach (var θ2 in FOL_BC_AND(lhs, unifier))
                             {

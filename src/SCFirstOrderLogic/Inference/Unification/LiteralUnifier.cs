@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         {
             var unifierAttempt = new VariableSubstitution();
 
-            if (TryUpdate(x, y, unifierAttempt))
+            if (TryUpdateUnsafe(x, y, unifierAttempt))
             {
                 unifier = unifierAttempt;
                 return true;
@@ -37,15 +37,23 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// </summary>
         /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
-        /// <param name="unifier">The unifier to update. Will be uodated to refer to a new unifier on success, or be unchanged on failure.</param>
+        /// <param name="unifier">The unifier to update. Will be unchanged on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryUpdate(CNFLiteral x, CNFLiteral y, ref VariableSubstitution unifier)
+        public static bool TryUpdate(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
         {
             var updatedUnifier = new VariableSubstitution(unifier);
 
-            if (TryUpdate(x, y, unifier))
+            if (TryUpdateUnsafe(x, y, updatedUnifier))
             {
-                unifier = updatedUnifier;
+                // Ugh. slower than is needed. Refactor this whole class at some point - after adding some good benchmarks..
+                foreach (var binding in updatedUnifier.Bindings)
+                {
+                    if (!unifier.Bindings.ContainsKey(binding.Key))
+                    {
+                        unifier.AddBinding(binding.Key, binding.Value);
+                    }
+                }
+
                 return true;
             }
 
@@ -53,13 +61,14 @@ namespace SCFirstOrderLogic.Inference.Unification
         }
 
         /// <summary>
-        /// Attempts to update a unifier (in place) so that it (also) unifies two given literals.
+        /// Attempts to update a unifier (in place) so that it (also) unifies two given literals. Faster than <see cref="TryUpdate(CNFLiteral, CNFLiteral, VariableSubstitution)"/>,
+        /// but can partially update the subsitution on failure. Use only when you don't care about the substitution being modified if it fails.
         /// </summary>
         /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
-        /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure. This behaviour is to facilitate efficiency. Use the overload if you need to avoid this.</param>
+        /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryUpdate(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
+        public static bool TryUpdateUnsafe(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
         {
             if (x.IsNegated != y.IsNegated || !x.Predicate.Symbol.Equals(y.Predicate.Symbol))
             {

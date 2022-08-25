@@ -192,7 +192,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 {
                     var updatedUnifier = new VariableSubstitution(proofStep.Unifier);
 
-                    if (LiteralUnifier.TryUpdate(knownUnitClause.Consequent, conjuncts.First(), updatedUnifier))
+                    if (LiteralUnifier.TryUpdateUnsafe(knownUnitClause.Consequent, conjuncts.First(), updatedUnifier))
                     {
                         foreach (var substitution in MatchWithKnownFacts(conjuncts.Skip(1), new ProofStep(proofStep, knownUnitClause.Consequent, updatedUnifier)))
                         {

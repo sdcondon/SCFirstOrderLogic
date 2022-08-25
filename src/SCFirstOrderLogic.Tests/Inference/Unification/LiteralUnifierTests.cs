@@ -128,6 +128,49 @@ namespace SCFirstOrderLogic.Inference.Unification
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal1).Should().Be(tc.ExpectedUnified))
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal2).Should().Be(tc.ExpectedUnified));
 
+        public static Test TryUpdateUnsafePositive => TestThat
+            .GivenEachOf(() => new TryUpdatePositiveTestCase[]
+            {
+                        new (
+                            Literal1: Knows(x, y),
+                            Literal2: Knows(john, jane),
+                            InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                            {
+                                [x] = john,
+                            },
+                            ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                            {
+                                [x] = john,
+                                [y] = jane,
+                            },
+                            ExpectedUnified: Knows(john, jane)),
+
+                        new (
+                            Literal1: Knows(x, y),
+                            Literal2: Knows(john, jane),
+                            InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                            {
+                                [y] = jane,
+                            },
+                            ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                            {
+                                [x] = john,
+                                [y] = jane,
+                            },
+                            ExpectedUnified: Knows(john, jane)),
+            })
+            .When(tc =>
+            {
+                (bool returnValue, VariableSubstitution? unifier) result;
+                result.unifier = new(tc.InitialSubstitutions);
+                result.returnValue = LiteralUnifier.TryUpdateUnsafe(tc.Literal1, tc.Literal2, result.unifier);
+                return result;
+            })
+            .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
+            .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+            .And((tc, r) => r.unifier!.ApplyTo(tc.Literal1).Should().Be(tc.ExpectedUnified))
+            .And((tc, r) => r.unifier!.ApplyTo(tc.Literal2).Should().Be(tc.ExpectedUnified));
+
         private record TryUpdateNegativeTestCase(CNFLiteral Literal1, CNFLiteral Literal2, Dictionary<VariableReference, Term> InitialSubstitutions);
 
         public static Test TryUpdateNegative => TestThat
@@ -154,6 +197,35 @@ namespace SCFirstOrderLogic.Inference.Unification
                 (bool returnValue, VariableSubstitution? unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
                 result.returnValue = LiteralUnifier.TryUpdate(tc.Literal1, tc.Literal2, result.unifier);
+                return result;
+            })
+            .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())
+            .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialSubstitutions));
+
+        public static Test TryUpdateUnsafeNegative => TestThat
+            .GivenEachOf(() => new TryUpdateNegativeTestCase[]
+            {
+                    new (
+                        Literal1: Knows(x, y),
+                        Literal2: Knows(john, jane),
+                        InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                        {
+                            [y] = john,
+                        }),
+
+                    new (
+                        Literal1: Knows(x, y),
+                        Literal2: Knows(john, jane),
+                        InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                        {
+                            [x] = jane,
+                        }),
+            })
+            .When(tc =>
+            {
+                (bool returnValue, VariableSubstitution? unifier) result;
+                result.unifier = new(tc.InitialSubstitutions);
+                result.returnValue = LiteralUnifier.TryUpdateUnsafe(tc.Literal1, tc.Literal2, result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse());
