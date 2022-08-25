@@ -128,14 +128,13 @@ namespace SCFirstOrderLogic.Inference.Chaining
             {
                 foreach (var clause in clausesWithMatchingConsequentSymbol)
                 {
-                    var updatedUnifier = new VariableSubstitution(unifier);
-
-                    if (LiteralUnifier.TryUpdateUnsafe(clause.Consequent, predicate, updatedUnifier))
+                    if (LiteralUnifier.TryUpdateUnsafe(clause.Consequent, predicate, unifier))
                     {
-                        var subTrees = VisitRule(clause, path, updatedUnifier, ct);
+                        var ruleUnifier = new VariableSubstitution(unifier);
+                        var subTrees = VisitRule(clause, path, ruleUnifier, ct);
                         if (subTrees != null)
                         {
-                            trees.Add(new Tree(predicate, clause, updatedUnifier, subTrees));
+                            trees.Add(new Tree(predicate, clause, ruleUnifier, subTrees));
                         }
                     }
                 }
