@@ -37,6 +37,26 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// </summary>
         /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
+        /// <param name="unifier">The unifier to update. Will be uodated to refer to a new unifier on success, or be unchanged on failure.</param>
+        /// <returns>True if the two literals can be unified, otherwise false.</returns>
+        public static bool TryUpdate(CNFLiteral x, CNFLiteral y, ref VariableSubstitution unifier)
+        {
+            var updatedUnifier = new VariableSubstitution(unifier);
+
+            if (TryUpdateUnsafe(x, y, updatedUnifier))
+            {
+                unifier = updatedUnifier;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to update a unifier so that it (also) unifies two given literals.
+        /// </summary>
+        /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
+        /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="unifier">The unifier to update. Will be unchanged on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
         public static bool TryUpdate(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
