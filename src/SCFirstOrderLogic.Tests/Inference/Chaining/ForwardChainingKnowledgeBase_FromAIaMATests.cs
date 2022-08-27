@@ -2,13 +2,12 @@
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
 using SCFirstOrderLogic.Inference;
-using SCFirstOrderLogic.Inference.Chaining;
 using System.Collections.Generic;
 using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
-namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.Chaining
 {
     public static class ForwardChainingKnowledgeBase_FromAIaMATests
     {
@@ -19,21 +18,21 @@ namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
                 // Trivial
                 // Actually fails given the book listing.. Don't want to deviate from the reference implementation though,
                 // so just commenting out the test. See SimpleForwardChainingKnowledgeBase for the fix..
-                ////MakeQuery(
-                ////    query: IsKing(John),
-                ////    kb: new Sentence[]
-                ////    {
-                ////        IsKing(John)
-                ////    }),
+                MakeQuery(
+                    query: IsKing(John),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John)
+                    }),
                 
                 // Trivial - with multiple substitutions
-                ////MakeQuery(
-                ////    query: IsKing(X),
-                ////    kb: new Sentence[]
-                ////    {
-                ////        IsKing(John),
-                ////        IsKing(Richard),
-                ////    }),
+                MakeQuery(
+                    query: IsKing(X),
+                    kb: new Sentence[]
+                    {
+                        IsKing(John),
+                        IsKing(Richard),
+                    }),
 
                 // single conjunct, single step
                 MakeQuery(
@@ -69,7 +68,7 @@ namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
                 // More complex - Crime example domain
                 MakeQuery(
                     query: IsCriminal(West),
-                    kb: CrimeDomain.Axioms),
+                    kb: Axioms),
             })
             .When((cxt, query) => query.Execute())
             .ThenReturns()

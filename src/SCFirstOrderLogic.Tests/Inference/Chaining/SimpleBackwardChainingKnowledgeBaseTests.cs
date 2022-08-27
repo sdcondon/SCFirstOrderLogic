@@ -14,13 +14,13 @@ namespace SCFirstOrderLogic.Inference.Chaining
             .GivenTestContext()
             .AndEachOf(() => new TestCase[]
             {
-                ////new(
-                ////    Label: "Trivial",
-                ////    Query: IsKing(John),
-                ////    Knowledge: new Sentence[]
-                ////    {
-                ////        IsKing(John)
-                ////    }),
+                new(
+                    Label: "Trivial",
+                    Query: IsKing(John),
+                    Knowledge: new Sentence[]
+                    {
+                        IsKing(John)
+                    }),
 
                 new(
                     Label: "single conjunct, single step",
@@ -84,23 +84,23 @@ namespace SCFirstOrderLogic.Inference.Chaining
         public static Test NegativeScenarios => TestThat
             .GivenEachOf(() => new TestCase[]
             {
-                ////new(
-                ////    Label: "No matching clause",
-                ////    Query: IsEvil(X),
-                ////    Knowledge: new Sentence[]
-                ////    {
-                ////        IsKing(John),
-                ////        IsGreedy(John),
-                ////    }),
+                new(
+                    Label: "No matching clause",
+                    Query: IsEvil(X),
+                    Knowledge: new Sentence[]
+                    {
+                        IsKing(John),
+                        IsGreedy(John),
+                    }),
 
-                ////new(
-                ////    Label: "clause with not all conjuncts satisfied",
-                ////    Query: IsEvil(X),
-                ////    Knowledge: new Sentence[]
-                ////    {
-                ////        IsKing(John),
-                ////        AllGreedyKingsAreEvil,
-                ////    }),
+                new(
+                    Label: "clause with not all conjuncts satisfied",
+                    Query: IsEvil(X),
+                    Knowledge: new Sentence[]
+                    {
+                        IsKing(John),
+                        AllGreedyKingsAreEvil,
+                    }),
 
                 new(
                     Label: "No unifier will work - x is either John or Richard - it can't be both",

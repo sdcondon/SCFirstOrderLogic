@@ -2,7 +2,6 @@
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
 using SCFirstOrderLogic.Inference;
-using SCFirstOrderLogic.Inference.Chaining;
 using SCFirstOrderLogic.SentenceFormatting;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDo
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
-namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.Chaining
 {
     public static class BackwardChainingKnowledgeBase_FromAIaMATests
     {
@@ -69,7 +68,7 @@ namespace SCFirstOrderLogic.Alternatives.Inference.Chaining
                 // More complex - Crime example domain
                 MakeQuery(
                     query: IsCriminal(West),
-                    kb: CrimeDomain.Axioms),
+                    kb: Axioms),
             })
             .When((cxt, query) => query.Execute())
             .ThenReturns()
