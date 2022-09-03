@@ -58,7 +58,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     var proofStepsByPredicate = proof.Steps;
                     var orderedPredicates = proofStepsByPredicate.Keys.ToList();
 
-                    for (var i = 0; i < proofStepsByPredicate.Count; i++)
+                    for (var i = 0; i < orderedPredicates.Count; i++)
                     {
                         var predicate = orderedPredicates[i];
                         var proofStep = proofStepsByPredicate[predicate];
@@ -82,9 +82,22 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         resultExplanation.AppendLine($"     By Rule : {proofStep.Format(formatter)}");
 
                         // Conjuncts used:
-                        foreach (var childPredicate in proofStep.Conjuncts.Select(c => proof.Unifier.ApplyTo(c).Predicate))
+                        foreach (var childPredicate in proofStep.Conjuncts)
                         {
-                            resultExplanation.AppendLine($"       From {GetSource(childPredicate)}: {formatter.Format(childPredicate)}");
+                            // NB: the algorithm builds up the unifier step-by-step, so that it can (will probably) result in many
+                            // terms being bound indirectly. E.g. variable A is bound to variable B, which is in turn bound to constant C.
+                            // There's no sense in making the algorithm itself more complex (and thus slower) than it needs to be to streamline
+                            // this, but for the readability of the explanation, we make sure to follw the chain to the end by applying the
+                            // unifier until it doesn't make any more changes. The "full story" remains viewable in the unifier.. 
+                            var oldChildPredicate = childPredicate;
+                            var newChildPredicate = proof.ApplyUnifierTo(childPredicate);
+                            while (!newChildPredicate.Equals(oldChildPredicate))
+                            {
+                                oldChildPredicate = newChildPredicate;
+                                newChildPredicate = proof.ApplyUnifierTo(oldChildPredicate);
+                            }
+
+                            resultExplanation.AppendLine($"       From {GetSource(newChildPredicate)}: {formatter.Format(newChildPredicate)}");
                         }
 
                         resultExplanation.AppendLine();
@@ -152,7 +165,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     {
                         foreach (var clauseProof in ProvePredicates(clause.Conjuncts, clauseProofPrototype))
                         {
-                            clauseProof.AddStep(clauseProof.Unifier.ApplyTo(goal).Predicate, clause); // Bug: adds KB as step... not quite right..
+                            clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), clause); // Bug: adds KB as step... not quite right..
                             yield return clauseProof;
                         }
                     }
@@ -168,11 +181,9 @@ namespace SCFirstOrderLogic.Inference.Chaining
             }
             else
             {
-                var transformedConjunct = proof.Unifier.ApplyTo(goals.First()).Predicate;
-
-                foreach (var transformedConjunctProof in ProvePredicate(transformedConjunct, proof))
+                foreach (var firstConjunctProof in ProvePredicate(proof.ApplyUnifierTo(goals.First()), proof))
                 {
-                    foreach (var restOfConjunctsProof in ProvePredicates(goals.Skip(1), transformedConjunctProof))
+                    foreach (var restOfConjunctsProof in ProvePredicates(goals.Skip(1), firstConjunctProof))
                     {
                         yield return restOfConjunctsProof;
                     }
@@ -197,6 +208,8 @@ namespace SCFirstOrderLogic.Inference.Chaining
             }
 
             public VariableSubstitution Unifier { get; }
+
+            public Predicate ApplyUnifierTo(Predicate predicate) => Unifier.ApplyTo(predicate).Predicate;
 
             public IReadOnlyDictionary<Predicate, CNFDefiniteClause> Steps => steps;
 
