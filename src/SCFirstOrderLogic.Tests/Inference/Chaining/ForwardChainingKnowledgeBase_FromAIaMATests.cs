@@ -67,6 +67,17 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         AllGreedyQueensAreEvil,
                     }),
 
+                // Uses same var twice in same proof
+                MakeQuery(
+                    query: Knows(John, Mary),
+                    kb: new Sentence[]
+                    {
+                        AllGreedyAreEvil,
+                        AllEvilKnowEachOther,
+                        IsGreedy(John),
+                        IsGreedy(Mary),
+                    }),
+
                 // More complex - Crime example domain
                 MakeQuery(
                     query: IsCriminal(West),
