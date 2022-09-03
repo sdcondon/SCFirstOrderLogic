@@ -63,6 +63,17 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     }),
 
                 new(
+                    Label: "Uses same var twice in same proof",
+                    Query: Knows(John, Mary),
+                    Knowledge: new Sentence[]
+                    {
+                        AllGreedyAreEvil,
+                        AllEvilKnowEachOther,
+                        IsGreedy(John),
+                        IsGreedy(Mary),
+                    }),
+
+                new(
                     Label: "Crime example domain",
                     Query: IsCriminal(West),
                     Knowledge: CrimeDomain.Axioms),

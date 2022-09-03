@@ -66,7 +66,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         var proofStep = proofStepsByPredicate[predicate];
 
                         // Consequent:
-                        resultExplanation.AppendLine($"#{i:D2}: {formatter.Format(predicate)}");
+                        resultExplanation.AppendLine($"Step #{i:D2}: {formatter.Format(predicate)}");
 
                         // Rule applied:
                         resultExplanation.AppendLine($"     By Rule : {proofStep.Format(formatter)}");
@@ -75,7 +75,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         foreach (var childPredicate in proofStep.Conjuncts)
                         {
                             var unifiedChildPredicate = proof.GetUnified(childPredicate);
-                            resultExplanation.AppendLine($"       From {$"#{orderedPredicates.IndexOf(unifiedChildPredicate):D2}"}: {formatter.Format(unifiedChildPredicate)}");
+                            resultExplanation.AppendLine($"     And Step #{orderedPredicates.IndexOf(unifiedChildPredicate):D2}: {formatter.Format(unifiedChildPredicate)}");
                         }
 
                         resultExplanation.AppendLine();
