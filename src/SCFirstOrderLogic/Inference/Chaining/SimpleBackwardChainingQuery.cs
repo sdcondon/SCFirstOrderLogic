@@ -37,22 +37,88 @@ namespace SCFirstOrderLogic.Inference.Chaining
         public bool Result => proofs?.Any() ?? throw new InvalidOperationException("Query is not yet complete");
 
         /// <summary>
-        /// Returns a human-readable explanation of the query result.
+        /// Gets a human-readable explanation of the query result.
         /// </summary>
-        /// <returns>A human-readable explanation of the query result</returns>
         public string ResultExplanation
         {
             get
             {
-                var formatter = new SentenceFormatter();
-                var stringBuilder = new StringBuilder();
+                // Don't bother lazy.. Won't be critical path - not worth the complexity hit. Might revisit.
+                var resultExplanation = new StringBuilder();
+                var proofNum = 1;
 
                 foreach (var proof in Proofs)
                 {
-                    stringBuilder.AppendLine(string.Join(", ", proof.Substitution.Bindings.Select(kvp => $"{formatter.Format(kvp.Key)}: {formatter.Format(kvp.Value)}")));
+                    resultExplanation.AppendLine($"--- PROOF #{proofNum++}");
+
+                    var formatter = new SentenceFormatter();
+                    var cnfExplainer = new CNFExplainer(formatter);
+
+                    // Now build the explanation string.
+                    var proofStepsByPredicate = proof.Steps;
+                    var orderedPredicates = proofStepsByPredicate.Keys.ToList();
+
+                    for (var i = 0; i < proofStepsByPredicate.Count; i++)
+                    {
+                        var predicate = orderedPredicates[i];
+                        var proofStep = proofStepsByPredicate[predicate];
+
+                        string GetSource(Predicate predicate)
+                        {
+                            if (orderedPredicates.Contains(predicate))
+                            {
+                                return $"#{orderedPredicates.IndexOf(predicate):D2}";
+                            }
+                            else
+                            {
+                                return " KB";
+                            }
+                        }
+
+                        // Consequent:
+                        resultExplanation.AppendLine($"#{i:D2}: {formatter.Format(predicate)}");
+
+                        // Rule applied:
+                        resultExplanation.AppendLine($"     By Rule : {proofStep.Format(formatter)}");
+
+                        // Conjuncts used:
+                        foreach (var childPredicate in proofStep.Conjuncts.Select(c => proof.Unifier.ApplyTo(c).Predicate))
+                        {
+                            resultExplanation.AppendLine($"       From {GetSource(childPredicate)}: {formatter.Format(childPredicate)}");
+                        }
+
+                        resultExplanation.AppendLine();
+                    }
+
+                    // Output the unifier:
+                    resultExplanation.Append("Using: {");
+                    resultExplanation.Append(string.Join(", ", proof.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
+                    resultExplanation.AppendLine("}");
+                    resultExplanation.AppendLine();
+
+                    // Explain all the normalisation terms (standardised variables and skolem functions)
+                    resultExplanation.AppendLine("Where:");
+                    var normalisationTermsToExplain = new HashSet<Term>();
+
+                    foreach (var term in CNFExplainer.FindNormalisationTerms(proof.Steps.Keys.Select(p => new CNFClause(new CNFLiteral[] { p })).ToArray()))
+                    {
+                        normalisationTermsToExplain.Add(term);
+                    }
+
+                    foreach (var term in proof.Unifier.Bindings.SelectMany(kvp => new[] { kvp.Key, kvp.Value }).Where(t => t is VariableReference vr && vr.Symbol is StandardisedVariableSymbol))
+                    {
+                        normalisationTermsToExplain.Add(term);
+                    }
+
+                    foreach (var term in normalisationTermsToExplain)
+                    {
+                        resultExplanation.AppendLine($"       {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
+                    }
+
+                    resultExplanation.AppendLine();
                 }
 
-                return stringBuilder.ToString();
+                return resultExplanation.ToString();
             }
         }
 
@@ -70,23 +136,24 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// <inheritdoc />
         public Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
-            proofs = ProvePredicate(query, new Proof(new VariableSubstitution()));
+            proofs = ProvePredicate(query, new Proof());
             return Task.FromResult(Result);
         }
 
-        private IEnumerable<Proof> ProvePredicate(Predicate goal, Proof proof)
+        private IEnumerable<Proof> ProvePredicate(Predicate goal, Proof parentProof)
         {
             if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
             {
                 foreach (var clause in clausesWithThisGoal)
                 {
-                    var clauseProof = new Proof(new VariableSubstitution(proof.Substitution));
+                    var clauseProofPrototype = new Proof(parentProof);
 
-                    if (LiteralUnifier.TryUpdateUnsafe(clause.Consequent, goal, clauseProof.Substitution))
+                    if (LiteralUnifier.TryUpdate(clause.Consequent, goal, clauseProofPrototype.Unifier))
                     {
-                        foreach (var θ2 in ProvePredicates(clause.Conjuncts, clauseProof))
+                        foreach (var clauseProof in ProvePredicates(clause.Conjuncts, clauseProofPrototype))
                         {
-                            yield return θ2;
+                            clauseProof.AddStep(clauseProof.Unifier.ApplyTo(goal).Predicate, clause); // Bug: adds KB as step... not quite right..
+                            yield return clauseProof;
                         }
                     }
                 }
@@ -101,9 +168,11 @@ namespace SCFirstOrderLogic.Inference.Chaining
             }
             else
             {
-                foreach (var firstConjunctProof in ProvePredicate(proof.Substitution.ApplyTo(goals.First()).Predicate, proof))
+                var transformedConjunct = proof.Unifier.ApplyTo(goals.First()).Predicate;
+
+                foreach (var transformedConjunctProof in ProvePredicate(transformedConjunct, proof))
                 {
-                    foreach (var restOfConjunctsProof in ProvePredicates(goals.Skip(1), firstConjunctProof))
+                    foreach (var restOfConjunctsProof in ProvePredicates(goals.Skip(1), transformedConjunctProof))
                     {
                         yield return restOfConjunctsProof;
                     }
@@ -113,80 +182,29 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
         public class Proof
         {
-            public Proof(VariableSubstitution substitution)
+            private readonly Dictionary<Predicate, CNFDefiniteClause> steps;
+
+            internal Proof()
             {
-                Substitution = substitution;
+                Unifier = new VariableSubstitution();
+                steps = new();
             }
 
-            public VariableSubstitution Substitution { get; } 
+            internal Proof(Proof parent)
+            {
+                Unifier = new VariableSubstitution(parent.Unifier);
+                steps = parent.Steps.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+            }
+
+            public VariableSubstitution Unifier { get; }
+
+            public IReadOnlyDictionary<Predicate, CNFDefiniteClause> Steps => steps;
+
+            internal void AddStep(Predicate predicate, CNFDefiniteClause rule)
+            {
+                steps[predicate] = rule;
+            }
         }
-
-        ////public class Tree
-        ////{
-        ////    internal Tree(Predicate consequent, CNFDefiniteClause rule, VariableSubstitution unifier, IReadOnlyDictionary<Predicate, IEnumerable<Tree>> subTreesByConjunct)
-        ////    {
-        ////        Consequent = consequent;
-        ////        Rule = rule ?? throw new ArgumentNullException(nameof(rule));
-        ////        Unifier = unifier;
-        ////        SubTrees = subTreesByConjunct ?? throw new ArgumentNullException(nameof(subTreesByConjunct));
-        ////    }
-
-        ////    /// <summary>
-        ////    /// Gets the consequent proved by the step.
-        ////    /// </summary>
-        ////    public Predicate Consequent { get; }
-
-        ////    /// <summary>
-        ////    /// Gets the root edge of the tree.
-        ////    /// </summary>
-        ////    public CNFDefiniteClause Rule { get; }
-
-        ////    /// <summary>
-        ////    /// Gets the unifier substitution applied to the consequent of the rule to give what we are looking to prove.
-        ////    /// </summary>
-        ////    public VariableSubstitution Unifier { get; }
-
-        ////    /// <summary>
-        ////    /// Gets the sub-trees that follow the root edge, keyed by node that they connect from. There will be more than one if the root edge actually represents a set of more than one coinjoined ("and") edges.
-        ////    /// </summary>
-        ////    public IReadOnlyDictionary<Predicate, IEnumerable<Tree>> SubTrees { get; }
-
-        ////    /// <summary>
-        ////    /// Flattens the tree out into a single mapping from the current node to the edge that should be followed to ultimately reach only target nodes.
-        ////    /// Intended to make trees easier to work with in certain situations (e.g. assertions in tests).
-        ////    /// <para/>
-        ////    /// Each node will occur at most once in the entire tree, so we can always safely do this.
-        ////    /// </summary>
-        ////    /// <returns>A mapping from the current node to the edge that should be followed to ultimately reach only target nodes.</returns>
-        ////    public static IReadOnlyDictionary<Predicate, IEnumerable<Tree>> Flatten(IEnumerable<Tree> trees)
-        ////    {
-        ////        var flattened = new Dictionary<Predicate, IEnumerable<Tree>>();
-
-        ////        void Visit(Predicate predicate, IEnumerable<Tree> trees)
-        ////        {
-        ////            if (!flattened.ContainsKey(predicate))
-        ////            {
-        ////                flattened[predicate] = Enumerable.Empty<Tree>();
-        ////            }
-
-        ////            flattened[predicate] = flattened[predicate].Concat(trees);
-        ////            foreach (var tree in trees)
-        ////            {
-        ////                foreach (var kvp in tree.SubTrees)
-        ////                {
-        ////                    Visit(kvp.Key, kvp.Value);
-        ////                }
-        ////            }
-        ////        }
-
-        ////        foreach (var tree in trees)
-        ////        {
-        ////            Visit(tree.Consequent, new[] { tree });
-        ////        }
-
-        ////        return flattened;
-        ////    }
-        ////}
 
         ////private class Path
         ////{
