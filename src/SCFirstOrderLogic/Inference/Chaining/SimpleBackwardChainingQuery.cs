@@ -4,9 +4,11 @@ using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static SCFirstOrderLogic.Inference.Chaining.SimpleBackwardChainingQuery;
 
 namespace SCFirstOrderLogic.Inference.Chaining
 {
@@ -44,15 +46,15 @@ namespace SCFirstOrderLogic.Inference.Chaining
             get
             {
                 // Don't bother lazy.. Won't be critical path - not worth the complexity hit. Might revisit.
+                var formatter = new SentenceFormatter();
+                var cnfExplainer = new CNFExplainer(formatter);
                 var resultExplanation = new StringBuilder();
-                var proofNum = 1;
 
+                var proofNum = 1;
                 foreach (var proof in Proofs)
                 {
                     resultExplanation.AppendLine($"--- PROOF #{proofNum++}");
-
-                    var formatter = new SentenceFormatter();
-                    var cnfExplainer = new CNFExplainer(formatter);
+                    resultExplanation.AppendLine();
 
                     // Now build the explanation string.
                     var proofStepsByPredicate = proof.Steps;
@@ -63,18 +65,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         var predicate = orderedPredicates[i];
                         var proofStep = proofStepsByPredicate[predicate];
 
-                        string GetSource(Predicate predicate)
-                        {
-                            if (orderedPredicates.Contains(predicate))
-                            {
-                                return $"#{orderedPredicates.IndexOf(predicate):D2}";
-                            }
-                            else
-                            {
-                                return " KB";
-                            }
-                        }
-
                         // Consequent:
                         resultExplanation.AppendLine($"#{i:D2}: {formatter.Format(predicate)}");
 
@@ -84,20 +74,8 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         // Conjuncts used:
                         foreach (var childPredicate in proofStep.Conjuncts)
                         {
-                            // NB: the algorithm builds up the unifier step-by-step, so that it can (will probably) result in many
-                            // terms being bound indirectly. E.g. variable A is bound to variable B, which is in turn bound to constant C.
-                            // There's no sense in making the algorithm itself more complex (and thus slower) than it needs to be to streamline
-                            // this, but for the readability of the explanation, we make sure to follw the chain to the end by applying the
-                            // unifier until it doesn't make any more changes. The "full story" remains viewable in the unifier.. 
-                            var oldChildPredicate = childPredicate;
-                            var newChildPredicate = proof.ApplyUnifierTo(childPredicate);
-                            while (!newChildPredicate.Equals(oldChildPredicate))
-                            {
-                                oldChildPredicate = newChildPredicate;
-                                newChildPredicate = proof.ApplyUnifierTo(oldChildPredicate);
-                            }
-
-                            resultExplanation.AppendLine($"       From {GetSource(newChildPredicate)}: {formatter.Format(newChildPredicate)}");
+                            var unifiedChildPredicate = proof.GetUnified(childPredicate);
+                            resultExplanation.AppendLine($"       From {$"#{orderedPredicates.IndexOf(unifiedChildPredicate):D2}"}: {formatter.Format(unifiedChildPredicate)}");
                         }
 
                         resultExplanation.AppendLine();
@@ -165,7 +143,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     {
                         foreach (var clauseProof in ProvePredicates(clause.Conjuncts, clauseProofPrototype))
                         {
-                            clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), clause); // Bug: adds KB as step... not quite right..
+                            clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), clause);
                             yield return clauseProof;
                         }
                     }
@@ -209,9 +187,26 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
             public VariableSubstitution Unifier { get; }
 
-            public Predicate ApplyUnifierTo(Predicate predicate) => Unifier.ApplyTo(predicate).Predicate;
-
             public IReadOnlyDictionary<Predicate, CNFDefiniteClause> Steps => steps;
+
+            public Predicate GetUnified(Predicate predicate)
+            {
+                // NB: the algorithm builds up the unifier step-by-step, so that it can (will probably) result in many
+                // terms being bound indirectly. E.g. variable A is bound to variable B, which is in turn bound to constant C.
+                // There's no sense in making the algorithm itself more complex (and thus slower) than it needs to be to streamline
+                // this, but for the readability of explanations, we make sure to follw the chain to the end by applying the
+                // unifier until it doesn't make any more changes. The "full story" remains viewable in the unifier.. 
+                var newPredicate = ApplyUnifierTo(predicate);
+                while (!newPredicate.Equals(predicate))
+                {
+                    predicate = newPredicate;
+                    newPredicate = ApplyUnifierTo(predicate);
+                }
+
+                return predicate;
+            }
+
+            internal Predicate ApplyUnifierTo(Predicate predicate) => Unifier.ApplyTo(predicate).Predicate;
 
             internal void AddStep(Predicate predicate, CNFDefiniteClause rule)
             {
