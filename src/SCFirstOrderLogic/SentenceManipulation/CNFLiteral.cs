@@ -1,5 +1,6 @@
 ﻿using SCFirstOrderLogic.SentenceFormatting;
 using System;
+using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.SentenceManipulation
 {
@@ -66,6 +67,16 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public CNFLiteral Negate() => new(Predicate, !IsNegated);
 
         /// <summary>
+        /// Constructs and returns a literal that is the same as this one, except for the
+        /// fact that all variable references are replaced with new ones.
+        /// </summary>
+        /// <returns>
+        /// A literal that is the same as this one, except for the
+        /// fact that all variable references are replaced with new ones.
+        /// </returns>
+        public CNFLiteral Restandardize() => throw new NotImplementedException(); // new((Predicate)VariableRestandardisation.Instance.ApplyTo(Predicate), IsNegated);
+
+        /// <summary>
         /// Returns a string that represents the current object.
         /// <para/>
         /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to format the literal.
@@ -118,5 +129,29 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="predicate">The predicate to convert.</param>
         public static implicit operator CNFLiteral(Predicate predicate) => new(predicate);
+
+        ////private class VariableRestandardisation : RecursiveSentenceTransformation
+        ////{
+        ////    private readonly Dictionary<VariableReference, VariableReference> mapping = new();
+
+        ////    private VariableRestandardisation()
+        ////    {
+        ////    }
+
+        ////    public static VariableRestandardisation Instance { get; } = new VariableRestandardisation();
+
+        ////    public override Sentence ApplyTo(Quantification quantification)
+        ////    {
+        ////        // Should we throw if the variable being standardised is already standardised? Or return it unchanged?
+        ////        // Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
+        ////        mapping[quantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(quantification, rootSentence));
+        ////        return base.ApplyTo(quantification);
+        ////    }
+
+        ////    public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
+        ////    {
+        ////        return mapping[variableDeclaration];
+        ////    }
+        ////}
     }
 }

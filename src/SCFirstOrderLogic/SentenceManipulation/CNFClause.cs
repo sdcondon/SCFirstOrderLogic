@@ -82,6 +82,16 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public bool IsEmpty => Literals.Count == 0;
 
         /// <summary>
+        /// Constructs and returns a clause that is the same as this one, except for the
+        /// fact that all variable references are replaced with new ones.
+        /// </summary>
+        /// <returns>
+        /// A cluse that is the same as this one, except for the fact that all variable
+        /// references are replaced with new ones.
+        /// </returns>
+        public CNFClause Restandardize() => new(Literals.Select(l => l.Restandardize()));
+
+        /// <summary>
         /// Returns a string that represents the current object.
         /// <para/>
         /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to format the clause.
