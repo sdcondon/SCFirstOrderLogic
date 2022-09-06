@@ -4,11 +4,9 @@ using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static SCFirstOrderLogic.Inference.Chaining.SimpleBackwardChainingQuery;
 
 namespace SCFirstOrderLogic.Inference.Chaining
 {
@@ -33,7 +31,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         /// <inheritdoc />
-        public bool IsComplete => proofs != null; // BAD - will be immediately true.
+        public bool IsComplete => proofs != null; // TODO: BAD - will be immediately true.
 
         /// <inheritdoc />
         public bool Result => proofs?.Any() ?? throw new InvalidOperationException("Query is not yet complete");
@@ -114,7 +112,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         /// <summary>
-        /// Gets the set of variable substitutions that can be made to satisfy the query.
+        /// Gets the set of proofs of the query..
         /// Result will be empty if and only if the query returned a negative result.
         /// </summary>
         public IEnumerable<Proof> Proofs => proofs ?? throw new InvalidOperationException("Query is not yet complete");
@@ -137,13 +135,14 @@ namespace SCFirstOrderLogic.Inference.Chaining
             {
                 foreach (var clause in clausesWithThisGoal)
                 {
+                    var restandardisedClause = clause.Restandardize();
                     var clauseProofPrototype = new Proof(parentProof);
 
-                    if (LiteralUnifier.TryUpdate(clause.Consequent, goal, clauseProofPrototype.Unifier))
+                    if (LiteralUnifier.TryUpdate(restandardisedClause.Consequent, goal, clauseProofPrototype.Unifier))
                     {
-                        foreach (var clauseProof in ProvePredicates(clause.Conjuncts, clauseProofPrototype))
+                        foreach (var clauseProof in ProvePredicates(restandardisedClause.Conjuncts, clauseProofPrototype))
                         {
-                            clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), clause);
+                            clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), restandardisedClause);
                             yield return clauseProof;
                         }
                     }

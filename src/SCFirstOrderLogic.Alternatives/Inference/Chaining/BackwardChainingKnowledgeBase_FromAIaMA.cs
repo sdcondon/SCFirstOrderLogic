@@ -135,8 +135,10 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 {
                     foreach (var clause in clausesWithThisGoal)
                     {
-                        var lhs = clause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
-                        var rhs = clause.Literals.Single(l => l.IsPositive);
+                        var restandardisedClause = clause.Restandardize();
+
+                        var lhs = restandardisedClause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
+                        var rhs = restandardisedClause.Literals.Single(l => l.IsPositive);
                         var unifier = new VariableSubstitution(θ);
 
                         if (LiteralUnifier.TryUpdateUnsafe(rhs, goal, unifier))

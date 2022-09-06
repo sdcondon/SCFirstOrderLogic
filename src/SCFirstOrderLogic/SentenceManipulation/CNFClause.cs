@@ -86,10 +86,37 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// fact that all variable references are replaced with new ones.
         /// </summary>
         /// <returns>
-        /// A cluse that is the same as this one, except for the fact that all variable
+        /// A clause that is the same as this one, except for the fact that all variable
         /// references are replaced with new ones.
         /// </returns>
-        public CNFClause Restandardize() => new(Literals.Select(l => l.Restandardize()));
+        public CNFClause Restandardize()
+        {
+            var mapping = new Dictionary<StandardisedVariableSymbol, StandardisedVariableSymbol>();
+
+            StandardisedVariableSymbol GetOrAddNewSymbol(StandardisedVariableSymbol oldSymbol)
+            {
+                if (!mapping.TryGetValue(oldSymbol, out var newSymbol))
+                {
+                    newSymbol = mapping[oldSymbol] = new StandardisedVariableSymbol(oldSymbol.OriginalVariableScope, oldSymbol.OriginalSentence);
+                }
+
+                return newSymbol;
+            }
+
+            Term VisitTerm(Term term) => term switch
+            {
+                Constant c => c,
+                VariableReference v => new VariableReference(GetOrAddNewSymbol((StandardisedVariableSymbol)v.Symbol)),
+                Function f => new Function(f.Symbol, f.Arguments.Select(a => VisitTerm(a)).ToArray()),
+                _ => throw new ArgumentException($"Unexpected term type '{term.GetType()}' encountered", nameof(term)),
+            };
+
+            Predicate VisitPredicate(Predicate predicate) => new Predicate(predicate.Symbol, predicate.Arguments.Select(a => VisitTerm(a)).ToArray());
+
+            CNFLiteral VisitLiteral(CNFLiteral literal) => new CNFLiteral(VisitPredicate(literal.Predicate), literal.IsNegated);
+
+            return new CNFClause(Literals.Select(l => VisitLiteral(l)));
+        }
 
         /// <summary>
         /// Returns a string that represents the current object.

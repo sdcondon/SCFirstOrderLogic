@@ -46,8 +46,18 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// </summary>
         public IEnumerable<Predicate> Conjuncts => Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
 
-        // TODO: Messy. Add a Format(CNFDefiniteClause) method to SentenceFormatter. BUT only if we end up moving this class into SentenceManipulation..
-        // Otherwise, do something else..
+        /// <summary>
+        /// Constructs and returns a clause that is the same as this one, except for the
+        /// fact that all variable references are replaced with new ones.
+        /// </summary>
+        /// <returns>
+        /// A clause that is the same as this one, except for the fact that all variable
+        /// references are replaced with new ones.
+        /// </returns>
+        public new CNFDefiniteClause Restandardize() => new CNFDefiniteClause(base.Restandardize());
+
+        // TODO: Messy, doesn't belong here. Perhaps add a Format(CNFDefiniteClause) method to SentenceFormatter.
+        // BUT only if we end up moving this class into SentenceManipulation - otherwise is messy (ultimately circular) namespace dep.
         public string Format(SentenceFormatter formatter)
         {
             if (IsUnitClause)
