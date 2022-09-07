@@ -31,7 +31,9 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         /// <inheritdoc />
-        public bool IsComplete => proofs != null; // TODO: BAD - will be immediately true.
+        // TODO-BUG: will be immediately true need to think about how best to think about "IsComplete" when query execution
+        // is an iterator method for proofs? Should IsComplete actually not be part of the interface?
+        public bool IsComplete => proofs != null; 
 
         /// <inheritdoc />
         public bool Result => proofs?.Any() ?? throw new InvalidOperationException("Query is not yet complete");
@@ -67,13 +69,13 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         resultExplanation.AppendLine($"Step #{i:D2}: {formatter.Format(predicate)}");
 
                         // Rule applied:
-                        resultExplanation.AppendLine($"     By Rule : {proofStep.Format(formatter)}");
+                        resultExplanation.AppendLine($"  By Rule: {proofStep.Format(formatter)}");
 
                         // Conjuncts used:
                         foreach (var childPredicate in proofStep.Conjuncts)
                         {
                             var unifiedChildPredicate = proof.GetUnified(childPredicate);
-                            resultExplanation.AppendLine($"     And Step #{orderedPredicates.IndexOf(unifiedChildPredicate):D2}: {formatter.Format(unifiedChildPredicate)}");
+                            resultExplanation.AppendLine($"  And Step #{orderedPredicates.IndexOf(unifiedChildPredicate):D2}: {formatter.Format(unifiedChildPredicate)}");
                         }
 
                         resultExplanation.AppendLine();
@@ -101,7 +103,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
                     foreach (var term in normalisationTermsToExplain)
                     {
-                        resultExplanation.AppendLine($"       {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
+                        resultExplanation.AppendLine($"  {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
                     }
 
                     resultExplanation.AppendLine();
@@ -212,20 +214,5 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 steps[predicate] = rule;
             }
         }
-
-        ////private class Path
-        ////{
-        ////    private Path(Predicate first, Path rest) => (First, Rest) = (first, rest);
-
-        ////    public static Path Empty { get; } = new Path(default, null);
-
-        ////    public Predicate First { get; }
-
-        ////    public Path Rest { get; }
-
-        ////    public Path Prepend(Predicate predicate) => new Path(predicate, this);
-
-        ////    public bool Contains(Predicate predicate) => (First?.Equals(predicate) ?? false) || (Rest?.Contains(predicate) ?? false);
-        ////}
     }
 }

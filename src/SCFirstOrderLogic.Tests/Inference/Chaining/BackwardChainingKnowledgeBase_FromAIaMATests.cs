@@ -44,7 +44,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         AllGreedyKingsAreEvil
                     }),
 
-                // Two applicable rules, each with two conjuncts, single step
+                // two conjuncts, single step, with a red herring
                 MakeQuery(
                     query: IsEvil(X),
                     kb: new Sentence[]
@@ -56,7 +56,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         AllGreedyQueensAreEvil,
                     }),
 
-                // Simple multiple substitutions
+                // Simple multiple proofs
                 MakeQuery(
                     query: IsKing(X),
                     kb: new Sentence[]
@@ -78,8 +78,8 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
                 // More complex - Crime example domain
                 MakeQuery(
-                    query: IsCriminal(West),
-                    kb: Axioms),
+                    query: CrimeDomain.IsCriminal(West),
+                    kb: CrimeDomain.Axioms),
             })
             .When((cxt, query) => query.Execute())
             .ThenReturns()

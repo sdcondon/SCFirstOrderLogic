@@ -55,7 +55,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         AllGreedyKingsAreEvil
                     }),
 
-                // Two applicable rules, each with two conjuncts, single step
+                // two conjuncts, single step, with red herrings
                 MakeQuery(
                     query: IsEvil(X),
                     kb: new Sentence[]
