@@ -19,14 +19,11 @@ The most basic way to express this is to manually compose a bunch of instances o
 ```csharp
 using static SCFirstOrderLogic;
 
-..
-
 // Helper methods for your predicates (and functions) are recommended:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
-..
-
+// Now the sentence itself, with some intermediate vars so that it isn't completely unreadable:
 var g = new VariableDeclaration("g");
 var c = new VariableDeclaration("c");
 var p = new VariableDeclaration("p");
@@ -43,16 +40,14 @@ Things to notice:
 First, we have the `SentenceFactory` static class in the `SentenceCreation` namespace. It is intended to be used via a `using static` directive. Here's how the example looks with this one:
 
 ```csharp
+using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
-
-..
 
 // Helper methods for your predicates (and functions) are recommended:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
-..
-
+// Using the factory, the sentence itself is a little less verbose:
 var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, And(IsParent(G, P), IsParent(P, C)))));
 ```
 
@@ -66,16 +61,14 @@ Things to notice about this one:
 Next, you'll also find `OperableSentenceFactory` in `SentenceCreation`. It works similarly to `SentenceFactory`, but lets you use operators:
 
 ```csharp
+using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
-
-..
 
 // Helper methods for your predicates (and functions) are recommended:
 OperablePredicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 OperablePredicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
-..
-
+// This is probably the most succinct of the approaches:
 var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, IsParent(G, P) & IsParent(P, C))));
 ```
 
@@ -93,8 +86,6 @@ modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as
 using SCFirstOrderLogic.LanguageIntegration;
 using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff an If methods..
 
-..
-
 // The helper methods recommended for the other approaches become full interfaces when language integration is used:
 interface IPerson
 {
@@ -102,10 +93,8 @@ interface IPerson
     bool IsGrandparentOf(IPerson person);
 }
 
-..
-
+// Now the sentence itself looks like this:
 SentenceFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
-
 ```
 
 Things to notice about this one:
