@@ -7,10 +7,10 @@ NB: This guide assumes some familiarity with first-order logic. It won't explain
 Obviously the first challenge is to write sentences. This can be done in several ways. This section will use the following sentence as an example:
 
 ```
-∀ g, c, [IsGrandparentOf(g, c) ⇔ ∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]
+∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]
 ```
 
-..that is, the definition of a grandparent. We use this example because its very straightforward but includes a good cross-section of FoL elements.
+..that is, the definition of a grandparent. We use this example because its very straightforward but includes a decent cross-section of FoL elements.
 
 ### Writing Sentences Manually
 
@@ -114,7 +114,7 @@ Things to notice about this one:
 ## Storing Knowledge and Making Inferences
 
 Once you have some sentences, storing them and making inferences is done with the aid of the types in the `Inference` namespace.
-The lowest common denominator here is the `IKnowledgeBase` interface. The library includes a few very simple knowledge bases - one that
+The most important type here is the `IKnowledgeBase` interface. The library includes a few very simple knowledge bases - one that
 uses forward chaining, one that uses backward chaining, and one that uses resolution. Some examples follow, but first, here's our domain,
 taken from section 9.3 of 'Artificial Intelligence: A Modern Approach':
 
@@ -183,8 +183,8 @@ var result = kb.Ask(IsCriminal(West)); // will be true
 // Or, to get an explanation:
 var query = kb.CreateQuery(IsCriminal(West));
 query.Execute();
-var result = query.Result); // true
-var explanation = Console.WriteLine(query.Explain()) // A human-readable walkthrough of the proof tree 
+Console.WriteLine(query.Result); // true
+Console.WriteLine(query.ResultExplanation) // A human-readable walkthrough of the proof tree 
 ```
 
 Using backward chaining:
@@ -195,7 +195,6 @@ using SCFirstOrderLogic.Inference.Chaining;
 var kb = new SimpleBackwardChainingKnowledgeBase();
 kb.Tell(rules);
 var result = kb.Ask(IsCriminal(West)); // will be true
-
 // ..Or can get an explanation in the same way as above
 ```
 
@@ -211,7 +210,6 @@ var kb = new new SimpleResolutionKnowledgeBase(
 
 kb.Tell(rules);
 var result = kb.Ask(IsCriminal(West)); // will be true
-
 // ..Or can get an explanation in the same way as above
 ```
 
@@ -220,7 +218,7 @@ Some things to note:
 
 ## Examples
 
-For initial usage examples, see the [example domains](../../src/SCFirstOrderLogic.ExampleDomains) project (and, to a lesser extent, the [tests](../../src/SCFirstOrderLogic.Tests)).
+For some usage examples, see the [example domains](../../src/SCFirstOrderLogic.ExampleDomains) project (and, to a lesser extent, the [tests](../../src/SCFirstOrderLogic.Tests)).
 Beyond that, see the XML documentation against the classes - which I hope is fairly decent.
 
 ## Beyond Getting Started
