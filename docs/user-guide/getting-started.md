@@ -195,6 +195,7 @@ Using resolution:
 using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
 using SCFirstOrderLogic.Inference.Resolution;
 
+// The resolution KB has a little more configurability/extensibility than the other two:
 var kb = new new SimpleResolutionKnowledgeBase(
     new SimpleClauseStore(),
     SimpleResolutionKnowledgeBase.Filters.None,
