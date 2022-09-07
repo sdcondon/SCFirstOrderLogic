@@ -12,6 +12,7 @@
     <Product>SCFirstOrderLogic</Product>
     <PackageId>SCFirstOrderLogic</PackageId>
     <Nullable>enable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>SCFirstOrderLogic.png</PackageIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
@@ -23,10 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\SCFirstOrderLogic.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <None Include="README.md" Pack="true" PackagePath="" />
+    <None Include="..\SCFirstOrderLogic.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
