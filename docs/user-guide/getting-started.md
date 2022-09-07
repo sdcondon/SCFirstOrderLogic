@@ -119,9 +119,8 @@ uses forward chaining, one that uses backward chaining, and one that uses resolu
 taken from section 9.3 of 'Artificial Intelligence: A Modern Approach':
 
 ```csharp
+using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
-
-..
 
 Constant America = new Constant(nameof(America));
 Constant Nono = new Constant(nameof(Nono));
@@ -135,8 +134,6 @@ Predicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
 Predicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
 Predicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
 Predicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
-
-..
 
 var rules = new Sentence[]
 {
@@ -174,22 +171,27 @@ var rules = new Sentence[]
 Using forward chaining:
 
 ```csharp
+using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
 using SCFirstOrderLogic.Inference.Chaining;
 
 var kb = new SimpleForwardChainingKnowledgeBase();
 kb.Tell(rules);
-var result = kb.Ask(IsCriminal(West)); // will be true
+var querySentence = IsCriminal(West);
+
+// Succinct way to get a true/false result:
+Console.WriteLine(kb.Ask(querySentence)); // "true"
 
 // Or, to get an explanation:
-var query = kb.CreateQuery(IsCriminal(West));
+var query = kb.CreateQuery(querySentence);
 query.Execute();
 Console.WriteLine(query.Result); // true
-Console.WriteLine(query.ResultExplanation) // A human-readable walkthrough of the proof tree 
+Console.WriteLine(query.ResultExplanation); // A human-readable walkthrough of the proof tree 
 ```
 
 Using backward chaining:
 
 ```csharp
+using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
 using SCFirstOrderLogic.Inference.Chaining;
 
 var kb = new SimpleBackwardChainingKnowledgeBase();
@@ -201,6 +203,7 @@ var result = kb.Ask(IsCriminal(West)); // will be true
 Using resolution:
 
 ```csharp
+using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
 using SCFirstOrderLogic.Inference.Resolution;
 
 var kb = new new SimpleResolutionKnowledgeBase(
@@ -214,7 +217,12 @@ var result = kb.Ask(IsCriminal(West)); // will be true
 ```
 
 Some things to note:
-* The `Tell`, `Ask`, `CreateQuery` and `Execute` methods used above are actually extension methods that are are synchronous wrappers around underlying async versions. The library has deep async support - because "real-world" KBs will tend to need to do IO. At the time of writing, the only implementation that currently supports this meaningfully is the resolution one, though.
+* Formatting of sentences and query result explanations includes the appropriate symbols (∀, ⇔, ∃, ∧ and so on).
+Depending on your environment, you might need to tke action so that these are rendered properly.
+E.g. when running on Windows it might be worth sticking a `Console.OutputEncoding = Encoding.UTF8;` in your application.
+* The `Tell`, `Ask`, `CreateQuery` and `Execute` methods used above are actually extension methods that are are synchronous wrappers around underlying async versions.
+The library has deep async support - because "real-world" KBs will tend to need to do IO.
+At the time of writing, the only implementation that currently supports this meaningfully is the resolution one, though.
 
 ## Examples
 
