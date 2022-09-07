@@ -218,8 +218,8 @@ var result = kb.Ask(IsCriminal(West)); // will be true
 
 Some things to note:
 * Formatting of sentences and query result explanations includes the appropriate symbols (∀, ⇔, ∃, ∧ and so on).
-Depending on your environment, you might need to tke action so that these are rendered properly.
-E.g. when running on Windows it might be worth sticking a `Console.OutputEncoding = Encoding.UTF8;` in your application.
+Depending on your environment, you might need to take action so that these are rendered properly.
+E.g. For running on Windows it might be worth sticking a `Console.OutputEncoding = Encoding.Unicode;` in your application.
 * The `Tell`, `Ask`, `CreateQuery` and `Execute` methods used above are actually extension methods that are are synchronous wrappers around underlying async versions.
 The library has deep async support - because "real-world" KBs will tend to need to do IO.
 At the time of writing, the only implementation that currently supports this meaningfully is the resolution one, though.
