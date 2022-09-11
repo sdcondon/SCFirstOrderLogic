@@ -6,7 +6,7 @@
     <RootNamespace>SCFirstOrderLogic</RootNamespace>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Basic first-order logic inference engine, primarily for learning and experimentation. Includes multiple ways to write sentences, and knowledge base implementations that allow for proof tree retrieval.</Description>
+    <Description>Basic first-order logic inference engine, primarily for learning and experimentation. Heavily influenced by "Artificial Intelligence: A Modern Approach" (Russell &amp; Norvig). Includes multiple ways to write sentences, and knowledge base implementations that allow for proof tree retrieval.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>first order logic inference engine knowledge base linq</PackageTags>
     <Product>SCFirstOrderLogic</Product>
