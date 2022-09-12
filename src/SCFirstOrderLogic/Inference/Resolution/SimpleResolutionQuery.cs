@@ -209,10 +209,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 // ..and iterate through its resolvents (if any) - also make a note of the unifier so that we can include it in the record of steps that we maintain:
                 await EnqueueUnfilteredResolventsAsync(resolution.Resolvent, cancellationToken);
             }
-
-            // If we've run out of clauses to smash together, return a negative result.
-            if (queue.Count == 0)
+            else if (queue.Count == 0)
             {
+                // We've run out of clauses to smash together - return a negative result.
                 result = false;
                 isComplete = true;
             }
@@ -239,6 +238,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 {
                     queue.Enqueue(resolution);
                 }
+            }
+
+            if (queue.Count == 0)
+            {
+                result = false;
+                isComplete = true;
             }
         }
 
