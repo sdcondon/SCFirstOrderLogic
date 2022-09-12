@@ -147,7 +147,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         ////    {
         ////        var kb = new EqualityAxiomisingKnowledgeBase(new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparisons.TotalLiteralCountMinimisation));
         ////        kb.TellAsync(KinshipDomain.Axioms).Wait();
-        ////        var query = kb.CreateQueryAsync(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X)))).Result;
+        ////        var query = kb.CreateQueryAsync(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X)))).GetAwaiter().GetResult();
         ////        query.CompleteAsync(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token).Wait();
         ////        return query;
         ////    })

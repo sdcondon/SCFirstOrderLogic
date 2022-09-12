@@ -82,7 +82,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// <returns>An <see cref="SimpleBackwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
         public SimpleBackwardChainingQuery CreateQuery(Sentence query)
         {
-            return CreateQueryAsync(query).Result;
+            return CreateQueryAsync(query).GetAwaiter().GetResult();
         }
     }
 }

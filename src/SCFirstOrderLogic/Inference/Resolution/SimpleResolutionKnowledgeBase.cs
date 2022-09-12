@@ -75,7 +75,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <returns>An <see cref="SimpleResolutionQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
         public SimpleResolutionQuery CreateQuery(Sentence sentence)
         {
-            return CreateQueryAsync(sentence).Result;
+            return CreateQueryAsync(sentence).GetAwaiter().GetResult();
         }
 
         /// <summary>

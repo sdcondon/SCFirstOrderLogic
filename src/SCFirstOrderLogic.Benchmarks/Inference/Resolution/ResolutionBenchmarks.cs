@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         {
             var kb = new SimpleResolutionKnowledgeBase(new SimpleClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
             kb.TellAsync(CrimeDomain.Axioms).Wait();
-            return kb.AskAsync(IsCriminal(West)).Result;
+            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
         }
 
         [Benchmark]

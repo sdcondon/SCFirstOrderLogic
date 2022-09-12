@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 store.AddAsync(new CNFClause(new Predicate("B"))).Wait();
                 return store;
             })
-            .When(store => store.ToArrayAsync().Result)
+            .When(store => store.ToArrayAsync().GetAwaiter().GetResult())
             .ThenReturns((_, a) => a.Should().BeEquivalentTo(new[] { new CNFClause(new Predicate("A")), new CNFClause(new Predicate("B")) }));
 
         public static Test Concurrency_AddDuringEnum => TestThat

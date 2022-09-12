@@ -200,7 +200,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             // on the store (which would raise potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
             // Downside of using Add: clause store will encounter itself when looking for unifiers - not a big deal,
             // but a performance/maintainability tradeoff nonetheless
-            if (clauseStore.AddAsync(resolution.Resolvent, cancellationToken).Result)
+            if (clauseStore.AddAsync(resolution.Resolvent, cancellationToken).GetAwaiter().GetResult())
             {
                 // This is a new clause, so we queue up some more clause pairings -
                 // (combinations of the resolvent and existing known clauses)
