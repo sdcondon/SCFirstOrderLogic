@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
     /// <summary>
     /// A store of knowledge expressed as statements of propositional logic (in turn expressed as LINQ expressions acting on the domain represented as an <see cref="IEnumerable{T}"/>).
     /// </summary>
-    /// <typeparam name="TDomain">The type of the domain. The domain must be modelled as an <see cref="IEnumerable{T}"/> of <see cref="TElement"/>.</typeparam>
+    /// <typeparam name="TDomain">The type of the domain. The domain must be modelled as an <see cref="IEnumerable{T}"/>.</typeparam>
     /// <typeparam name="TElement">The type that the sentences passed to this class refer to.</typeparam>
     /// <remarks>
     /// Not 100% convinced by the need for this interface, given that I'm not sure of the need for any implementation other than the one provided.

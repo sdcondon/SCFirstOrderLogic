@@ -170,6 +170,9 @@ namespace SCFirstOrderLogic.Inference.Chaining
             }
         }
 
+        /// <summary>
+        /// Container for a proof of a query.
+        /// </summary>
         public class Proof
         {
             private readonly Dictionary<Predicate, CNFDefiniteClause> steps;
@@ -186,17 +189,31 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 steps = parent.Steps.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 
+            /// <summary>
+            /// Gets the unifier used by this proof.
+            /// </summary>
             public VariableSubstitution Unifier { get; }
 
+            /// <summary>
+            /// Gets the steps of the proof. Each predicate used in the proof (including the goal) is present as a key.
+            /// The associated value is the clause that was used to prove it. Each conjunct of that clause will be present
+            /// as a key - all the way back to the relevant unit clauses.
+            /// </summary>
             public IReadOnlyDictionary<Predicate, CNFDefiniteClause> Steps => steps;
 
+            /// <summary>
+            /// Applies the proof's unifier to a given predicate.
+            /// <para/>
+            /// NB: the algorithm builds up the unifier step-by-step, so that it can (will probably) result in many
+            /// terms being bound indirectly. E.g. variable A is bound to variable B, which is in turn bound to constant C.
+            /// There's no sense in making the algorithm itself more complex (and thus slower) than it needs to be to streamline
+            /// this, but for the readability of explanations, this method follows the chain to the end by applying the
+            /// unifier until it doesn't make any more changes. The "full story" remains accessible via the unifier and proof steps.
+            /// </summary>
+            /// <param name="predicate"></param>
+            /// <returns>The input predicate transformed by the proof's unifier.</returns>
             public Predicate GetUnified(Predicate predicate)
             {
-                // NB: the algorithm builds up the unifier step-by-step, so that it can (will probably) result in many
-                // terms being bound indirectly. E.g. variable A is bound to variable B, which is in turn bound to constant C.
-                // There's no sense in making the algorithm itself more complex (and thus slower) than it needs to be to streamline
-                // this, but for the readability of explanations, we make sure to follw the chain to the end by applying the
-                // unifier until it doesn't make any more changes. The "full story" remains viewable in the unifier.. 
                 var newPredicate = ApplyUnifierTo(predicate);
                 while (!newPredicate.Equals(predicate))
                 {
@@ -209,10 +226,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
             internal Predicate ApplyUnifierTo(Predicate predicate) => Unifier.ApplyTo(predicate).Predicate;
 
-            internal void AddStep(Predicate predicate, CNFDefiniteClause rule)
-            {
-                steps[predicate] = rule;
-            }
+            internal void AddStep(Predicate predicate, CNFDefiniteClause rule) => steps[predicate] = rule;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
     /// <summary>
     /// An implementation of the <see cref="ILinqKnowledgeBase{TDomain, TElement}"/> interface that simply wraps an inner <see cref="IKnowledgeBase"/> instance.
     /// </summary>
-    /// <typeparam name="TDomain">The type of the domain. The domain must be modelled as an <see cref="IEnumerable{T}"/> of <see cref="TElement"/>.</typeparam>
+    /// <typeparam name="TDomain">The type of the domain. The domain must be modelled as an <see cref="IEnumerable{T}"/>.</typeparam>
     /// <typeparam name="TElement">The type that the sentences passed to this class refer to.</typeparam>
     public class LinqKnowledgeBase<TDomain, TElement> : ILinqKnowledgeBase<TDomain, TElement>
         where TDomain : IEnumerable<TElement>
