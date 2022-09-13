@@ -131,33 +131,33 @@ namespace SCFirstOrderLogic.Inference.Unification
         public static Test TryUpdateUnsafePositive => TestThat
             .GivenEachOf(() => new TryUpdatePositiveTestCase[]
             {
-                        new (
-                            Literal1: Knows(x, y),
-                            Literal2: Knows(john, jane),
-                            InitialSubstitutions: new Dictionary<VariableReference, Term>()
-                            {
-                                [x] = john,
-                            },
-                            ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
-                            {
-                                [x] = john,
-                                [y] = jane,
-                            },
-                            ExpectedUnified: Knows(john, jane)),
+                new (
+                    Literal1: Knows(x, y),
+                    Literal2: Knows(john, jane),
+                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    {
+                        [x] = john,
+                    },
+                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    {
+                        [x] = john,
+                        [y] = jane,
+                    },
+                    ExpectedUnified: Knows(john, jane)),
 
-                        new (
-                            Literal1: Knows(x, y),
-                            Literal2: Knows(john, jane),
-                            InitialSubstitutions: new Dictionary<VariableReference, Term>()
-                            {
-                                [y] = jane,
-                            },
-                            ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
-                            {
-                                [x] = john,
-                                [y] = jane,
-                            },
-                            ExpectedUnified: Knows(john, jane)),
+                new (
+                    Literal1: Knows(x, y),
+                    Literal2: Knows(john, jane),
+                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    {
+                        [y] = jane,
+                    },
+                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    {
+                        [x] = john,
+                        [y] = jane,
+                    },
+                    ExpectedUnified: Knows(john, jane)),
             })
             .When(tc =>
             {
@@ -194,7 +194,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             })
             .When(tc =>
             {
-                (bool returnValue, VariableSubstitution? unifier) result;
+                (bool returnValue, VariableSubstitution unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
                 result.returnValue = LiteralUnifier.TryUpdate(tc.Literal1, tc.Literal2, result.unifier);
                 return result;
