@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.Linq
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.LanguageIntegration
 {
     /// <summary>
     /// The natural numbers example domain from chapter 8 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.

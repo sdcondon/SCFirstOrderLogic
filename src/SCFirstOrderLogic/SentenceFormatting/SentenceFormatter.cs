@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
 {
     /// <summary>
     /// Temporary..
-    /// Will do while I figure out what I need (formatprovider, ToString implementations in inidividual classes, ...?).
+    /// Will do while I figure out what I need (formatprovider, ToString implementations in individual classes, ...?).
     /// Will ultimately want something that is more intelligent with brackets (i.e. drops them where not needed), too.
     /// </summary>
     public class SentenceFormatter

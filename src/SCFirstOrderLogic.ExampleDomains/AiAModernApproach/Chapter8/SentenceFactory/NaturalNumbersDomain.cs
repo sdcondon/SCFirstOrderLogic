@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8
+namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.SentenceFactory
 {
     /// <summary>
     /// The natural numbers example domain from chapter 8 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
@@ -34,7 +34,7 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8
         /// <summary>
         /// Gets the fundamental axioms of the natural numbers domain.
         /// </summary>
-        public static IReadOnlyCollection<Sentence> Axioms { get; } 
+        public static IReadOnlyCollection<Sentence> Axioms { get; }
 
         public static Constant Zero { get; } = new Constant(nameof(Zero));
 

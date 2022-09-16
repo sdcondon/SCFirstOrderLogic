@@ -1,7 +1,5 @@
 ﻿using SCFirstOrderLogic.SentenceFormatting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation
 {
@@ -44,6 +42,15 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             Predicate = predicate;
             IsNegated = isNegated;
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="CNFLiteral"/> class that is not negated.
+        /// </summary>
+        /// <param name="predicate">The atomic sentence to which this literal refers.</param>
+        public CNFLiteral(Predicate predicate)
+            : this(predicate, false)
+        {
         }
 
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
-using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9;
-using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
+using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.SentenceFactory;
+using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.SentenceFactory.CrimeDomain;
 
 namespace SCFirstOrderLogic.Inference.Chaining
 {
