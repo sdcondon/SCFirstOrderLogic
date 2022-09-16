@@ -95,7 +95,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             StandardisedVariableSymbol GetOrAddNewSymbol(StandardisedVariableSymbol oldSymbol)
             {
-                if (!mapping.TryGetValue(oldSymbol, out var newSymbol))
+                if (!mapping!.TryGetValue(oldSymbol, out var newSymbol))
                 {
                     newSymbol = mapping[oldSymbol] = new StandardisedVariableSymbol(oldSymbol.OriginalVariableScope, oldSymbol.OriginalSentence);
                 }
