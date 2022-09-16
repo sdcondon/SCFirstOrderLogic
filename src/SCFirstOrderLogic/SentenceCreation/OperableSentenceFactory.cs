@@ -101,6 +101,14 @@ namespace SCFirstOrderLogic.SentenceCreation
         public static OperableSentence Iff(OperableSentence left, OperableSentence right) =>
             new OperableEquivalence(left, right);
 
+        /// <summary>
+        /// Shorthand factory method for a new <see cref="OperableVariableDeclaration"/> instance.
+        /// </summary>
+        /// <param name="symbol">The symbol of the variable.</param>>
+        /// <returns>A new <see cref="OperableVariableDeclaration"/> instance.</returns>
+        public static OperableVariableDeclaration Var(object symbol) =>
+            new OperableVariableDeclaration(symbol);
+
         #region VariableDeclarations
         //// I'm still unconvinced that these properties are a good idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
 

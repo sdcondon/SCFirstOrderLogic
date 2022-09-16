@@ -12,10 +12,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
 {
     /// <summary>
     /// Query implementation used by <see cref="SimpleBackwardChainingKnowledgeBase"/>.
-    /// <para/>
-    /// Problematic because it doesn't recurse across conjuncts - meaning that we don't try out different following conjunct bindings
-    /// for each possible solution for a given conjunct. No test case that articulates this at the time of writing -
-    /// but note the extra binding (unused) that appears in some of the tests..
     /// </summary>
     public class SimpleBackwardChainingQuery : IQuery
     {
@@ -31,7 +27,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         /// <inheritdoc />
-        // TODO-BUG: will be immediately true need to think about how best to think about "IsComplete" when query execution
+        // TODO-BUG: will be immediately true. Need to think about how best to think about "IsComplete" when query execution
         // is an iterator method for proofs? Should IsComplete actually not be part of the interface?
         public bool IsComplete => proofs != null; 
 

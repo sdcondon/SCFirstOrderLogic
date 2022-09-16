@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.Chaining
 {
     /// <summary>
-    /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm.
+    /// An implementation of <see cref="IKnowledgeBase"/> that uses a (depth-first) backward chaining algorithm.
     /// <para/>
     /// For now this is VERY basic - just an implementation of what is found in figure 9.6 of "Artificial Intelligence: A Modern Approach".
     /// Would be nice to at least bring it up to comparability with the <see cref="SimpleResolutionKnowledgeBase"/> implementation - 
@@ -17,6 +17,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// </summary>
     public class SimpleBackwardChainingKnowledgeBase : IKnowledgeBase
     {
+        // TODO: what if large. At some point add a clause store equivalent..
         private readonly Dictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol = new();
 
         /// <inheritdoc />

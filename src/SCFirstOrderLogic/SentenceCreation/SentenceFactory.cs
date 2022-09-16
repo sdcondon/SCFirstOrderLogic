@@ -144,6 +144,14 @@
         public static Sentence AreEqual(Term left, Term right) =>
             new Predicate(EqualitySymbol.Instance, left, right);
 
+        /// <summary>
+        /// Shorthand factory method for a new <see cref="VariableDeclaration"/> instance.
+        /// </summary>
+        /// <param name="symbol">The symbol of the variable.</param>>
+        /// <returns>A new <see cref="VariableDeclaration"/> instance.</returns>
+        public static VariableDeclaration Var(object symbol) =>
+            new VariableDeclaration(symbol);
+
         #region VariableDeclarations
         //// I'm still unconvinced that these properties are a good idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
 

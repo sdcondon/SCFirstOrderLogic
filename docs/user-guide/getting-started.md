@@ -14,7 +14,7 @@ Obviously the first challenge is to write sentences. This can be done in several
 
 ### Writing Sentences Manually
 
-The most basic way to express this is to manually compose a bunch of instances of the types found in the top-level `SCFirstOrderLogic` namespace, like this:
+The most basic way to express this is to manually compose instances of the types found in the top-level `SCFirstOrderLogic` namespace into a tree structure, like this:
 
 ```csharp
 using static SCFirstOrderLogic;
@@ -52,9 +52,10 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, And(I
 ```
 
 Things to notice about this one:
-* The factory provides ForAll and ThereExists methods for creating quantifications. There are overloads for declaring multiple variables at once.
-* The factory provides `A` through `Z` as properties that return variable definitions with these letters as their symbol.
+* The factory provides `ForAll` and `ThereExists` methods for creating quantifications. There are overloads for declaring multiple variables at once.
+* The factory provides `If` and `Iff` methods for creation implications and equivalences, respectively.
 * The factory provides methods for conjunctions (`And`), disjunctions (`Or`) and negations (`Not`). See the next two examples if you really want to use C# operators for these.
+* The factory provides `A` through `Z` as properties that return variable definitions with these letters as their symbol.
 
 ### Writing Sentences with OperableSentenceFactory
 
@@ -74,6 +75,7 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, IsPar
 
 Things to notice about this one:
 * We've only used & (for a conjunction) here. | works for disjunctions, and ! for negations.
+* With the exception of the operators, other aspects of this factory are the same as `SentenceFactory`. `ThereExists`, `ForAll`, `Iff`, `If` and variable declarations
 * The only proviso is that the supporting methods for domain specific elements now need to use `Operable..` as their return type - which is easy as these types are 
 implicitly convertible from the normal equivalents.
 
