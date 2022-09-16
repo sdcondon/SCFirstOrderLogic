@@ -55,7 +55,7 @@ Things to notice about this one:
 * The factory provides `ForAll` and `ThereExists` methods for creating quantifications. There are overloads for declaring multiple variables at once.
 * The factory provides `If` and `Iff` methods for creating implications and equivalences, respectively.
 * The factory provides methods for conjunctions (`And`), disjunctions (`Or`) and negations (`Not`). See the next two examples if you really want to use C# operators for these.
-* The factory provides `A` through `Z` as properties that return variable definitions with these letters as their symbol.
+* The factory provides `A` through `Z` as properties that return variable declarations with these letters as their symbol.
 
 ### Writing Sentences with OperableSentenceFactory
 
