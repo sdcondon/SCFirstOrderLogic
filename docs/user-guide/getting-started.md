@@ -66,8 +66,8 @@ using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
 // Helper methods for your predicates (and functions) are recommended:
-OperablePredicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
-OperablePredicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
+OperablePredicate IsGrandparent(OperableTerm grandparent, OperableTerm grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
+OperablePredicate IsParent(OperableTerm parent, OperableTerm child) => new Predicate(nameof(IsParent), parent, child);
 
 // This is probably the most succinct of the approaches:
 var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, IsParent(G, P) & IsParent(P, C))));

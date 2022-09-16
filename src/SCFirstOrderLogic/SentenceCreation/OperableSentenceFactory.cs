@@ -102,6 +102,15 @@ namespace SCFirstOrderLogic.SentenceCreation
             new OperableEquivalence(left, right);
 
         /// <summary>
+        /// Shorthand factory method for a new <see cref="OperablePredicate"/> instance with the <see cref="EqualitySymbol.Instance"/> symbol.
+        /// </summary>
+        /// <param name="left">The left-hand operand of the equality.</param>
+        /// <param name="right">The right-hand operand of the equality.</param>
+        /// <returns>A new <see cref="OperablePredicate"/> instance.</returns>
+        public static OperableSentence AreEqual(OperableTerm left, OperableTerm right) =>
+            new OperablePredicate(EqualitySymbol.Instance, left, right);
+
+        /// <summary>
         /// Shorthand factory method for a new <see cref="OperableVariableDeclaration"/> instance.
         /// </summary>
         /// <param name="symbol">The symbol of the variable.</param>>
