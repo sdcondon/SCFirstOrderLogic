@@ -156,7 +156,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         }
                     }
                 }
-
+ 
                 kb.AddRange(@new);
             }
             while (@new.Count > 0);
@@ -177,7 +177,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         // I'm not a huge fan of recursion when trying to write "learning" code (because its not particularly readable) - but I'll admit it is handy here.
-        // May revisit this - perhaps when I try to make the whole thing executable step-by-stepfor greater observability - can step through without debugging).
+        // May revisit this - perhaps when I try to make the whole thing executable step-by-step for greater observability - can step through without debugging).
         private IEnumerable<ProofStep> MatchWithKnownFacts(IEnumerable<Predicate> conjuncts, ProofStep proofStep)
         {
             if (!conjuncts.Any())
@@ -280,7 +280,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             public CNFDefiniteClause Rule { get; }
 
             /// <summary>
-            /// The known unit clauses that were used to make this step.
+            /// The known predicates that were used to make this step.
             /// </summary>
             public IEnumerable<Predicate> KnownPredicates { get; }
 

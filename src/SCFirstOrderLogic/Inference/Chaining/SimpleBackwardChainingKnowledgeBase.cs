@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// <para/>
     /// For now this is VERY basic - just an implementation of what is found in figure 9.6 of "Artificial Intelligence: A Modern Approach".
     /// Would be nice to at least bring it up to comparability with the <see cref="SimpleResolutionKnowledgeBase"/> implementation - 
-    /// with explanation methods and perhaps a little configurability.
+    /// at least add in some support for out-of-memory clause storage.
     /// </summary>
     public class SimpleBackwardChainingKnowledgeBase : IKnowledgeBase
     {

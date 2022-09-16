@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a forward chaining algorithm.
     /// <para/>
-    /// VERY simple (read - inefficient) implementation that differs from the implementation in figure 9.6 of
+    /// This is a VERY simple (read - inefficient) implementation that differs from the implementation in figure 9.3 of
     /// "Artificial Intelligence: A Modern Approach" only by the inclusion of proof tree retrieval.
     /// </summary>
     public sealed class SimpleForwardChainingKnowledgeBase : IKnowledgeBase

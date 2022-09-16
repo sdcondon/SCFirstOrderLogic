@@ -6,8 +6,10 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceFormatting
 {
     /// <summary>
-    /// Temporary..
-    /// Will do while I figure out what I need (formatprovider, ToString implementations in individual classes, ...?).
+    /// This class provides functionality for rendering <see cref="Sentence"/> instances (and <see cref="CNFSentence"/> instances) in the standard first-order logic syntax.
+    /// Using a single <see cref="SentenceFormatter"/> instance guarantees unique (and customisable) labelling of standardised variables and Skolem functions for all sentences formatted with the instance.
+    /// <para/>
+    /// NB: fairly likely to change in future. This implementation will suffice while I figure out what I want (IFormatProvider and ICustomFormatter/s, probably).
     /// Will ultimately want something that is more intelligent with brackets (i.e. drops them where not needed), too.
     /// </summary>
     public class SentenceFormatter
@@ -88,7 +90,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="conjunction">The conjunction to be formatted.</param>
         /// <returns>A string representation of the given conjunction.</returns>
-        private string Format(Conjunction conjunction) =>
+        public string Format(Conjunction conjunction) =>
             $"[{Format(conjunction.Left)} ∧ {Format(conjunction.Right)}]";
 
         /// <summary>
@@ -204,7 +206,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
             }
             else
             {
-                // Suppose we *could* fall back on the ToString of the underlying variable symbol here.
+                // TODO: I suppose we *could* fall back on the ToString of the underlying variable symbol here.
                 // But obviously then we lose the unique representation guarentee, and it should be relatively
                 // easy to use essentially infinite label sets - so I'd rather just fail.
                 throw new InvalidOperationException("Skolem function label set is exhausted");
@@ -247,7 +249,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
             }
             else
             {
-                // Suppose we *could* fall back on the ToString of the underlying variable symbol here.
+                // TODO: I suppose we *could* fall back on the ToString of the underlying variable symbol here.
                 // But obviously then we lose the unique representation guarantee, and it should be relatively
                 // easy to use essentially infinite label sets - so I'd rather just fail.
                 throw new InvalidOperationException("Skolem function label set is exhausted");

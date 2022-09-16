@@ -74,7 +74,7 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, IsPar
 ```
 
 Things to notice about this one:
-* We've only used & (for a conjunction) here. | works for disjunctions, and ! for negations.
+* We've only used `&` (for a conjunction) above, but `|` works for disjunctions, and `!` for negations.
 * Other aspects of this factory are the same as `SentenceFactory` - it also offers `ThereExists`, `ForAll`, `Iff`, `If` and single-letter variable declaration properties.
 * The only proviso is that the supporting methods for domain specific elements now need to use `Operable..` as their return type - which is easy as these types are 
 implicitly convertible from the normal equivalents.

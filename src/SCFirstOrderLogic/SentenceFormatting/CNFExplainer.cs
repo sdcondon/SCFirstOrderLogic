@@ -6,7 +6,7 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceFormatting
 {
     /// <summary>
-    /// Utility logic for human-readable explanations of CNF clauses - notably, the CNF terms (standardised variables and Skolem functions) within them.
+    /// Utility logic for human-readable explanations of CNF clauses - notably, the normalisation terms (standardised variables and Skolem functions) within them.
     /// </summary>
     public class CNFExplainer
     {
@@ -22,10 +22,12 @@ namespace SCFirstOrderLogic.SentenceFormatting
         }
 
         /// <summary>
-        /// Returns an enumeration of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
+        /// Returns an enumerable of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
         /// That is, standardised variables and Skolem functions. Intended to be useful in creating a "legend" of such terms.
+        /// <para/>
+        /// TODO-BREAKINGCHANGE: Nothing to do with formatting. Doesn't belong here.. Perhaps CNFExamination class in SentenceManipulation?
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An enumerable of the (distinct) standardised variable references and Skolem functions found within the clauses.</returns>
         public static IEnumerable<Term> FindNormalisationTerms(params CNFClause[] clauses)
         {
             var returnedAlready = new List<Term>();
@@ -87,7 +89,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
             }
             else
             {
-                throw new ArgumentException("The provided term is not a standardised variable or Skolem function", nameof(term));
+                throw new ArgumentException("The provided term is not a standardised variable reference or Skolem function", nameof(term));
             }
         }
     }
