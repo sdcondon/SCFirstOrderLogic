@@ -2,6 +2,8 @@
 
 # SCFirstOrderLogic
 
+[![NuGet version (SCFirstOrderLogic)](https://img.shields.io/nuget/v/SCFirstOrderLogic.svg?style=flat-square)](https://www.nuget.org/packages/SCFirstOrderLogic/) [![NuGet downloads (SCFirstOrderLogic)](https://img.shields.io/nuget/dt/SCFirstOrderLogic.svg?style=flat-square)](https://www.nuget.org/packages/SCFirstOrderLogic/)
+
 Basic but fully functional and documented [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) implementations. Includes:
 
 * Implementations of both raw and CNF sentence representation. Multiple ways of instantiating raw sentences, including a language-integrated approach that allows (the domain to be modelled as an IEnumerable<T> and) sentences to be provided as lambda expressions.
