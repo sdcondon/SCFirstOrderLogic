@@ -2,7 +2,7 @@
 
 # SCFirstOrderLogic
 
-Basic but fully XML-documented [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) implementations. Includes:
+Basic but fully functional and documented [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) implementations. Includes:
 
 * Implementations of both raw and CNF sentence representation. Multiple ways of instantiating raw sentences, including a language-integrated approach that allows (the domain to be modelled as an IEnumerable<T> and) sentences to be provided as lambda expressions.
 * Knowledge base implementations that, while using very simple versions of their respective algorithms, do expose properties for the retrieval of proof details.
