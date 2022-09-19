@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// <summary>
     /// Sub-type of <see cref="CNFClause"/> that adds methods and properties appropriate for definite clauses.
     /// <para/>
-    /// A useful class, no doubt, and one that at some point might get "promoted" to live in the SentenceManipulation namespace
+    /// TODO-BREAKING: A useful class, no doubt, and one that at some point might get "promoted" to live in the SentenceManipulation namespace
     /// alongside the other CNF representation types. HOWEVER, not 100% sure I'm happy with it just yet, so leaving it here for now.
     /// </summary>
     public class CNFDefiniteClause : CNFClause

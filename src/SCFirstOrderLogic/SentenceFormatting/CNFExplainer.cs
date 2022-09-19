@@ -30,11 +30,24 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <returns>An enumerable of the (distinct) standardised variable references and Skolem functions found within the clauses.</returns>
         public static IEnumerable<Term> FindNormalisationTerms(params CNFClause[] clauses)
         {
+            var predicates = clauses.SelectMany(c => c.Literals).Select(l => l.Predicate);
+            return FindNormalisationTerms(predicates);
+        }
+
+        /// <summary>
+        /// Returns an enumerable of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
+        /// That is, standardised variables and Skolem functions. Intended to be useful in creating a "legend" of such terms.
+        /// <para/>
+        /// TODO-BREAKING: Nothing to do with formatting. Doesn't belong here.. Perhaps CNFExamination class in SentenceManipulation?
+        /// </summary>
+        /// <returns>An enumerable of the (distinct) standardised variable references and Skolem functions found within the clauses.</returns>
+        public static IEnumerable<Term> FindNormalisationTerms(IEnumerable<Predicate> predicates)
+        {
             var returnedAlready = new List<Term>();
 
-            foreach (var literal in clauses.SelectMany(c => c.Literals))
+            foreach (var predicate in predicates)
             {
-                foreach (var topLevelTerm in literal.Predicate.Arguments)
+                foreach (var topLevelTerm in predicate.Arguments)
                 {
                     var stack = new Stack<Term>();
                     stack.Push(topLevelTerm);
@@ -73,7 +86,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <summary>
         /// Outputs a human-readble string for a given normalisaion term (standardised variable or Skolem function). Intended for use with <see cref="FindNormalisationTerms(CNFClause[])"/>.
         /// <para/>
-        /// TODO-LOCALISATION: (if I get bored or this ever takes off for whtaever reason): Allow for localisation and allow specification of culture in ctor (optional - default to current culture).
+        /// TODO-LOCALISATION: (if I get bored or this ever takes off for whatever reason): Allow for localisation and allow specification of culture in ctor (optional - default to current culture).
         /// </summary>
         /// <param name="term">The term to examine.</param>
         /// <returns>A human readable string that completes the sentence "{term} is .."</returns>

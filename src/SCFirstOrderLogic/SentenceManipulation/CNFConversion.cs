@@ -33,6 +33,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             // TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
             // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong.
             // Should we validate here..? Or handle on the assumption that they are universally quantified?
+            // Trying to write some tests for this should help in establishing 'nice' behaviour.
             // Also should probably complain when nested definitions uses the same symbol (i.e. symbols that are equal).
             sentence = new VariableStandardisation(sentence).ApplyTo(sentence);
 
@@ -82,7 +83,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 {
                     // Should we throw if the variable being standardised is already standardised? Or return it unchanged?
                     // Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-                    // TODO: This creation of implicit scope is hacky. In particular, think about the inconsistency when there are multiple. Is this a problem? Ponder me.
+                    // TODO?: This creation of implicit scope is hacky. In particular, think about the inconsistency when there are multiple. Is this a problem? Ponder me.
                     var implicitScope = new UniversalQuantification(variableDeclaration, rootSentence);
                     standardisedVariableDeclaration = mapping[variableDeclaration] = new VariableDeclaration(new StandardisedVariableSymbol(implicitScope, rootSentence));
                 }
@@ -264,8 +265,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 {
                     // Apply distribution of ∨ over ∧: (α ∨ (β ∧ γ)) ≡ ((α ∨ β) ∧ (α ∨ γ))
                     // NB the "else if" below is fine (i.e. we don't need a seperate case for if they are both &&s)
-                    // since if b.Left is also an &&, well end up distributing over it once we recurse down as far
-                    // as the Expression.OrElses we create here.
+                    // since if b.Left is also an &&, we'll end up distributing over it once we recurse down as far
+                    // as the Disjunctions we create here.
                     sentence = new Conjunction(
                         new Disjunction(disjunction.Left, cRight.Left),
                         new Disjunction(disjunction.Left, cRight.Right));

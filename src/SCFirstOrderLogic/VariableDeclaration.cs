@@ -45,7 +45,7 @@ namespace SCFirstOrderLogic
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
         /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
         /// <para/>
-        /// TODO-BREAKING: Worth noting I also have minor regrets calling this symbol. It should probably be called Identifier..
+        /// TODO-BREAKING: Worth noting I also have minor regrets calling this 'Symbol'. It should probably be called 'Identifier'.
         /// </remarks>
         public object Symbol { get; }
 

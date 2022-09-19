@@ -85,8 +85,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     explanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
                     explanation.AppendLine("}");
 
-                    // TODO: Ugh, unreadable. More type fluidity. Or just more overloads of FindMormalisationTerms..
-                    foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.KnownPredicates.Select(p => new CNFClause(new CNFLiteral[] { p })).Append(new CNFClause(new CNFLiteral[] { UsefulPredicates[i] })).ToArray()))
+                    foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.KnownPredicates.Append(UsefulPredicates[i])))
                     {
                         explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
                     }

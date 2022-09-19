@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// </summary>
     public sealed class SimpleForwardChainingKnowledgeBase : IKnowledgeBase
     {
-        // TODO: what if large. At some point add a clause store equivalent..
+        // TODO-EXTENSIBILITY: what if large. At some point add a clause store equivalent..
         private readonly List<CNFDefiniteClause> clauses = new ();
 
         /// <inheritdoc />

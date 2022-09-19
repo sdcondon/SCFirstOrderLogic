@@ -90,13 +90,13 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
         public static bool TryUpdateUnsafe(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
         {
-            if (x.IsNegated != y.IsNegated || !x.Predicate.Symbol.Equals(y.Predicate.Symbol))
+            if (x.IsNegated != y.IsNegated 
+                || !x.Predicate.Symbol.Equals(y.Predicate.Symbol)
+                || x.Predicate.Arguments.Count != y.Predicate.Arguments.Count)
             {
                 return false;
             }
 
-            // BUG: Makes the assumption that same symbol means same number of arguments.
-            // It is possible to confuse this algorithm by passing literals where that isn't true
             foreach (var args in x.Predicate.Arguments.Zip(y.Predicate.Arguments, (x, y) => (x, y)))
             {
                 if (!TryUpdate(args.x, args.y, unifier))
