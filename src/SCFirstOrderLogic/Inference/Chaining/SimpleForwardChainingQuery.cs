@@ -85,7 +85,8 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     explanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
                     explanation.AppendLine("}");
 
-                    foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.KnownPredicates.Select(p => new CNFClause(new CNFLiteral[] { p })).Append(new CNFClause(new CNFLiteral[] { UsefulPredicates[i] })).ToArray())) // TODO: UGH, awful. More type fluidity.
+                    // TODO: Ugh, unreadable. More type fluidity. Or just more overloads of FindMormalisationTerms..
+                    foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.KnownPredicates.Select(p => new CNFClause(new CNFLiteral[] { p })).Append(new CNFClause(new CNFLiteral[] { UsefulPredicates[i] })).ToArray()))
                     {
                         explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
                     }
@@ -287,7 +288,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             /// <summary>
             /// The substitution that is applied to the rule's conjuncts to make them match the known predicates.
             /// <para/>
-            /// TODO: Make VariableSubstitution readonly, and add MutableVariableSubstitution.
+            /// TODO-BREAKING: Make VariableSubstitution readonly, and add MutableVariableSubstitution.
             /// </summary>
             public VariableSubstitution Unifier { get; }
 

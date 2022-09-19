@@ -56,7 +56,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// </returns>
         public new CNFDefiniteClause Restandardize() => new CNFDefiniteClause(base.Restandardize());
 
-        // TODO: Messy, doesn't belong here. Perhaps add a Format(CNFDefiniteClause) method to SentenceFormatter.
+        // TODO-BREAKING: Messy, doesn't belong here. Perhaps add a Format(CNFDefiniteClause) method to SentenceFormatter.
         // BUT only if we end up moving this class into SentenceManipulation - otherwise is messy (ultimately circular) namespace dep.
         public string Format(SentenceFormatter formatter)
         {

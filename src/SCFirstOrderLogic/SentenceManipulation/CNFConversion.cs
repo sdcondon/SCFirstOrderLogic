@@ -82,7 +82,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 {
                     // Should we throw if the variable being standardised is already standardised? Or return it unchanged?
                     // Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-                    // TODO: This creation of implicit scope is hacky. IN particular, think about the inconsistency when there are multiple. Is this a problem? Ponder me.
+                    // TODO: This creation of implicit scope is hacky. In particular, think about the inconsistency when there are multiple. Is this a problem? Ponder me.
                     var implicitScope = new UniversalQuantification(variableDeclaration, rootSentence);
                     standardisedVariableDeclaration = mapping[variableDeclaration] = new VariableDeclaration(new StandardisedVariableSymbol(implicitScope, rootSentence));
                 }

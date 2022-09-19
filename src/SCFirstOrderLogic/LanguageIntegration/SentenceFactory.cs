@@ -138,10 +138,10 @@ namespace SCFirstOrderLogic.LanguageIntegration
             return TryCreateSentence<TDomain, TElement>(lambda.Body, out sentence);
         }
 
+        // TODO-QOL: might be nice to return more info than just "false" on failure. that is, return an InstantionOutcome or somesuch instead of a bool
         private static bool TryCreateSentence<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
         {
-            // TODO-QOL: might be nice to return more info than just "false" on failure.
             return
                 // Complex sentences:
                 TryCreateNegation<TDomain, TElement>(expression, out sentence)
@@ -181,14 +181,14 @@ namespace SCFirstOrderLogic.LanguageIntegration
             if (typeof(TElement).IsAssignableFrom(expression.Type)) // Constants must be elements of the domain
             {
                 if (expression is MemberExpression memberExpr
-                    && typeof(TDomain).IsAssignableFrom(memberExpr.Expression?.Type)) // BUG-MINOR: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
+                    && typeof(TDomain).IsAssignableFrom(memberExpr.Expression?.Type)) // BUG-MINOR: Should check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                 {
                     // TElement-valued property access of the domain is interpreted as a constant.
                     term = new Constant(new MemberConstantSymbol(memberExpr.Member));
                     return true;
                 }
                 else if (expression is MethodCallExpression methodCallExpr
-                    && typeof(TDomain).IsAssignableFrom(methodCallExpr.Object?.Type) // BUG-MINOR: Do we actually need to check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
+                    && typeof(TDomain).IsAssignableFrom(methodCallExpr.Object?.Type) // BUG-MINOR: Should check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                     && methodCallExpr.Arguments.Count == 0)
                 {
                     // TElement-valued parameterless method call of the domain is interpreted as a constant.

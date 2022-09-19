@@ -27,8 +27,10 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         /// <inheritdoc />
-        // TODO-BUG: will be immediately true. Need to think about how best to think about "IsComplete" when query execution
-        // is an iterator method for proofs? Should IsComplete actually not be part of the interface?
+        // BUG: will be immediately true. Need to think about how best to think about "IsComplete" when query execution
+        // is an iterator method for proofs? Should IsComplete actually not be part of the interface? At the very least, clarify
+        // meaning in interface docs ("IsComplete indicates that you can retrieve result without a delay.." vs "IsComplete means
+        // that all work is done").
         public bool IsComplete => proofs != null; 
 
         /// <inheritdoc />
