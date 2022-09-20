@@ -19,7 +19,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Visits a <see cref="Conjunction"/> instance.
         /// The default implementation just visits both of the sub-sentences.
         /// </summary>
-        /// <param name="conjunction">The conjunction instance to visit.</param>
+        /// <param name="conjunction">The <see cref="Conjunction"/> instance to visit.</param>
         public virtual void Visit(Conjunction conjunction)
         {
             Visit(conjunction.Left);
