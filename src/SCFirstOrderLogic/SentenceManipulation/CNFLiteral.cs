@@ -5,10 +5,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Representation of a literal (i.e. an atomic sentence or a negated atomic sentence) of first-order logic within a sentence in conjunctive normal form.
-    /// </summary>
-    /// <remarks>
+    /// <para/>
     /// NB: Yes, literals are a meaningful notion regardless of CNF, but we only use THIS type within our CNF representation. Hence this type being called CNFLiteral and residing in this namespace.
-    /// </remarks>
+    /// <para/>
+    /// TODO-BREAKING: Having looked at consuming this library now, this was a mistake - it's annoying and counterintuitive given that using literals is going to be at least as common as using "raw" sentences.
+    /// Tempted to move all the CNF representation stuff up into root namespace - and rename CNFLiteral to Literal in the process.
+    /// </summary>
     public class CNFLiteral : IEquatable<CNFLiteral>
     {
         /// <summary>

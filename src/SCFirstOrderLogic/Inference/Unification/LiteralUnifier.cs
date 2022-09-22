@@ -8,6 +8,9 @@ namespace SCFirstOrderLogic.Inference.Unification
     /// <summary>
     /// Utility class for creating unifiers for literals.
     /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
+    /// <para/>
+    /// TODO-BREAKING: Now that I'm actually looking at consuming this library, I can't help but feel that Unification namespace should be under SentenceManipulation, not Inference -
+    /// because I want to use unification, but I'm not doing inference..
     /// </summary>
     public static class LiteralUnifier
     {

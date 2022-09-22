@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SCFirstOrderLogic.SentenceManipulation
+﻿namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state.
