@@ -1,18 +1,13 @@
-﻿using SCFirstOrderLogic.SentenceFormatting;
-using SCFirstOrderLogic.SentenceManipulation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic
 {
     /// <summary>
     /// Sub-type of <see cref="CNFClause"/> that adds methods and properties appropriate for definite clauses.
-    /// <para/>
-    /// TODO-BREAKING: A useful class, no doubt, and one that at some point might get "promoted" to live in the SentenceManipulation namespace
-    /// alongside the other CNF representation types. HOWEVER, not 100% sure I'm happy with it just yet, so leaving it here for now.
     /// </summary>
-    public class CNFDefiniteClause : CNFClause
+    public sealed class CNFDefiniteClause : CNFClause
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CNFDefiniteClause"/> that is a copy of an existing <see cref="CNFClause"/>.
@@ -55,19 +50,5 @@ namespace SCFirstOrderLogic.Inference.Chaining
         /// references are replaced with new ones.
         /// </returns>
         public new CNFDefiniteClause Restandardize() => new CNFDefiniteClause(base.Restandardize());
-
-        // TODO-BREAKING: Messy, doesn't belong here. Perhaps add a Format(CNFDefiniteClause) method to SentenceFormatter.
-        // BUT only if we end up moving this class into SentenceManipulation - otherwise is messy (ultimately circular) namespace dep.
-        public string Format(SentenceFormatter formatter)
-        {
-            if (IsUnitClause)
-            {
-                return formatter.Format(Consequent);
-            }
-            else
-            {
-                return $"{string.Join(" ∧ ", Conjuncts.Select(c => formatter.Format(c)))} ⇒ {formatter.Format(Consequent)}";
-            }
-        }
     }
 }

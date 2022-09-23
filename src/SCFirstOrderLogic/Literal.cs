@@ -1,23 +1,20 @@
 ﻿using SCFirstOrderLogic.SentenceFormatting;
 using System;
 
-namespace SCFirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic
 {
     /// <summary>
-    /// Representation of a literal (i.e. an atomic sentence or a negated atomic sentence) of first-order logic within a sentence in conjunctive normal form.
+    /// Representation of a literal (i.e. an atomic sentence or a negated atomic sentence) of first-order logic.
     /// <para/>
-    /// NB: Yes, literals are a meaningful notion regardless of CNF, but we only use THIS type within our CNF representation. Hence this type being called CNFLiteral and residing in this namespace.
-    /// <para/>
-    /// TODO-BREAKING: Having looked at consuming this library now, this was a mistake - it's annoying and counterintuitive given that using literals is going to be at least as common as using "raw" sentences.
-    /// Tempted to move all the CNF representation stuff up into root namespace - and rename CNFLiteral to Literal in the process.
+    /// TODO-DOCS: Complete this: note that this type is NOT a subtype of <see cref="Sentence"/>.
     /// </summary>
-    public class CNFLiteral : IEquatable<CNFLiteral>
+    public sealed class Literal : IEquatable<Literal>
     {
         /// <summary>
-        /// Initialises a new instance of the <see cref="CNFLiteral"/> class.
+        /// Initialises a new instance of the <see cref="Literal"/> class.
         /// </summary>
         /// <param name="sentence">The literal, represented as a <see cref="Sentence"/> object. An exception will be thrown if it is neither a predicate nor a negated predicate.</param>
-        public CNFLiteral(Sentence sentence)
+        public Literal(Sentence sentence)
         {
             if (sentence is Negation negation)
             {
@@ -36,21 +33,21 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="CNFLiteral"/> class.
+        /// Initialises a new instance of the <see cref="Literal"/> class.
         /// </summary>
         /// <param name="predicate">The atomic sentence to which this literal refers.</param>
         /// <param name="isNegated">A value indicating whether the atomic sentence is negated.</param>
-        public CNFLiteral(Predicate predicate, bool isNegated)
+        public Literal(Predicate predicate, bool isNegated)
         {
             Predicate = predicate;
             IsNegated = isNegated;
         }
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="CNFLiteral"/> class that is not negated.
+        /// Initialises a new instance of the <see cref="Literal"/> class that is not negated.
         /// </summary>
         /// <param name="predicate">The atomic sentence to which this literal refers.</param>
-        public CNFLiteral(Predicate predicate)
+        public Literal(Predicate predicate)
             : this(predicate, false)
         {
         }
@@ -74,7 +71,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Constructs and returns a literal that is the negation of this one.
         /// </summary>
         /// <returns>A literal that is the negation of this one.</returns>
-        public CNFLiteral Negate() => new(Predicate, !IsNegated);
+        public Literal Negate() => new(Predicate, !IsNegated);
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -88,10 +85,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public override string ToString() => new SentenceFormatter().Format(this);
 
         /// <inheritdoc />
-        public override bool Equals(object? obj) => obj is CNFLiteral literal && Equals(literal);
+        public override bool Equals(object? obj) => obj is Literal literal && Equals(literal);
 
         /// <inheritdoc />
-        public bool Equals(CNFLiteral? other)
+        public bool Equals(Literal? other)
         {
             return other != null && other.Predicate.Equals(Predicate) && other.IsNegated.Equals(IsNegated);
         }
@@ -109,14 +106,14 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
 
         /// <summary>
-        /// Defines the (explicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFLiteral"/>. NB: This conversion is explicit because it can fail (if the sentence isn't actually a literal).
+        /// Defines the (explicit) conversion of a <see cref="Sentence"/> instance to a <see cref="Literal"/>. NB: This conversion is explicit because it can fail (if the sentence isn't actually a literal).
         /// </summary>
         /// <param name="sentence">The sentence to convert.</param>
-        public static explicit operator CNFLiteral(Sentence sentence)
+        public static explicit operator Literal(Sentence sentence)
         {
             try
             {
-                return new CNFLiteral(sentence);
+                return new Literal(sentence);
             }
             catch (ArgumentException e)
             {
@@ -125,9 +122,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
-        /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="CNFLiteral"/>. NB: This conversion is implicit because it is always valid and results in no loss of information.
+        /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="Literal"/>. NB: This conversion is implicit because it is always valid and results in no loss of information.
         /// </summary>
         /// <param name="predicate">The predicate to convert.</param>
-        public static implicit operator CNFLiteral(Predicate predicate) => new(predicate);
+        public static implicit operator Literal(Predicate predicate) => new(predicate);
     }
 }

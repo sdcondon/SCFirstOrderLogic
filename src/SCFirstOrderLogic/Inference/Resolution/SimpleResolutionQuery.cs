@@ -1,6 +1,5 @@
 ﻿using SCFirstOrderLogic.InternalUtilities;
 using SCFirstOrderLogic.SentenceFormatting;
-using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -115,7 +114,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     explanation.Append(string.Join(", ", resolution.Substitution.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
                     explanation.AppendLine("}");
 
-                    foreach (var term in CNFExplainer.FindNormalisationTerms(DiscoveredClauses[i], resolution.Clause1, resolution.Clause2))
+                    foreach (var term in CNFExaminer.FindNormalisationTerms(DiscoveredClauses[i], resolution.Clause1, resolution.Clause2))
                     {
                         explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
                     }

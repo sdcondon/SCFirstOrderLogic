@@ -1,16 +1,13 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace SCFirstOrderLogic.Inference.Unification
+namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     /// <summary>
     /// Utility class for creating unifiers for literals.
     /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
-    /// <para/>
-    /// TODO-BREAKING: Now that I'm actually looking at consuming this library, I can't help but feel that Unification namespace should be under SentenceManipulation, not Inference -
-    /// because I want to use unification, but I'm not doing inference..
     /// </summary>
     public static class LiteralUnifier
     {
@@ -21,7 +18,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryCreate(CNFLiteral x, CNFLiteral y, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
+        public static bool TryCreate(Literal x, Literal y, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
         {
             var unifierAttempt = new VariableSubstitution();
 
@@ -42,7 +39,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="unifier">The unifier to update. Will be uodated to refer to a new unifier on success, or be unchanged on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryUpdate(CNFLiteral x, CNFLiteral y, ref VariableSubstitution unifier)
+        public static bool TryUpdate(Literal x, Literal y, ref VariableSubstitution unifier)
         {
             var updatedUnifier = new VariableSubstitution(unifier);
 
@@ -62,7 +59,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="unifier">The unifier to update. Will be unchanged on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryUpdate(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
+        public static bool TryUpdate(Literal x, Literal y, VariableSubstitution unifier)
         {
             var updatedUnifier = new VariableSubstitution(unifier);
 
@@ -84,14 +81,14 @@ namespace SCFirstOrderLogic.Inference.Unification
         }
 
         /// <summary>
-        /// Attempts to update a unifier (in place) so that it (also) unifies two given literals. Faster than <see cref="TryUpdate(CNFLiteral, CNFLiteral, VariableSubstitution)"/>,
+        /// Attempts to update a unifier (in place) so that it (also) unifies two given literals. Faster than <see cref="TryUpdate(Literal, Literal, VariableSubstitution)"/>,
         /// but can partially update the subsitution on failure. Use only when you don't care about the substitution being modified if it fails.
         /// </summary>
         /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryUpdateUnsafe(CNFLiteral x, CNFLiteral y, VariableSubstitution unifier)
+        public static bool TryUpdateUnsafe(Literal x, Literal y, VariableSubstitution unifier)
         {
             if (x.IsNegated != y.IsNegated 
                 || !x.Predicate.Symbol.Equals(y.Predicate.Symbol)

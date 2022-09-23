@@ -1,5 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
-using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Unification;
 
 namespace SCFirstOrderLogic.Inference.Unification
 {
@@ -19,10 +19,10 @@ namespace SCFirstOrderLogic.Inference.Unification
         private static readonly Sentence YKnowsJane = Knows(john, jane);
         private static readonly Sentence YKnowsMotherOfY = Knows(john, jane);
 
-        private static readonly CNFLiteral JohnKnowsX_Literal = new(Knows(john, x));
-        private static readonly CNFLiteral JohnKnowsJane_Literal = new(Knows(john, jane));
-        private static readonly CNFLiteral YKnowsJane_Literal = new(Knows(y, jane));
-        private static readonly CNFLiteral YKnowsMotherOfY_Literal = new(Knows(y, Mother(y)));
+        private static readonly Literal JohnKnowsX_Literal = new(Knows(john, x));
+        private static readonly Literal JohnKnowsJane_Literal = new(Knows(john, jane));
+        private static readonly Literal YKnowsJane_Literal = new(Knows(y, jane));
+        private static readonly Literal YKnowsMotherOfY_Literal = new(Knows(y, Mother(y)));
 
         [Benchmark]
         public static bool Unify1_Actual() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);

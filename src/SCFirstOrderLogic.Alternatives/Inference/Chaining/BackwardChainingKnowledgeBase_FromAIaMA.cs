@@ -1,6 +1,7 @@
-﻿using SCFirstOrderLogic.Inference.Unification;
+﻿using SCFirstOrderLogic;
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Unification;
 using System.Text;
 
 namespace SCFirstOrderLogic.Inference.Chaining

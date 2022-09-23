@@ -1,15 +1,15 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace SCFirstOrderLogic.Inference.Unification
+namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     /// <summary>
     /// Extension methods pertaining to the unification of clauses.
     /// <para/>
     /// NB: Of course, these methods COULD just be added to <see cref="CNFClause"/>. It felt a little messy
-    /// to have CNFClause depend on code in the Inference namespace though. Perhaps a slightly idiosyncratic 
+    /// to have CNFClause depend on code in the SentenceManipulation namespace though. Perhaps a slightly idiosyncratic 
     /// design decision, but I'm sticking by it..
     /// </summary>
     public static class CNFClauseExtensions

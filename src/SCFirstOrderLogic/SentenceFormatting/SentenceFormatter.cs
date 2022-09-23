@@ -61,11 +61,28 @@ namespace SCFirstOrderLogic.SentenceFormatting
         public string Format(CNFClause clause) => string.Join(" ∨ ", clause.Literals.Select(l => Format(l)));
 
         /// <summary>
-        /// Returns a string representation of a given <see cref="CNFLiteral"/> instance.
+        /// Returns a string representation of a given <see cref="CNFDefiniteClause"/> instance.
+        /// </summary>
+        /// <param name="definiteClause">The clause to be formatted.</param>
+        /// <returns>A string representation of the given clause.</returns>
+        public string Format(CNFDefiniteClause definiteClause)
+        {
+            if (definiteClause.IsUnitClause)
+            {
+                return Format(definiteClause.Consequent);
+            }
+            else
+            {
+                return $"{ string.Join(" ∧ ", definiteClause.Conjuncts.Select(c => Format(c))) } ⇒ { Format(definiteClause.Consequent) }";
+            }
+        }
+
+        /// <summary>
+        /// Returns a string representation of a given <see cref="Literal"/> instance.
         /// </summary>
         /// <param name="literal">The literal to be formatted.</param>
         /// <returns>A string representation of the given literal.</returns>
-        public string Format(CNFLiteral literal) => $"{(literal.IsNegated ? "¬" : "")}{Format(literal.Predicate)}";
+        public string Format(Literal literal) => $"{(literal.IsNegated ? "¬" : "")}{Format(literal.Predicate)}";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Sentence"/> instance.

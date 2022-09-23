@@ -63,7 +63,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Constructs and returns a literal that is the negation of this one.
         /// </summary>
         /// <returns>A literal that is the negation of this one.</returns>
-        public CNFLiteral Negate() => new(Predicate, !IsNegated);
+        public Literal Negate() => new(Predicate, !IsNegated);
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -114,7 +114,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
-        /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="CNFLiteral"/>. NB: This conversion is implicit because it is always valid.
+        /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="Literal"/>. NB: This conversion is implicit because it is always valid.
         /// </summary>
         /// <param name="sentence">The predicate to convert.</param>
         public static implicit operator CNFLiteral_WithTypeSwitchCtorVisitors(Predicate predicate) => new(predicate);

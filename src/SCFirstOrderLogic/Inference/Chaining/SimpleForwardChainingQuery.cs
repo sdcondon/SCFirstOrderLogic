@@ -1,6 +1,7 @@
-﻿using SCFirstOrderLogic.Inference.Unification;
+﻿using SCFirstOrderLogic;
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Unification;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -74,7 +75,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     }
 
                     explanation.AppendLine($"#{i:D2}: {formatter.Format(UsefulPredicates[i])}");
-                    explanation.AppendLine($"     By Rule : {proofStep.Rule.Format(formatter)}");
+                    explanation.AppendLine($"     By Rule : {formatter.Format(proofStep.Rule)}");
 
                     foreach (var knownUnitClause in proofStep.KnownPredicates)
                     {
@@ -85,7 +86,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     explanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
                     explanation.AppendLine("}");
 
-                    foreach (var term in CNFExplainer.FindNormalisationTerms(proofStep.KnownPredicates.Append(UsefulPredicates[i])))
+                    foreach (var term in CNFExaminer.FindNormalisationTerms(proofStep.KnownPredicates.Append(UsefulPredicates[i])))
                     {
                         explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
                     }

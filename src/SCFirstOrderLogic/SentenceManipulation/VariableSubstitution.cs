@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// <summary>
     /// Sentence transformation class that makes some substitutions for variable terms.
     /// In addition to the <see cref="RecursiveSentenceTransformation.ApplyTo(Sentence)"/> method
-    /// offered by the base class, this also offers an <see cref="ApplyTo(CNFLiteral)"/> method.
+    /// offered by the base class, this also offers an <see cref="ApplyTo(Literal)"/> method.
     /// </summary>
     public class VariableSubstitution : RecursiveSentenceTransformation
     {
@@ -57,9 +57,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// </summary>
         /// <param name="literal">The literal to apply the unifier to.</param>
         /// <returns>The unified version of the literal.</returns>
-        public CNFLiteral ApplyTo(CNFLiteral literal)
+        public Literal ApplyTo(Literal literal)
         {
-            return new CNFLiteral((Predicate)base.ApplyTo(literal.Predicate), literal.IsNegated);
+            return new Literal((Predicate)base.ApplyTo(literal.Predicate), literal.IsNegated);
         }
 
         /// <inheritdoc />

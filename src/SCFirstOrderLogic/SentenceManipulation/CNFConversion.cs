@@ -4,7 +4,7 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Implementation of <see cref="RecursiveSentenceTransformation"/> that converts sentences to conjunctive normal form.
+    /// Converts sentences to conjunctive normal form.
     /// <para/>
     /// This type is internal because its output is not *completely* normalised, since it *doesn't* normalise the
     /// order of evaluation of the clauses (i.e. the conjunctions found at the root of the output sentence),

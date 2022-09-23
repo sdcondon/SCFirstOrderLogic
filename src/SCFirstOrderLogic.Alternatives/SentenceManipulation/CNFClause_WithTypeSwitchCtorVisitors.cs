@@ -1,4 +1,5 @@
-﻿using SCFirstOrderLogic.SentenceFormatting;
+﻿using SCFirstOrderLogic;
+using SCFirstOrderLogic.SentenceFormatting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Representation of an individual clause (i.e. a disjunction of <see cref="CNFLiteral"/>s) of a first-order logic sentence in conjunctive normal form.
+    /// Representation of an individual clause (i.e. a disjunction of <see cref="Literal"/>s) of a first-order logic sentence in conjunctive normal form.
     /// </summary>
     public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTypeSwitchCtorVisitors>
     {

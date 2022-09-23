@@ -1,5 +1,5 @@
-﻿using SCFirstOrderLogic.Inference.Resolution;
-using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic;
+using SCFirstOrderLogic.Inference.Resolution;
 using System;
 using System.Collections.Generic;
 using System.Linq;

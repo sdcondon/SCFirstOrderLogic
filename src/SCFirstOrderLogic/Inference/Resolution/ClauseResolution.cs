@@ -1,5 +1,5 @@
-﻿using SCFirstOrderLogic.Inference.Unification;
-using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Unification;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -59,7 +59,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 {
                     if (LiteralUnifier.TryCreate(literal1, literal2.Negate(), out var unifier))
                     {
-                        var unifiedLiterals = new HashSet<CNFLiteral>(clause1.Literals
+                        var unifiedLiterals = new HashSet<Literal>(clause1.Literals
                             .Concat(clause2.Literals)
                             .Except(new[] { literal1, literal2 })
                             .Select(l => unifier.ApplyTo(l)));
@@ -75,7 +75,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                                 {
                                     if (!rLiteral1.Equals(rLiteral2) && LiteralUnifier.TryCreate(rLiteral1, rLiteral2, out var factoringUnifier))
                                     {
-                                        unifiedLiterals = new HashSet<CNFLiteral>(unifiedLiterals.Select(l => factoringUnifier.ApplyTo(l)));
+                                        unifiedLiterals = new HashSet<Literal>(unifiedLiterals.Select(l => factoringUnifier.ApplyTo(l)));
                                         factoringCarriedOut = true;
                                         break;
                                     }

@@ -1,6 +1,7 @@
-﻿using SCFirstOrderLogic.Inference.Unification;
+﻿using SCFirstOrderLogic;
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Unification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         resultExplanation.AppendLine($"Step #{i:D2}: {formatter.Format(predicate)}");
 
                         // Rule applied:
-                        resultExplanation.AppendLine($"  By Rule: {proofStep.Format(formatter)}");
+                        resultExplanation.AppendLine($"  By Rule: {formatter.Format(proofStep)}");
 
                         // Conjuncts used:
                         foreach (var childPredicate in proofStep.Conjuncts)
@@ -89,7 +90,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     resultExplanation.AppendLine("Where:");
                     var normalisationTermsToExplain = new HashSet<Term>();
 
-                    foreach (var term in CNFExplainer.FindNormalisationTerms(proof.Steps.Keys.Select(p => new CNFClause(new CNFLiteral[] { p })).ToArray()))
+                    foreach (var term in CNFExaminer.FindNormalisationTerms(proof.Steps.Keys.Select(p => new CNFClause(new Literal[] { p })).ToArray()))
                     {
                         normalisationTermsToExplain.Add(term);
                     }

@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Linq;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;

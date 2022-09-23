@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using SCFirstOrderLogic.SentenceManipulation;
 
-namespace SCFirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic
 {
     /// <summary>
     /// Representation of a <see cref="Sentence"/> in conjunctive normal form (CNF).
-    /// <para/>
-    /// TODO-BREAKING: CNF classes should probably be sealed.
     /// </summary>
-    public class CNFSentence
+    public sealed class CNFSentence
     {
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFSentence"/> class, implicitly converting the provided sentence to CNF in the process.

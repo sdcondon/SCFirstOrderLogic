@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.Inference.Unification
+namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     public class LiteralUnifierTests
     {
@@ -16,7 +15,7 @@ namespace SCFirstOrderLogic.Inference.Unification
         private static readonly VariableDeclaration x = new(nameof(x));
         private static readonly VariableDeclaration y = new(nameof(y));
 
-        private record TryUnifyPositiveTestCase(CNFLiteral Literal1, CNFLiteral Literal2, Dictionary<VariableReference, Term> ExpectedSubstitutions, CNFLiteral ExpectedUnified);
+        private record TryUnifyPositiveTestCase(Literal Literal1, Literal Literal2, Dictionary<VariableReference, Term> ExpectedSubstitutions, Literal ExpectedUnified);
 
         public static Test TryCreatePositive => TestThat
             .GivenEachOf(() => new TryUnifyPositiveTestCase[]
@@ -61,7 +60,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal1).Should().Be(tc.ExpectedUnified))
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal2).Should().Be(tc.ExpectedUnified));
 
-        private record TryUnifyNegativeTestCase(CNFLiteral Literal1, CNFLiteral Literal2);
+        private record TryUnifyNegativeTestCase(Literal Literal1, Literal Literal2);
 
         public static Test TryCreateNegative => TestThat
             .GivenEachOf(() => new TryUnifyNegativeTestCase[]
@@ -83,7 +82,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())
             .And((tc, r) => r.unifier.Should().BeNull());
 
-        private record TryUpdatePositiveTestCase(CNFLiteral Literal1, CNFLiteral Literal2, Dictionary<VariableReference, Term> InitialSubstitutions, Dictionary<VariableReference, Term> ExpectedSubstitutions, CNFLiteral? ExpectedUnified);
+        private record TryUpdatePositiveTestCase(Literal Literal1, Literal Literal2, Dictionary<VariableReference, Term> InitialSubstitutions, Dictionary<VariableReference, Term> ExpectedSubstitutions, Literal? ExpectedUnified);
 
         public static Test TryUpdatePositive => TestThat
             .GivenEachOf(() => new TryUpdatePositiveTestCase[]
@@ -171,7 +170,7 @@ namespace SCFirstOrderLogic.Inference.Unification
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal1).Should().Be(tc.ExpectedUnified))
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal2).Should().Be(tc.ExpectedUnified));
 
-        private record TryUpdateNegativeTestCase(CNFLiteral Literal1, CNFLiteral Literal2, Dictionary<VariableReference, Term> InitialSubstitutions);
+        private record TryUpdateNegativeTestCase(Literal Literal1, Literal Literal2, Dictionary<VariableReference, Term> InitialSubstitutions);
 
         public static Test TryUpdateNegative => TestThat
             .GivenEachOf(() => new TryUpdateNegativeTestCase[]
