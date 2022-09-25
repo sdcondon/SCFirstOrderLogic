@@ -4,9 +4,11 @@ using System;
 namespace SCFirstOrderLogic
 {
     /// <summary>
-    /// Representation of a literal (i.e. an atomic sentence or a negated atomic sentence) of first-order logic.
+    /// Streamlined representation of a literal (i.e. a predicate or a negated predicate) of first-order logic.
     /// <para/>
-    /// TODO-DOCS: Complete this: note that this type is NOT a subtype of <see cref="Sentence"/>.
+    /// Note that this type is NOT a subtype of <see cref="Sentence"/>. To represent literals as <see cref="Sentence"/>s, 
+    /// <see cref="SCFirstOrderLogic.Predicate"/> and <see cref="Negation"/> should be used as appropriate. This type is used within
+    /// our <see cref="CNFClause"/> type, and may also be of use to consumers who want a streamlined literal representation.
     /// </summary>
     public sealed class Literal : IEquatable<Literal>
     {
