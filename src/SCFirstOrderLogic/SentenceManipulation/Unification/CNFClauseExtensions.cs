@@ -44,7 +44,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
             unifier = new VariableSubstitution();
 
-            foreach (var (literal1, literal2) in thisClause.Literals.Zip(otherClause.Literals))
+            // BUG-MAJOR: ummm, what? hash code and thus ordering not preserved if terms are different, idiot. fix me!
+            // luckily of limited impact given the only place this is used.
+            foreach (var (literal1, literal2) in thisClause.Literals.Zip(otherClause.Literals)) 
             {
                 if (!LiteralUnifier.TryUpdateUnsafe(literal1, literal2, unifier))
                 {

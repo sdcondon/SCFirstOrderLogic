@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic
         /// Initialises a new instance of the <see cref="CNFSentence"/> class, implicitly converting the provided sentence to CNF in the process.
         /// </summary>
         /// <param name="sentence">The sentence to (convert and) represent.</param>
-        internal CNFSentence(Sentence sentence)
+        public CNFSentence(Sentence sentence)
         {
             var cnfSentence = CNFConversion.ApplyTo(sentence);
             var clauses = new List<CNFClause>();
