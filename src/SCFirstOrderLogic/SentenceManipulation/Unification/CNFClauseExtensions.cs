@@ -44,7 +44,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
             unifier = new VariableSubstitution();
 
-            // BUG-MAJOR: ummm, what? hash code and thus ordering not preserved if terms are different, idiot. fix me!
+            // BUG-MAJOR: ummm, what? hash code and thus ordering not preserved if the terms are different, idiot. fix me! Needs to be similar to ClauseResolution.
             // luckily of limited impact given the only place this is used.
             foreach (var (literal1, literal2) in thisClause.Literals.Zip(otherClause.Literals)) 
             {

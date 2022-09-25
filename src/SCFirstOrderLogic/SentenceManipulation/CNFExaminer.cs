@@ -12,8 +12,6 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <summary>
         /// Returns an enumerable of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
         /// That is, standardised variables and Skolem functions. Intended to be useful in creating a "legend" of such terms.
-        /// <para/>
-        /// TODO-BREAKING: Nothing to do with formatting. Doesn't belong here.. Perhaps CNFExamination class in SentenceManipulation?
         /// </summary>
         /// <returns>An enumerable of the (distinct) standardised variable references and Skolem functions found within the clauses.</returns>
         public static IEnumerable<Term> FindNormalisationTerms(params CNFClause[] clauses)
@@ -25,8 +23,6 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <summary>
         /// Returns an enumerable of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
         /// That is, standardised variables and Skolem functions. Intended to be useful in creating a "legend" of such terms.
-        /// <para/>
-        /// TODO-BREAKING: Nothing to do with formatting. Doesn't belong here.. Perhaps CNFExamination class in SentenceManipulation?
         /// </summary>
         /// <returns>An enumerable of the (distinct) standardised variable references and Skolem functions found within the clauses.</returns>
         public static IEnumerable<Term> FindNormalisationTerms(IEnumerable<Predicate> predicates)
