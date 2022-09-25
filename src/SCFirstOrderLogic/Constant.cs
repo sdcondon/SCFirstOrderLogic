@@ -40,6 +40,8 @@ namespace SCFirstOrderLogic
         /// string-returning 'Render' method. However, given that the only things we need of a symbol are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
         /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
+        /// <para/>
+        /// Perhaps should be called 'Identifier'..
         /// </summary>
         public object Symbol { get; }
 
