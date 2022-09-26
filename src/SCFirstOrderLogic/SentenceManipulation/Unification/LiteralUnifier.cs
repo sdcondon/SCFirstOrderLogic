@@ -155,7 +155,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
         private static bool TryUpdate(Function x, Function y, VariableSubstitution unifier)
         {
-            if (!x.Symbol.Equals(y.Symbol))
+            if (!x.Symbol.Equals(y.Symbol) || x.Arguments.Count != y.Arguments.Count)
             {
                 return false;
             }
