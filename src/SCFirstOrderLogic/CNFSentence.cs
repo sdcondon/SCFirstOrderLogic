@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic
     /// <summary>
     /// Representation of a <see cref="Sentence"/> in conjunctive normal form (CNF).
     /// </summary>
-    public sealed class CNFSentence
+    public class CNFSentence
     {
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFSentence"/> class, implicitly converting the provided sentence to CNF in the process.

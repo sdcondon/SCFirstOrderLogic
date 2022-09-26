@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic
     /// <summary>
     /// Sub-type of <see cref="CNFClause"/> that adds methods and properties appropriate for definite clauses.
     /// </summary>
-    public sealed class CNFDefiniteClause : CNFClause
+    public class CNFDefiniteClause : CNFClause
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CNFDefiniteClause"/> that is a copy of an existing <see cref="CNFClause"/>.
