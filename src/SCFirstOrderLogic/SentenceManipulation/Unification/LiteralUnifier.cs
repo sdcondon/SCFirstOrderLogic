@@ -65,7 +65,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
             if (TryUpdateUnsafe(x, y, updatedUnifier))
             {
-                // Ugh. slower than is needed. Refactor this whole class at some point - after adding some good benchmarks..
+                // TODO-PERFORMANCE: Ugh. slower than is needed. Refactor this whole class at some point - after adding some good benchmarks..
                 foreach (var binding in updatedUnifier.Bindings)
                 {
                     if (!unifier.Bindings.ContainsKey(binding.Key))

@@ -377,7 +377,7 @@ namespace SCFirstOrderLogic.SentenceCreation
 
         /// <summary>
         /// Surrogate for <see cref="Function"/> instances that derives from <see cref="OperableTerm"/> and can thus be operated on with the  == operator
-        /// to create equality predicate instances. N.B. constructor is intentionally not public - can be implicitly converted to from <see cref="Function"/>
+        /// to create equality predicate instances. N.B. constructor is intentionally not public - can be implicitly converted from <see cref="Function"/>
         /// instances. E.g.
         /// <code>OperableFunction MyFunction(OperableTerm arg1) => new Function(nameof(MyFunction), arg1);</code>
         /// </summary>

@@ -5,7 +5,7 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceFormatting
 {
     /// <summary>
-    /// Utility logic for interrogations of sentences - notably, the normalisation terms (standardised variables and Skolem functions) within them.
+    /// Utility logic for the interrogation of sentences - specifically, the normalisation terms (standardised variables and Skolem functions) within them.
     /// </summary>
     public static class CNFExaminer
     {
