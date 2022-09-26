@@ -32,7 +32,7 @@ var equivalenceRHS = new ExistentialQuantification(p, new Conjunction(IsParent(g
 Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantification(c, new Equivalence(equivalenceLHS, equivalenceRHS));
 ```
 
-Things to notice:
+Notice that:
 * This is very simple in that it involves nothing other than the sentence types themselves, but is obviously far too verbose to be workable. Hence the alternatives.
 
 ### Writing Sentences with SentenceFactory
@@ -43,7 +43,7 @@ First, we have the `SentenceFactory` static class in the `SentenceCreation` name
 using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
-// Helper methods for your predicates (and functions) are recommended:
+// Helper methods for your predicates (and functions) are also recommended with this approach:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
@@ -51,7 +51,7 @@ Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), p
 var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, And(IsParent(G, P), IsParent(P, C)))));
 ```
 
-Things to notice about this one:
+Notice that:
 * The factory provides `ForAll` and `ThereExists` methods for creating quantifications. There are overloads for declaring multiple variables at once.
 * The factory provides `If` and `Iff` methods for creating implications and equivalences, respectively.
 * The factory provides methods for conjunctions (`And`), disjunctions (`Or`) and negations (`Not`). See the next two examples if you really want to use C# operators for these.
@@ -65,7 +65,7 @@ Next, you'll also find `OperableSentenceFactory` in `SentenceCreation`. It works
 using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
-// Helper methods for your predicates (and functions) are recommended:
+// Helper methods for your predicates (and functions) are also recommended with this approach:
 OperablePredicate IsGrandparent(OperableTerm grandparent, OperableTerm grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 OperablePredicate IsParent(OperableTerm parent, OperableTerm child) => new Predicate(nameof(IsParent), parent, child);
 
@@ -73,7 +73,7 @@ OperablePredicate IsParent(OperableTerm parent, OperableTerm child) => new Predi
 var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, IsParent(G, P) & IsParent(P, C))));
 ```
 
-Things to notice about this one:
+Notice that:
 * We've only used `&` (for a conjunction) above, but `|` works for disjunctions, and `!` for negations.
 * Other aspects of this factory are the same as `SentenceFactory` - it also offers `ThereExists`, `ForAll`, `Iff`, `If` and single-letter variable declaration properties.
 * The only proviso is that the supporting methods for domain specific elements now need to use `Operable..` as their return type - which is easy as these types are 
@@ -88,7 +88,7 @@ modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as
 using SCFirstOrderLogic.LanguageIntegration;
 using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff an If methods..
 
-// The helper methods recommended for the other approaches become full interfaces when language integration is used:
+// The helper methods recommended for the other approaches become full interfaces when language integration is used (no implementation is needed):
 interface IPerson
 {
     bool IsParentOf(IPerson person);
@@ -99,7 +99,7 @@ interface IPerson
 SentenceFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
 ```
 
-Things to notice about this one:
+Notice that:
 * This is obviously non-trivial - more info can be found on the [language integration](./language-integration.md) page.
 
 ## Storing Knowledge and Making Inferences
@@ -208,10 +208,10 @@ var result = kb.Ask(IsCriminal(West)); // will be true
 // ..Or can get an explanation in the same way as above
 ```
 
-Some things to note:
+Notice that:
 * Formatting of sentences and query result explanations includes the appropriate symbols (∀, ⇔, ∃, ∧ and so on).
-Depending on your environment, you might need to take action so that these are rendered properly.
-E.g. For running on Windows it might be worth sticking a `Console.OutputEncoding = Encoding.Unicode;` in your application.
+Depending on your environment, you might need to take action so that these are outputted properly.
+E.g. For running on Windows it might be worth adding `Console.OutputEncoding = Encoding.Unicode;` to your application start-up.
 * The `Tell`, `Ask`, `CreateQuery` and `Execute` methods used above are actually extension methods that are are synchronous wrappers around underlying async versions.
 The library has deep async support - because "real-world" KBs will tend to need to do IO.
 At the time of writing, the only implementation that currently supports this meaningfully is the resolution one, though.
@@ -221,13 +221,6 @@ At the time of writing, the only implementation that currently supports this mea
 For some usage examples, see the [example domains](../../src/SCFirstOrderLogic.ExampleDomains) project (and, to a lesser extent, the [tests](../../src/SCFirstOrderLogic.Tests)).
 Beyond that, see the XML documentation against the classes - which I hope is fairly decent.
 
-## Beyond Getting Started
+## Where Next?
 
-There are a number of things we've not touched on here, but are worth noting:
-
-* **Equality:** The top-level namespace `SCFirstOrderLogic` includes [`EqualitySymbol`](../../src/SCFirstOrderLogic/EqualitySymbol.cs), intended to be used as the symbol for the equality predicate.
-The various sentence creation methods make use of this in created sentences where appropriate.
-None of the knowledge bases here use particular techniques (e.g. demodulation) to handle equality. However, the `Inference` namespace does include [`EqualityAxiomisingKnowledgeBase`](../../src/SCFirstOrderLogic/Inference/EqualityAxiomisingKnowledgeBase.cs), which is a decorator applied to an inner knowledge base - and adds rules pertaining to equality as knowledge is added.
-* **Sentence Formatting:** There is some sentence formatting logic to be found in the `SentenceFormatting` namespace - which includes support for ensuring unique labelling of symbols for standardised variables and Skolem functions across a set of sentences.
-The sets of labels used can be specified by the caller (but defaults do exist).
-* **Sentence Manipulation and CNF:** While it wasn't explicity mentioned above, the knowledge bases referenced above do of course make use of conjunctive normal form where appropriate. Classes for conversion to and representation of CNF can be found in the `SentenceManipulation` namespace, alongside interfaces and base classes for sentence visitor logic
+Take a look at ['beyond getting started'](./beyond-getting-started.md).
