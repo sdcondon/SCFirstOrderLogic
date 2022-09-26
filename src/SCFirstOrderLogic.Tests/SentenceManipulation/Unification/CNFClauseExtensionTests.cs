@@ -13,15 +13,15 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         public static Test UnifiesWithAnyOfBehaviour => TestThat
             .GivenEachOf(() => new UnifiesWithAnyOfTestCase[]
             {
-                new (
-                    Clause: new CNFClause(IsParent(P, C)),
-                    Clauses: new CNFClause[] { },
-                    ExpectedResult: false),
+                ////new (
+                ////    Clause: new CNFClause(IsParent(P, C)),
+                ////    Clauses: new CNFClause[] { },
+                ////    ExpectedResult: false),
 
-                new (
-                    Clause: new CNFClause(IsParent(P, C)),
-                    Clauses: new CNFClause[] { new CNFClause(IsParent(X, Y)) },
-                    ExpectedResult: true),
+                ////new (
+                ////    Clause: new CNFClause(IsParent(P, C)),
+                ////    Clauses: new CNFClause[] { new CNFClause(IsParent(X, Y)) },
+                ////    ExpectedResult: true),
 
                 new (
                     Clause: new CNFClause(IsParent(X, Y) | IsChild(X, Y)),

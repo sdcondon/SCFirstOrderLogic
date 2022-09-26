@@ -1,8 +1,6 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
 
-namespace SCFirstOrderLogic.Inference.Unification
+namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     /// <summary>
     /// Utility class for creating unifiers for literals.

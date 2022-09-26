@@ -123,7 +123,11 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
         private static bool TryUpdate(VariableReference variable, Term other, VariableSubstitution unifier)
         {
-            if (unifier.Bindings.TryGetValue(variable, out var value))
+            if (variable.Equals(other))
+            {
+                return true;
+            }
+            else if (unifier.Bindings.TryGetValue(variable, out var value))
             {
                 // The variable is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.

@@ -191,13 +191,13 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 // We'd use an index here in anything approaching a production scenario:
                 foreach (var knownUnitClause in kb.Where(k => k.IsUnitClause))
                 {
-                    var updatedUnifier = new VariableSubstitution(proofStep.Unifier);
+                    var firstConjunctUnifier = new VariableSubstitution(proofStep.Unifier);
 
-                    if (LiteralUnifier.TryUpdateUnsafe(knownUnitClause.Consequent, conjuncts.First(), updatedUnifier))
+                    if (LiteralUnifier.TryUpdateUnsafe(knownUnitClause.Consequent, conjuncts.First(), firstConjunctUnifier))
                     {
-                        foreach (var substitution in MatchWithKnownFacts(conjuncts.Skip(1), new ProofStep(proofStep, knownUnitClause.Consequent, updatedUnifier)))
+                        foreach (var restOfConjunctsProof in MatchWithKnownFacts(conjuncts.Skip(1), new ProofStep(proofStep, knownUnitClause.Consequent, firstConjunctUnifier)))
                         {
-                            yield return substitution;
+                            yield return restOfConjunctsProof;
                         }
                     }
                 }

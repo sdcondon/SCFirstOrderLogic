@@ -14,6 +14,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         private static readonly Constant jane = new("Jane");
         private static readonly VariableDeclaration x = new(nameof(x));
         private static readonly VariableDeclaration y = new(nameof(y));
+        private static readonly VariableDeclaration a = new(nameof(a));
+        private static readonly VariableDeclaration b = new(nameof(b));
 
         private record TryUnifyPositiveTestCase(Literal Literal1, Literal Literal2, Dictionary<VariableReference, Term> ExpectedSubstitutions, Literal ExpectedUnified);
 
@@ -114,6 +116,21 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                         [y] = jane,
                     },
                     ExpectedUnified: Knows(john, jane)),
+
+                new (
+                    Literal1: Knows(x, y),
+                    Literal2: Knows(a, b),
+                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    {
+                        [x] = a,
+                        [y] = b,
+                    },
+                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    {
+                        [x] = a,
+                        [y] = b,
+                    },
+                    ExpectedUnified: Knows(a, b)),
             })
             .When(tc =>
             {

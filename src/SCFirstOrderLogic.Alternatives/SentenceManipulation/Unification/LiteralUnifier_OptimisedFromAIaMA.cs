@@ -1,9 +1,6 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
 
-namespace SCFirstOrderLogic.Inference.Unification
+namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     /// <summary>
     /// Most general unifier logic - optimised from the version presented in the source material,

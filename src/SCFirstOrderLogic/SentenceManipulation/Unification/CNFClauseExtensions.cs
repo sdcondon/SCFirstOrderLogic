@@ -1,6 +1,5 @@
 ﻿using SCFirstOrderLogic;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation.Unification
@@ -24,7 +23,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// <returns>True if this clause unifies with any of the provided clauses; otherwise false.</returns>
         public static bool UnifiesWithAnyOf(this CNFClause thisClause, IEnumerable<CNFClause> clauses)
         {
-            return clauses.Any(c => thisClause.TryUnifyWith(c, out var _));
+            return clauses.Any(c => thisClause.TryUnifyWith(c));
         }
 
         /// <summary>
@@ -32,29 +31,39 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// </summary>
         /// <param name="thisClause">"This" clause.</param>
         /// <param name="otherClause">The other clause.</param>
-        /// <param name="unifier">On success, will be populated with the unifier.</param>
         /// <returns>True if the two clauses were successfully unified, otherwise false.</returns>
-        private static bool TryUnifyWith(this CNFClause thisClause, CNFClause otherClause, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
+        private static bool TryUnifyWith(this CNFClause thisClause, CNFClause otherClause)
         {
             if (thisClause.Literals.Count != otherClause.Literals.Count)
             {
-                unifier = null;
                 return false;
             }
+            
+            return TryUnifyWith(thisClause.Literals, otherClause.Literals, new VariableSubstitution()).Any();
+        }
 
-            unifier = new VariableSubstitution();
-
-            // BUG-MAJOR: ummm, what? hash code and thus ordering not preserved if the terms are different, idiot. fix me!
-            foreach (var (literal1, literal2) in thisClause.Literals.Zip(otherClause.Literals)) 
+        private static IEnumerable<VariableSubstitution> TryUnifyWith(IEnumerable<Literal> thisLiterals, IEnumerable<Literal> otherLiterals, VariableSubstitution unifier)
+        {
+            if (!thisLiterals.Any())
             {
-                if (!LiteralUnifier.TryUpdateUnsafe(literal1, literal2, unifier))
+                yield return unifier;
+            }
+            else
+            {
+                foreach (var otherLiteral in otherLiterals)
                 {
-                    unifier = null;
-                    return false;
+                    var firstLiteralUnifier = new VariableSubstitution(unifier);
+
+                    if (LiteralUnifier.TryUpdateUnsafe(thisLiterals.First(), otherLiteral, firstLiteralUnifier))
+                    {
+                        // Ugh: Skip is bad enough - Except is going to get slow, esp when nested. Important thing for now is that it works as a baseline..
+                        foreach (var restOfLiteralsUnifier in TryUnifyWith(thisLiterals.Skip(1), otherLiterals.Except(new[] { otherLiteral }), firstLiteralUnifier))
+                        {
+                            yield return restOfLiteralsUnifier;
+                        }
+                    }
                 }
             }
-
-            return true;
         }
     }
 }

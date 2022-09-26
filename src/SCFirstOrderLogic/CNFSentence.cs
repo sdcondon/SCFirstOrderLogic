@@ -59,7 +59,7 @@ namespace SCFirstOrderLogic
                 {
                     // We've hit a clause.
                     // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFClause ctor that
-                    // we invoke here does so to figure out the details of the clause). So we can just return rather than invoking base.Visit. 
+                    // we invoke here does so to figure out the details of the clause). So we can just return rather than invoking base.Visit.
                     clauses.Add(new CNFClause(sentence));
                 }
             }
