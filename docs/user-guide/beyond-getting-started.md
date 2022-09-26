@@ -17,7 +17,7 @@ The sets of labels used can be specified by the caller (but defaults do exist).
 
 ## Learning Resources in the Repository
 
-The repo contains a few resources aside from the library itself that people might find useful or interesting:
+The repo contains a few resources aside from the source of the library itself that people might find interesting:
 
 * **['Alternatives' project](../../src/SCFirstOrderLogic.Alternatives):** this class library contains a number of alternative implementations of things. Some of these implementations are truer recreations of algorithms as listed in the source material. These have been created for learning and benchmarking.
-* **['Benchmarks' project](../../src/SCFirstOrderLogic.Benchmarks):** benchmark project for evaluating performance of the algorithms in the NuGet package and in the 'Alternatives' project 
+* **['Benchmarks' project](../../src/SCFirstOrderLogic.Benchmarks):** benchmark project for evaluating performance of the algorithms in the NuGet package and in the 'Alternatives' project.
