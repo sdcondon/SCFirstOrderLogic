@@ -316,7 +316,7 @@ namespace SCFirstOrderLogic.SentenceCreation
 
         /// <summary>
         /// Surrogate for <see cref="Constant"/> instances that derives from <see cref="OperableTerm"/> and can thus be operated on with the  == operator
-        /// to create equality predicate instances. N.B. constructor is intentionally not public - can be implicitly converted to from <see cref="Constant"/>
+        /// to create equality predicate instances. N.B. constructor is intentionally not public - can be implicitly converted from (and to) <see cref="Constant"/>
         /// instances. E.g.
         /// <code>OperableConstant MyConstant { get; } = new Constant(nameof(MyConstant));</code>
         /// </summary>
@@ -383,7 +383,7 @@ namespace SCFirstOrderLogic.SentenceCreation
 
         /// <summary>
         /// Surrogate for <see cref="Function"/> instances that derives from <see cref="OperableTerm"/> and can thus be operated on with the  == operator
-        /// to create equality predicate instances. N.B. constructor is intentionally not public - can be implicitly converted from <see cref="Function"/>
+        /// to create equality predicate instances. N.B. constructor is intentionally not public - can be implicitly converted from (and to) <see cref="Function"/>
         /// instances. E.g.
         /// <code>OperableFunction MyFunction(OperableTerm arg1) => new Function(nameof(MyFunction), arg1);</code>
         /// </summary>
@@ -445,7 +445,7 @@ namespace SCFirstOrderLogic.SentenceCreation
 
         /// <summary>
         /// Surrogate for <see cref="Predicate"/> instances that derives from <see cref="OperableSentence"/> and can thus be operated on with |, &amp; and ! operators
-        /// to create disjunctions, conjunctions and negations respectively. N.B. constructor is intentionally not public - can be implicitly converted to from <see cref="Predicate"/>
+        /// to create disjunctions, conjunctions and negations respectively. N.B. constructor is intentionally not public - can be implicitly converted from (and to) <see cref="Predicate"/>
         /// instances. E.g.
         /// <code>OperablePredicate MyPredicate(OperableTerm arg1) => new Predicate(nameof(MyPredicate), arg1);</code>
         /// </summary>
@@ -487,7 +487,7 @@ namespace SCFirstOrderLogic.SentenceCreation
 
         /// <summary>
         /// Surrogate for <see cref="Term"/> instances that defines an == operator to create equality predicates.
-        /// Instances are implicitly convertible to the equivalent <see cref="Term"/> instance.
+        /// Instances are implicitly convertible from (and to) the equivalent <see cref="Term"/> instance.
         /// </summary>
 #pragma warning disable CS0660, CS0661
         // Overrides == but not Equals and HashCode. Overriding these would make no sense. Needing to disable these warnings is
@@ -576,6 +576,18 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// </summary>
             /// <param name="declaration">The declaration to convert.</param>
             public static implicit operator OperableVariableReference(OperableVariableDeclaration declaration) => new(declaration);
+
+            /// <summary>
+            /// Implicitly converts an <see cref="OperableVariableDeclaration"/> instance to an <see cref="VariableReference"/> referring to that variable.
+            /// </summary>
+            /// <param name="declaration">The declaration to convert.</param>
+            public static implicit operator VariableReference(OperableVariableDeclaration declaration) => new(declaration);
+
+            /// <summary>
+            /// Implicitly converts an <see cref="OperableVariableDeclaration"/> instance to an <see cref="Term"/> (that is a <see cref="VariableReference"/> referring to that variable).
+            /// </summary>
+            /// <param name="declaration">The declaration to convert.</param>
+            public static implicit operator Term(OperableVariableDeclaration declaration) => new VariableReference(declaration);
         }
 
         /// <summary>

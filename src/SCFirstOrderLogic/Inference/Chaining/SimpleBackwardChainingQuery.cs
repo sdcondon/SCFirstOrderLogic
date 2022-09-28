@@ -90,7 +90,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                     resultExplanation.AppendLine("Where:");
                     var normalisationTermsToExplain = new HashSet<Term>();
 
-                    foreach (var term in CNFExaminer.FindNormalisationTerms(proof.Steps.Keys.Select(p => new CNFClause(new Literal[] { p })).ToArray()))
+                    foreach (var term in CNFExaminer.FindNormalisationTerms(proof.Steps.Keys))
                     {
                         normalisationTermsToExplain.Add(term);
                     }

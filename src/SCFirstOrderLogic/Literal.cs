@@ -108,22 +108,6 @@ namespace SCFirstOrderLogic
         public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
 
         /// <summary>
-        /// Defines the (explicit) conversion of a <see cref="Sentence"/> instance to a <see cref="Literal"/>. NB: This conversion is explicit because it can fail (if the sentence isn't actually a literal).
-        /// </summary>
-        /// <param name="sentence">The sentence to convert.</param>
-        public static explicit operator Literal(Sentence sentence)
-        {
-            try
-            {
-                return new Literal(sentence);
-            }
-            catch (ArgumentException e)
-            {
-                throw new InvalidCastException($"To be converted to a literal, sentences must be either a predicate or a negated predicate. {sentence} is neither.", e);
-            }
-        }
-
-        /// <summary>
         /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="Literal"/>. NB: This conversion is implicit because it is always valid and results in no loss of information.
         /// </summary>
         /// <param name="predicate">The predicate to convert.</param>
