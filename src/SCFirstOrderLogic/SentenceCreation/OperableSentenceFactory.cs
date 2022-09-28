@@ -591,6 +591,24 @@ namespace SCFirstOrderLogic.SentenceCreation
             internal OperableVariableDeclaration Declaration { get; }
 
             internal object Symbol => Declaration.Symbol;
+
+            /// <summary>
+            /// Implicitly converts an <see cref="OperableVariableReference"/> instance to an equivalent <see cref="VariableReference"/>.
+            /// </summary>
+            /// <param name="reference">The reference to convert.</param>
+            public static implicit operator VariableReference(OperableVariableReference reference) => new(reference.Declaration);
+
+            /// <summary>
+            /// Implicitly converts an <see cref="VariableReference"/> instance to an equivalent <see cref="OperableVariableReference"/>.
+            /// </summary>
+            /// <param name="reference">The reference to convert.</param>
+            public static implicit operator OperableVariableReference(VariableReference reference) => new(reference.Declaration);
+
+            /// <summary>
+            /// Implicitly converts an <see cref="OperableVariableReference"/> instance to an equivalent <see cref="Term"/>.
+            /// </summary>
+            /// <param name="reference">The reference to convert.</param>
+            public static implicit operator Term(OperableVariableReference reference) => new VariableReference(reference.Declaration);
         }
     }
 }
