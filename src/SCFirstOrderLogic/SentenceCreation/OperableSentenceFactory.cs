@@ -331,6 +331,12 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// </summary>
             /// <param name="constant">The constant to convert.</param>
             public static implicit operator OperableConstant(Constant constant) => new(constant.Symbol);
+
+            /// <summary>
+            /// Implicitly converts an <see cref="OperableConstant"/> instance to an equivalent <see cref="OperableConstant"/>.
+            /// </summary>
+            /// <param name="constant">The constant to convert.</param>
+            public static implicit operator Constant(OperableConstant constant) => new(constant.Symbol);
         }
 
         /// <summary>
@@ -402,7 +408,13 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// Implicitly converts a <see cref="Function"/> instance to an equivalent <see cref="OperableFunction"/>.
             /// </summary>
             /// <param name="function">The function to convert.</param>
-            public static implicit operator OperableFunction(Function function) => new(function.Symbol, function.Arguments.Select(a => (OperableTerm)a).ToArray());
+            public static implicit operator OperableFunction(Function function) => new(function.Symbol, function.Arguments.Cast<OperableTerm>().ToArray());
+
+            /// <summary>
+            /// Implicitly converts an <see cref="OperableFunction"/> instance to an equivalent <see cref="Function"/>.
+            /// </summary>
+            /// <param name="function">The function to convert.</param>
+            public static implicit operator Function(OperableFunction function) => new(function.Symbol, function.Arguments.Cast<Term>().ToArray());
         }
 
         /// <summary>
@@ -458,7 +470,13 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// Implicitly converts a <see cref="Predicate"/> instance to an equivalent <see cref="OperablePredicate"/>.
             /// </summary>
             /// <param name="predicate">The predicate to convert.</param>
-            public static implicit operator OperablePredicate(Predicate predicate) => new(predicate.Symbol, predicate.Arguments.Select(a => (OperableTerm)a).ToArray());
+            public static implicit operator OperablePredicate(Predicate predicate) => new(predicate.Symbol, predicate.Arguments.Cast<OperableTerm>().ToArray());
+
+            /// <summary>
+            /// Implicitly converts an <see cref="OperablePredicate"/> instance to an equivalent <see cref="Predicate"/>.
+            /// </summary>
+            /// <param name="predicate">The operable predicate to convert.</param>
+            public static implicit operator Predicate(OperablePredicate predicate) => new(predicate.Symbol, predicate.Arguments.Cast<Term>().ToArray());
         }
 
         /// <summary>
