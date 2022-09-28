@@ -294,7 +294,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                 OperableExistentialQuantification existentialQuantification => new ExistentialQuantification(existentialQuantification.Variable, existentialQuantification.Sentence),
                 OperableImplication implication => new Implication(implication.Antecedent, implication.Consequent),
                 OperableNegation negation => new Negation(negation.Sentence),
-                OperablePredicate predicate => new Predicate(predicate.Symbol, predicate.Arguments.Select(a => (Term)a).ToArray()),
+                OperablePredicate predicate => (Sentence)predicate,
                 OperableUniversalQuantification universalQuantification => new UniversalQuantification(universalQuantification.Variable, universalQuantification.Sentence),
                 _ => throw new ArgumentException($"Unsupported OperableSentence type '{sentence.GetType()}'", nameof(sentence))
             };
@@ -477,6 +477,12 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// </summary>
             /// <param name="predicate">The operable predicate to convert.</param>
             public static implicit operator Predicate(OperablePredicate predicate) => new(predicate.Symbol, predicate.Arguments.Cast<Term>().ToArray());
+
+            /// <summary>
+            /// Implicitly converts an <see cref="OperablePredicate"/> instance to an equivalent <see cref="Sentence"/>.
+            /// </summary>
+            /// <param name="predicate">The operable predicate to convert.</param>
+            public static implicit operator Sentence(OperablePredicate predicate) => new Predicate(predicate.Symbol, predicate.Arguments.Cast<Term>().ToArray());
         }
 
         /// <summary>
