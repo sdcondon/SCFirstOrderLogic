@@ -294,7 +294,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                 OperableExistentialQuantification existentialQuantification => new ExistentialQuantification(existentialQuantification.Variable, existentialQuantification.Sentence),
                 OperableImplication implication => new Implication(implication.Antecedent, implication.Consequent),
                 OperableNegation negation => new Negation(negation.Sentence),
-                OperablePredicate predicate => (Sentence)predicate,
+                OperablePredicate predicate => new Predicate(predicate.Symbol, predicate.Arguments.Select(a => (Term)a).ToArray()),
                 OperableUniversalQuantification universalQuantification => new UniversalQuantification(universalQuantification.Variable, universalQuantification.Sentence),
                 _ => throw new ArgumentException($"Unsupported OperableSentence type '{sentence.GetType()}'", nameof(sentence))
             };
@@ -408,13 +408,13 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// Implicitly converts a <see cref="Function"/> instance to an equivalent <see cref="OperableFunction"/>.
             /// </summary>
             /// <param name="function">The function to convert.</param>
-            public static implicit operator OperableFunction(Function function) => new(function.Symbol, function.Arguments.Cast<OperableTerm>().ToArray());
+            public static implicit operator OperableFunction(Function function) => new(function.Symbol, function.Arguments.Select(a => (OperableTerm)a).ToArray());
 
             /// <summary>
             /// Implicitly converts an <see cref="OperableFunction"/> instance to an equivalent <see cref="Function"/>.
             /// </summary>
             /// <param name="function">The function to convert.</param>
-            public static implicit operator Function(OperableFunction function) => new(function.Symbol, function.Arguments.Cast<Term>().ToArray());
+            public static implicit operator Function(OperableFunction function) => new(function.Symbol, function.Arguments.Select(a => (Term)a).ToArray());
         }
 
         /// <summary>
@@ -470,19 +470,19 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// Implicitly converts a <see cref="Predicate"/> instance to an equivalent <see cref="OperablePredicate"/>.
             /// </summary>
             /// <param name="predicate">The predicate to convert.</param>
-            public static implicit operator OperablePredicate(Predicate predicate) => new(predicate.Symbol, predicate.Arguments.Cast<OperableTerm>().ToArray());
+            public static implicit operator OperablePredicate(Predicate predicate) => new(predicate.Symbol, predicate.Arguments.Select(a => (OperableTerm)a).ToArray());
 
             /// <summary>
             /// Implicitly converts an <see cref="OperablePredicate"/> instance to an equivalent <see cref="Predicate"/>.
             /// </summary>
             /// <param name="predicate">The operable predicate to convert.</param>
-            public static implicit operator Predicate(OperablePredicate predicate) => new(predicate.Symbol, predicate.Arguments.Cast<Term>().ToArray());
+            public static implicit operator Predicate(OperablePredicate predicate) => new(predicate.Symbol, predicate.Arguments.Select(a => (Term)a).ToArray());
 
             /// <summary>
             /// Implicitly converts an <see cref="OperablePredicate"/> instance to an equivalent <see cref="Sentence"/>.
             /// </summary>
             /// <param name="predicate">The operable predicate to convert.</param>
-            public static implicit operator Sentence(OperablePredicate predicate) => new Predicate(predicate.Symbol, predicate.Arguments.Cast<Term>().ToArray());
+            public static implicit operator Sentence(OperablePredicate predicate) => new Predicate(predicate.Symbol, predicate.Arguments.Select(a => (Term)a).ToArray());
         }
 
         /// <summary>
@@ -538,19 +538,19 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableTerm"/>.
             /// </summary>
             /// <param name="constant">The cpnstant to convert.</param>
-            public static implicit operator OperableTerm(Constant constant) => (OperableConstant)constant;
+            public static implicit operator OperableTerm(Constant constant) => new OperableConstant(constant.Symbol);
 
             /// <summary>
             /// Implicitly converts a <see cref="Function"/> instance to an equivalent <see cref="OperableTerm"/>.
             /// </summary>
             /// <param name="function">The function to convert.</param>
-            public static implicit operator OperableTerm(Function function) => (OperableFunction)function;
+            public static implicit operator OperableTerm(Function function) => new OperableFunction(function.Symbol, function.Arguments.Select(a => (OperableTerm)a).ToArray());
 
             /// <summary>
             /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableTerm"/>.
             /// </summary>
             /// <param name="variableReference">The variable reference to convert.</param>
-            public static implicit operator OperableTerm(VariableReference variableReference) => (OperableVariableReference)variableReference;
+            public static implicit operator OperableTerm(VariableReference variableReference) => new OperableVariableReference(variableReference.Declaration.Symbol);
         }
 #pragma warning restore CS0660, CS0661
 
