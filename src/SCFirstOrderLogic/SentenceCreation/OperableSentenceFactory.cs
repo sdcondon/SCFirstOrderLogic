@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.SentenceCreation
     /// <code>using static SCFirstOrderLogic.SentenceManipulation.OperableSentenceFactory;</code>
     /// This class provides a compromise between <see cref="SentenceFactory"/> and the full language integration provided by the types in the LanguageIntegration namespace.
     /// The objects returned by this factory (are implicitly convertible to <see cref="Sentence"/>s and) override operators in a way that is perhaps intuitive: | for disjunctions, &amp; for conjunctions, ! for negations, and == for the equality predicate.
-    /// For domain-specific sentence elements (predicates, functions &amp; constants), their operable surrogate is implicitly convertible FROM the regular type, so the recommendation is to create appropriate properties and methods to create them - declaring
+    /// For domain-specific sentence elements (predicates, functions &amp; constants), their operable surrogate is implicitly convertible from (and to) the regular type, so the recommendation is to create appropriate properties and methods to create them - declaring
     /// the type as Operable.. so that they can be operated on. For example:
     /// <code>OperablePredicate MyBinaryPredicate(Term arg1, Term arg2) => new Predicate(nameof(MyBinaryPredicate), arg1, arg2);</code>
     /// ..which means you can then write things like:

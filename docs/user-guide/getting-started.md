@@ -37,7 +37,8 @@ Notice that:
 
 ### Writing Sentences with SentenceFactory
 
-First, we have the `SentenceFactory` static class in the `SentenceCreation` namespace. It is intended to be used via a `using static` directive. Here's how the example looks with this one:
+First, we have the `SentenceFactory` static class in the `SentenceCreation` namespace. It is intended to be used via a `using static` directive,
+and includes a number of static methods and properties to assist with succinct sentence creation. Here's how the example looks with this one:
 
 ```csharp
 using SCFirstOrderLogic;
@@ -66,8 +67,8 @@ using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
 // Helper methods for your predicates (and functions) are also recommended with this approach:
-OperablePredicate IsGrandparent(OperableTerm grandparent, OperableTerm grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
-OperablePredicate IsParent(OperableTerm parent, OperableTerm child) => new Predicate(nameof(IsParent), parent, child);
+OperablePredicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
+OperablePredicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
 // This is probably the most succinct of the approaches:
 var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, IsParent(G, P) & IsParent(P, C))));
@@ -96,11 +97,17 @@ interface IPerson
 }
 
 // Now the sentence itself looks like this:
-SentenceFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
+var grandparentDefn = 
+    SentenceFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
 ```
 
 Notice that:
-* This is obviously non-trivial - more info can be found on the [language integration](./language-integration.md) page.
+* This is obviously non-trivial - more information can be found on the [language integration](./language-integration.md) page.
+
+### (Not) Writing Sentences as Strings
+
+Being able to point a parser at "∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]" would be great,
+but I've not gotten around to that just yet. At some point in the future I may take a look at this (shouldn't be too tough, especially if I make use of something like ANTLR)
 
 ## Storing Knowledge and Making Inferences
 
@@ -162,7 +169,7 @@ var rules = new Sentence[]
 Using forward chaining:
 
 ```csharp
-using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
+using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods - IKnowledgeBase is very async..
 using SCFirstOrderLogic.Inference.Chaining;
 
 var kb = new SimpleForwardChainingKnowledgeBase();
@@ -216,9 +223,9 @@ E.g. For running on Windows it might be worth adding `Console.OutputEncoding = E
 The library has deep async support - because "real-world" KBs will tend to need to do IO.
 At the time of writing, the only implementation that currently supports this meaningfully is the resolution one, though.
 
-## Examples
+## More Examples
 
-For some usage examples, see the [example domains](../../src/SCFirstOrderLogic.ExampleDomains) project (and, to a lesser extent, the [tests](../../src/SCFirstOrderLogic.Tests)).
+For some more examples, see the [example domains](../../src/SCFirstOrderLogic.ExampleDomains) project (and, to a lesser extent, the [tests](../../src/SCFirstOrderLogic.Tests)).
 Beyond that, see the XML documentation against the classes - which I hope is fairly decent.
 
 ## Where Next?
