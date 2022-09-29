@@ -18,7 +18,7 @@ namespace SCFirstOrderLogic.SentenceCreation
     /// <para/>
     /// <strong>N.B.</strong> The real sentence classes do not define these operators to keep them as lean and mean as possible.
     /// In fact, the author's worry is that these operators aren't a good idea at all - because of the resulting wishy-washy mix of C# syntax and first-order logic concepts.
-    /// Using the full LINQ integration (via <see cref="LanguageIntegration.SentenceFactory"/>) is strongly recommended instead of this class - because it has a much clearer and cleaner definition for how C# is mapped to FoL logic ("this expression would evaluate as true when invoked on an IEnumerable representing the domain").
+    /// Using the full LINQ integration (via <see cref="LanguageIntegration.SentenceFactory"/>) is strongly recommended instead of this class - because it has a much clearer and cleaner definition for how C# is mapped to FoL logic ("this expression would evaluate as true when invoked on an IEnumerable representing the domain"). 
     /// However, libraries should empower people, not constrain them, so here we are.
     /// </summary>
     public static class OperableSentenceFactory
@@ -533,6 +533,24 @@ namespace SCFirstOrderLogic.SentenceCreation
                 VariableReference variableReference => new OperableVariableReference(variableReference.Declaration.Symbol),
                 _ => throw new ArgumentException("Unsupported TermSurrogate type"),
             };
+
+            /// <summary>
+            /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableTerm"/>.
+            /// </summary>
+            /// <param name="constant">The cpnstant to convert.</param>
+            public static implicit operator OperableTerm(Constant constant) => (OperableConstant)constant;
+
+            /// <summary>
+            /// Implicitly converts a <see cref="Function"/> instance to an equivalent <see cref="OperableTerm"/>.
+            /// </summary>
+            /// <param name="function">The function to convert.</param>
+            public static implicit operator OperableTerm(Function function) => (OperableFunction)function;
+
+            /// <summary>
+            /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableTerm"/>.
+            /// </summary>
+            /// <param name="variableReference">The variable reference to convert.</param>
+            public static implicit operator OperableTerm(VariableReference variableReference) => (OperableVariableReference)variableReference;
         }
 #pragma warning restore CS0660, CS0661
 
