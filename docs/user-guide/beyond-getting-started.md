@@ -19,5 +19,5 @@ The sets of labels used can be specified by the caller (but defaults do exist).
 
 The repo contains a few resources aside from the source of the library itself that people might find interesting:
 
-* **['Alternatives' project](../../src/SCFirstOrderLogic.Alternatives):** this class library contains a number of alternative implementations of things. Some of these implementations are "rawer" recreations of algorithms as listed in the source material, others just exhibit slightly different performance or complexity characteristics. These have been created for learning and benchmarking.
+* **['Alternatives' project](../../src/SCFirstOrderLogic.Alternatives):** this class library contains a number of alternative implementations of things. Some of these implementations are "rawer" recreations of algorithms as listed in the source material (these tend to have names suffixed with `_FromAIaMA`), others just exhibit slightly different performance or complexity characteristics. These have been created for learning and benchmarking.
 * **['Benchmarks' project](../../src/SCFirstOrderLogic.Benchmarks):** benchmark project for evaluating performance of the algorithms in the NuGet package and in the 'Alternatives' project.

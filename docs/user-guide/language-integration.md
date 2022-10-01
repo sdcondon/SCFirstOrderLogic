@@ -11,7 +11,7 @@ Benefits of using LINQ expressions:
   * Provide a way of integrating the rest of your business logic (in particular, known constants) with the knowledge base.
   For example, a knowledge base could derive known constants and their functions/predicates by enumerating an actual implementation of IEnumerable&lt;TElement&gt;.
   Of course, the fact that we often only know particular things about constants doesn't mesh particularly well with having a real object graph.
-  However, given that any implementation is likely to be an adapter anyway (as, for example, LinqToKB doesn't engage with the .NET type system much - more on this below),
+  However, given that any implementation is likely to be an adapter anyway (as, for example, SCFirstOrderLogic doesn't engage with the .NET type system - more on this below),
   there could be a convention based thing where exceptions thrown by the implementation are classed as unknowns by the knowledge base.
   This may (probably will..) turn out to be more complex than is useful, but you never know (and the real goal here is teaching myself FoL anyway, so I'm not too fussed if it doesn't pan out).
   * Provide a way of validating a domain implementation with the knowledge base.
@@ -21,7 +21,7 @@ Drawbacks of using LINQ expressions:
 * Obviously (as alluded to above, and also mentioned below), allowing for constants declared at runtime raises some (surmountable) challenges.
 * By using C#, there is a danger in confusing C# operators with the elements of first order logic that they are mapped to - creating a risk to learning outcomes.
 That is, while it may be intuitive to map the C# `||` operator to a disjunction in FoL, they do of course represent very different things.
-Compared to uses of LINQ such as LINQ to SQL (where the system being mapped to is very obviously distinct), it is perhaps less obvious that there IS still a different system (first order logic) being mapped to here. This is important to bear in mind while working with this library.
+Compared to uses of LINQ such as LINQ to SQL (where the system being mapped to is very obviously distinct), it is perhaps less obvious that there IS still a different system (first order logic) being mapped to here. This is important to bear in mind while working with this the types in this namespace.
 * Simple FoL sentences are nice and simple to represent in C#, but more complex ones get a little gnarly. An example from the source text book, `∀x [∀y Animal(y) ⇒ Loves(x, y)] ⇒ [∃y Loves(y, x)]` ("everyone who loves all animals is loved by something"), is the following in C#: `d => d.All(x => If(d.All(y => If(y.IsAnimal, x.Loves(y))), d.Any(y => y.Loves(x))))`.
 
 Before we dive into the details, a few things to note about this:
@@ -48,7 +48,7 @@ The mapping between bool-valued C# expressions (that act on the TDomain) and FoL
 |Negation|`¬{sentence}`|`!{expression}`|
 |Existential quantification|`∃ {variable}, {sentence}`|`{domain}.Any({variable} => {expression})` †|
 |Universal quantification|`∀ {variable}, {sentence}`|`{domain}.All({variable} => {expression})` †|
-|Equality|`{sentence} = {sentence}`|`{expression} == {expression}`|
+|Equality|`{term} = {term}`|`{expression} == {expression}`|
 |Predicate|`{predicate symbol}({term}, ..)`|A boolean-valued property or method call on a TElement, or a boolean-valued property or method call on TDomain (for ground predicates).|
 |Constant|`{constant symbol}`|Access of a TElement-valued property or parameterless method on TDomain ‡|
 |Function|`{function symbol}({term}, ...)`|Invocation of a TElement-valued method on TElement that accepts only TElement-valued paramaters, or access of a TElement-valued property of TElement|
