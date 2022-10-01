@@ -16,10 +16,14 @@ namespace SCFirstOrderLogic.SentenceCreation
     /// ..which means you can then write things like:
     /// <code>ForAll(X, ThereExists(Y, !MyBinaryPredicate(X, Y) | MyOtherPredicate(Y)));</code>
     /// <para/>
-    /// <strong>N.B.</strong> The real sentence classes do not define these operators to keep them as lean and mean as possible.
+    /// <strong>N.B. #1:</strong> The real sentence classes do not define these operators to keep them as lean and mean as possible.
     /// In fact, the author's worry is that these operators aren't a good idea at all - because of the resulting wishy-washy mix of C# syntax and first-order logic concepts.
     /// Using the full LINQ integration (via <see cref="LanguageIntegration.SentenceFactory"/>) is strongly recommended instead of this class - because it has a much clearer and cleaner definition for how C# is mapped to FoL logic ("this expression would evaluate as true when invoked on an IEnumerable representing the domain"). 
     /// However, libraries should empower people, not constrain them, so here we are.
+    /// <para/>
+    /// <strong>N.B. #2:</strong> It's also probably worth noting that this approach's reliance on implicit conversion will result in some memory overhead compared to using SentenceFactory -
+    /// as each conversion creates a new object. Probably not something you're worried about if you're just learning and experimenting with this library and just want a nice succinct way to
+    /// write sentences, but.. the more you know.
     /// </summary>
     public static class OperableSentenceFactory
     {
