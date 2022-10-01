@@ -2,7 +2,7 @@
 
 This document details the language integration features of SCFirstOrderLogic. These features reside in the SCFirstOrderLogic.LanguageIntegration namespace.
 
-No doubt there are countless first-order logic libraries out there for .NET. The only perhaps non-obvious part of this one is the classes in the LanguageIntegration namespace, which allow for specifying FoL sentences as LINQ expressions.
+No doubt there are countless first-order logic libraries out there for .NET (edit: actually, no, it turns out that there aren't). The only perhaps non-obvious part of this one is the classes in the LanguageIntegration namespace, which allow for specifying FoL sentences as LINQ expressions.
 That is, rather than directly giving the knowledge base sentences of first order logic as instances of the Sentence class, we (represent domains as IEnumerable&lt;TElement&gt; and) `Tell` an `IKnowledgeBase` bool-valued expressions that are guaranteed to be true for all models that it will be `Ask`ed about - which the knowledge base then converts into the entailed sentences of first order logic.
 
 Benefits of using LINQ expressions:
