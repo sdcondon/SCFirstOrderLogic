@@ -2,7 +2,7 @@
 
 ## Overview
 
-First and foremost, here is a quick overview of the namespaces found within this library. This is just to provide a little context for diving deeper:
+First and foremost, here is a quick overview of the namespaces found within this library. This is just to provide a little context before diving deeper:
  
 * **`SCFirstOrderLogic`:** the root namespace contains classes representing individual elements of first order logic sentences ([universal](../../src/SCFirstOrderLogic/UniversalQuantification.cs) and [existential](../../src/SCFirstOrderLogic/ExistentialQuantification.cs) quantifications, [conjunctions](../../src/SCFirstOrderLogic/Conjunction.cs), [disjunctions](../../src/SCFirstOrderLogic/Disjunction.cs), [predicates](../../src/SCFirstOrderLogic/Predicate.cs), [functions](../../src/SCFirstOrderLogic/Function.cs) and so on).
 Instances of these classes are composed into tree structures that represent sentences of first order logic. This namespace also contains classes that represent sentences in [conjunctive normal form](https://en.wikipedia.org/wiki/Conjunctive_normal_form) - CNFSentence and CNFClause.
@@ -18,3 +18,8 @@ Instances of these classes are composed into tree structures that represent sent
 ## Getting Started
 
 See [getting started](./getting-started.md) for first steps.
+
+## Other Resources
+
+* **[Beyond Getting Started](./beyond-getting-started.md):** assorted reference information not covered in 'getting started'
+* **[Language Integration](./language-integration.md):** details of the language integration functionality provided by the library.

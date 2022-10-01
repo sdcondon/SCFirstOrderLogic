@@ -519,7 +519,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                 OperableConstant constant => new Constant(constant.Symbol),
                 OperableFunction function => new Function(function.Symbol, function.Arguments.Select(a => (Term)a).ToArray()),
                 OperableVariableReference variableReference => new VariableReference(variableReference.Declaration.Symbol),
-                _ => throw new ArgumentException("Unsupported TermSurrogate type"),
+                _ => throw new ArgumentException("Unsupported OperableTerm subtype"),
             };
 
             /// <summary>
@@ -531,7 +531,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                 Constant constant => new OperableConstant(constant.Symbol),
                 Function function => new OperableFunction(function.Symbol, function.Arguments.Select(a => (OperableTerm)a).ToArray()),
                 VariableReference variableReference => new OperableVariableReference(variableReference.Declaration.Symbol),
-                _ => throw new ArgumentException("Unsupported TermSurrogate type"),
+                _ => throw new ArgumentException("Unsupported Term subtype"),
             };
 
             /// <summary>
