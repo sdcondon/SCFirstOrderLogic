@@ -75,7 +75,7 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, IsPar
 ```
 
 Notice that:
-* We've only used `&` (for a conjunction) above, but `|` works for disjunctions, and `!` for negations.
+* We've only used `&` (for a conjunction) above, but `|` works for disjunctions, and `!` for negations. In addition, `==` (applied to terms rather than sentences, of course) works for the equality predicate.
 * Other aspects of this factory are the same as `SentenceFactory` - it also offers `ThereExists`, `ForAll`, `Iff`, `If` and single-letter variable declaration properties.
 * The only proviso is that the supporting methods for domain specific elements now need to use `Operable..` as their return type - which is easy as these types are 
 implicitly convertible from the normal equivalents.
@@ -166,7 +166,7 @@ var rules = new Sentence[]
 
 ```
 
-Using forward chaining:
+### Using Forward Chaining
 
 ```csharp
 using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods - IKnowledgeBase is very async..
@@ -186,7 +186,7 @@ Console.WriteLine(query.Result); // true
 Console.WriteLine(query.ResultExplanation); // A human-readable walkthrough of the proof tree 
 ```
 
-Using backward chaining:
+### Using Bckward Chaining
 
 ```csharp
 using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
@@ -198,7 +198,7 @@ var result = kb.Ask(IsCriminal(West)); // will be true
 // ..Or can get an explanation in the same way as above
 ```
 
-Using resolution:
+### Using Resolution
 
 ```csharp
 using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods

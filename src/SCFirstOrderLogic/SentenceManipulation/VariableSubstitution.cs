@@ -32,13 +32,13 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Initializes a new instance of the <see cref="VariableSubstitution"/> class that uses a given set of bindings.
         /// </summary>
         /// <param name="bindings">The bindings to use.</param>
-        internal VariableSubstitution(IReadOnlyDictionary<VariableReference, Term> bindings)
+        public VariableSubstitution(IReadOnlyDictionary<VariableReference, Term> bindings)
         {
             this.bindings = new (bindings);
         }
 
         /// <summary>
-        /// Gets the substitions applied by this transformation.
+        /// Gets the substitutions applied by this transformation.
         /// </summary>
         public IReadOnlyDictionary<VariableReference, Term> Bindings => bindings;
 
