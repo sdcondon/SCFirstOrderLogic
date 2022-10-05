@@ -16,6 +16,8 @@ Includes:
 As mentioned above, the main goal here is for it to be a resource for learning and experimentation.
 As such, care has also been taken to include good type and member documentation, as well as [Source Link](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink) to allow for debugging - and explanatory inline comments in the source code where appropriate.
 
+## Documentation
+
 For now at least, full documentation can be found in the docs folder of this repository. Specifically, we have:
 
 * **[User Guide](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/docs/user-guide/README.md):** The user guide is fairly sparse so far, but should suffice for people to get up and running
@@ -24,3 +26,11 @@ For now at least, full documentation can be found in the docs folder of this rep
   * **[Beyond Getting Started](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/docs/user-guide/beyond-getting-started.md):** Brings attention to a few things not mentioned in 'getting started'
   * **[Language Integration](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/docs/user-guide/language-integration.md):** An explanation of how the language integration aspects of this library work
 * **[Roadmap](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/docs/roadmap.md):** Full project tracking would be overkill for the moment, so there's just a bullet list to organise my thoughts
+
+## See Also
+
+Like this? It might also be worth checking out:
+
+* [SCClassicalPlanning](https://github.com/sdcondon/SCClassicalPlanning): Basic classical planning implementations. Based on chapter 10 of "Artificial Intelligence: A Modern Approach" - though perhaps a _little_ more loosely than this repo is based on chapters 8 and 9. Specifically, introduces a couple more PDDL concepts that the book doesn't bother with (but should IMO). Depends on this library (and [SCGraphTheory.Search](https://github.com/sdcondon/SCGraphTheory.Search)).
+* [SCPropositionalLogic](https://github.com/sdcondon/SCPropositionalLogic): Basic propositional logic implementations. Based on chapter 7 of "Artificial Intelligence: A Modern Approach". Mostly just a precursor to this repo - I haven't bothered publishing this one to NuGet - but might be of use if you find this repo a bit too much.
+* [AIMA Code](https://github.com/aimacode/aima-csharp): I mention this only because I feel like I should. This is the "official" C# repository for "Artificial Intelligence: A Modern Approach" - and it is utterly, irretrievably useless.
