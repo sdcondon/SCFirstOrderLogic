@@ -27,6 +27,10 @@ For now at least, full documentation can be found in the docs folder of this rep
   * **[Language Integration](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/docs/user-guide/language-integration.md):** An explanation of how the language integration aspects of this library work
 * **[Roadmap](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/docs/roadmap.md):** Full project tracking would be overkill for the moment, so there's just a bullet list to organise my thoughts
 
+## Issues and Contributions
+
+I'm not expecting anyone to want to get involved given the low download figures on NuGet, but please feel free to do so. I do keep a vague eye on the issues tab, and will add a CONTRIBUTING.md if anyone drops me a message expressing interest.
+
 ## See Also
 
 Like this? It might also be worth checking out:
