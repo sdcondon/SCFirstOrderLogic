@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.SentenceManipulation;
 using System.Linq;
 
 namespace SCFirstOrderLogic.Inference.Resolution

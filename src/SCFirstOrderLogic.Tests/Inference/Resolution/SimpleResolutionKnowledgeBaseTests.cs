@@ -128,7 +128,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         private static SimpleResolutionQuery MakeQuery(Sentence query, IEnumerable<Sentence> knowledge)
         {
-            var knowledgeBase = new SimpleResolutionKnowledgeBase(new SimpleClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+            var knowledgeBase = new SimpleResolutionKnowledgeBase(
+                new SimpleClauseStore(),
+                SimpleResolutionKnowledgeBase.Filters.None,
+                SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
             knowledgeBase.Tell(knowledge);
             return knowledgeBase.CreateQuery(query);
         }

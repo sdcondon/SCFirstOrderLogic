@@ -35,6 +35,8 @@ For now at least, full documentation can be found in the docs folder of this rep
 
 I'm not expecting anyone to want to get involved given the low download figures on NuGet, but please feel free to do so.
 I do keep a vague eye on the [issues](https://github.com/sdcondon/SCFirstOrderLogic/issues) tab, and will add a CONTRIBUTING.md if anyone drops me a message expressing interest.
+Do bear in mind though that I have a very particular scope in mind for the library, though.
+When we reach the point where I feel that it does a good job of its "learning and experimenting" remit and offers sufficient means of extension, I'll view it as done (and suggest that any extensions belong in their own packages).
 
 ## See Also
 
