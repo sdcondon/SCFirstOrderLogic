@@ -33,7 +33,8 @@ For now at least, full documentation can be found in the docs folder of this rep
 
 ## Issues and Contributions
 
-I'm not expecting anyone to want to get involved given the low download figures on NuGet, but please feel free to do so. I do keep a vague eye on the issues tab, and will add a CONTRIBUTING.md if anyone drops me a message expressing interest.
+I'm not expecting anyone to want to get involved given the low download figures on NuGet, but please feel free to do so.
+I do keep a vague eye on the [issues](https://github.com/sdcondon/SCFirstOrderLogic/issues) tab, and will add a CONTRIBUTING.md if anyone drops me a message expressing interest.
 
 ## See Also
 
