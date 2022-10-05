@@ -9,10 +9,7 @@ Includes:
 * Knowledge base implementations that, while using very simple versions of their respective algorithms, do expose properties for the retrieval of proof details.
 * Sentence formatting logic that allows for (customisable) unique labelling of standardised variables and Skolem functions across a set of sentences.
 
-As mentioned above, the main goal here is for it to be a resource for learning and experimentation. As such, care has also been taken to include:
-
-* Good type and member documentation
-* Functionality for explaining the results of queries
-* [Source Link](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink), to allow for debugging; as well as explanatory inline comments in the source code where appropriate
+As mentioned above, the main goal here is for it to be a resource for learning and experimentation.
+As such, care has also been taken to include good type and member documentation, as well as [Source Link](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink) to allow for debugging - and explanatory inline comments in the source code where appropriate.
 
 Full documentation can be found via the [FlUnit repository readme](https://github.com/sdcondon/SCFirstOrderLogic).
