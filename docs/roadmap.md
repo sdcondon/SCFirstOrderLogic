@@ -5,4 +5,4 @@ This library will be "done" when I think that it does its "learning and experime
 
 Priorities at the time of writing:
 * A parser for sentences expressed as strings (mostly an excuse to play with ANTLR)
-* Rule indexing support in the chaining knowledge bases
+* Rule indexing support in the chaining knowledge bases - something similar to resolution's IClauseStore
