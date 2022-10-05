@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.SentenceFactory
+namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory
 {
     /// <summary>
     /// The natural numbers example domain from chapter 8 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
@@ -20,9 +20,9 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.SentenceFa
         {
             Axioms = new List<Sentence>()
             {
-                ForAll(X, Not(AreEqual(Successor(X), Zero))),
+                ForAll(X, !AreEqual(Successor(X), Zero)),
 
-                ForAll(X, Y, If(Not(AreEqual(X, Y)), Not(AreEqual(Successor(X), Successor(Y))))),
+                ForAll(X, Y, If(!AreEqual(X, Y), !AreEqual(Successor(X), Successor(Y)))),
 
                 ForAll(X, AreEqual(Add(Zero, X), X)),
 
@@ -36,10 +36,10 @@ namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.SentenceFa
         /// </summary>
         public static IReadOnlyCollection<Sentence> Axioms { get; }
 
-        public static Constant Zero { get; } = new Constant(nameof(Zero));
+        public static OperableConstant Zero { get; } = new Constant(nameof(Zero));
 
-        public static Function Successor(Term t) => new Function(nameof(Successor), t);
+        public static OperableFunction Successor(OperableTerm t) => new Function(nameof(Successor), t);
 
-        public static Function Add(Term t, Term other) => new Function(nameof(Add), t, other);
+        public static OperableFunction Add(OperableTerm t, OperableTerm other) => new Function(nameof(Add), t, other);
     }
 }

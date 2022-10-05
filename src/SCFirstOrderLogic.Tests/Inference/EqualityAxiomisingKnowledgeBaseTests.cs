@@ -4,7 +4,7 @@ using SCFirstOrderLogic.TestUtilities;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
-using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.SentenceFactory.KinshipDomain;
+using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingSentenceFactory.KinshipDomain;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 namespace SCFirstOrderLogic.Inference

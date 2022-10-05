@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.OperableSentenceFactory
+namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory
 {
     /// <summary>
     /// The "curiousity and the cat" example from section 9.5 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.

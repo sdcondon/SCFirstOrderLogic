@@ -2,7 +2,7 @@
 using FlUnit;
 using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
-using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.OperableSentenceFactory.KinshipDomain;
+using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory.KinshipDomain;
 
 namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {

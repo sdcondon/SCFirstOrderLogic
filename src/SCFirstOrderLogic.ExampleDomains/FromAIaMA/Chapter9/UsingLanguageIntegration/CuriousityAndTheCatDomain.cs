@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.LanguageIntegration
+namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingLanguageIntegration
 {
     /// <summary>
     /// The "curiousity and the cat" example from section 9.5 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.

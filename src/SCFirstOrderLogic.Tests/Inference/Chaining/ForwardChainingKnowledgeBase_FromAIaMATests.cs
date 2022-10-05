@@ -2,7 +2,7 @@
 using FlUnit;
 using SCFirstOrderLogic.Inference;
 using System.Collections.Generic;
-using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.SentenceFactory.CrimeDomain;
+using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CrimeDomain;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 

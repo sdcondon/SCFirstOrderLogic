@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
-namespace SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter8.OperableSentenceFactory
+namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory
 {
     /// <summary>
     /// The kinship example domain from chapter 8 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.

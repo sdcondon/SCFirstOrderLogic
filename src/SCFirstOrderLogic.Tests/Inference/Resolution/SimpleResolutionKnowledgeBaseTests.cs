@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.SentenceFactory;
+using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory;
 using System.Collections.Generic;
-using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.SentenceFactory.CrimeDomain;
-using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.SentenceFactory.CuriousityAndTheCatDomain;
+using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CrimeDomain;
+using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CuriousityAndTheCatDomain;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
