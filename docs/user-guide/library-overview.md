@@ -1,6 +1,6 @@
 # SCFirstOrderLogic Overview
 
-Here is a quick overview of the namespaces found within this library. Rewading this should give you some context for diving a little deeper:
+Here is a quick overview of the namespaces found within this library. Reading this should give you some context for diving a little deeper:
  
 * **`SCFirstOrderLogic`:** the root namespace contains classes representing individual elements of first order logic sentences ([universal](../../src/SCFirstOrderLogic/UniversalQuantification.cs) and [existential](../../src/SCFirstOrderLogic/ExistentialQuantification.cs) quantifications, [conjunctions](../../src/SCFirstOrderLogic/Conjunction.cs), [disjunctions](../../src/SCFirstOrderLogic/Disjunction.cs), [predicates](../../src/SCFirstOrderLogic/Predicate.cs), [functions](../../src/SCFirstOrderLogic/Function.cs) and so on).
 Instances of these classes are composed into tree structures that represent sentences of first order logic. This namespace also contains classes that represent sentences in [conjunctive normal form](https://en.wikipedia.org/wiki/Conjunctive_normal_form) - CNFSentence and CNFClause.
