@@ -4,6 +4,10 @@
 
 [![NuGet version (SCFirstOrderLogic)](https://img.shields.io/nuget/v/SCFirstOrderLogic.svg?style=flat-square)](https://www.nuget.org/packages/SCFirstOrderLogic/) [![NuGet downloads (SCFirstOrderLogic)](https://img.shields.io/nuget/dt/SCFirstOrderLogic.svg?style=flat-square)](https://www.nuget.org/packages/SCFirstOrderLogic/)
 
+This repository contains the source code for the SCFirstOrderLogic NuGet package.
+
+## Package Overview
+
 Basic but fully functional and documented [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) implementations.
 Heavily influenced by ["Artificial Intelligence: A Modern Approach" (Russell & Norvig)](https://www.google.com/search?q=isbn+978-1292153964).
 Intended first and foremost to assist with learning and experimentation, but does include extension points (and async support) so that it is at least conceivable that it could be (extended to be) useful in a production scenario.
@@ -16,7 +20,7 @@ Includes:
 As mentioned above, the main goal here is for it to be a resource for learning and experimentation.
 As such, care has also been taken to include good type and member documentation, as well as [Source Link](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink) to allow for debugging - and explanatory inline comments in the source code where appropriate.
 
-## Documentation
+## Package Documentation
 
 For now at least, full documentation can be found in the docs folder of this repository. Specifically, we have:
 
