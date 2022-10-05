@@ -185,7 +185,7 @@ namespace SCFirstOrderLogic
                 else
                 {
                     // Assume we've hit a literal. NB will throw if its not actually a literal.
-                    // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFLiteral ctor that
+                    // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the Literal ctor that
                     // we invoke here does so to figure out the details of the literal). So we can just return rather than invoking base.Visit.
                     Literals.Add(new Literal(sentence));
                 }
