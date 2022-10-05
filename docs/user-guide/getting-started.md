@@ -186,7 +186,7 @@ Console.WriteLine(query.Result); // true
 Console.WriteLine(query.ResultExplanation); // A human-readable walkthrough of the proof tree 
 ```
 
-### Using Bckward Chaining
+### Using Backward Chaining
 
 ```csharp
 using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
