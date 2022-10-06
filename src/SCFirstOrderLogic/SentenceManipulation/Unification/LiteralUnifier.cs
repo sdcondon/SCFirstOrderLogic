@@ -16,7 +16,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// </summary>
         /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
-        /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier.</param>
+        /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier (which transforms from x to y).</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
         public static bool TryCreate(Literal x, Literal y, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
         {
