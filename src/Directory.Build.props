@@ -1,5 +1,9 @@
 <Project>
   <PropertyGroup>
+    <CurrentDate></CurrentDate>
+  </PropertyGroup>
+    
+  <PropertyGroup>
     <Authors>Simon Condon</Authors>
     <Company />
     <Product>SCFirstOrderLogic</Product>
@@ -14,7 +18,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <Version>0.0.0-localbuild+localbuild</Version>
+    <Version>0.0.0-localbuild.$([System.DateTime]::Now.ToString(yyyyMMdd.HHmmss))+localbuild.$([System.DateTime]::Now.ToString(yyyyMMdd.HHmmss))</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
