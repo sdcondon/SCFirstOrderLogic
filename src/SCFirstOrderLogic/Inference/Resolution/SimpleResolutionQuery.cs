@@ -173,6 +173,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 await query.EnqueueUnfilteredResolventsAsync(clause, cancellationToken);
             }
 
+            if (query.queue.Count == 0)
+            {
+                query.result = false;
+                query.isComplete = true;
+            }
+
             return query;
         }
 
@@ -201,7 +207,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             // on the store (which would raise potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
             // Downside of using Add: clause store will encounter itself when looking for unifiers - not a big deal,
             // but a performance/maintainability tradeoff nonetheless
-            if (clauseStore.AddAsync(resolution.Resolvent, cancellationToken).GetAwaiter().GetResult())
+            if (await clauseStore.AddAsync(resolution.Resolvent, cancellationToken))
             {
                 // This is a new clause, so we queue up some more clause pairings -
                 // (combinations of the resolvent and existing known clauses)
@@ -210,7 +216,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 // ..and iterate through its resolvents (if any) - also make a note of the unifier so that we can include it in the record of steps that we maintain:
                 await EnqueueUnfilteredResolventsAsync(resolution.Resolvent, cancellationToken);
             }
-            else if (queue.Count == 0)
+            
+            if (queue.Count == 0)
             {
                 // We've run out of clauses to smash together - return a negative result.
                 result = false;
@@ -239,12 +246,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 {
                     queue.Enqueue(resolution);
                 }
-            }
-
-            if (queue.Count == 0)
-            {
-                result = false;
-                isComplete = true;
             }
         }
 
