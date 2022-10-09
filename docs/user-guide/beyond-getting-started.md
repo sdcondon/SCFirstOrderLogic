@@ -13,7 +13,7 @@ The various sentence creation methods make use of this in created sentences wher
 None of the knowledge bases here use particular techniques (e.g. demodulation, paramodulation) to handle equality. However, the `Inference` namespace does include [`EqualityAxiomisingKnowledgeBase`](../../src/SCFirstOrderLogic/Inference/EqualityAxiomisingKnowledgeBase.cs), which is a decorator applied to an inner knowledge base - and adds rules pertaining to equality as knowledge is added.
 * **Sentence Formatting:** There is some sentence formatting logic to be found in the `SentenceFormatting` namespace - which includes support for ensuring unique labelling of symbols for standardised variables and Skolem functions across a set of sentences.
 The sets of labels used can be specified by the caller (but defaults do exist).
-* **Sentence Manipulation and CNF:** While it wasn't explicity mentioned above, the knowledge bases referenced above do of course make use of conjunctive normal form where appropriate. Classes for representation of CNF can be found alongside the "raw" sentence types in the `SCFirstOrderLogic` namespace.
+* **Sentence Manipulation and CNF:** While it wasn't explicity mentioned in "getting started", the knowledge bases referenced in that document do of course make use of conjunctive normal form where appropriate. Classes for representation of CNF can be found alongside the "raw" sentence types in the `SCFirstOrderLogic` namespace.
 
 ## Learning Resources in the Repository
 
