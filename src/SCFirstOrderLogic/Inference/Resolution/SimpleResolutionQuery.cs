@@ -30,12 +30,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private bool result;
 
         private SimpleResolutionQuery(
-            IKnowledgeBaseClauseStore clauseStore,
+            IQueryClauseStore clauseStore,
             Func<ClauseResolution, bool> filter,
             Comparison<ClauseResolution> priorityComparison,
             Sentence query)
         {
-            this.clauseStore = clauseStore.CreateQueryClauseStore();
+            this.clauseStore = clauseStore;
             this.filter = filter;
             queue = new MaxPriorityQueue<ClauseResolution>(priorityComparison);
             steps = new Dictionary<CNFClause, ClauseResolution>();
@@ -157,12 +157,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
             Sentence querySentence,
             CancellationToken cancellationToken = default)
         {
-            var query = new SimpleResolutionQuery(clauseStore, filter, priorityComparison, querySentence);
+            var queryClauseStore = clauseStore.CreateQueryClauseStore();
 
-            // Initialise the clause store with the clauses from the negation of the query:
+            var query = new SimpleResolutionQuery(queryClauseStore, filter, priorityComparison, querySentence);
+
+            // Initialise the query clause store with the clauses from the negation of the query:
             foreach (var clause in query.NegatedQuery.Clauses)
             {
-                await clauseStore.AddAsync(clause, cancellationToken);
+                await queryClauseStore.AddAsync(clause, cancellationToken);
             }
 
             // Queue up all initial clause pairings - adhering to our clause pair filter and priority comparer.
