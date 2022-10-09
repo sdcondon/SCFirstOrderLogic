@@ -168,7 +168,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             // Queue up all initial clause pairings - adhering to our clause pair filter and priority comparer.
-            await foreach (var clause in clauseStore)
+            await foreach (var clause in queryClauseStore)
             {
                 await query.EnqueueUnfilteredResolventsAsync(clause, cancellationToken);
             }
