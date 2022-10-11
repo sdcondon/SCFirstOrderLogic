@@ -17,7 +17,7 @@ Obviously the first challenge is to write sentences. This can be done in several
 The most basic way to express this is to manually compose instances of the types found in the top-level `SCFirstOrderLogic` namespace into a tree structure, like this:
 
 ```csharp
-using static SCFirstOrderLogic;
+using SCFirstOrderLogic;
 
 // Helper methods for your predicates (and functions) are recommended:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
