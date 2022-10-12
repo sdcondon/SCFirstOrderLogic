@@ -18,7 +18,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <Version>0.0.0-local.$([System.DateTime]::Now.ToString(yyyyMMddTHHmmss))</Version>
+    <Version>0.0.0-local.$([System.DateTime]::Now.ToString(yyyyMMddTHHmm))</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
