@@ -4,7 +4,7 @@ Clone the repo and use your IDE's TODO/Task list functionality (TODOs are genera
 This library will be "done" when I think that it does its "learning and experimentation" job adequately, and provides enough extension points for people to build on it should they so wish.
 
 Priorities at the time of writing:
-* Find and zap any remaining bugs
+* Find and zap any remaining bugs - not seen any new issues in my usage of this for a while now, so cautiously optimistic
 
 Breaking changes lined up for v3:
 * Probably change the ref params in ..Visitor{TState} classes - was thinking about value types,
