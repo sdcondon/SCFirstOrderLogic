@@ -11,6 +11,7 @@ Breaking changes lined up for v3:
 but most of the time this isn't what we will want - can always add ..RefVisitor{TState}, or ..VisitorR{TState}
 * Rule indexing support in the chaining knowledge bases - something similar to resolution's IClauseStore.
 Will probably involve breaking changes to ctor of these KBs.
+* Will probably remove implicit conversion of predicates to literals. Was a little overzealous - causes the compiler to make some annoying choices.
 
 On the TODO list for later:
 * A parser for sentences expressed as strings (mostly an excuse to play with ANTLR)
