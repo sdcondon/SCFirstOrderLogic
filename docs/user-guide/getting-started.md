@@ -83,13 +83,14 @@ implicitly convertible from the normal equivalents.
 ### Writing Sentences with LanguageIntegration
 
 Finally, there are the types to be found in the `LanguageIntegration` namespace. The `SentenceFactory` in this namespace is based on the idea of
-modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as a LINQ expression. Like this:
+modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as a boolean-valued LINQ expression. Like this:
 
 ```csharp
 using SCFirstOrderLogic.LanguageIntegration;
 using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff an If methods..
 
-// The helper methods recommended for the other approaches become full interfaces when language integration is used (no implementation is needed):
+// The helper methods recommended for the other approaches become full interfaces
+// when language integration is used (no implementation is needed):
 interface IPerson
 {
     bool IsParentOf(IPerson person);
