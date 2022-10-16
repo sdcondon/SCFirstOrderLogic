@@ -1,8 +1,5 @@
 <Project>
-  <PropertyGroup>
-    <CurrentDate></CurrentDate>
-  </PropertyGroup>
-    
+   
   <PropertyGroup>
     <Authors>Simon Condon</Authors>
     <Company />
@@ -18,10 +15,15 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <Version>0.0.0-local.$([System.DateTime]::Now.ToString(yyyyMMddTHHmm))</Version>
+    <!-- NB: timestamp below doesn't include seconds because depending on such a package gets VS into an infinite restore loop.. -->
+    <Version>0.0.0-local.$([System.DateTime]::Now.ToString(yyMMdd.HHmm))</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' != 'true' And Exists('C:\Users\simon\Code\Packages')">
+    <PackageOutputPath>C:\Users\simon\Code\Packages</PackageOutputPath>
   </PropertyGroup>
 </Project>
