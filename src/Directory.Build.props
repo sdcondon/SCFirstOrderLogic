@@ -16,7 +16,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
     <!-- NB: timestamp below doesn't include seconds because depending on such a package gets VS into an infinite restore loop.. -->
-    <Version>0.0.0-local.$([System.DateTime]::Now.ToString(yyMMdd.HHmm))</Version>
+    <Version>0.0.0-local.$([System.DateTime]::Now.ToString(yyMMddTHHmm))</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
