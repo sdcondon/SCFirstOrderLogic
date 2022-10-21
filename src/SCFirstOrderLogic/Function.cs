@@ -89,7 +89,10 @@ namespace SCFirstOrderLogic
         public override void Accept(ITermVisitor visitor) => visitor.Visit(this);
 
         /// <inheritdoc />
-        public override void Accept<T>(ITermVisitor<T> visitor, ref T state) => visitor.Visit(this, ref state);
+        public override void Accept<T>(ITermVisitor<T> visitor, T state) => visitor.Visit(this, state);
+
+        /// <inheritdoc />
+        public override void Accept<T>(ITermVisitorR<T> visitor, ref T state) => visitor.Visit(this, ref state);
 
         /// <inheritdoc />
         public override TOut Accept<TOut>(ITermTransformation<TOut> transformation) => transformation.ApplyTo(this);

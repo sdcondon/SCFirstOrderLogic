@@ -31,7 +31,15 @@ namespace SCFirstOrderLogic
         /// <param name="visitor">The visitor that is visiting the sentence.</param>
         /// <param name="state">A reference to the state that the visitor is working with.</param>
         /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
-        public abstract void Accept<TState>(ISentenceVisitor<TState> visitor, ref TState state);
+        public abstract void Accept<TState>(ISentenceVisitor<TState> visitor, TState state);
+
+        /// <summary>
+        /// Accepts a <see cref="ISentenceVisitorR{TState}"/> instance. Implementations should simply invoke the appropriate Visit method of the visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor that is visiting the sentence.</param>
+        /// <param name="state">A reference to the state that the visitor is working with.</param>
+        /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
+        public abstract void Accept<TState>(ISentenceVisitorR<TState> visitor, ref TState state);
 
         /// <summary>
         /// Accepts a <see cref="ISentenceTransformation{TOut}"/> instance. Implementations should simply invoke the appropriate ApplyTo method of the transformation.

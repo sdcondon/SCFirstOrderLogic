@@ -4,30 +4,30 @@
     /// Interface for visitors of <see cref="Term"/> instances.
     /// <para/>
     /// NB: This interface (in comparison to the non-generic <see cref="ITermVisitor"/>) is specifically for visitors that facilitate
-    /// state accumulation outside of the visitor instance itself.
+    /// state accumulation outside of the visitor instance itself - state that is passed to the visitor by reference.
     /// </summary>
     /// <typeparam name="TState">The type of state that this visitor works with.</typeparam>
-    public interface ITermVisitor<TState>
+    public interface ITermVisitorR<TState>
     {
         /// <summary>
         /// Visits a <see cref="Constant"/> instance.
         /// </summary>
         /// <param name="constant">The constant to visit.</param>
         /// <param name="state">A reference to the state for this visitation.</param>
-        void Visit(Constant constant, TState state);
+        void Visit(Constant constant, ref TState state);
 
         /// <summary>
         /// Visits a <see cref="Function"/> instance.
         /// </summary>
         /// <param name="function">The function to visit.</param>
         /// <param name="state">A reference to the state for this visitation.</param>
-        void Visit(Function function, TState state);
+        void Visit(Function function, ref TState state);
 
         /// <summary>
         /// Visits a <see cref="VariableReference"/> instance.
         /// </summary>
         /// <param name="variable">The variable reference to visit.</param>
         /// <param name="state">A reference to the state for this visitation.</param>
-        void Visit(VariableReference variable, TState state);
+        void Visit(VariableReference variable, ref TState state);
     }
 }

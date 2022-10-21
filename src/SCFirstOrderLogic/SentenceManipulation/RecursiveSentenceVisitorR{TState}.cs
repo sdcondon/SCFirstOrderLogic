@@ -3,15 +3,15 @@
     /// <summary>
     /// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state.
     /// </summary>
-    public abstract class RecursiveSentenceVisitor<TState> : ISentenceVisitor<TState>, ITermVisitor<TState>
+    public abstract class RecursiveSentenceVisitorR<TState> : ISentenceVisitorR<TState>, ITermVisitorR<TState>
     {
         /// <summary>
         /// Visits a <see cref="Sentence"/> instance.
-        /// The default implementation simply invokes the Visit method appropriate to the type of the sentence (via <see cref="Sentence.Accept{TState}(ISentenceVisitor{TState}, ref TState)"/>.
+        /// The default implementation simply invokes the Visit method appropriate to the type of the sentence (via <see cref="Sentence.Accept{TState}(ISentenceVisitorR{TState}, ref TState)"/>.
         /// </summary>
         /// <param name="sentence">The sentence to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Sentence sentence, TState state) => sentence.Accept(this, state);
+        public virtual void Visit(Sentence sentence, ref TState state) => sentence.Accept(this, ref state);
 
         /// <summary>
         /// Visits a <see cref="Conjunction"/> instance.
@@ -19,10 +19,10 @@
         /// </summary>
         /// <param name="conjunction">The <see cref="Conjunction"/> instance to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Conjunction conjunction, TState state)
+        public virtual void Visit(Conjunction conjunction, ref TState state)
         {
-            Visit(conjunction.Left, state);
-            Visit(conjunction.Right, state);
+            Visit(conjunction.Left, ref state);
+            Visit(conjunction.Right, ref state);
         }
 
         /// <summary>
@@ -31,10 +31,10 @@
         /// </summary>
         /// <param name="disjunction">The <see cref="Disjunction"/> instance to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Disjunction disjunction, TState state)
+        public virtual void Visit(Disjunction disjunction, ref TState state)
         {
-            Visit(disjunction.Left, state);
-            Visit(disjunction.Right, state);
+            Visit(disjunction.Left, ref state);
+            Visit(disjunction.Right, ref state);
         }
 
         /// <summary>
@@ -43,10 +43,10 @@
         /// </summary>
         /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Equivalence equivalence, TState state)
+        public virtual void Visit(Equivalence equivalence, ref TState state)
         {
-            Visit(equivalence.Left, state);
-            Visit(equivalence.Right, state);
+            Visit(equivalence.Left, ref state);
+            Visit(equivalence.Right, ref state);
         }
 
         /// <summary>
@@ -55,10 +55,10 @@
         /// </summary>
         /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(ExistentialQuantification existentialQuantification, TState state)
+        public virtual void Visit(ExistentialQuantification existentialQuantification, ref TState state)
         {
-            Visit(existentialQuantification.Variable, state);
-            Visit(existentialQuantification.Sentence, state);
+            Visit(existentialQuantification.Variable, ref state);
+            Visit(existentialQuantification.Sentence, ref state);
         }
 
         /// <summary>
@@ -67,10 +67,10 @@
         /// </summary>
         /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Implication implication, TState state)
+        public virtual void Visit(Implication implication, ref TState state)
         {
-            Visit(implication.Antecedent, state);
-            Visit(implication.Consequent, state);
+            Visit(implication.Antecedent, ref state);
+            Visit(implication.Consequent, ref state);
         }
 
         /// <summary>
@@ -79,11 +79,11 @@
         /// </summary>
         /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Predicate predicate, TState state)
+        public virtual void Visit(Predicate predicate, ref TState state)
         {
             foreach (var argument in predicate.Arguments)
             {
-                Visit(argument, state);
+                Visit(argument, ref state);
             }
         }
 
@@ -93,9 +93,9 @@
         /// </summary>
         /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Negation negation, TState state)
+        public virtual void Visit(Negation negation, ref TState state)
         {
-            Visit(negation.Sentence, state);
+            Visit(negation.Sentence, ref state);
         }
 
         /////// <summary>
@@ -104,15 +104,15 @@
         /////// </summary>
         /////// <param name="quantification">The <see cref="Quantification"/> instance to visit.</param>
         /////// <param name="state">A reference to the state of this visitation.</param>
-        ////public virtual void Visit(Quantification quantification, TState state)
+        ////public virtual void Visit(Quantification quantification, ref TState state)
         ////{
         ////    switch (quantification)
         ////    {
         ////        case ExistentialQuantification existentialQuantification:
-        ////            Visit(existentialQuantification, state);
+        ////            Visit(existentialQuantification, ref state);
         ////            break;
         ////        case UniversalQuantification universalQuantification:
-        ////            Visit(universalQuantification, state);
+        ////            Visit(universalQuantification, ref state);
         ////            break;
         ////        default:
         ////            throw new ArgumentException($"Unsupported Quantification type '{quantification.GetType()}'", nameof(quantification));
@@ -125,19 +125,19 @@
         /// </summary>
         /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(UniversalQuantification universalQuantification, TState state)
+        public virtual void Visit(UniversalQuantification universalQuantification, ref TState state)
         {
-            Visit(universalQuantification.Variable, state);
-            Visit(universalQuantification.Sentence, state);
+            Visit(universalQuantification.Variable, ref state);
+            Visit(universalQuantification.Sentence, ref state);
         }
 
         /// <summary>
         /// Visits a <see cref="Term"/> instance.
-        /// The default implementation simply invokes the Visit method appropriate to the type of the term (via <see cref="Term.Accept{TState}(ITermVisitor{TState}, TState)"/>.
+        /// The default implementation simply invokes the Visit method appropriate to the type of the term (via <see cref="Term.Accept{TState}(ITermVisitorR{TState}, ref TState)"/>.
         /// </summary>
         /// <param name="term">The term to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Term term, TState state) => term.Accept(this, state);
+        public virtual void Visit(Term term, ref TState state) => term.Accept(this, ref state);
 
         /// <summary>
         /// Visits a <see cref="Constant"/> instance.
@@ -145,7 +145,7 @@
         /// </summary>
         /// <param name="constant">The constant to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Constant constant, TState state)
+        public virtual void Visit(Constant constant, ref TState state)
         {
         }
 
@@ -155,9 +155,9 @@
         /// </summary>
         /// <param name="variable">The variable reference to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(VariableReference variable, TState state)
+        public virtual void Visit(VariableReference variable, ref TState state)
         {
-            Visit(variable.Declaration, state);
+            Visit(variable.Declaration, ref state);
         }
 
         /// <summary>
@@ -166,11 +166,11 @@
         /// </summary>
         /// <param name="function">The function to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Function function, TState state)
+        public virtual void Visit(Function function, ref TState state)
         {
             foreach (var argument in function.Arguments)
             {
-                Visit(argument, state);
+                Visit(argument, ref state);
             }
         }
 
@@ -180,7 +180,7 @@
         /// </summary>
         /// <param name="variableDeclaration">The <see cref="VariableDeclaration"/> instance to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(VariableDeclaration variableDeclaration, TState state)
+        public virtual void Visit(VariableDeclaration variableDeclaration, ref TState state)
         {
         }
     }

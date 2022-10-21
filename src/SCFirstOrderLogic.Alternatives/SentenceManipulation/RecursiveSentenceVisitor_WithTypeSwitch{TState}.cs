@@ -3,7 +3,7 @@
     /// <summary>
     /// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state.
     /// </summary>
-    public abstract class RecursiveSentenceVisitor_WithTypeSwitch<TState> : ISentenceVisitor<TState>, ITermVisitor<TState>
+    public abstract class RecursiveSentenceVisitor_WithTypeSwitch<TState> : ISentenceVisitorR<TState>, ITermVisitorR<TState>
     {
         /// <summary>
         /// Applies this transformation to a <see cref="Sentence"/> instance.

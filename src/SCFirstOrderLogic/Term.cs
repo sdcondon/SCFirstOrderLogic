@@ -20,7 +20,15 @@ namespace SCFirstOrderLogic
         /// <param name="visitor">The visitor that is visiting the term.</param>
         /// <param name="state">A reference to the state that the visitor is working with.</param>
         /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
-        public abstract void Accept<TState>(ITermVisitor<TState> visitor, ref TState state);
+        public abstract void Accept<TState>(ITermVisitor<TState> visitor, TState state);
+
+        /// <summary>
+        /// Accepts a <see cref="ITermVisitorR{TState}"/> instance.
+        /// </summary>
+        /// <param name="visitor">The visitor that is visiting the term.</param>
+        /// <param name="state">A reference to the state that the visitor is working with.</param>
+        /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
+        public abstract void Accept<TState>(ITermVisitorR<TState> visitor, ref TState state);
 
         /// <summary>
         /// Accepts a <see cref="ITermTransformation{TOut}"/> instance. Implementations should simply invoke the appropriate ApplyTo method of the transformation.

@@ -30,7 +30,10 @@ namespace SCFirstOrderLogic
         public override void Accept(ISentenceVisitor visitor) => visitor.Visit(this);
 
         /// <inheritdoc />
-        public override void Accept<T>(ISentenceVisitor<T> visitor, ref T state) => visitor.Visit(this, ref state);
+        public override void Accept<T>(ISentenceVisitor<T> visitor, T state) => visitor.Visit(this, state);
+
+        /// <inheritdoc />
+        public override void Accept<T>(ISentenceVisitorR<T> visitor, ref T state) => visitor.Visit(this, ref state);
 
         /// <inheritdoc />
         public override TOut Accept<TOut>(ISentenceTransformation<TOut> transformation) => transformation.ApplyTo(this);
