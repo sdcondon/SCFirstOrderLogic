@@ -19,7 +19,8 @@ namespace SCFirstOrderLogic.Inference
         {
             foreach (var sentence in sentences)
             {
-                // No guarantee of re-entrance safety - so go one at a time. TODO: this is dumb - not this class' responsibility
+                // No guarantee of re-entrance safety - so go one at a time.
+                // TODO: this is dumb - not this class' responsibility
                 await knowledgeBase.TellAsync(sentence, cancellationToken);
             }
         }

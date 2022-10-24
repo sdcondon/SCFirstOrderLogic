@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace SCFirstOrderLogic.SentenceManipulation
 {
@@ -34,7 +36,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="bindings">The bindings to use.</param>
         public VariableSubstitution(IReadOnlyDictionary<VariableReference, Term> bindings)
         {
-            this.bindings = new (bindings);
+            this.bindings = new(bindings);
         }
 
         /// <summary>
@@ -72,6 +74,47 @@ namespace SCFirstOrderLogic.SentenceManipulation
             }
 
             return variable;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            if (obj is not VariableSubstitution otherSubstitution)
+            {
+                return false;
+            }
+
+            foreach (var kvp in bindings)
+            {
+                if (!otherSubstitution.bindings.TryGetValue(kvp.Key, out var otherValue) || !kvp.Value.Equals(otherValue))
+                {
+                    return false;
+                }
+            }
+
+            foreach (var otherKvp in otherSubstitution.bindings)
+            {
+                if (!bindings.TryGetValue(otherKvp.Key, out var value) || !otherKvp.Value.Equals(value))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            HashCode hashCode = new();
+
+            foreach (var kvp in bindings)
+            {
+                hashCode.Add(kvp.Key);
+                hashCode.Add(kvp.Value);
+            }
+
+            return hashCode.ToHashCode();
         }
     }
 }
