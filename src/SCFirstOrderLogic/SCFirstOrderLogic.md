@@ -12,4 +12,4 @@ Includes:
 As mentioned above, the main goal here is for it to be a resource for learning and experimentation.
 As such, care has also been taken to include good type and member documentation, as well as [Source Link](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink) to allow for debugging - and explanatory inline comments in the source code where appropriate.
 
-Full documentation can be found via the [SCFirstOrderLogic repository readme](https://github.com/sdcondon/SCFirstOrderLogic).
+Full documentation can be found [here](https://sdcondon.github.io/SCFirstOrderLogic/).

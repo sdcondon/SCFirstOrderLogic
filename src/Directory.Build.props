@@ -7,7 +7,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/sdcondon/SCFirstOrderLogic.git</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <PackageProjectUrl>https://github.com/sdcondon/SCFirstOrderLogic</PackageProjectUrl>
+    <PackageProjectUrl>https://sdcondon.github.io/SCFirstOrderLogic/</PackageProjectUrl>
     <PackageReleaseNotes>See https://github.com/sdcondon/SCFirstOrderLogic/releases.</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>2021-2022 Simon Condon</Copyright>
