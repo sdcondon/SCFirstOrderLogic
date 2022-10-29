@@ -1,0 +1,31 @@
+﻿@page "/beyond-getting-started"
+
+<PageTitle>Beyond Getting Started</PageTitle>
+
+<h1>Beyond Getting Started</h1>
+
+<p>Once you have worked through <a href="getting-started">'getting started'</a>, the best approach for getting to grips with SCFirstOrderLogic is to experiment with the <a href="https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.ExampleDomains">example domains</a> (and/or domains of your own making), consulting the type and member documentation as you go.</p>
+
+<p>You may also find the information provided below useful:</p>
+
+<h2>Functionality not Mentioned in 'Getting Started'</h2>
+
+<p>There are a number of pieces of functionality that are not mentioned in 'getting stated', but are worth noting:</p>
+
+<ul>
+    <li><b>Equality:</b> The top-level namespace `SCFirstOrderLogic` includes `EqualitySymbol`, intended to be used as the symbol for the equality predicate.
+    The various sentence creation methods make use of this in created sentences where appropriate.
+    None of the knowledge bases here use particular techniques (e.g. demodulation, paramodulation) to handle equality. However, the `Inference` namespace does include `EqualityAxiomisingKnowledgeBase`, which is a decorator applied to an inner knowledge base - and adds rules pertaining to equality as knowledge is added.</li>
+    <li><b>Sentence Formatting:</b> There is some sentence formatting logic to be found in the `SentenceFormatting` namespace - which includes support for ensuring unique labelling of symbols for standardised variables and Skolem functions across a set of sentences.
+    The sets of labels used can be specified by the caller (but defaults do exist).</li>
+    <li><b>CNF:</b> While it wasn't explicity mentioned in "getting started", the knowledge bases referenced in that document do of course make use of conjunctive normal form where appropriate. Classes for representation of CNF can be found alongside the "raw" sentence types in the `SCFirstOrderLogic` namespace.</li>
+</ul>
+
+<h2>Learning Resources in the Repository</h2>
+
+<p>The repo contains a few resources aside from the source of the library itself that people might find interesting:</p>
+
+<ul>
+    <li><b><a href="https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.Alternatives">'Alternatives' project</a>:</b> this class library contains a number of alternative implementations of things. Some of these implementations are "rawer" recreations of algorithms as listed in the source material (these tend to have names suffixed with `_FromAIaMA`), others just exhibit slightly different performance or complexity characteristics. These have been created for learning and benchmarking.</li>
+    <li><b><a href="https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.Benchmarks">'Benchmarks' project</a>:</b> benchmark project for evaluating performance of the algorithms in the NuGet package and in the 'Alternatives' project.</li>
+</ul>

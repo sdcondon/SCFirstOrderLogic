@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.ExampleDo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.Tests", "SCFirstOrderLogic.Tests\SCFirstOrderLogic.Tests.csproj", "{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCFirstOrderLogic.Alternatives", "SCFirstOrderLogic.Alternatives\SCFirstOrderLogic.Alternatives.csproj", "{DB058ED1-32D1-493C-AEB4-FD0156FB8197}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.Alternatives", "SCFirstOrderLogic.Alternatives\SCFirstOrderLogic.Alternatives.csproj", "{DB058ED1-32D1-493C-AEB4-FD0156FB8197}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCFirstOrderLogic.Documentation", "SCFirstOrderLogic.Documentation\SCFirstOrderLogic.Documentation.csproj", "{6A62E349-C68B-48C5-8F0E-538C9E01947F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +48,10 @@ Global
 		{DB058ED1-32D1-493C-AEB4-FD0156FB8197}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB058ED1-32D1-493C-AEB4-FD0156FB8197}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB058ED1-32D1-493C-AEB4-FD0156FB8197}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A62E349-C68B-48C5-8F0E-538C9E01947F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A62E349-C68B-48C5-8F0E-538C9E01947F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A62E349-C68B-48C5-8F0E-538C9E01947F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A62E349-C68B-48C5-8F0E-538C9E01947F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
