@@ -6,13 +6,13 @@ using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFa
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
-    public static class BackwardChainingKnowledgeBase_SimplerTests
+    public static class BackwardChainingKnowledgeBase_FromAIaMATests
     {
         public static Test PositiveScenarios => TestThat
             .GivenTestContext()
-            .AndEachOf(() => new BackwardChainingKnowledgeBase_Simpler.Query[]
+            .AndEachOf(() => new BackwardChainingKnowledgeBase_FromAIaMA.Query[]
             {
                 // trivial
                 MakeQuery(
@@ -82,10 +82,10 @@ namespace SCFirstOrderLogic.Inference.Chaining
             .ThenReturns()
             .And((_, _, rv) => rv.Should().BeTrue())
             .And((_, query, _) => query.Result.Should().BeTrue())
-            .And((cxt, query, _) => cxt.WriteOutputLine(query.ResultExplanation));
+            .And((cxt, query, _) => cxt.WriteOutputLine(query.ResultExplanation)); // Going to replace with full proof trees, so no point asserting on subs for now.
 
         public static Test NegativeScenarios => TestThat
-            .GivenEachOf(() => new BackwardChainingKnowledgeBase_Simpler.Query[]
+            .GivenEachOf(() => new BackwardChainingKnowledgeBase_FromAIaMA.Query[]
             {
                 // no matching clause
                 MakeQuery(
@@ -120,9 +120,9 @@ namespace SCFirstOrderLogic.Inference.Chaining
             .And((_, rv) => rv.Should().BeFalse())
             .And((query, _) => query.Result.Should().BeFalse());
 
-        private static BackwardChainingKnowledgeBase_Simpler.Query MakeQuery(Sentence query, IEnumerable<Sentence> kb)
+        private static BackwardChainingKnowledgeBase_FromAIaMA.Query MakeQuery(Sentence query, IEnumerable<Sentence> kb)
         {
-            var knowledgeBase = new BackwardChainingKnowledgeBase_Simpler();
+            var knowledgeBase = new BackwardChainingKnowledgeBase_FromAIaMA();
             knowledgeBase.Tell(kb);
             return knowledgeBase.CreateQueryAsync(query).GetAwaiter().GetResult();
         }

@@ -1,10 +1,11 @@
 ﻿using SCFirstOrderLogic;
+using SCFirstOrderLogic.Inference;
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using SCFirstOrderLogic.SentenceManipulation.Unification;
 using System.Text;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a (depth-first) backward chaining algorithm.

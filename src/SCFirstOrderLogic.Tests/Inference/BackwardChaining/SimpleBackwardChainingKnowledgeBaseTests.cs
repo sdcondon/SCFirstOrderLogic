@@ -6,7 +6,7 @@ using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFa
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     public static class SimpleBackwardChainingKnowledgeBaseTests
     {
@@ -80,7 +80,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             })
             .When((_, tc) =>
             {
-                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase();
+                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
                 knowledgeBase.Tell(tc.Knowledge);
 
                 var query = knowledgeBase.CreateQuery(tc.Query);
@@ -125,7 +125,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             })
             .When(tc =>
             {
-                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase();
+                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
                 knowledgeBase.Tell(tc.Knowledge);
 
                 var query = knowledgeBase.CreateQuery(tc.Query);

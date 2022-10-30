@@ -1,8 +1,9 @@
 ﻿using BenchmarkDotNet.Attributes;
 using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory;
+using SCFirstOrderLogic.Inference;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CrimeDomain;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     [MemoryDiagnoser]
     [InProcess]
@@ -11,8 +12,8 @@ namespace SCFirstOrderLogic.Inference.Chaining
         [Benchmark(Baseline = true)]
         public static bool CrimeExample_SimpleBackwardChainingKnowledgeBase()
         {
-            var kb = new SimpleBackwardChainingKnowledgeBase();
-            kb.TellAsync(CrimeDomain.Axioms).Wait();
+            var kb = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
+            kb.TellAsync(Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
         }
 
@@ -20,7 +21,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         public static bool CrimeExample_BackwardChainingKnowledgeBase_Simpler()
         {
             var kb = new BackwardChainingKnowledgeBase_Simpler();
-            kb.TellAsync(CrimeDomain.Axioms).Wait();
+            kb.TellAsync(Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
         }
 
@@ -28,7 +29,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
         public static bool CrimeExample_BackwardChainingKnowledgeBase_FromAIaMA()
         {
             var kb = new BackwardChainingKnowledgeBase_FromAIaMA();
-            kb.TellAsync(CrimeDomain.Axioms).Wait();
+            kb.TellAsync(Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
         }
     }

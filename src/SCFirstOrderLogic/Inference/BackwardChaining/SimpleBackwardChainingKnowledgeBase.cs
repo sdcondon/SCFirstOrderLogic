@@ -1,12 +1,11 @@
 ﻿using SCFirstOrderLogic;
 using SCFirstOrderLogic.Inference.Resolution;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a (depth-first) backward chaining algorithm.
@@ -17,14 +16,19 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// </summary>
     public class SimpleBackwardChainingKnowledgeBase : IKnowledgeBase
     {
-        // TODO-BREAKING/EXTENSIBILITY: what if large. At some point add a clause store equivalent..
-        private readonly Dictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol = new();
+        private readonly IClauseStore clauseStore;
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="SimpleBackwardChainingKnowledgeBase"/> class.
+        /// </summary>
+        /// <param name="clauseStore">The object to use to store and look up clauses.</param>
+        public SimpleBackwardChainingKnowledgeBase(IClauseStore clauseStore) => this.clauseStore = clauseStore;
 
         /// <inheritdoc />
-        public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
+        public async Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
             // Normalize, then verify that the sentence consists only of definite clauses
-            // before indexing any of them:
+            // before indexing ANY of them:
             var cnfSentence = new CNFSentence(sentence);
 
             if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))
@@ -32,20 +36,11 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));
             }
 
-            // Store clauses just in memory, but indexed by their consequent symbol:
+            // Store clauses in the clause store:
             foreach (var clause in cnfSentence.Clauses)
             {
-                var definiteClause = new CNFDefiniteClause(clause);
-
-                if (!clausesByConsequentSymbol.TryGetValue(definiteClause.Consequent.Symbol, out var clausesWithThisConsequentSymbol))
-                {
-                    clausesWithThisConsequentSymbol = clausesByConsequentSymbol[definiteClause.Consequent.Symbol] = new List<CNFDefiniteClause>();
-                }
-
-                clausesWithThisConsequentSymbol.Add(definiteClause);
+                await clauseStore.AddAsync(new CNFDefiniteClause(clause), cancellationToken);
             }
-
-            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
@@ -73,7 +68,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             //var standardisation = new VariableStandardisation(query);
             //p = (Predicate)standardisation.ApplyTo(p);
 
-            return Task.FromResult(new SimpleBackwardChainingQuery(p, clausesByConsequentSymbol));
+            return Task.FromResult(new SimpleBackwardChainingQuery(p, clauseStore));
         }
 
         /// <summary>

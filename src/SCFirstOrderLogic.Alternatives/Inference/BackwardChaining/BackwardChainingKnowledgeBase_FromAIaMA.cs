@@ -1,10 +1,11 @@
 ﻿using SCFirstOrderLogic;
+using SCFirstOrderLogic.Inference;
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using SCFirstOrderLogic.SentenceManipulation.Unification;
 using System.Text;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a backward chaining algorithm. This one is implemented as close as possible to the
@@ -12,7 +13,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// </summary>
     public class BackwardChainingKnowledgeBase_FromAIaMA : IKnowledgeBase
     {
-        private readonly Dictionary<object, List<CNFClause>> clausesByConsequentSymbol = new ();
+        private readonly Dictionary<object, List<CNFClause>> clausesByConsequentSymbol = new();
 
         /// <inheritdoc />
         public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
