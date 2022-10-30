@@ -195,7 +195,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="Term"/> instance.
-        /// The default implementation simply invokes the ApplyTo method appropriate to the type of the term.
+        /// <para/>
+        /// The default implementation uses a pattern-matching switch expression to invoke the ApplyTo method appropriate to the actual type of the term.
+        /// This is evidentally faster than calling <see cref="Term.Accept{TOut}(ITermTransformation{TOut})"/>.
+        /// Whatever lookup-creating shenannigans the compiler gets up to are apparently quicker than a virtual method call.
         /// </summary>
         /// <param name="term">The term to visit.</param>
         /// <returns>The transformed term.</returns>
