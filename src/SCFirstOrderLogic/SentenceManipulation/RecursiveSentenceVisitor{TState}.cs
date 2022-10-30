@@ -7,7 +7,7 @@
     {
         /// <summary>
         /// Visits a <see cref="Sentence"/> instance.
-        /// The default implementation simply invokes the Visit method appropriate to the type of the sentence (via <see cref="Sentence.Accept{TState}(ISentenceVisitor{TState}, ref TState)"/>.
+        /// The default implementation simply invokes the Visit method appropriate to the type of the sentence (via <see cref="Sentence.Accept{TState}(ISentenceVisitor{TState}, TState)"/>.
         /// </summary>
         /// <param name="sentence">The sentence to visit.</param>
         /// <param name="state">A reference to the state of this visitation.</param>

@@ -13,19 +13,19 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <summary>
         /// Initializes a new instance of the <see cref="CNFExaminer"/> class.
         /// </summary>
-        /// <param name="sentenceFormatter"></param>
+        /// <param name="sentenceFormatter">The formatter to use when formatting sentence elements as part of output.</param>
         public CNFExplainer(SentenceFormatter sentenceFormatter)
         {
             this.sentenceFormatter = sentenceFormatter;
         }
 
         /// <summary>
-        /// Outputs a human-readble string for a given normalisaion term (standardised variable or Skolem function). Throws an exception if the passed term is not a normalisation term.
+        /// Outputs a human-readable string for a given normalisation term (standardised variable or Skolem function). Throws an exception if the passed term is not a normalisation term.
         /// <para/>
         /// TODO-LOCALISATION: (if I get bored or this ever takes off for whatever reason): Allow for localisation and allow specification of culture in ctor (optional - default to current culture).
         /// </summary>
         /// <param name="term">The term to examine.</param>
-        /// <returns>A human readable string that completes the sentence "{term} is .."</returns>
+        /// <returns>A human-readable string that completes the sentence "{term} is .."</returns>
         public string ExplainNormalisationTerm(Term term)
         {
             if (term is Function function && function.Symbol is SkolemFunctionSymbol skolemFunctionSymbol)

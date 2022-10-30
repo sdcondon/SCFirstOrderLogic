@@ -7,7 +7,7 @@
     /// state accumulation outside of the visitor instance itself.
     /// </summary>
     /// <typeparam name="TState">The type of state that this visitor works with.</typeparam>
-    public interface ITermVisitor<TState>
+    public interface ITermVisitor<in TState>
     {
         /// <summary>
         /// Visits a <see cref="Constant"/> instance.
