@@ -85,7 +85,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
             .ThenReturns()
             .And((_, _, rv) => rv.Should().BeTrue())
             .And((_, query, _) => query.Result.Should().BeTrue())
-            .And((cxt, query, _) => cxt.WriteOutputLine(query.Explain())); // Going to replace with full proof trees, so no point asserting on subs for now.
+            .And((cxt, query, _) => cxt.WriteOutputLine(query.ResultExplanation)); // Going to replace with full proof trees, so no point asserting on subs for now.
 
         public static Test NegativeScenarios => TestThat
             .GivenEachOf(() => new BackwardChainingKnowledgeBase_FromAIaMA.Query[]
