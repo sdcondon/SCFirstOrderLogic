@@ -14,6 +14,30 @@ namespace SCFirstOrderLogic.Inference.Resolution
     {
         private readonly ConcurrentBag<CNFClause> clauses = new();
         private readonly SemaphoreSlim addLock = new(1);
+        
+        /// <summary>
+        /// Initializes a new instrance of the <see cref="SimpleClauseStore"/> class.
+        /// </summary>
+        public SimpleClauseStore() { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class that is pre-populated with some knowledge.
+        /// <para/>
+        /// NB: Most implementations of <see cref="IClauseStore"/> won't have a constructor for pre-population, because most clause stores
+        /// will do IO when adding knowledge, and including long-running operations in a ctor is generally a bad idea.
+        /// We can only include it here because of the in-memory nature of this implementation.
+        /// </summary>
+        /// <param name="sentences">The initial content of the store.</param>
+        public SimpleClauseStore(IEnumerable<Sentence> sentences)
+        {
+            foreach (var sentence in sentences)
+            {
+                foreach (var clause in new CNFSentence(sentence).Clauses)
+                {
+                    clauses.Add(clause);
+                }
+            }
+        }
 
         /// <inheritdoc />
         public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
