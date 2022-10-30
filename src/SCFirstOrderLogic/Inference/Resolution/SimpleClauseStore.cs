@@ -79,20 +79,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
 #pragma warning restore CS1998
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<ClauseResolution> FindResolutions(
-            CNFClause clause,
-            [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            await foreach (var otherClause in this.WithCancellation(cancellationToken))
-            {
-                foreach (var resolution in ClauseResolution.Resolve(clause, otherClause))
-                {
-                    yield return resolution;
-                }
-            }
-        }
-
-        /// <inheritdoc />
         public IQueryClauseStore CreateQueryClauseStore() => new QueryClauseStore(clauses);
 
         /// <summary>

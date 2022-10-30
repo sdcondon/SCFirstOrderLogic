@@ -22,13 +22,5 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>True if the clause was added, false if it was already present.</returns>
         Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Returns all possible resolutions of a given clause with some clause in the store.
-        /// </summary>
-        /// <param name="clause">The clause to find resolutions for.</param>
-        /// <param name="cancellationToken">Cancellation token for the operation.</param>
-        /// <returns></returns>
-        IAsyncEnumerable<ClauseResolution> FindResolutions(CNFClause clause, CancellationToken cancellationToken = default);
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {
@@ -8,5 +10,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// </summary>
     public interface IQueryClauseStore : IClauseStore, IDisposable
     {
+        /// <summary>
+        /// Returns all possible resolutions of a given clause with some clause in the store.
+        /// </summary>
+        /// <param name="clause">The clause to find resolutions for.</param>
+        /// <param name="cancellationToken">Cancellation token for the operation.</param>
+        /// <returns></returns>
+        IAsyncEnumerable<ClauseResolution> FindResolutions(CNFClause clause, CancellationToken cancellationToken = default);
     }
 }
