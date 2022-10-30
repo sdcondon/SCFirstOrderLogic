@@ -17,16 +17,16 @@ namespace SCFirstOrderLogic.Inference.Chaining
     /// </summary>
     public sealed class SimpleForwardChainingQuery : IQuery
     {
-        private readonly Predicate α;
+        private readonly Predicate goal;
         private readonly List<CNFDefiniteClause> kb;
         private readonly Dictionary<Predicate, ProofStep> proof = new();
         private readonly Lazy<ReadOnlyCollection<Predicate>> usefulPredicates;
 
         private bool? result;
 
-        internal SimpleForwardChainingQuery(Predicate α, List<CNFDefiniteClause> clauses)
+        internal SimpleForwardChainingQuery(Predicate goal, List<CNFDefiniteClause> clauses)
         {
-            this.α = α;
+            this.goal = goal;
             this.kb = new List<CNFDefiniteClause>(clauses);
             this.usefulPredicates = new Lazy<ReadOnlyCollection<Predicate>>(MakeUsefulPredicates);
         }
@@ -124,23 +124,26 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
             do
             {
-                @new.Clear();
-
-                foreach (var fact in kb)
+                // First check if we've found our goal
+                foreach (var fact in kb.Where(f => f.IsUnitClause))
                 {
-                    // First check if we've found our goal
-                    if (fact.IsUnitClause && LiteralUnifier.TryCreate(fact.Consequent, α, out var φ))
+                    if (LiteralUnifier.TryCreate(fact.Consequent, goal, out var φ))
                     {
                         result = true;
                         return Task.FromResult(true);
                     }
+                }
 
+                @new.Clear();
+
+                foreach (var rule in kb.Where(f => !f.IsUnitClause))
+                {
                     // NB: we don't need the variable standardisation line from the book because that's already
                     // happened as part of the conversion to CNF that is carried out when the KB is told things.
                     // So all we do is call the consequent 'q' to match the book listing:
-                    var q = fact.Consequent;
+                    var q = rule.Consequent;
 
-                    foreach (var proofStep in MatchWithKnownFacts(fact))
+                    foreach (var proofStep in MatchWithKnownFacts(rule))
                     {
                         // Need the inferred predicate as a clause - worth looking into a bit more type fluidity at some point
                         // so that this line is unecessary
@@ -217,7 +220,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
 
             // Walk back through the DAG of predicates, starting from the goal, breadth-first:
             var orderedSteps = new List<Predicate>();
-            var queue = new Queue<Predicate>(new[] { α });
+            var queue = new Queue<Predicate>(new[] { goal });
             while (queue.Count > 0)
             {
                 var predicate = queue.Dequeue();
