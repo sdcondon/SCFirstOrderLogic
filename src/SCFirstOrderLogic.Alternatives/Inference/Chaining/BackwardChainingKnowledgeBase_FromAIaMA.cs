@@ -92,6 +92,26 @@ namespace SCFirstOrderLogic.Inference.Chaining
             public bool Result => substitutions?.Any() ?? throw new InvalidOperationException("Query is not yet complete");
 
             /// <summary>
+            /// Returns a human-readable explanation of the query result.
+            /// </summary>
+            /// <returns>A human-readable explanation of the query result</returns>
+            public string ResultExplanation
+            {
+                get
+                {
+                    var formatter = new SentenceFormatter();
+                    var stringBuilder = new StringBuilder();
+
+                    foreach (var substitution in Substitutions)
+                    {
+                        stringBuilder.AppendLine(string.Join(", ", substitution.Bindings.Select(kvp => $"{formatter.Format(kvp.Key)}: {formatter.Format(kvp.Value)}")));
+                    }
+
+                    return stringBuilder.ToString();
+                }
+            }
+
+            /// <summary>
             /// Gets the set of variable substitutions that can be made to satisfy the query.
             /// Result will be empty if and only if the query returned a negative result.
             /// </summary>
@@ -100,23 +120,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
             /// <inheritdoc />
             public void Dispose()
             {
-            }
-
-            /// <summary>
-            /// Returns a human-readable explanation of the query result.
-            /// </summary>
-            /// <returns>A human-readable explanation of the query result</returns>
-            public string Explain()
-            {
-                var formatter = new SentenceFormatter();
-                var stringBuilder = new StringBuilder();
-
-                foreach (var substitution in Substitutions)
-                {
-                    stringBuilder.AppendLine(string.Join(", ", substitution.Bindings.Select(kvp => $"{formatter.Format(kvp.Key)}: {formatter.Format(kvp.Value)}")));
-                }
-
-                return stringBuilder.ToString();
             }
 
             /// <inheritdoc />

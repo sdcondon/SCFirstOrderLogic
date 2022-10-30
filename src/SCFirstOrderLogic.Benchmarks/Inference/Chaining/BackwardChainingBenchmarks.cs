@@ -17,6 +17,14 @@ namespace SCFirstOrderLogic.Inference.Chaining
         }
 
         [Benchmark]
+        public static bool CrimeExample_BackwardChainingKnowledgeBase_Simpler()
+        {
+            var kb = new BackwardChainingKnowledgeBase_Simpler();
+            kb.TellAsync(CrimeDomain.Axioms).Wait();
+            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
+        }
+
+        [Benchmark]
         public static bool CrimeExample_BackwardChainingKnowledgeBase_FromAIaMA()
         {
             var kb = new BackwardChainingKnowledgeBase_FromAIaMA();
