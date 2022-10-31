@@ -1,4 +1,5 @@
 ﻿using SCFirstOrderLogic;
+using SCFirstOrderLogic.InternalUtilities;
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
@@ -18,7 +19,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         private readonly Predicate query;
         private readonly IClauseStore clauseStore;
 
-        private IAsyncEnumerable<Proof>? proofs;
+        private List<Proof>? proofs;
 
         internal SimpleBackwardChainingQuery(Predicate query, IClauseStore clauseStore)
         {
@@ -27,19 +28,14 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         }
 
         /// <inheritdoc />
-        // BUG: will be immediately true. Need to think about how best to think about "IsComplete" when query execution
-        // is an iterator method for proofs? Should IsComplete actually not be part of the interface? At the very least, clarify
-        // meaning in interface docs ("IsComplete indicates that you can retrieve result without a delay.." vs "IsComplete means
-        // that all work is done").
         public bool IsComplete => proofs != null;
 
         /// <inheritdoc />
-        public bool Result => proofs?.GetAsyncEnumerator().MoveNextAsync().GetAwaiter().GetResult() ?? throw new InvalidOperationException("Query is not yet complete");
+        public bool Result => proofs?.Any() ?? throw new InvalidOperationException("Query is not yet complete");
 
         /// <summary>
         /// Gets a human-readable explanation of the query result.
         /// </summary>
-        // TODO: Maybe make this async? Feels awkward.. Think I need to do some refactoring of execution instead.
         public string ResultExplanation
         {
             get
@@ -50,74 +46,63 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 var resultExplanation = new StringBuilder();
 
                 var proofNum = 1;
-                IAsyncEnumerator<Proof>? enumerator = null;
-                try
+
+                foreach (var proof in Proofs)
                 {
-                    enumerator = Proofs.GetAsyncEnumerator();
+                    resultExplanation.AppendLine($"--- PROOF #{proofNum++}");
+                    resultExplanation.AppendLine();
 
-                    while (enumerator.MoveNextAsync().GetAwaiter().GetResult()) // TODO: See ValueTask warning here <--
+                    // Now build the explanation string.
+                    var proofStepsByPredicate = proof.Steps;
+                    var orderedPredicates = proofStepsByPredicate.Keys.ToList();
+
+                    for (var i = 0; i < orderedPredicates.Count; i++)
                     {
-                        var proof = enumerator.Current;
+                        var predicate = orderedPredicates[i];
+                        var proofStep = proofStepsByPredicate[predicate];
 
-                        resultExplanation.AppendLine($"--- PROOF #{proofNum++}");
-                        resultExplanation.AppendLine();
+                        // Consequent:
+                        resultExplanation.AppendLine($"Step #{i:D2}: {formatter.Format(predicate)}");
 
-                        // Now build the explanation string.
-                        var proofStepsByPredicate = proof.Steps;
-                        var orderedPredicates = proofStepsByPredicate.Keys.ToList();
+                        // Rule applied:
+                        resultExplanation.AppendLine($"  By Rule: {formatter.Format(proofStep)}");
 
-                        for (var i = 0; i < orderedPredicates.Count; i++)
+                        // Conjuncts used:
+                        foreach (var childPredicate in proofStep.Conjuncts)
                         {
-                            var predicate = orderedPredicates[i];
-                            var proofStep = proofStepsByPredicate[predicate];
-
-                            // Consequent:
-                            resultExplanation.AppendLine($"Step #{i:D2}: {formatter.Format(predicate)}");
-
-                            // Rule applied:
-                            resultExplanation.AppendLine($"  By Rule: {formatter.Format(proofStep)}");
-
-                            // Conjuncts used:
-                            foreach (var childPredicate in proofStep.Conjuncts)
-                            {
-                                var unifiedChildPredicate = proof.GetUnified(childPredicate);
-                                resultExplanation.AppendLine($"  And Step #{orderedPredicates.IndexOf(unifiedChildPredicate):D2}: {formatter.Format(unifiedChildPredicate)}");
-                            }
-
-                            resultExplanation.AppendLine();
-                        }
-
-                        // Output the unifier:
-                        resultExplanation.Append("Using: {");
-                        resultExplanation.Append(string.Join(", ", proof.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
-                        resultExplanation.AppendLine("}");
-                        resultExplanation.AppendLine();
-
-                        // Explain all the normalisation terms (standardised variables and skolem functions)
-                        resultExplanation.AppendLine("Where:");
-                        var normalisationTermsToExplain = new HashSet<Term>();
-
-                        foreach (var term in CNFExaminer.FindNormalisationTerms(proof.Steps.Keys))
-                        {
-                            normalisationTermsToExplain.Add(term);
-                        }
-
-                        foreach (var term in proof.Unifier.Bindings.SelectMany(kvp => new[] { kvp.Key, kvp.Value }).Where(t => t is VariableReference vr && vr.Symbol is StandardisedVariableSymbol))
-                        {
-                            normalisationTermsToExplain.Add(term);
-                        }
-
-                        foreach (var term in normalisationTermsToExplain)
-                        {
-                            resultExplanation.AppendLine($"  {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
+                            var unifiedChildPredicate = proof.GetUnified(childPredicate);
+                            resultExplanation.AppendLine($"  And Step #{orderedPredicates.IndexOf(unifiedChildPredicate):D2}: {formatter.Format(unifiedChildPredicate)}");
                         }
 
                         resultExplanation.AppendLine();
                     }
-                }
-                finally
-                {
-                    enumerator?.DisposeAsync().GetAwaiter().GetResult();
+
+                    // Output the unifier:
+                    resultExplanation.Append("Using: {");
+                    resultExplanation.Append(string.Join(", ", proof.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
+                    resultExplanation.AppendLine("}");
+                    resultExplanation.AppendLine();
+
+                    // Explain all the normalisation terms (standardised variables and skolem functions)
+                    resultExplanation.AppendLine("Where:");
+                    var normalisationTermsToExplain = new HashSet<Term>();
+
+                    foreach (var term in CNFExaminer.FindNormalisationTerms(proof.Steps.Keys))
+                    {
+                        normalisationTermsToExplain.Add(term);
+                    }
+
+                    foreach (var term in proof.Unifier.Bindings.SelectMany(kvp => new[] { kvp.Key, kvp.Value }).Where(t => t is VariableReference vr && vr.Symbol is StandardisedVariableSymbol))
+                    {
+                        normalisationTermsToExplain.Add(term);
+                    }
+
+                    foreach (var term in normalisationTermsToExplain)
+                    {
+                        resultExplanation.AppendLine($"  {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
+                    }
+
+                    resultExplanation.AppendLine();
                 }
 
                 return resultExplanation.ToString();
@@ -128,18 +113,19 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// Gets the set of proofs of the query..
         /// Result will be empty if and only if the query returned a negative result.
         /// </summary>
-        public IAsyncEnumerable<Proof> Proofs => proofs ?? throw new InvalidOperationException("Query is not yet complete");
+        public IEnumerable<Proof> Proofs => proofs ?? throw new InvalidOperationException("Query is not yet complete");
+
+        /// <inheritdoc />
+        public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
+        {
+            proofs = await ProvePredicate(query, new Proof()).ToListAsync(cancellationToken);
+            return Result;
+        }
 
         /// <inheritdoc />
         public void Dispose()
         {
-        }
-
-        /// <inheritdoc />
-        public Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
-        {
-            proofs = ProvePredicate(query, new Proof());
-            return Task.FromResult(Result);
+            //// Nothing to do
         }
 
         private async IAsyncEnumerable<Proof> ProvePredicate(Predicate goal, Proof parentProof)
