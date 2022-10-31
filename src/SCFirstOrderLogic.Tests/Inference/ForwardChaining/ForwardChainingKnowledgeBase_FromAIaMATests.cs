@@ -1,26 +1,39 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory;
+using SCFirstOrderLogic.Inference;
 using System.Collections.Generic;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CrimeDomain;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
-    public static class SimpleForwardChainingKnowledgeBaseTests
+    public static class ForwardChainingKnowledgeBase_FromAIaMATests
     {
         public static Test PositiveScenarios => TestThat
             .GivenTestContext()
-            .AndEachOf(() => new SimpleForwardChainingQuery[]
+            .AndEachOf(() => new ForwardChainingKnowledgeBase_FromAIaMA.Query[]
             {
-                // trivial
-                MakeQuery(
-                    query: IsKing(John),
-                    kb: new Sentence[]
-                    {
-                        IsKing(John)
-                    }),
+                // Trivial
+                // Commented out because it actually fails given the book listing.. Don't want to deviate from the reference implementation though,
+                // so just commenting out the test. See SimpleForwardChainingKnowledgeBase for the fix..
+                ////MakeQuery(
+                ////    query: IsKing(John),
+                ////    kb: new Sentence[]
+                ////    {
+                ////        IsKing(John)
+                ////    }),
+                
+                // Trivial - with multiple substitutions
+                // Commented out because it actually fails given the book listing.. Don't want to deviate from the reference implementation though,
+                // so just commenting out the test. See SimpleForwardChainingKnowledgeBase for the fix..
+                ////MakeQuery(
+                ////    query: IsKing(X),
+                ////    kb: new Sentence[]
+                ////    {
+                ////        IsKing(John),
+                ////        IsKing(Richard),
+                ////    }),
 
                 // single conjunct, single step
                 MakeQuery(
@@ -41,7 +54,7 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         AllGreedyKingsAreEvil
                     }),
 
-                // Two applicable rules, each with two conjuncts, single step
+                // two conjuncts, single step, with red herrings
                 MakeQuery(
                     query: IsEvil(X),
                     kb: new Sentence[]
@@ -51,15 +64,6 @@ namespace SCFirstOrderLogic.Inference.Chaining
                         IsQueen(Mary),
                         AllGreedyKingsAreEvil,
                         AllGreedyQueensAreEvil,
-                    }),
-
-                // Multiple possible substitutions
-                MakeQuery(
-                    query: IsKing(X),
-                    kb: new Sentence[]
-                    {
-                        IsKing(John),
-                        IsKing(Richard),
                     }),
 
                 // Uses same var twice in same proof
@@ -76,16 +80,15 @@ namespace SCFirstOrderLogic.Inference.Chaining
                 // More complex - Crime example domain
                 MakeQuery(
                     query: IsCriminal(West),
-                    kb: CrimeDomain.Axioms),
+                    kb: Axioms),
             })
             .When((cxt, query) => query.Execute())
             .ThenReturns()
             .And((_, _, rv) => rv.Should().BeTrue())
-            .And((_, query, _) => query.Result.Should().BeTrue())
-            .And((cxt, query, _) => cxt.WriteOutput(query.ResultExplanation));
+            .And((_, query, _) => query.Result.Should().BeTrue());
 
         public static Test NegativeScenarios => TestThat
-            .GivenEachOf(() => new SimpleForwardChainingQuery[]
+            .GivenEachOf(() => new ForwardChainingKnowledgeBase_FromAIaMA.Query[]
             {
                 // no matching clause
                 MakeQuery(
@@ -120,11 +123,11 @@ namespace SCFirstOrderLogic.Inference.Chaining
             .And((_, rv) => rv.Should().BeFalse())
             .And((query, _) => query.Result.Should().BeFalse());
 
-        private static SimpleForwardChainingQuery MakeQuery(Sentence query, IEnumerable<Sentence> kb)
+        private static ForwardChainingKnowledgeBase_FromAIaMA.Query MakeQuery(Sentence query, IEnumerable<Sentence> kb)
         {
-            var knowledgeBase = new SimpleForwardChainingKnowledgeBase();
+            var knowledgeBase = new ForwardChainingKnowledgeBase_FromAIaMA();
             knowledgeBase.Tell(kb);
-            return knowledgeBase.CreateQuery(query);
+            return (ForwardChainingKnowledgeBase_FromAIaMA.Query)knowledgeBase.CreateQuery(query);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a forward chaining algorithm.

@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SCFirstOrderLogic.Inference.Chaining
+namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
     /// <summary>
     /// Query implementation used by <see cref="SimpleForwardChainingKnowledgeBase"/>.
