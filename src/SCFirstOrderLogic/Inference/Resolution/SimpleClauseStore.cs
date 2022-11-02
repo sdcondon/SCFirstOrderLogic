@@ -16,7 +16,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private readonly SemaphoreSlim addLock = new(1);
         
         /// <summary>
-        /// Initializes a new instrance of the <see cref="SimpleClauseStore"/> class.
+        /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class.
         /// </summary>
         public SimpleClauseStore() { }
 

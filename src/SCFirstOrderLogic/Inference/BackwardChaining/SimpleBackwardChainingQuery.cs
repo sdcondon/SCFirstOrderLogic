@@ -132,7 +132,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             await foreach (var ruleApplication in clauseStore.GetClauseApplications(goal, parentProof.Unifier))
             {
-                await foreach (var clauseProof in ProvePredicates(ruleApplication.Clause.Conjuncts, new Proof(parentProof, ruleApplication.Substitution)))
+                await foreach (var clauseProof in ProvePredicates(ruleApplication.Clause.Conjuncts, new Proof(parentProof.Steps, ruleApplication.Substitution)))
                 {
                     clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), ruleApplication.Clause);
                     yield return clauseProof;
@@ -171,10 +171,10 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 steps = new();
             }
 
-            internal Proof(Proof parent, VariableSubstitution unifier)
+            internal Proof(IEnumerable<KeyValuePair<Predicate, CNFDefiniteClause>> steps, VariableSubstitution unifier)
             {
                 Unifier = unifier;
-                steps = parent.Steps.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                this.steps = steps.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 
             /// <summary>
