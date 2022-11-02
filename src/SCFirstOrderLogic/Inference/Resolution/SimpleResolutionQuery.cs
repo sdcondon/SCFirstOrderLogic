@@ -236,13 +236,13 @@ namespace SCFirstOrderLogic.Inference.Resolution
         {
             await foreach (var resolution in clauseStore.FindResolutions(clause, cancellationToken))
             {
-                // NB: Throwing away clauses returned by the unifier store has performance impact.
+                // NB: Throwing away clauses returned by the unifier store has a performance impact.
                 // Could instead/also use a store that knows to not look for certain clause pairings in the first place..
                 // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is
                 // then a mix of implementation (how unifiers are stored/indexed) and strategy, plus there's a bit more
                 // strategy in the form of the priority comparer. This feels a good compromise - there are of course
                 // alternatives (e.g. some kind of strategy object that encapsulates both) - but they felt like overkill
-                // for this simple implementation.
+                // for this *simple* implementation.
                 if (filter(resolution))
                 {
                     queue.Enqueue(resolution);
