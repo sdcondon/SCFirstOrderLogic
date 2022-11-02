@@ -6,6 +6,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
+    /// <para/>
     /// See §9.5 ("Resolution") of 'Artificial Intelligence: A Modern Approach' for a detailed explanation of resolution.
     /// Notes:
     /// <list type="bullet">
@@ -79,6 +80,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         /// <summary>
         /// Useful filters for use by <see cref="SimpleResolutionKnowledgeBase"/>.
+        /// <para/>
         /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
         /// </summary>
         public class Filters
@@ -96,6 +98,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         /// <summary>
         /// Useful priority comparisons for use by <see cref="SimpleResolutionKnowledgeBase"/>.
+        /// <para/>
         /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
         /// </summary>
         public class PriorityComparisons
