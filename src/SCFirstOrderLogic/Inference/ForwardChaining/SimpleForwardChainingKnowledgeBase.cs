@@ -15,16 +15,16 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     /// </summary>
     public sealed class SimpleForwardChainingKnowledgeBase : IKnowledgeBase
     {
-        // TODO-BREAKING/EXTENSIBILITY: what if large. At some point add a clause store equivalent..
+        // TODO*-V3: what if large. At some point add a clause store equivalent..
         private readonly List<CNFDefiniteClause> clauses = new ();
 
         /// <inheritdoc />
         public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
-            // First things first - normalise the sentence.
+            // Normalize, then verify that the sentence consists only of definite clauses
+            // before indexing ANY of them:
             var cnfSentence = new CNFSentence(sentence);
 
-            // Now we need to verify that it consists only of definite clauses before adding anything to the store:
             if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))
             {
                 throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));

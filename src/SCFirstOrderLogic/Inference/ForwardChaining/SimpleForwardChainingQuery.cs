@@ -113,27 +113,22 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         public ReadOnlyCollection<Predicate> UsefulPredicates => usefulPredicates.Value;
 
         /// <inheritdoc />
-        public void Dispose()
-        {
-        }
-
-        /// <inheritdoc />
         public Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
             var @new = new List<CNFDefiniteClause>();
 
+            // First, quickly check if we've been asked something that is in the KB directly.
+            // Otherwise, we only check against the goal when we discover something we didn't already know.
+            // This means that if we didn't do a quick check here, asking the KB something that 
+            // is in the KB as-is wouldn't work..
+            if (new CNFDefiniteClause(queryGoal).UnifiesWithAnyOf(kb))
+            {
+                result = true;
+                return Task.FromResult(true);
+            }
+            
             do
             {
-                // First check if we've found our goal
-                foreach (var fact in kb.Where(f => f.IsUnitClause))
-                {
-                    if (LiteralUnifier.TryCreate(fact.Consequent, queryGoal, out var φ))
-                    {
-                        result = true;
-                        return Task.FromResult(true);
-                    }
-                }
-
                 @new.Clear();
 
                 foreach (var rule in kb.Where(f => !f.IsUnitClause))
@@ -154,19 +149,32 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                         {
                             // ..add it to the proof tree
                             proof[proofStep.InferredPredicate] = proofStep;
-                            
+
+                            // .. check if it is the goal
+                            if (LiteralUnifier.TryCreate(inferredClause.Consequent, queryGoal, out var _))
+                            {
+                                result = true;
+                                return Task.FromResult(true);
+                            }
+
                             // ..and to the list of new conclusions of this iteration..
                             @new.Add(inferredClause);
                         }
                     }
                 }
- 
+
                 kb.AddRange(@new);
             }
             while (@new.Count > 0);
 
             result = false;
             return Task.FromResult(false);
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            //// Nothing to do
         }
 
         /// <summary>
