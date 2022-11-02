@@ -1,6 +1,7 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
 using SCFirstOrderLogic.SentenceManipulation.Unification;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +27,10 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 
 #pragma warning disable CS1998 // async lacks await.. Could stick a Task.Yield in there, but not worth it.
         /// <inheritdoc/>
-        public async IAsyncEnumerable<(CNFDefiniteClause Clause, VariableSubstitution Substitution)> GetClauseApplications(Predicate goal, VariableSubstitution constraints, CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<(CNFDefiniteClause Clause, VariableSubstitution Substitution)> GetClauseApplications(
+            Predicate goal,
+            VariableSubstitution constraints,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
             {
