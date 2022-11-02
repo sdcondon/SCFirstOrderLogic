@@ -8,18 +8,26 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     [InProcess]
     public class ForwardChainingBenchmarks
     {
-        ////[Benchmark(Baseline = true)]
-        ////public static bool CrimeExample_SimpleForwardChainingKnowledgeBase()
-        ////{
-        ////    var kb = new SimpleForwardChainingKnowledgeBase();
-        ////    kb.TellAsync(CrimeDomain.Axioms).Wait();
-        ////    return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
-        ////}
+        [Benchmark(Baseline = true)]
+        public static bool CrimeExample_SimpleForwardChainingKnowledgeBase()
+        {
+            var kb = new SimpleForwardChainingKnowledgeBase();
+            kb.TellAsync(CrimeDomain.Axioms).Wait();
+            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
+        }
 
         [Benchmark]
         public static bool CrimeExample_ForwardChainingKnowledgeBase_FromAIaMA()
         {
             var kb = new ForwardChainingKnowledgeBase_FromAIaMA();
+            kb.TellAsync(CrimeDomain.Axioms).Wait();
+            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
+        }
+
+        [Benchmark]
+        public static bool CrimeExample_ForwardChainingKnowledgeBase_Simpler()
+        {
+            var kb = new ForwardChainingKnowledgeBase_Simpler();
             kb.TellAsync(CrimeDomain.Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
         }
