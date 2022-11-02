@@ -17,16 +17,16 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     /// </summary>
     public sealed class SimpleForwardChainingQuery : IQuery
     {
-        private readonly Predicate goal;
+        private readonly Predicate queryGoal;
         private readonly List<CNFDefiniteClause> kb;
         private readonly Dictionary<Predicate, ProofStep> proof = new();
         private readonly Lazy<ReadOnlyCollection<Predicate>> usefulPredicates;
 
         private bool? result;
 
-        internal SimpleForwardChainingQuery(Predicate goal, List<CNFDefiniteClause> clauses)
+        internal SimpleForwardChainingQuery(Predicate queryGoal, List<CNFDefiniteClause> clauses)
         {
-            this.goal = goal;
+            this.queryGoal = queryGoal;
             this.kb = new List<CNFDefiniteClause>(clauses);
             this.usefulPredicates = new Lazy<ReadOnlyCollection<Predicate>>(MakeUsefulPredicates);
         }
@@ -127,7 +127,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                 // First check if we've found our goal
                 foreach (var fact in kb.Where(f => f.IsUnitClause))
                 {
-                    if (LiteralUnifier.TryCreate(fact.Consequent, goal, out var φ))
+                    if (LiteralUnifier.TryCreate(fact.Consequent, queryGoal, out var φ))
                     {
                         result = true;
                         return Task.FromResult(true);
@@ -220,7 +220,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 
             // Walk back through the DAG of predicates, starting from the goal, breadth-first:
             var orderedSteps = new List<Predicate>();
-            var queue = new Queue<Predicate>(new[] { goal });
+            var queue = new Queue<Predicate>(new[] { queryGoal });
             while (queue.Count > 0)
             {
                 var predicate = queue.Dequeue();

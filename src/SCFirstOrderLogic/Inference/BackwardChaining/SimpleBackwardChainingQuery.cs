@@ -16,14 +16,14 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     /// </summary>
     public class SimpleBackwardChainingQuery : IQuery
     {
-        private readonly Predicate query;
+        private readonly Predicate queryGoal;
         private readonly IClauseStore clauseStore;
 
         private List<Proof>? proofs;
 
-        internal SimpleBackwardChainingQuery(Predicate query, IClauseStore clauseStore)
+        internal SimpleBackwardChainingQuery(Predicate queryGoal, IClauseStore clauseStore)
         {
-            this.query = query;
+            this.queryGoal = queryGoal;
             this.clauseStore = clauseStore;
         }
 
@@ -118,7 +118,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// <inheritdoc />
         public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
-            proofs = await ProvePredicate(query, new Proof()).ToListAsync(cancellationToken);
+            proofs = await ProvePredicate(queryGoal, new Proof()).ToListAsync(cancellationToken);
             return Result;
         }
 
@@ -184,8 +184,9 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 
             /// <summary>
             /// Gets the steps of the proof. Each predicate used in the proof (including the goal) is present as a key.
-            /// The associated value is the clause that was used to prove it. Each conjunct of that clause will be present
-            /// as a key - all the way back to the relevant unit clauses.
+            /// The associated value is the clause that was used to prove it. Each conjunct of that clause will also be present
+            /// as a key - all the way back to and inclusive of the relevant unit clauses that are present in the KB (which
+            /// of course have no conjuncts).
             /// </summary>
             public IReadOnlyDictionary<Predicate, CNFDefiniteClause> Steps => steps;
 
