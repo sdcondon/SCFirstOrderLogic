@@ -68,7 +68,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             if (Bindings.TryGetValue(variable, out var substitutedTerm))
             {
-                // TODO: the comment below is a hangover from when this type was internal and used only in cnf creation. does this need to change?
+                // TODO*-V3: the comment below is a hangover from when this type was internal and used only in cnf creation. does this need to change?
                 // Don't need base.ApplyTo because we apply this as we add each substitution.
                 return substitutedTerm;
             }

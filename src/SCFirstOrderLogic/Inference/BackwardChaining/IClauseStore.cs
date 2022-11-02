@@ -30,7 +30,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// <param name="constraints">
         /// The variable substitutions already made.
         /// <para/>
-        /// TODO-PRE-V3: Not strictly necessary - but omitting it as-is would make for potentially confusing proof tree details.
+        /// TODO*-V3: Not strictly necessary - but omitting it as-is would make for potentially confusing proof tree details.
         /// A higher level concern, really - but would mean needing to apply existing sub before calling this method.
         /// eliminate me from here if application of existing sub before this method is called proves not to be too much of a performance burden.
         /// </param>

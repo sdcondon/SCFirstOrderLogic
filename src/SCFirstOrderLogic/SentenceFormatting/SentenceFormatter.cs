@@ -231,7 +231,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
                 // when e.g. debugging.
                 // asterisk supposed to represent some kind of puff of smoke for the existential instantiation..
                 ////return $"*{symbol.StandardisedVariableSymbol.OriginalSymbol}";
-                // .. Or ILabeller instead of IEnumerable<string>?
+                // TODO-BREAKING: ..Or ILabeller instead of IEnumerable<string>?
             }
         }
 
@@ -274,7 +274,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
                 // when e.g. debugging.
                 // double arrow supposed to represent standardising variables "apart".
                 ////return $"↔{symbol.OriginalSymbol}";
-                // .. Or ILabeller instead of IEnumerable<string>?
+                // TODO-BREAKING: .. Or ILabeller instead of IEnumerable<string>?
             }
         }
     }

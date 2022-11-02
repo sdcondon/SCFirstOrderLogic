@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     /// </summary>
     public class BackwardChainingKnowledgeBase_Simpler : IKnowledgeBase
     {
-        // TODO-BREAKING/EXTENSIBILITY: what if large. At some point add a clause store equivalent..
+        // NB: Hard-coding of clause storage in a Dictionary instead of an anstracted clause store:
         private readonly Dictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol = new();
 
         /// <inheritdoc />
