@@ -8,8 +8,6 @@ namespace SCFirstOrderLogic.Inference
     /// <summary>
     /// Decorator knowledge base class that, when answering queries, will concurrently execute the query and the negation of the query
     /// at the same time. This allows for returning a negative result in a reasonable timeframe when a query is known to be false.
-    /// <para/>
-    /// No reference back to the source material for this one. Just seems like an interesting and useful thing to offer.
     /// </summary>
     public class DuplexKnowledgeBase : IKnowledgeBase
     {

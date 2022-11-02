@@ -9,6 +9,7 @@ namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
     /// Decorator knowledge base class that adds equality axioms as knowledge is added to the underlying knowledge base.
+    /// <para/>
     /// See §9.5.5 ("Equality") of Artifical Intelligence: A Modern Approach for more on dealing with equality by axiomising it.
     /// </summary>
     public class EqualityAxiomisingKnowledgeBase : IKnowledgeBase
