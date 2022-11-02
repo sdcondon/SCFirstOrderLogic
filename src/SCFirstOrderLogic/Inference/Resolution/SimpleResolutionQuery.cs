@@ -18,7 +18,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// <item/>Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
     /// </list>  
     /// </summary>
-    public class SimpleResolutionQuery : SteppableQuery
+    public class SimpleResolutionQuery : SteppableQuery<ClauseResolution>
     {
         private readonly IQueryClauseStore clauseStore;
         private readonly Func<ClauseResolution, bool> filter;
@@ -183,7 +183,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <inheritdoc/>
-        public override async Task NextStepAsync(CancellationToken cancellationToken = default)
+        public override async Task<ClauseResolution> NextStepAsync(CancellationToken cancellationToken = default)
         {
             if (IsComplete)
             {
@@ -199,7 +199,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             {
                 result = true;
                 isComplete = true;
-                return;
+                return resolution;
             }
 
             // Otherwise, check if we've found a new clause (i.e. something that we didn't know already)..
@@ -223,6 +223,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 result = false;
                 isComplete = true;
             }
+
+            return resolution;
         }
 
         /// <inheritdoc/>
