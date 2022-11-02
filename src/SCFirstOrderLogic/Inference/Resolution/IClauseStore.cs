@@ -6,12 +6,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// Interface for types that facilitate the storage of CNF clauses, for later lookup of all of stored clauses
-    /// that a given clause resolves with. See §9.2.3 of 'Artificial Intelligence: A Modern Approach' ("Storage and Retrieval")
-    /// for a little context.
+    /// that a given clause resolves with.
     /// <para/>
     /// NB: Clause storage and retrieval is functionality that underpins resolution. We have an abstraction for it because
     /// knowledge bases of different sizes and natures will have different requirements for how the known clauses are stored
     /// (w.r.t. indexing approach, primary vs secondary storage, and so on) in order to be acceptably performant.
+    /// See §9.2.3 of 'Artificial Intelligence: A Modern Approach' ("Storage and Retrieval") for a little more on clause storage.
     /// </summary>
     public interface IClauseStore : IAsyncEnumerable<CNFClause>
     {

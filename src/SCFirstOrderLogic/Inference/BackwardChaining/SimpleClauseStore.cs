@@ -25,7 +25,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             return Task.FromResult(clausesWithThisConsequentSymbol.Add(clause));
         }
 
-#pragma warning disable CS1998 // async lacks await.. Could add await Task.Yield(), but the overhead is not worth it.
+#pragma warning disable CS1998 // async lacks await.. Could add await Task.Yield() to silence this, but it is not worth the overhead.
         /// <inheritdoc/>
         public async IAsyncEnumerable<(CNFDefiniteClause Clause, VariableSubstitution Substitution)> GetClauseApplications(
             Predicate goal,

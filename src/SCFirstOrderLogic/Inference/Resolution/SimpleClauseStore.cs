@@ -118,7 +118,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
             }
 
-#pragma warning disable CS1998 // async lacks await.. Could stick a Task.Yield in there, but not worth it.
+#pragma warning disable CS1998 // async lacks await.. Could add await Task.Yield() to silence this, but it is not worth the overhead.
             /// <inheritdoc />
             public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
             {

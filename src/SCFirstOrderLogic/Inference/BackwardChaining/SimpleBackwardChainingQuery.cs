@@ -148,11 +148,11 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             }
             else
             {
-                await foreach (var firstConjunctProof in ProvePredicate(proof.ApplyUnifierTo(goals.First()), proof))
+                await foreach (var firstGoalProof in ProvePredicate(proof.ApplyUnifierTo(goals.First()), proof))
                 {
-                    await foreach (var restOfConjunctsProof in ProvePredicates(goals.Skip(1), firstConjunctProof))
+                    await foreach (var restOfGoalsProof in ProvePredicates(goals.Skip(1), firstGoalProof))
                     {
-                        yield return restOfConjunctsProof;
+                        yield return restOfGoalsProof;
                     }
                 }
             }
