@@ -130,6 +130,8 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 
         private async IAsyncEnumerable<Proof> ProvePredicate(Predicate goal, Proof parentProof)
         {
+            // NB: This implementation is coded to be a depth-first and-or search, but the clause store can at least
+            // control which branches get explored first by ordering of the returned clause applications appropriately.
             await foreach (var ruleApplication in clauseStore.GetClauseApplications(goal, parentProof.Unifier))
             {
                 await foreach (var clauseProof in ProvePredicates(ruleApplication.Clause.Conjuncts, new Proof(parentProof.Steps, ruleApplication.Substitution)))
