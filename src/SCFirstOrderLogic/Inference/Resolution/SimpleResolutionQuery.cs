@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// Encapsulates a query, allowing for step-by-step execution, as well as examination of those steps, as or after they are carried out.
     /// Notes:
     /// <list type="bullet">
-    /// <item/>Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
+    /// <item/>TODO: Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
     /// </list>  
     /// </summary>
     public class SimpleResolutionQuery : SteppableQuery<ClauseResolution>
@@ -141,8 +141,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         /// <summary>
         /// Creates and initialises a new instance of the <see cref="SimpleResolutionQuery"/> class. Initialisation can potentially
-        /// be a long-running operation (and long-running constructors are a bad idea) - so the constructor is private
-        /// and this method exists.
+        /// be a long-running operation (and long-running constructors are a bad idea) - so the constructor is private and this method exists.
         /// </summary>
         /// <param name="clauseStore">A knowledge base clause store to use to create the clause store for this query.</param>
         /// <param name="filter">A filter to apply to clause pairings during this query.</param>
