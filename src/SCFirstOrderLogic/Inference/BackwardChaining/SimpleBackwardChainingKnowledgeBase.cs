@@ -74,7 +74,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// Initiates a new query against the knowledge base.
         /// </summary>
         /// <param name="query">The query sentence.</param>
-        /// <returns>An <see cref="SimpleBackwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
+        /// <returns>A <see cref="SimpleBackwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
         public SimpleBackwardChainingQuery CreateQuery(Sentence query)
         {
             return CreateQueryAsync(query).GetAwaiter().GetResult();

@@ -26,6 +26,19 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         }
 
 #pragma warning disable CS1998 // async lacks await.. Could add await Task.Yield() to silence this, but it is not worth the overhead.
+        /// <inheritdoc />
+        public async IAsyncEnumerator<CNFDefiniteClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        {
+            foreach (var clauseList in clausesByConsequentSymbol.Values)
+            {
+                foreach (var clause in clauseList)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    yield return clause;
+                }
+            }
+        }
+
         /// <inheritdoc/>
         public async IAsyncEnumerable<(CNFDefiniteClause Clause, VariableSubstitution Substitution)> GetClauseApplications(
             Predicate goal,
@@ -43,19 +56,6 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                     {
                         yield return (restandardisedClause, substitution);
                     }
-                }
-            }
-        }
-
-        /// <inheritdoc />
-        public async IAsyncEnumerator<CNFDefiniteClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-        {
-            foreach (var clauseList in clausesByConsequentSymbol.Values)
-            {
-                foreach (var clause in clauseList)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    yield return clause;
                 }
             }
         }
