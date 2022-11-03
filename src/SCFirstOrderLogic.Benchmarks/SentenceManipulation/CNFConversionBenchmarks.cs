@@ -15,9 +15,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 ThereExists(Y, Loves(Y, X))));
 
         [Benchmark(Baseline = true)]
-        public static CNFSentence DoCNFConversion_ProductionVersion() => CNFConversion.ApplyTo(NonTrivialSentence);
+        public static Sentence DoCNFConversion_ProductionVersion() => CNFConversion.ApplyTo(NonTrivialSentence);
 
         [Benchmark]
-        public static CNFSentence DoCNFConversion_WithoutTypeSwitch() => CNFConversion_WithoutTypeSwitch.ApplyTo(NonTrivialSentence);
+        public static Sentence DoCNFConversion_WithoutTypeSwitch() => CNFConversion_WithoutTypeSwitch.ApplyTo(NonTrivialSentence);
     }
 }

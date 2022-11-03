@@ -28,16 +28,6 @@ namespace SCFirstOrderLogic
         public IReadOnlyCollection<CNFClause> Clauses { get; }
 
         /// <summary>
-        /// Defines the (implicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFSentence"/> instance.
-        /// </summary>
-        /// <param name="sentence">The sentence to convert.</param>
-        /// <remarks>
-        /// TODO: I'm still not 100% happy with exactly how the CNFSentence / Sentence dichotomy is handled. Almost all of the time
-        /// we'll be wanting to deal with CNF - but the "raw" sentence tree structure still has value..
-        /// </remarks>
-        public static implicit operator CNFSentence(Sentence sentence) => new(sentence);
-
-        /// <summary>
         /// Sentence visitor that constructs a set of <see cref="CNFClause"/> objects from a <see cref="Sentence"/> in CNF.
         /// </summary>
         private class CNFClauseFinder : RecursiveSentenceVisitor
