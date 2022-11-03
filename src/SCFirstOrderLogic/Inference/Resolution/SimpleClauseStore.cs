@@ -32,7 +32,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         {
             foreach (var sentence in sentences)
             {
-                foreach (var clause in new CNFSentence(sentence).Clauses)
+                foreach (var clause in sentence.ToCNF().Clauses)
                 {
                     clauses.Add(clause);
                 }

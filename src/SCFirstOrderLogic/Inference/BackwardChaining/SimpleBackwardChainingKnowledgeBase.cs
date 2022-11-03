@@ -27,7 +27,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             // Normalize, then verify that the sentence consists only of definite clauses
             // before indexing ANY of them:
-            var cnfSentence = new CNFSentence(sentence);
+            var cnfSentence = sentence.ToCNF();
 
             if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))
             {

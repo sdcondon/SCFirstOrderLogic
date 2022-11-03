@@ -32,7 +32,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <inheritdoc />
-        public void Tell(Sentence sentence) => sentences.Add(new CNFSentence(sentence));
+        public void Tell(Sentence sentence) => sentences.Add(sentence.ToCNF());
 
         /// <inheritdoc />
         public bool Ask(Sentence sentence) => new Query(this, sentence).Complete();
@@ -55,7 +55,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             public Query(ResolutionKnowledgeBase_Simpler knowledgeBase, Sentence sentence)
             {
-                this.NegatedQuery = new CNFSentence(new Negation(sentence));
+                this.NegatedQuery = new Negation(sentence).ToCNF();
 
                 this.clauses = knowledgeBase.sentences
                     .Append(NegatedQuery)

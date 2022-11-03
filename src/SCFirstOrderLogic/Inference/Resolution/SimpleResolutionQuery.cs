@@ -41,7 +41,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             steps = new Dictionary<CNFClause, ClauseResolution>();
             discoveredClauses = new(MakeDiscoveredClauses);
 
-            NegatedQuery = new CNFSentence(new Negation(query));
+            NegatedQuery = new Negation(query).ToCNF();
         }
 
         /// <summary>

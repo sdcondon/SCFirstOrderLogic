@@ -23,7 +23,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             // * Puts it into a form where we can easily verify that it is all definite clauses
             // * Standardises variables for us
             // * Means we don't have to do existential instantiation - since thats essentially done for us via Skolemisation
-            var cnfSentence = new CNFSentence(sentence);
+            var cnfSentence = sentence.ToCNF();
 
             // Now verify that the sentence consists only of definite clauses before indexing any of them:
             if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))

@@ -45,7 +45,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <inheritdoc />
         public async Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
-            foreach(var clause in new CNFSentence(sentence).Clauses)
+            foreach(var clause in sentence.ToCNF().Clauses)
             {
                 await clauseStore.AddAsync(clause, cancellationToken);
             }

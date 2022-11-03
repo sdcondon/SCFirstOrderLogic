@@ -23,6 +23,7 @@ namespace SCFirstOrderLogic.Inference
         /// </summary>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>A container for information on what happened during the step.</returns>
+        // TODO-BREAKING: Should this use ValueTask? Investigate me.
         public abstract Task<TStepResult> NextStepAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc />
