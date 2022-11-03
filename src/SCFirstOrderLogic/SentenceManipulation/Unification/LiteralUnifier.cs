@@ -37,7 +37,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// </summary>
         /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
-        /// <param name="unifier">The unifier to update. Will be uodated to refer to a new unifier on success, or be unchanged on failure.</param>
+        /// <param name="unifier">The unifier to update. Will be updated to refer to a new unifier on success, or be unchanged on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
         public static bool TryUpdate(Literal x, Literal y, ref VariableSubstitution unifier)
         {
