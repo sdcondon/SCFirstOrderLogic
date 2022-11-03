@@ -64,7 +64,7 @@ namespace SCFirstOrderLogic
         /// Gets a value indicating whether this is a definite clause - that is, whether exactly one of its literals is positive.
         /// <para/>
         /// NB: this means that the clause can be written in the form L₁ ∧ L₂ ∧ .. ∧ Lₙ ⇒ L, where none of the literals is negated
-        /// (or is simply a single non-negated literal).
+        /// - or is simply a single non-negated literal.
         /// </summary>
         public bool IsDefiniteClause => Literals.Count(l => l.IsPositive) == 1;
 

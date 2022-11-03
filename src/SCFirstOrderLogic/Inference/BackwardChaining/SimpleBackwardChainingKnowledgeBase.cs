@@ -31,7 +31,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 
             if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))
             {
-                throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));
+                throw new ArgumentException("This knowledge base supports only knowledge that can be expressed as definite clauses", nameof(sentence));
             }
 
             // Store clauses in the clause store:
