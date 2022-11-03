@@ -23,7 +23,7 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' != 'true' And Exists('C:\Users\simon\Code\Packages')">
-    <PackageOutputPath>C:\Users\simon\Code\Packages</PackageOutputPath>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' != 'true' And Exists('C:\Users\simon\Coding\Packages')">
+    <PackageOutputPath>C:\Users\simon\Coding\Packages</PackageOutputPath>
   </PropertyGroup>
 </Project>

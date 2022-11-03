@@ -9,7 +9,8 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a (depth-first) backward chaining algorithm.
     /// <para/>
-    /// For now this is VERY basic - just an implementation of what is found in figure 9.6 of "Artificial Intelligence: A Modern Approach".
+    /// This is a VERY basic implementation - essentially just what is found in figure 9.6 of "Artificial Intelligence: A Modern Approach".
+    /// More sophisticated implementations - for now at least - are outside of the scope of this package.
     /// </summary>
     public class SimpleBackwardChainingKnowledgeBase : IKnowledgeBase
     {
