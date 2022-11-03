@@ -35,6 +35,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             }
 
             // Store clauses in the clause store:
+            // NB: we go one-by-one rather than assuming the clause store can handle re-entry.
             foreach (var clause in cnfSentence.Clauses)
             {
                 await clauseStore.AddAsync(new CNFDefiniteClause(clause), cancellationToken);
