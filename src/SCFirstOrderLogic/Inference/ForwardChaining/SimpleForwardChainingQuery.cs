@@ -190,7 +190,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// </summary>
         private IAsyncEnumerable<ProofStep> MatchWithKnownFacts(CNFDefiniteClause rule)
         {
-            // TODO*-V3: no specific conjunct ordering here - just look at them in the order they happen to fall.
+            // TODO-FEATURE: no specific conjunct ordering here - just look at them in the order they happen to fall.
             // In a production scenario, we'd at least TRY to order the conjuncts in a way that minimises
             // the amount of work we have to do. And this is where we'd do it.
             return MatchWithKnownFacts(rule.Conjuncts, new ProofStep(rule));

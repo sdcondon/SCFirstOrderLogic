@@ -125,9 +125,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             })
             .When(tc =>
             {
-                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
-                knowledgeBase.Tell(tc.Knowledge);
-
+                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore(tc.Knowledge));
                 var query = knowledgeBase.CreateQuery(tc.Query);
                 query.Execute();
 
