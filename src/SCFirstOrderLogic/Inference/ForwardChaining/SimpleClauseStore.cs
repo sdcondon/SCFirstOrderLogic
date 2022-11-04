@@ -130,7 +130,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             {
                 // Here we just iterate through ALL known predicates trying to find something that unifies with the fact.
                 // A better implementation would do some kind of indexing:
-                // TODO: ..we don't even store facts and rules separately, which we probably should..
+                // TODO-PERFORMANCE: ..we don't even store facts and rules separately, which we probably should..
                 await foreach (var knownClause in this.WithCancellation(cancellationToken))
                 {
                     if (knownClause.IsUnitClause)

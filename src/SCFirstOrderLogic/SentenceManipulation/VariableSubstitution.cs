@@ -8,6 +8,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// In addition to the <see cref="RecursiveSentenceTransformation.ApplyTo(Sentence)"/> method
     /// offered by the base class, this also offers an <see cref="ApplyTo(Literal)"/> method.
     /// </summary>
+    // TODO-FEATURE/ROBUSTNESS: Make VariableSubstitution readonly (i.e. even internally), and add MutableVariableSubstitution : VariableSubstitution.
     public class VariableSubstitution : RecursiveSentenceTransformation
     {
         private readonly Dictionary<VariableReference, Term> bindings;

@@ -223,15 +223,16 @@ namespace SCFirstOrderLogic.SentenceFormatting
             }
             else
             {
-                // TODO: I suppose we *could* fall back on the ToString of the underlying variable symbol here.
+                // I suppose we *could* fall back on the ToString of the underlying variable symbol here.
                 // But obviously then we lose the unique representation guarentee, and it should be relatively
                 // easy to use essentially infinite label sets - so I'd rather just fail.
                 throw new InvalidOperationException("Skolem function label set is exhausted");
                 // Should come back to this at some point though. Difficult to use a common formatter
                 // when e.g. debugging.
-                // asterisk supposed to represent some kind of puff of smoke for the existential instantiation..
-                ////return $"*{symbol.StandardisedVariableSymbol.OriginalSymbol}";
-                // TODO-BREAKING: ..Or ILabeller instead of IEnumerable<string>?
+                // Perhaps add asterisks - supposed to represent some kind of puff of smoke for the existential instantiation..
+                ////return $"*{symbol.StandardisedVariableSymbol.OriginalSymbol}*";
+                // TODO-BREAKING-V4?: ..Or ILabeller instead of IEnumerable<string>? Then can offer different behaviours.
+                // Probably look at general formatting stuff at the same time (e.g. would IFormattable and format strings be useful) 
             }
         }
 
@@ -266,15 +267,16 @@ namespace SCFirstOrderLogic.SentenceFormatting
             }
             else
             {
-                // TODO: I suppose we *could* fall back on the ToString of the underlying variable symbol here.
+                // I suppose we *could* fall back on the ToString of the underlying variable symbol here.
                 // But obviously then we lose the unique representation guarantee, and it should be relatively
                 // easy to use essentially infinite label sets - so I'd rather just fail.
                 throw new InvalidOperationException("Skolem function label set is exhausted");
                 // Should come back to this at some point though. Difficult to use a common formatter
                 // when e.g. debugging.
-                // double arrow supposed to represent standardising variables "apart".
-                ////return $"↔{symbol.OriginalSymbol}";
-                // TODO-BREAKING: .. Or ILabeller instead of IEnumerable<string>?
+                // Perhaps add arrows: supposed to represent standardising variables "apart".
+                ////return $"←{symbol.OriginalSymbol}→";
+                // TODO-BREAKING-V4?: ..Or ILabeller instead of IEnumerable<string>? Then can offer different behaviours.
+                // Probably look at general formatting stuff at the same time (e.g. would IFormattable and format strings be useful) 
             }
         }
     }

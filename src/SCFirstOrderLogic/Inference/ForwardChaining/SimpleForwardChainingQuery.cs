@@ -297,8 +297,6 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 
             /// <summary>
             /// The substitution that is applied to the rule's conjuncts to make them match the known predicates.
-            /// <para/>
-            /// TODO-BREAKING: Make VariableSubstitution readonly, and add MutableVariableSubstitution.
             /// </summary>
             public VariableSubstitution Unifier { get; }
 
