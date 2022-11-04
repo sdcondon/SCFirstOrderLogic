@@ -33,7 +33,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             IQueryClauseStore clauseStore,
             Func<ClauseResolution, bool> filter,
             Comparison<ClauseResolution> priorityComparison,
-            Sentence query)
+            Sentence querySentence)
         {
             this.clauseStore = clauseStore;
             this.filter = filter;
@@ -41,7 +41,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             steps = new Dictionary<CNFClause, ClauseResolution>();
             discoveredClauses = new(MakeDiscoveredClauses);
 
-            NegatedQuery = new Negation(query).ToCNF();
+            NegatedQuery = new Negation(querySentence).ToCNF();
         }
 
         /// <summary>

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
     /// <summary>
-    /// TODO: Interface for types that facilitate the storage of CNF definite clauses, for later lookup of all clauses
-    /// that could ..
+    /// Interface for types that facilitate the storage and retrieval of CNF definite clauses
+    /// for the purposes of forward chaining.
     /// <para/>
     /// NB: Clause storage and retrieval is necessary during the chaining process. We have an abstraction for it because
     /// knowledge bases of different sizes and natures will have different requirements for how the known clauses are stored

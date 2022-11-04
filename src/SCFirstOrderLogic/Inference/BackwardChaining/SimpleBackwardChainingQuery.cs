@@ -132,11 +132,11 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             // NB: This implementation is coded to be a depth-first and-or search, but the clause store can at least
             // control which branches get explored first by ordering the returned clause applications appropriately.
-            await foreach (var ruleApplication in clauseStore.GetClauseApplications(goal, parentProof.Unifier))
+            await foreach (var (clause, substitution) in clauseStore.GetClauseApplications(goal, parentProof.Unifier))
             {
-                await foreach (var clauseProof in ProvePredicates(ruleApplication.Clause.Conjuncts, new Proof(parentProof.Steps, ruleApplication.Substitution)))
+                await foreach (var clauseProof in ProvePredicates(clause.Conjuncts, new Proof(parentProof.Steps, substitution)))
                 {
-                    clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), ruleApplication.Clause);
+                    clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), clause);
                     yield return clauseProof;
                 }
             }

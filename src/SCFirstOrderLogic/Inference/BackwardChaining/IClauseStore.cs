@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
-    /// Interface for types that facilitate the storage of CNF definite clauses, for later lookup of all clauses
-    /// that could theoretically be used to prove a given predicate (because they have a consequent that unifies with it).
+    /// Interface for types that facilitate the storage of CNF definite clauses for the purposes of backward chaining.
     /// <para/>
     /// NB: Clause storage and retrieval is necessary during the chaining process. We have an abstraction for it because
     /// knowledge bases of different sizes and natures will have different requirements for how the known clauses are stored
@@ -24,18 +23,18 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         Task<bool> AddAsync(CNFDefiniteClause clause, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Returns all possible applications of a clause in the knowledge base.
+        /// Returns all possible applications of a clause in the knowledge base that result in a given consequent.
         /// </summary>
         /// <param name="goal">The goal - which the consequent term of the returned clauses should match (after transformation with the returned substitution).</param>
         /// <param name="constraints">
-        /// The variable substitutions already made.
+        /// The variable substitutions already made that must be respected.
         /// <para/>
         /// TODO*-V3: Not strictly necessary - but omitting it as-is would make for potentially confusing proof tree details.
         /// A higher level concern, really - but would mean needing to apply existing sub before calling this method.
         /// eliminate me from here if application of existing sub before this method is called proves not to be too much of a performance burden.
         /// </param>
         /// <param name="cancellationToken">Cancellation token for the operation.</param>
-        /// <returns></returns>
+        /// <returns>An enumerable of clause-substitution pairs, one for each possible clause application.</returns>
         IAsyncEnumerable<(CNFDefiniteClause Clause, VariableSubstitution Substitution)> GetClauseApplications(Predicate goal, VariableSubstitution constraints, CancellationToken cancellationToken = default);
     }
 }

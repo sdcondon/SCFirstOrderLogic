@@ -16,16 +16,16 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// </summary>
         /// <param name="facts">The facts.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        /// <returns>An enumerable of applicable rules.</returns>
+        /// <returns>An async enumerable of applicable rules.</returns>
         IAsyncEnumerable<CNFDefiniteClause> GetApplicableRules(IEnumerable<Predicate> facts, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Returns all possible resolutions of a given clause with some clause in the store.
+        /// Finds all known facts that unify with a given fact.
         /// </summary>
         /// <param name="fact">The fact to check for.</param>
-        /// <param name="substitution">The variable values that must be respected.</param>
+        /// <param name="constraints">The variable values that must be respected.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        /// <returns></returns>
-        IAsyncEnumerable<(Predicate knownFact, VariableSubstitution unifier)> MatchWithKnownFacts(Predicate fact, VariableSubstitution substitution, CancellationToken cancellationToken = default);
+        /// <returns>An async enumerable of fact-unifier pairs - one for each known fact that unifies with the given fact.</returns>
+        IAsyncEnumerable<(Predicate knownFact, VariableSubstitution unifier)> MatchWithKnownFacts(Predicate fact, VariableSubstitution constraints, CancellationToken cancellationToken = default);
     }
 }
