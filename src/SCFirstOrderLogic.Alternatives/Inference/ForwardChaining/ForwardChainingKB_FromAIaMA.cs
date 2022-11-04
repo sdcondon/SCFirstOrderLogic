@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     /// (including variable and field naming, hence the naming that prioritises brevity over clarity) to the implementation in figure 9.6 of
     /// "Artificial Intelligence: A Modern Approach" - for reference and baselining purposes.
     /// </summary>
-    public sealed class ForwardChainingKnowledgeBase_FromAIaMA : IKnowledgeBase
+    public sealed class ForwardChainingKB_FromAIaMA : IKnowledgeBase
     {
         private readonly List<CNFDefiniteClause> clauses = new ();
 
@@ -63,7 +63,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         }
 
         /// <summary>
-        /// Query implementation used by <see cref="ForwardChainingKnowledgeBase_FromAIaMA"/>.
+        /// Query implementation used by <see cref="ForwardChainingKB_FromAIaMA"/>.
         /// </summary>
         public sealed class Query : IQuery
         {

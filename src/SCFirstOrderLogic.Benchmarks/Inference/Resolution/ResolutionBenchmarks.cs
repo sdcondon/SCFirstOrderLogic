@@ -17,9 +17,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         [Benchmark]
-        public static bool CrimeExample_SimplerResolutionKnowledgeBase()
+        public static bool CrimeExample_SimplerResolutionKB_WithoutClauseStore()
         {
-            var kb = new ResolutionKnowledgeBase_Simpler(ResolutionKnowledgeBase_Simpler.Filters.None, ResolutionKnowledgeBase_Simpler.PriorityComparisons.UnitPreference);
+            var kb = new ResolutionKB_WithoutClauseStore(ResolutionKB_WithoutClauseStore.Filters.None, ResolutionKB_WithoutClauseStore.PriorityComparisons.UnitPreference);
             foreach (var axiom in CrimeDomain.Axioms)
             {
                 kb.Tell(axiom);

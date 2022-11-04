@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     /// <para/>
     /// Differs from real version in that it doesn't use a clause store.
     /// </summary>
-    public class BackwardChainingKnowledgeBase_Simpler : IKnowledgeBase
+    public class BackwardChainingKB_WithoutClauseStore : IKnowledgeBase
     {
         // NB: Hard-coding of clause storage in a Dictionary instead of an anstracted clause store:
         private readonly Dictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol = new();

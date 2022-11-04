@@ -17,17 +17,17 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         }
 
         [Benchmark]
-        public static bool CrimeExample_ForwardChainingKnowledgeBase_FromAIaMA()
+        public static bool CrimeExample_ForwardChainingKB_FromAIaMA()
         {
-            var kb = new ForwardChainingKnowledgeBase_FromAIaMA();
+            var kb = new ForwardChainingKB_FromAIaMA();
             kb.TellAsync(CrimeDomain.Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
         }
 
         [Benchmark]
-        public static bool CrimeExample_ForwardChainingKnowledgeBase_Simpler()
+        public static bool CrimeExample_ForwardChainingKB_WithoutClauseStore()
         {
-            var kb = new ForwardChainingKnowledgeBase_Simpler();
+            var kb = new ForwardChainingKB_WithoutClauseStore();
             kb.TellAsync(CrimeDomain.Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
         }

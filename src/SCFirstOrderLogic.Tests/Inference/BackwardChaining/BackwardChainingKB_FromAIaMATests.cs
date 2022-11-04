@@ -8,11 +8,11 @@ using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
-    public static class BackwardChainingKnowledgeBase_FromAIaMATests
+    public static class BackwardChainingKB_FromAIaMATests
     {
         public static Test PositiveScenarios => TestThat
             .GivenTestContext()
-            .AndEachOf(() => new BackwardChainingKnowledgeBase_FromAIaMA.Query[]
+            .AndEachOf(() => new BackwardChainingKB_FromAIaMA.Query[]
             {
                 // trivial
                 MakeQuery(
@@ -85,7 +85,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             .And((cxt, query, _) => cxt.WriteOutputLine(query.ResultExplanation)); // Going to replace with full proof trees, so no point asserting on subs for now.
 
         public static Test NegativeScenarios => TestThat
-            .GivenEachOf(() => new BackwardChainingKnowledgeBase_FromAIaMA.Query[]
+            .GivenEachOf(() => new BackwardChainingKB_FromAIaMA.Query[]
             {
                 // no matching clause
                 MakeQuery(
@@ -120,9 +120,9 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             .And((_, rv) => rv.Should().BeFalse())
             .And((query, _) => query.Result.Should().BeFalse());
 
-        private static BackwardChainingKnowledgeBase_FromAIaMA.Query MakeQuery(Sentence query, IEnumerable<Sentence> kb)
+        private static BackwardChainingKB_FromAIaMA.Query MakeQuery(Sentence query, IEnumerable<Sentence> kb)
         {
-            var knowledgeBase = new BackwardChainingKnowledgeBase_FromAIaMA();
+            var knowledgeBase = new BackwardChainingKB_FromAIaMA();
             knowledgeBase.Tell(kb);
             return knowledgeBase.CreateQueryAsync(query).GetAwaiter().GetResult();
         }

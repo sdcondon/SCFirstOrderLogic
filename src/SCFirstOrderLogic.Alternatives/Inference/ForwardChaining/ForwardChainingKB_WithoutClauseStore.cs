@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     /// This is a VERY simple (read - inefficient) implementation that differs from the implementation in figure 9.3 of
     /// "Artificial Intelligence: A Modern Approach" only by the inclusion of proof tree retrieval.
     /// </summary>
-    public sealed class ForwardChainingKnowledgeBase_Simpler : IKnowledgeBase
+    public sealed class ForwardChainingKB_WithoutClauseStore : IKnowledgeBase
     {
         // NB: Hard-coded usage of an in-memory list for clause storage, unlike the abstracted clause store used by the library version.
         private readonly List<CNFDefiniteClause> clauses = new ();
