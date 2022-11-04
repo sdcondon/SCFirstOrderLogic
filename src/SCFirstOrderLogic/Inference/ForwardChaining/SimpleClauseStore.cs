@@ -1,5 +1,6 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
 using SCFirstOrderLogic.SentenceManipulation.Unification;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -13,6 +14,35 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     public class SimpleClauseStore : IKnowledgeBaseClauseStore
     {
         private readonly HashSet<CNFDefiniteClause> clauses = new();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class.
+        /// </summary>
+        public SimpleClauseStore() { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class that is pre-populated with some knowledge.
+        /// <para/>
+        /// NB: Of course, most "real" implementations of <see cref="IClauseStore"/> won't have a constructor for pre-population, because most
+        /// "real" clause stores will do IO when adding knowledge, and including long-running operations in a ctor is generally a bad idea.
+        /// We only include it here because of (the in-memory nature of this implementation and) its usefulness for tests.
+        /// </summary>
+        /// <param name="sentences">The initial content of the store.</param>
+        public SimpleClauseStore(IEnumerable<Sentence> sentences)
+        {
+            foreach (var sentence in sentences)
+            {
+                foreach (var clause in sentence.ToCNF().Clauses)
+                {
+                    if (!clause.IsDefiniteClause)
+                    {
+                        throw new ArgumentException($"All forward chaining knowledge must be expressable as definite clauses. The normalisation of {sentence} includes {clause}, which is not a definite clause");
+                    }
+
+                    clauses.Add(new CNFDefiniteClause(clause));
+                }
+            }
+        }
 
         /// <inheritdoc/>
         public Task<bool> AddAsync(CNFDefiniteClause clause, CancellationToken cancellationToken = default)
