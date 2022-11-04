@@ -156,7 +156,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             Sentence querySentence,
             CancellationToken cancellationToken = default)
         {
-            var queryClauseStore = clauseStore.CreateQueryClauseStore();
+            var queryClauseStore = await clauseStore.CreateQueryStoreAsync(cancellationToken);
 
             var query = new SimpleResolutionQuery(queryClauseStore, filter, priorityComparison, querySentence);
 

@@ -26,13 +26,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// Returns all possible applications of a clause in the knowledge base that result in a given consequent.
         /// </summary>
         /// <param name="goal">The goal - which the consequent term of the returned clauses should match (after transformation with the returned substitution).</param>
-        /// <param name="constraints">
-        /// The variable substitutions already made that must be respected.
-        /// <para/>
-        /// TODO*-V3: Not strictly necessary - but omitting it as-is would make for potentially confusing proof tree details.
-        /// A higher level concern, really - but would mean needing to apply existing sub before calling this method.
-        /// eliminate me from here if application of existing sub before this method is called proves not to be too much of a performance burden.
-        /// </param>
+        /// <param name="constraints">The variable substitutions already made that must be respected.</param>
         /// <param name="cancellationToken">Cancellation token for the operation.</param>
         /// <returns>An enumerable of clause-substitution pairs, one for each possible clause application.</returns>
         IAsyncEnumerable<(CNFDefiniteClause Clause, VariableSubstitution Substitution)> GetClauseApplications(Predicate goal, VariableSubstitution constraints, CancellationToken cancellationToken = default);

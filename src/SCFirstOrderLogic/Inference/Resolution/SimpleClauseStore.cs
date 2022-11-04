@@ -79,17 +79,20 @@ namespace SCFirstOrderLogic.Inference.Resolution
 #pragma warning restore CS1998
 
         /// <inheritdoc />
-        public IQueryClauseStore CreateQueryClauseStore() => new QueryClauseStore(clauses);
+        public Task<IQueryClauseStore> CreateQueryStoreAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<IQueryClauseStore>(new QueryStore(clauses));
+        }
 
         /// <summary>
         /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="SimpleClauseStore"/>.
         /// </summary>
-        private class QueryClauseStore : IQueryClauseStore
+        private class QueryStore : IQueryClauseStore
         {
             private readonly ConcurrentBag<CNFClause> clauses;
             private readonly SemaphoreSlim addLock = new(1);
 
-            public QueryClauseStore(IEnumerable<CNFClause> clauses) => this.clauses = new ConcurrentBag<CNFClause>(clauses);
+            public QueryStore(IEnumerable<CNFClause> clauses) => this.clauses = new ConcurrentBag<CNFClause>(clauses);
 
             /// <inheritdoc />
             public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)

@@ -38,7 +38,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             // NB: we go one-by-one rather than assuming the clause store can handle re-entry.
             foreach (var clause in cnfSentence.Clauses)
             {
-                await clauseStore.AddAsync(new CNFDefiniteClause(clause));
+                await clauseStore.AddAsync(new CNFDefiniteClause(clause), cancellationToken);
             }
         }
 
@@ -54,7 +54,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// <param name="query">The query sentence.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>A task that returns an <see cref="SimpleForwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
-        public Task<SimpleForwardChainingQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default)
+        public async Task<SimpleForwardChainingQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default)
         {
             if (query is not Predicate p)
             {
@@ -65,7 +65,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             // (assuming the symbols in the query don't have weird equality rules)..
             // ..and in any case our standardisation logic assumes all variables to be quantified, otherwise it crashes..
 
-            return Task.FromResult(new SimpleForwardChainingQuery(p, clauseStore.CreateQueryClauseStore()));
+            return new SimpleForwardChainingQuery(p, await clauseStore.CreateQueryStoreAsync(cancellationToken));
         }
 
         /// <summary>

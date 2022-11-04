@@ -63,16 +63,19 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 #pragma warning restore CS1998
 
         /// <inheritdoc />
-        public IQueryClauseStore CreateQueryClauseStore() => new QueryClauseStore(clauses);
+        public Task<IQueryClauseStore> CreateQueryStoreAsync(CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<IQueryClauseStore>(new QueryStore(clauses));
+        }
 
         /// <summary>
         /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="SimpleClauseStore"/>.
         /// </summary>
-        private class QueryClauseStore : IQueryClauseStore
+        private class QueryStore : IQueryClauseStore
         {
             private readonly HashSet<CNFDefiniteClause> clauses;
 
-            public QueryClauseStore(IEnumerable<CNFDefiniteClause> clauses) => this.clauses = new HashSet<CNFDefiniteClause>(clauses);
+            public QueryStore(IEnumerable<CNFDefiniteClause> clauses) => this.clauses = new HashSet<CNFDefiniteClause>(clauses);
 
             /// <inheritdoc />
             public Task<bool> AddAsync(CNFDefiniteClause clause, CancellationToken cancellationToken = default)
@@ -130,7 +133,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             {
                 // Here we just iterate through ALL known predicates trying to find something that unifies with the fact.
                 // A better implementation would do some kind of indexing:
-                // TODO-PERFORMANCE: ..we don't even store facts and rules separately, which we probably should..
+                // TODO-PERFORMANCE: ..we don't even store facts and rules separately..
                 await foreach (var knownClause in this.WithCancellation(cancellationToken))
                 {
                     if (knownClause.IsUnitClause)

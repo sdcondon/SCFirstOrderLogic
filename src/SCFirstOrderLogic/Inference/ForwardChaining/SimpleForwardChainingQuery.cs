@@ -182,7 +182,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// <inheritdoc />
         public void Dispose()
         {
-            //// Nothing to do
+            clauseStore.Dispose();
         }
 
         /// <summary>
@@ -190,9 +190,11 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// </summary>
         private IAsyncEnumerable<ProofStep> MatchWithKnownFacts(CNFDefiniteClause rule)
         {
-            // TODO-FEATURE: no specific conjunct ordering here - just look at them in the order they happen to fall.
-            // In a production scenario, we'd at least TRY to order the conjuncts in a way that minimises
+            // NB: there's no specific conjunct ordering here - just look at them in the order they happen to fall.
+            // To improve performance we could at least TRY to order the conjuncts in a way that minimises
             // the amount of work we have to do. And this is where we'd do it.
+            // TODO-FEATURE: would be relatively easy to add an (optional) ctor parameter for controlling 
+            // conjunct ordering.
             return MatchWithKnownFacts(rule.Conjuncts, new ProofStep(rule));
         }
 
