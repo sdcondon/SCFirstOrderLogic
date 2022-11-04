@@ -14,53 +14,53 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             .GivenTestContext()
             .AndEachOf(() => new SimpleForwardChainingQuery[]
             {
-                // trivial
-                MakeQuery(
-                    query: IsKing(John),
-                    kb: new Sentence[]
-                    {
-                        IsKing(John)
-                    }),
+                ////// trivial
+                ////MakeQuery(
+                ////    query: IsKing(John),
+                ////    kb: new Sentence[]
+                ////    {
+                ////        IsKing(John)
+                ////    }),
 
-                // single conjunct, single step
-                MakeQuery(
-                    query: IsEvil(John),
-                    kb: new Sentence[]
-                    {
-                        IsGreedy(John),
-                        AllGreedyAreEvil
-                    }),
+                ////// single conjunct, single step
+                ////MakeQuery(
+                ////    query: IsEvil(John),
+                ////    kb: new Sentence[]
+                ////    {
+                ////        IsGreedy(John),
+                ////        AllGreedyAreEvil
+                ////    }),
 
-                // two conjuncts, single step
-                MakeQuery(
-                    query: IsEvil(John),
-                    kb: new Sentence[]
-                    {
-                        IsGreedy(John),
-                        IsKing(John),
-                        AllGreedyKingsAreEvil
-                    }),
+                ////// two conjuncts, single step
+                ////MakeQuery(
+                ////    query: IsEvil(John),
+                ////    kb: new Sentence[]
+                ////    {
+                ////        IsGreedy(John),
+                ////        IsKing(John),
+                ////        AllGreedyKingsAreEvil
+                ////    }),
 
-                // Two applicable rules, each with two conjuncts, single step
-                MakeQuery(
-                    query: IsEvil(X),
-                    kb: new Sentence[]
-                    {
-                        IsKing(John),
-                        IsGreedy(Mary),
-                        IsQueen(Mary),
-                        AllGreedyKingsAreEvil,
-                        AllGreedyQueensAreEvil,
-                    }),
+                ////// Two applicable rules, each with two conjuncts, single step
+                ////MakeQuery(
+                ////    query: IsEvil(X),
+                ////    kb: new Sentence[]
+                ////    {
+                ////        IsKing(John),
+                ////        IsGreedy(Mary),
+                ////        IsQueen(Mary),
+                ////        AllGreedyKingsAreEvil,
+                ////        AllGreedyQueensAreEvil,
+                ////    }),
 
-                // Multiple possible substitutions
-                MakeQuery(
-                    query: IsKing(X),
-                    kb: new Sentence[]
-                    {
-                        IsKing(John),
-                        IsKing(Richard),
-                    }),
+                ////// Multiple possible substitutions
+                ////MakeQuery(
+                ////    query: IsKing(X),
+                ////    kb: new Sentence[]
+                ////    {
+                ////        IsKing(John),
+                ////        IsKing(Richard),
+                ////    }),
 
                 // Uses same var twice in same proof
                 MakeQuery(
@@ -122,7 +122,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 
         private static SimpleForwardChainingQuery MakeQuery(Sentence query, IEnumerable<Sentence> kb)
         {
-            var knowledgeBase = new SimpleForwardChainingKnowledgeBase();
+            var knowledgeBase = new SimpleForwardChainingKnowledgeBase(new SimpleClauseStore());
             knowledgeBase.Tell(kb);
             return knowledgeBase.CreateQuery(query);
         }

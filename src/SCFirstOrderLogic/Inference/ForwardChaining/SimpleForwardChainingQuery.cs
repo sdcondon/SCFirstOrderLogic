@@ -1,4 +1,5 @@
 ﻿using SCFirstOrderLogic;
+using SCFirstOrderLogic.InternalUtilities;
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using SCFirstOrderLogic.SentenceManipulation.Unification;
@@ -18,16 +19,16 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     public sealed class SimpleForwardChainingQuery : IQuery
     {
         private readonly Predicate queryGoal;
-        private readonly List<CNFDefiniteClause> kb;
+        private readonly IQueryClauseStore clauseStore;
         private readonly Dictionary<Predicate, ProofStep> proof = new();
         private readonly Lazy<ReadOnlyCollection<Predicate>> usefulPredicates;
 
         private bool? result;
 
-        internal SimpleForwardChainingQuery(Predicate queryGoal, List<CNFDefiniteClause> clauses)
+        internal SimpleForwardChainingQuery(Predicate queryGoal, IQueryClauseStore clauseStore)
         {
             this.queryGoal = queryGoal;
-            this.kb = new List<CNFDefiniteClause>(clauses);
+            this.clauseStore = clauseStore;
             this.usefulPredicates = new Lazy<ReadOnlyCollection<Predicate>>(MakeUsefulPredicates);
         }
 
@@ -113,39 +114,43 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         public ReadOnlyCollection<Predicate> UsefulPredicates => usefulPredicates.Value;
 
         /// <inheritdoc />
-        public Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
+        public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
-            var @new = new List<CNFDefiniteClause>();
-
             // First, quickly check if we've been asked something that is in the KB directly.
             // Otherwise, we only check against the goal when we discover something we didn't already know.
             // This means that if we didn't do a quick check here, asking the KB something that 
             // is in the KB as-is wouldn't work..
-            if (new CNFDefiniteClause(queryGoal).UnifiesWithAnyOf(kb))
+            if (await clauseStore.MatchWithKnownFacts(queryGoal, new VariableSubstitution(), cancellationToken).AnyAsync(cancellationToken))
             {
                 result = true;
-                return Task.FromResult(true);
+                return true;
             }
-            
+
+            // This knowledge base does incremental chaining - at each step, only the rules that
+            // are applicable to newly discovered facts are considered. This means that prior to
+            // the first step, we need to populate the "new" list with all of the facts from the KB.
+            List<CNFDefiniteClause> newFacts = (await clauseStore.ToListAsync(cancellationToken)).Where(c => c.IsUnitClause).ToList();
+
             do
             {
-                @new.Clear();
+                var applicableRules = await clauseStore.GetApplicableRules(newFacts.Select(f => f.Consequent), cancellationToken).ToListAsync();
 
-                foreach (var rule in kb.Where(f => !f.IsUnitClause))
+                newFacts.Clear();
+
+                foreach (var rule in applicableRules)
                 {
                     // NB: we don't need the variable standardisation line from the book because that's already
                     // happened as part of the conversion to CNF that is carried out when the KB is told things.
-                    // So all we do is call the consequent 'q' to match the book listing:
-                    var q = rule.Consequent;
 
-                    foreach (var proofStep in MatchWithKnownFacts(rule))
+                    await foreach (var proofStep in MatchWithKnownFacts(rule))
                     {
                         // Need the inferred predicate as a clause - worth looking into a bit more type fluidity at some point
                         // so that this line is unecessary
                         var inferredClause = new CNFDefiniteClause(proofStep.InferredPredicate);
 
                         // If we have a new conclusion..
-                        if (!inferredClause.UnifiesWithAnyOf(kb) && !inferredClause.UnifiesWithAnyOf(@new))
+                        
+                        if (!await clauseStore.MatchWithKnownFacts(inferredClause.Consequent, new VariableSubstitution(), cancellationToken).AnyAsync(cancellationToken) && !inferredClause.UnifiesWithAnyOf(newFacts))
                         {
                             // ..add it to the proof tree
                             proof[proofStep.InferredPredicate] = proofStep;
@@ -154,21 +159,24 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                             if (LiteralUnifier.TryCreate(inferredClause.Consequent, queryGoal, out var _))
                             {
                                 result = true;
-                                return Task.FromResult(true);
+                                return true;
                             }
 
                             // ..and to the list of new conclusions of this iteration..
-                            @new.Add(inferredClause);
+                            newFacts.Add(inferredClause);
                         }
                     }
                 }
 
-                kb.AddRange(@new);
+                foreach (var newFact in newFacts)
+                {
+                    await clauseStore.AddAsync(newFact, cancellationToken);
+                }
             }
-            while (@new.Count > 0);
+            while (newFacts.Count > 0);
 
             result = false;
-            return Task.FromResult(false);
+            return false;
         }
 
         /// <inheritdoc />
@@ -180,17 +188,15 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// <summary>
         /// Finds the variable substitutions t such that t.ApplyTo(clause) = t.ApplyTo(p1 ∧ ... ∧ pₙ) for some p1, .., pₙ in KB
         /// </summary>
-        private IEnumerable<ProofStep> MatchWithKnownFacts(CNFDefiniteClause rule)
+        private IAsyncEnumerable<ProofStep> MatchWithKnownFacts(CNFDefiniteClause rule)
         {
-            // NB: no specific conjunct ordering here - just look at them in the order they happen to fall.
+            // TODO*-V3: no specific conjunct ordering here - just look at them in the order they happen to fall.
             // In a production scenario, we'd at least TRY to order the conjuncts in a way that minimises
             // the amount of work we have to do. And this is where we'd do it.
             return MatchWithKnownFacts(rule.Conjuncts, new ProofStep(rule));
         }
 
-        // I'm not a huge fan of recursion when trying to write "learning" code (because its not particularly readable) - but I'll admit it is handy here.
-        // May revisit this - perhaps when I try to make the whole thing executable step-by-step for greater observability - can step through without debugging).
-        private IEnumerable<ProofStep> MatchWithKnownFacts(IEnumerable<Predicate> conjuncts, ProofStep proofStep)
+        private async IAsyncEnumerable<ProofStep> MatchWithKnownFacts(IEnumerable<Predicate> conjuncts, ProofStep proofStep)
         {
             if (!conjuncts.Any())
             {
@@ -198,18 +204,11 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             }
             else
             {
-                // Here we just iterate through ALL known predicates trying to find something that unifies with the first conjunct.
-                // We'd use an index here in anything approaching a production scenario:
-                foreach (var knownUnitClause in kb.Where(k => k.IsUnitClause))
+                await foreach (var (knownFact, unifier) in clauseStore.MatchWithKnownFacts(conjuncts.First(), proofStep.Unifier))
                 {
-                    var firstConjunctUnifier = new VariableSubstitution(proofStep.Unifier);
-
-                    if (LiteralUnifier.TryUpdateUnsafe(knownUnitClause.Consequent, conjuncts.First(), firstConjunctUnifier))
+                    await foreach (var restOfConjunctsProof in MatchWithKnownFacts(conjuncts.Skip(1), new ProofStep(proofStep, knownFact, unifier)))
                     {
-                        foreach (var restOfConjunctsProof in MatchWithKnownFacts(conjuncts.Skip(1), new ProofStep(proofStep, knownUnitClause.Consequent, firstConjunctUnifier)))
-                        {
-                            yield return restOfConjunctsProof;
-                        }
+                        yield return restOfConjunctsProof;
                     }
                 }
             }

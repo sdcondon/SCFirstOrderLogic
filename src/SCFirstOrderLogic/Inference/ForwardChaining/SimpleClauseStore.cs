@@ -67,7 +67,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                 IEnumerable<Predicate> facts,
                 [EnumeratorCancellation] CancellationToken cancellationToken = default)
             {
-                await foreach (var clause in this.WithCancellation(cancellationToken))
+                bool AnyConjunctUnifiesWithAnyFact(CNFDefiniteClause clause)
                 {
                     foreach (var conjunct in clause.Conjuncts)
                     {
@@ -75,9 +75,19 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                         {
                             if (LiteralUnifier.TryCreate(conjunct, fact, out _))
                             {
-                                yield return clause;
+                                return true;
                             }
                         }
+                    }
+
+                    return false;
+                }
+
+                await foreach (var clause in this.WithCancellation(cancellationToken))
+                {
+                    if (AnyConjunctUnifiesWithAnyFact(clause))
+                    {
+                        yield return clause;
                     }
                 }
             }
@@ -85,19 +95,21 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             /// <inheritdoc />
             public async IAsyncEnumerable<(Predicate knownFact, VariableSubstitution unifier)> MatchWithKnownFacts(
                 Predicate fact,
-                VariableSubstitution substitution,
+                VariableSubstitution constraints,
                 [EnumeratorCancellation] CancellationToken cancellationToken = default)
             {
-                // Here we just iterate through ALL known predicates trying to find something that unifies with the first conjunct.
-                // We'd use an index here in anything approaching a production scenario:
+                // Here we just iterate through ALL known predicates trying to find something that unifies with the fact.
+                // A better implementation would do some kind of indexing:
                 // TODO: ..we don't even store facts and rules separately, which we probably should..
                 await foreach (var knownClause in this.WithCancellation(cancellationToken))
                 {
                     if (knownClause.IsUnitClause)
                     {
-                        if (LiteralUnifier.TryUpdate(knownClause.Consequent, fact, ref substitution))
+                        var unifier = new VariableSubstitution(constraints);
+
+                        if (LiteralUnifier.TryUpdateUnsafe(knownClause.Consequent, fact, unifier))
                         {
-                            yield return (knownClause.Consequent, substitution);
+                            yield return (knownClause.Consequent, unifier);
                         }
                     }
                 }

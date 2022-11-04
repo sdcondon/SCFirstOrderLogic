@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         [Benchmark(Baseline = true)]
         public static bool CrimeExample_SimpleForwardChainingKnowledgeBase()
         {
-            var kb = new SimpleForwardChainingKnowledgeBase();
+            var kb = new SimpleForwardChainingKnowledgeBase(new SimpleClauseStore());
             kb.TellAsync(CrimeDomain.Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
         }

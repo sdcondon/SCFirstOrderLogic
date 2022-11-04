@@ -1,6 +1,5 @@
 ﻿using SCFirstOrderLogic;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,11 +14,16 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     /// </summary>
     public sealed class SimpleForwardChainingKnowledgeBase : IKnowledgeBase
     {
-        // TODO*-V3: what if large. At some point add a clause store equivalent..
-        private readonly List<CNFDefiniteClause> clauses = new ();
+        private readonly IKnowledgeBaseClauseStore clauseStore;
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="SimpleForwardChainingKnowledgeBase"/> class.
+        /// </summary>
+        /// <param name="clauseStore">the clause store to use to store and look up clauses.</param>
+        public SimpleForwardChainingKnowledgeBase(IKnowledgeBaseClauseStore clauseStore) => this.clauseStore = clauseStore;
 
         /// <inheritdoc />
-        public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
+        public async Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
             // Normalize, then verify that the sentence consists only of definite clauses
             // before indexing ANY of them:
@@ -27,17 +31,15 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 
             if (cnfSentence.Clauses.Any(c => !c.IsDefiniteClause))
             {
-                throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));
+                throw new ArgumentException("This knowledge base supports only knowledge that can be expressed as definite clauses", nameof(sentence));
             }
 
-            // Finally just add each clause to a (simple in-memory) list of known clauses.
-            // Of course, in a production scenario we'd want some indexing. More on this in the query class.
+            // Store clauses in the clause store:
+            // NB: we go one-by-one rather than assuming the clause store can handle re-entry.
             foreach (var clause in cnfSentence.Clauses)
             {
-                clauses.Add(new CNFDefiniteClause(clause));
+                await clauseStore.AddAsync(new CNFDefiniteClause(clause));
             }
-
-            return Task.CompletedTask;
         }
 
         /// <inheritdoc />
@@ -62,10 +64,8 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             // Doesn't hurt to not standardise here - wont clash because all of the KB rules *are* standardised
             // (assuming the symbols in the query don't have weird equality rules)..
             // ..and in any case our standardisation logic assumes all variables to be quantified, otherwise it crashes..
-            //var standardisation = new VariableStandardisation(query);
-            //p = (Predicate)standardisation.ApplyTo(p);
 
-            return Task.FromResult(new SimpleForwardChainingQuery(p, clauses));
+            return Task.FromResult(new SimpleForwardChainingQuery(p, clauseStore.CreateQueryClauseStore()));
         }
 
         /// <summary>
