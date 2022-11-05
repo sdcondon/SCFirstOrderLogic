@@ -174,9 +174,9 @@ var rules = new Sentence[]
 
 <pre style="background-color: lightgrey"><code class="prettyprint lang-cs">
 using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods - IKnowledgeBase is very async..
-using SCFirstOrderLogic.Inference.Chaining;
+using SCFirstOrderLogic.Inference.ForwardChaining;
 
-var kb = new SimpleForwardChainingKnowledgeBase();
+var kb = new SimpleForwardChainingKnowledgeBase(new SimpleClauseStore());
 kb.Tell(rules);
 var querySentence = IsCriminal(West);
 
@@ -193,9 +193,9 @@ Console.WriteLine(query.ResultExplanation); // A human-readable walkthrough of t
 <h3>Using Backward Chaining</h3>
 
 <pre style="background-color: lightgrey"><code class="prettyprint lang-cs">using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
-using SCFirstOrderLogic.Inference.Chaining;
+using SCFirstOrderLogic.Inference.BackwardChaining;
 
-var kb = new SimpleBackwardChainingKnowledgeBase();
+var kb = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
 kb.Tell(rules);
 var result = kb.Ask(IsCriminal(West)); // will be true
 // ..Or can get an explanation in the same way as above
