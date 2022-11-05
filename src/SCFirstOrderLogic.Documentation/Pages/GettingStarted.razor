@@ -92,7 +92,7 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, IsPar
 modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as a boolean-valued LINQ expression. Like this:</p>
 
 <pre style="background-color: lightgrey"><code class="prettyprint lang-cs">using SCFirstOrderLogic.LanguageIntegration;
-using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff an If methods..
+using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff an If methods
 
 // The helper methods recommended for the other approaches become full interfaces
 // when language integration is used (no implementation is needed):
@@ -121,37 +121,38 @@ but I've not gotten around to that just yet. At some point in the future I may t
 <p>Once you have some sentences, storing them and making inferences is done with the aid of the types in the `Inference` namespace.
 The most important type here is the `IKnowledgeBase` interface. The library includes a few very simple knowledge bases - one that
 uses forward chaining, one that uses backward chaining, and one that uses resolution. Some examples follow, but first, here's our domain,
-taken from section 9.3 of 'Artificial Intelligence: A Modern Approach':</p>
+taken from section 9.3 of 'Artificial Intelligence: A Modern Approach'. Note that it consists only of definite clauses, so we can use
+forward and backward chaining on it:</p>
 
 <pre style="background-color: lightgrey"><code class="prettyprint lang-cs">using SCFirstOrderLogic;
-using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
 Constant America = new Constant(nameof(America));
 Constant Nono = new Constant(nameof(Nono));
 Constant West = new Constant(nameof(West));
 
-Predicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
-Predicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
-Predicate IsCriminal(Term t) => new Predicate(nameof(IsCriminal), t);
-Predicate IsWeapon(Term t) => new Predicate(nameof(IsWeapon), t);
-Predicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
-Predicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
-Predicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
-Predicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
+OperablePredicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
+OperablePredicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
+OperablePredicate IsCriminal(Term t) => new Predicate(nameof(IsCriminal), t);
+OperablePredicate IsWeapon(Term t) => new Predicate(nameof(IsWeapon), t);
+OperablePredicate IsMissile(Term t) => new Predicate(nameof(IsMissile), t);
+OperablePredicate Owns(Term owner, Term owned) => new Predicate(nameof(Owns), owner, owned);
+OperablePredicate Sells(Term seller, Term item, Term buyer) => new Predicate(nameof(Sells), seller, item, buyer);
+OperablePredicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyOf), t, other);
 
 var rules = new Sentence[]
 {
     // "... it is a crime for an American to sell weapons to hostile nations":
     // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x).
-    ForAll(X, Y, Z, If(And(IsAmerican(X), IsWeapon(Y), Sells(X, Y, Z), IsHostile(Z)), IsCriminal(X))),
+    ForAll(X, Y, Z, If(IsAmerican(X) & IsWeapon(Y) & Sells(X, Y, Z) & IsHostile(Z), IsCriminal(X))),
 
     // "Nono... has some missiles."
     // ∃x Missile(x) ∧ Owns(Nono, x)
-    ThereExists(X, And(IsMissile(X), Owns(Nono, X))),
+    ThereExists(X, IsMissile(X) & Owns(Nono, X)),
 
     // "All of its missiles were sold to it by Colonel West":
     // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
-    ForAll(X, If(And(IsMissile(X), Owns(Nono, X)), Sells(West, X, Nono))),
+    ForAll(X, If(IsMissile(X) & Owns(Nono, X), Sells(West, X, Nono))),
 
     // We will also need to know that missiles are weapons: 
     // Missile(x) ⇒ Weapon(x)
@@ -172,21 +173,27 @@ var rules = new Sentence[]
 
 <h3>Using Forward Chaining</h3>
 
-<pre style="background-color: lightgrey"><code class="prettyprint lang-cs">
-using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods - IKnowledgeBase is very async..
+<pre style="background-color: lightgrey"><code class="prettyprint lang-cs">using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods - IKnowledgeBase is very async
 using SCFirstOrderLogic.Inference.ForwardChaining;
 
+// .. paste the domain listing here ..
+
+// Note that the knowledge base ctor has a "clause store" parameter.
+// The clause store takes responsibility for the actual storage and lookup
+// of knowledge. The package provides only SimpleClauseStore, which stores
+// things in memory. This is an extension point - create your own implementation
+// of IClauseStore to use secondary storage and/or customised indexing, for example.
 var kb = new SimpleForwardChainingKnowledgeBase(new SimpleClauseStore());
 kb.Tell(rules);
 var querySentence = IsCriminal(West);
 
 // Succinct way to get a true/false result:
-Console.WriteLine(kb.Ask(querySentence)); // "true"
+Console.WriteLine(kb.Ask(querySentence)); // "True"
 
 // Or, to get an explanation:
 var query = kb.CreateQuery(querySentence);
 query.Execute();
-Console.WriteLine(query.Result); // true
+Console.WriteLine(query.Result); // "True"
 Console.WriteLine(query.ResultExplanation); // A human-readable walkthrough of the proof tree 
 </code></pre>
 
@@ -195,6 +202,11 @@ Console.WriteLine(query.ResultExplanation); // A human-readable walkthrough of t
 <pre style="background-color: lightgrey"><code class="prettyprint lang-cs">using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
 using SCFirstOrderLogic.Inference.BackwardChaining;
 
+// .. paste the domain listing here ..
+
+// As with forward chaining, backward chaining KB uses a clause store
+// (note that while it has the same name, its a different class in a
+// different namespace - this was perhaps a mistake, but is good for brevity..)
 var kb = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
 kb.Tell(rules);
 var result = kb.Ask(IsCriminal(West)); // will be true
@@ -206,6 +218,8 @@ var result = kb.Ask(IsCriminal(West)); // will be true
 <pre style="background-color: lightgrey"><code class="prettyprint lang-cs">
 using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
 using SCFirstOrderLogic.Inference.Resolution;
+
+// .. paste the domain listing here ..
 
 // The resolution KB has a little more configurability/extensibility than the other two:
 var kb = new new SimpleResolutionKnowledgeBase(
