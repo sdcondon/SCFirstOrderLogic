@@ -12,4 +12,9 @@
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\SCFirstOrderLogic-32.png" Link="wwwroot\SCFirstOrderLogic-32.png" />
+    <Content Include="..\SCFirstOrderLogic-128.png" Link="wwwroot\SCFirstOrderLogic-128.png" />
+  </ItemGroup>
+
 </Project>

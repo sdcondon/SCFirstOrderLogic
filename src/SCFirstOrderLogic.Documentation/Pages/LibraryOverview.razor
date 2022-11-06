@@ -14,18 +14,18 @@
       <li>
         <b><code>Inference</code></b>: intended as the top-level namespace for actual inference algorithms. Directly contains <code>IKnowledgeBase</code>, an interface for knowledge bases (stores of knowledge that can callers can `Tell` and `Ask` things).
         <ul>
-          <li><b><code>BackwardChaining</code></b>: Contains an implementation of the knowledge base interface that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Backward_chaining">backward chaining</a> - as well as some supporting types.</li>
-          <li><b><code>ForwardChaining</code></b>: Contains an implementation of the knowledge base interface that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Forward_chaining">forward chaining</a> - as well as some supporting types.</li>
-          <li><b><code>Resolution</code></b>: Contains an implementation of the knowledge base interface that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Resolution_(logic)">resolution</a> - as well as some supporting types.</li>
+          <li><b><code>BackwardChaining</code></b>: contains an <code>IKnowledgeBase</code> implementation that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Backward_chaining">backward chaining</a> - as well as some supporting types.</li>
+          <li><b><code>ForwardChaining</code></b>: contains an <code>IKnowledgeBase</code> implementation that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Forward_chaining">forward chaining</a> - as well as some supporting types.</li>
+          <li><b><code>Resolution</code></b>: contains an <code>IKnowledgeBase</code> implementation that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Resolution_(logic)">resolution</a> - as well as some supporting types.</li>
         </ul>
       </li>
       <li><b><code>LanguageIntegration</code></b>: contains classes to create FoL sentences from LINQ expressions (i.e. allowing sentences to be provided as lambda expressions).</li>
-      <li><b><code>SentenceCreation</code></b>: Logic to ease the creation of sentences - which the language integration classes serve as an alternative to.</li>
-      <li><b><code>SentenceFormatting</code></b>: Logic for creating string representations of sentences. Includes logic for ensuring unique labelling of standardised variables and Skolem functions (which the symbol representations themselves don't concern themselves with).</li>
+      <li><b><code>SentenceCreation</code></b>: logic to ease the creation of sentences - which the language integration classes serve as an alternative to.</li>
+      <li><b><code>SentenceFormatting</code></b>: logic for creating string representations of sentences. Includes logic for ensuring unique labelling of standardised variables and Skolem functions (which the symbol representations themselves don't concern themselves with).</li>
       <li>
-        <b><code>SentenceManipulation</code></b>: Assorted logic for the manipulation of sentences. Contains some interfaces and base classes for sentence visitors and transformations.
+        <b><code>SentenceManipulation</code></b>: assorted logic for the manipulation of sentences. Contains some interfaces and base classes for sentence visitors and transformations.
         <ul>
-          <li><b><code>Unification</code></b>: Utility logic for <a href="https://en.wikipedia.org/wiki/Unification_(computer_science)">unifying</a> literals and sentences.</li>
+          <li><b><code>Unification</code></b>: utility logic for <a href="https://en.wikipedia.org/wiki/Unification_(computer_science)">unifying</a> literals and sentences.</li>
         </ul>
       </li>
     </ul>
