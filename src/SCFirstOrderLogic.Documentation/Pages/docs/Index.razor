@@ -8,9 +8,9 @@
 Note, however, that some degree of effort has been put into the type and member documentation. That should be your primary resource for learning how to use this library.
 Having said all that, some hopefully useful notes do follow here.</p>
 
-<h2>Functionality by Namespace</h2>
+<h2>Notes by Namespace</h2>
 
-<h3>Sentence Representation</h3>
+<h3><code>SCFirstOrderLogic</code></h3>
 
 <ul>
     <li><b>CNF:</b> While it wasn't explicity mentioned in "getting started", the knowledge bases referenced in that document do of course make use of conjunctive normal form where appropriate.
@@ -20,7 +20,7 @@ Having said all that, some hopefully useful notes do follow here.</p>
     The various sentence creation methods make use of this in created sentences where appropriate.</li>
 </ul>
 
-<h3>Inference</h3>
+<h3><code>SCFirstOrderLogic.Inference</code></h3>
 
 <ul>
   <li>
@@ -29,13 +29,13 @@ Having said all that, some hopefully useful notes do follow here.</p>
   </li>
 </ul>
 
-<h3>Sentence Creation</h3>
+<h3><code>SCFirstOrderLogic.SentenceCreation</code></h3>
 
 <ul>
   <li><b>Language Integration:</b> As mentioned briefly in 'getting started', a language-integrated appropach to sentence creation is available. See <a href="docs/language-integration">here</a> for details.</li>
 </ul>
 
-<h3>Sentence Formatting</h3>
+<h3><code>SCFirstOrderLogic.SentenceFormatting</code></h3>
 
 <p>There is some sentence formatting logic to be found in the SentenceFormatting namespace - which includes support for ensuring unique labelling of symbols for standardised variables and Skolem functions across a set of sentences.
 The sets of labels used can be specified by the caller (but defaults do exist).</p>
