@@ -8,7 +8,7 @@ This repository contains the source code for the SCFirstOrderLogic NuGet package
 
 ## Package Documentation
 
-For documentation of the package itself, see https://sdcondon.github.io/SCFirstOrderLogic/.
+For documentation of the package itself, see https://sdcondon.net/SCFirstOrderLogic/.
 
 ## Issues and Contributions
 

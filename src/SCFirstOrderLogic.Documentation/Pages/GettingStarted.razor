@@ -14,9 +14,9 @@
 
 <p>..that is, the definition of a grandparent. We use this example because its very straightforward but includes a decent cross-section of FoL elements.</p>
 
-<h3>Writing Sentences Manually</h3>
+<h3>Writing Sentences Directly</h3>
 
-<p>The most basic way to express this is to manually compose instances of the types found in the top-level `SCFirstOrderLogic` namespace into a tree structure, like this:</p>
+<p>The most basic way to express this is to directly compose instances of the types found in the top-level `SCFirstOrderLogic` namespace into a tree structure, like this:</p>
 
 <pre style="background-color: lightgrey"><code class="prettyprint lang-cs">using SCFirstOrderLogic;
 
@@ -205,7 +205,7 @@ using SCFirstOrderLogic.Inference.BackwardChaining;
 // .. paste the domain listing here ..
 
 // As with forward chaining, backward chaining KB uses a clause store
-// (note that while it has the same name, its a different class in a
+// (note that while it has the same name, it is a different class in a
 // different namespace - this was perhaps a mistake, but is good for brevity..)
 var kb = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
 kb.Tell(rules);
