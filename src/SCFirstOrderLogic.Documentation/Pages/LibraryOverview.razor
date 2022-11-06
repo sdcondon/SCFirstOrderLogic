@@ -14,7 +14,8 @@
             <li>
                 <code>Inference</code>: intended as the top-level namespace for actual inference algorithms. Directly contains <code>IKnowledgeBase</code>, an interface for knowledge bases (stores of knowledge that can callers can `Tell` and `Ask` things).
                 <ul>
-                    <li><code>Chaining</code>: Contains implementations of the knowledge base interface that use very simple forms of forward and backward chaining.</li>
+                    <li><code>BackwardChaining</code>: Contains implementations of the knowledge base interface that use very simple forms of backward chaining.</li>
+                    <li><code>ForwardChaining</code>: Contains implementations of the knowledge base interface that use very simple forms of forward chaining.</li>
                     <li><code>Resolution</code>: Contains an implementation of the knowledge base interface that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Resolution_(logic)">resolution</a> - as well as some supporting types. These supporting types include an interface for clause stores, and a very simple implementation that just stores clauses in a list.</li>
                 </ul>
             </li>

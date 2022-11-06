@@ -1,4 +1,4 @@
-name: Deploy Documentation to GitHub Pages
+name: Build docs site to gh-pages branch
 
 on:
   push:
