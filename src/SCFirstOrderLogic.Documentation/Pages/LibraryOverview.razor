@@ -4,30 +4,30 @@
 
 <h1>Library Overview</h1>
 
-<p>Here is a quick overview of the namespaces found within this library. Reading this should give you some context for diving a little deeper:</p>
+<p>Here is a quick overview of the namespaces found within this library. Reading this should give you some helpful context for diving a little deeper:</p>
 
 <ul>
-    <li>
-        <code>SCFirstOrderLogic</code>: the root namespace contains classes representing individual elements of first order logic sentences (universal and existential quantifications, conjunctions, disjunctions, predicates, functions and so on).
-        <br />Instances of these classes are composed into tree structures that represent sentences of first order logic. This namespace also contains classes that represent sentences in <a href="https://en.wikipedia.org/wiki/Conjunctive_normal_form">conjunctive normal form</a> - <code>CNFSentence</code> and <code>CNFClause</code>.
+  <li>
+    <b><code>SCFirstOrderLogic</code></b>: the root namespace contains classes representing individual elements of first order logic sentences (universal and existential quantifications, conjunctions, disjunctions, predicates, functions and so on).
+    Instances of these classes are composed into tree structures that represent sentences of first order logic. This namespace also contains classes that represent sentences in <a href="https://en.wikipedia.org/wiki/Conjunctive_normal_form">conjunctive normal form</a>, as well as a class that represents the identifier of the equality predicate.
+    <ul>
+      <li>
+        <b><code>Inference</code></b>: intended as the top-level namespace for actual inference algorithms. Directly contains <code>IKnowledgeBase</code>, an interface for knowledge bases (stores of knowledge that can callers can `Tell` and `Ask` things).
         <ul>
-            <li>
-                <code>Inference</code>: intended as the top-level namespace for actual inference algorithms. Directly contains <code>IKnowledgeBase</code>, an interface for knowledge bases (stores of knowledge that can callers can `Tell` and `Ask` things).
-                <ul>
-                    <li><code>BackwardChaining</code>: Contains implementations of the knowledge base interface that use very simple forms of backward chaining.</li>
-                    <li><code>ForwardChaining</code>: Contains implementations of the knowledge base interface that use very simple forms of forward chaining.</li>
-                    <li><code>Resolution</code>: Contains an implementation of the knowledge base interface that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Resolution_(logic)">resolution</a> - as well as some supporting types. These supporting types include an interface for clause stores, and a very simple implementation that just stores clauses in a list.</li>
-                </ul>
-            </li>
-            <li><code>LanguageIntegration</code>: contains classes to create FoL sentences from LINQ expressions (i.e. allowing sentences to be provided as lambda expressions). For details, see the <a href="language-integration">language integration</a> page.</li>
-            <li><code>SentenceCreation</code>: Logic to ease the creation of sentences - these serve as an alternative to using language integration. Contains the <code>SentenceFactory</code> and <code>OperableSentenceFactory</code> static classes, which both include a number of shorthand static helper methods for instantiating sentences.</li>
-            <li><code>SentenceFormatting</code>: Logic for creating string representations of sentences. Includes logic for ensuring unique labelling of standardised variables and Skolem functions (which the symbol representations themselves don't concern themselves with).</li>
-            <li>
-                <code>SentenceManipulation</code>: Assorted logic for the manipulation of sentences. Contains some interfaces and base classes for sentence visitors and transformations.
-                <ul>
-                    <li><code>Unification</code>: Utility logic for <a href="https://en.wikipedia.org/wiki/Unification_(computer_science)">unifying</a> literals and sentences.</li>
-                </ul>
-            </li>
+          <li><b><code>BackwardChaining</code></b>: Contains an implementation of the knowledge base interface that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Backward_chaining">backward chaining</a> - as well as some supporting types.</li>
+          <li><b><code>ForwardChaining</code></b>: Contains an implementation of the knowledge base interface that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Forward_chaining">forward chaining</a> - as well as some supporting types.</li>
+          <li><b><code>Resolution</code></b>: Contains an implementation of the knowledge base interface that uses a very simple form of <a href="https://en.wikipedia.org/wiki/Resolution_(logic)">resolution</a> - as well as some supporting types.</li>
         </ul>
-    </li>
+      </li>
+      <li><b><code>LanguageIntegration</code></b>: contains classes to create FoL sentences from LINQ expressions (i.e. allowing sentences to be provided as lambda expressions).</li>
+      <li><b><code>SentenceCreation</code></b>: Logic to ease the creation of sentences - which the language integration classes serve as an alternative to.</li>
+      <li><b><code>SentenceFormatting</code></b>: Logic for creating string representations of sentences. Includes logic for ensuring unique labelling of standardised variables and Skolem functions (which the symbol representations themselves don't concern themselves with).</li>
+      <li>
+        <b><code>SentenceManipulation</code></b>: Assorted logic for the manipulation of sentences. Contains some interfaces and base classes for sentence visitors and transformations.
+        <ul>
+          <li><b><code>Unification</code></b>: Utility logic for <a href="https://en.wikipedia.org/wiki/Unification_(computer_science)">unifying</a> literals and sentences.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>

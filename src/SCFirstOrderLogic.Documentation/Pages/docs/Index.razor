@@ -1,0 +1,51 @@
+﻿@page "/docs"
+
+<PageTitle>Beyond Getting Started</PageTitle>
+
+<h1>Beyond Getting Started</h1>
+
+<p>This library is fairly small and its download counts are rather low - putting a huge amount of effort into full documentation here would not be a great use of time.
+Note, however, that some degree of effort has been put into the type and member documentation. That should be your primary resource for learning how to use this library.
+Having said all that, some hopefully useful notes do follow here.</p>
+
+<h2>Functionality by Namespace</h2>
+
+<h3>Sentence Representation</h3>
+
+<ul>
+    <li><b>CNF:</b> While it wasn't explicity mentioned in "getting started", the knowledge bases referenced in that document do of course make use of conjunctive normal form where appropriate.
+    Classes for representation of CNF can be found alongside the "raw" sentence types in the SCFirstOrderLogic namespace.
+    Note that the Sentence base class defines a <code>ToCNF</code> method.</li>
+    <li><b>Equality:</b> The SCFirstOrderLogic namespace includes EqualitySymbol, intended to be used as the symbol for the equality predicate.
+    The various sentence creation methods make use of this in created sentences where appropriate.</li>
+</ul>
+
+<h3>Inference</h3>
+
+<ul>
+  <li>
+    <b>EqualityAxiomisingKnowledgeBase:</b> None of the knowledge bases here use particular techniques (e.g. demodulation, paramodulation) to handle equality.
+    However, the Inference namespace does include EqualityAxiomisingKnowledgeBase, which is a decorator applied to an inner knowledge base - and adds rules pertaining to equality as knowledge is added.
+  </li>
+</ul>
+
+<h3>Sentence Creation</h3>
+
+<ul>
+  <li><b>Language Integration:</b> As mentioned briefly in 'getting started', a language-integrated appropach to sentence creation is available. See <a href="docs/language-integration">here</a> for details.</li>
+</ul>
+
+<h3>Sentence Formatting</h3>
+
+<p>There is some sentence formatting logic to be found in the SentenceFormatting namespace - which includes support for ensuring unique labelling of symbols for standardised variables and Skolem functions across a set of sentences.
+The sets of labels used can be specified by the caller (but defaults do exist).</p>
+
+<h2>Learning Resources in the Repository</h2>
+
+<p>The repo contains a few resources aside from the source of the library itself that people might find interesting and/or useful:</p>
+
+<ul>
+    <li><b><a href="https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.ExampleDomains">'ExampleDomains' project</a>:</b> Example domains, declared using each of the sentence creation options.</li>
+    <li><b><a href="https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.Alternatives">'Alternatives' project</a>:</b> this class library contains a number of alternative implementations of things. Some of these implementations are "rawer" recreations of algorithms as listed in the source material (these tend to have names suffixed with `_FromAIaMA`), others just exhibit slightly different performance or complexity characteristics. These have been created for learning and benchmarking.</li>
+    <li><b><a href="https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.Benchmarks">'Benchmarks' project</a>:</b> benchmark project for evaluating performance of the algorithms in the NuGet package and in the 'Alternatives' project.</li>
+</ul>

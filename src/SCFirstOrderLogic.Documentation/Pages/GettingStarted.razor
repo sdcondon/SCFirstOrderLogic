@@ -8,7 +8,7 @@
 
 <h2>Writing Sentences</h2>
 
-<p>Obviously the first challenge is to write sentences. This can be done in several ways. This section will use the following sentence as an example:</p>
+<p>The first challenge is to write sentences. This can be done in several ways. This section will use the following sentence as an example:</p>
 
 <pre><code>∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]</code></pre>
 
@@ -16,15 +16,15 @@
 
 <h3>Writing Sentences Directly</h3>
 
-<p>The most basic way to express this is to directly compose instances of the types found in the top-level `SCFirstOrderLogic` namespace into a tree structure, like this:</p>
+<p>The most basic way to express sentences is to directly compose instances of the types found in the top-level `SCFirstOrderLogic` namespace into a tree structure, like this:</p>
 
 <pre style="background-color: lightgrey"><code class="prettyprint lang-cs">using SCFirstOrderLogic;
 
-// Helper methods for your predicates (and functions) are recommended:
+// Helper methods for creating your predicates (and functions) are recommended:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
-// Now the sentence itself, with some intermediate vars so that it isn't completely unreadable:
+// Now the sentence itself, with some intermediate variables so that it isn't completely unreadable:
 var g = new VariableDeclaration("g");
 var c = new VariableDeclaration("c");
 var p = new VariableDeclaration("p");
@@ -108,7 +108,7 @@ var grandparentDefn =
 
 <p>Notice that:</p>
 <ul>
-    <li>This is obviously non-trivial - more information can be found on the [language integration](./language-integration.md) page.</li>
+    <li>This is obviously non-trivial - more information can be found on the <a href="docs/language-integration">language integration</a> page.</li>
 </ul>
 
 <h3>(Not) Writing Sentences as Strings</h3>
@@ -179,8 +179,8 @@ using SCFirstOrderLogic.Inference.ForwardChaining;
 // .. paste the domain listing here ..
 
 // Note that the knowledge base ctor has a "clause store" parameter.
-// The clause store takes responsibility for the actual storage and lookup
-// of knowledge. The package provides only SimpleClauseStore, which stores
+// The clause store takes responsibility for the storage and lookup of
+// individual clauses. The package provides only SimpleClauseStore, which stores
 // things in memory. This is an extension point - create your own implementation
 // of IClauseStore to use secondary storage and/or customised indexing, for example.
 var kb = new SimpleForwardChainingKnowledgeBase(new SimpleClauseStore());
@@ -237,8 +237,7 @@ var result = kb.Ask(IsCriminal(West)); // will be true
     Depending on your environment, you might need to take action so that these are outputted properly.
     E.g. For running on Windows it might be worth adding `Console.OutputEncoding = Encoding.Unicode;` to your application start-up.</li>
     <li>The `Tell`, `Ask`, `CreateQuery` and `Execute` methods used above are actually extension methods that are are synchronous wrappers around underlying async versions.
-    The library has deep async support - because "real-world" KBs will tend to need to do IO.
-    At the time of writing, the only implementation that currently supports this meaningfully is the resolution one, though.</li>
+    The library has deep async support - because "real-world" KBs will tend to need to do IO.</li>
 </ul>
 
 <h2>More Examples</h2>
@@ -249,4 +248,4 @@ Beyond that, see the XML documentation against the classes - which I hope is fai
 
 <h2>Where Next?</h2>
 
-<p>Take a look at <a href="beyond-getting-started">'beyond getting started'</a></p>
+<p>Take a look at <a href="docs">'beyond getting started'</a></p>
