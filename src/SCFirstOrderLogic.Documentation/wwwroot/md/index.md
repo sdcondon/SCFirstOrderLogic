@@ -17,4 +17,4 @@ The recommended initial learning path is as follows:
 
 1. **[Library Overview](library-overview.md):** This is the recommended first stop. Provides a quick overview of the library - useful context for diving a little deeper
 1. **[Getting Started](getting-started.md):** Guidance for writing your first code that consumes this library
-1. **[Beyond Getting Started](beyond-getting-started.md):** Brings attention to a few things not mentioned in 'getting started'
+1. **[Beyond Getting Started](beyond-getting-started):** Brings attention to a few things not mentioned in 'getting started'
