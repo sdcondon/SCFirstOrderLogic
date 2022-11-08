@@ -1,7 +1,7 @@
 ﻿# Roadmap
 
 Long-term, this library will be "done" when I think that it does its "learning and experimentation" job adequately, and provides enough extension points for people to extend it should they so wish.
-In particular, I don't intend to add any particularly powerful or complex inference logic to this package - the simple implementations are enough.
+In particular, I don't intend to add any particularly powerful or specialised inference logic to this package - the simple implementations are enough.
 
 Priorities at the time of writing:
 
