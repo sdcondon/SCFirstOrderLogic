@@ -1,0 +1,84 @@
+﻿<!-- ..because HTML is annoying and Markdig is great.. -->
+@using System.Linq;
+@using Markdig
+@using Markdig.Renderers
+@using Markdig.Renderers.Html
+@using Markdig.Syntax
+@inherits ComponentBase
+@inject HttpClient Http
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+@markup
+
+@code {
+  private MarkupString markup;
+
+  [Parameter]
+  public string? MarkdownUri { get; set; }
+
+  protected override async Task OnInitializedAsync()
+  {
+    var markdown = await Http.GetStringAsync(MarkdownUri);
+
+    var pipeline = new MarkdownPipelineBuilder()
+        .Use(new Extension(Nav.Uri))
+        .UseBootstrap()
+        .Build();
+
+    markup = new MarkupString(Markdig.Markdown.ToHtml(markdown, pipeline));
+  }
+
+  protected override void OnAfterRender(bool firstRender)
+  {
+    JS.InvokeVoidAsync("PR.prettyPrint");
+  }
+
+  public class Extension : IMarkdownExtension
+  {
+    private readonly string baseUrl;
+
+    public Extension(string baseUrl) => this.baseUrl = baseUrl;
+
+    public void Setup(MarkdownPipelineBuilder pipeline) { }
+
+    public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
+    {
+      HtmlRenderer? htmlRenderer = renderer as HtmlRenderer;
+      ////if (htmlRenderer != null)
+      ////{
+      ////  htmlRenderer.BaseUrl = new Uri(baseUrl);
+      ////}
+
+      ObjectRendererCollection? objectRenderers = htmlRenderer?.ObjectRenderers;
+
+      if (objectRenderers != null && !objectRenderers.Contains<PrettyPrintCodeBlockRenderer>())
+      {
+        var codeBlockRenderer = objectRenderers.OfType<CodeBlockRenderer>().SingleOrDefault() ?? new CodeBlockRenderer();
+        objectRenderers.Replace<CodeBlockRenderer>(new PrettyPrintCodeBlockRenderer(codeBlockRenderer));
+      }
+    }
+  }
+
+  class PrettyPrintCodeBlockRenderer : HtmlObjectRenderer<CodeBlock>
+  {
+    private CodeBlockRenderer innerRenderer;
+
+    public PrettyPrintCodeBlockRenderer(CodeBlockRenderer innerRenderer)
+    {
+      this.innerRenderer = innerRenderer;
+    }
+
+    protected override void Write(HtmlRenderer renderer, CodeBlock obj)
+    {
+      if (obj is FencedCodeBlock fencedCodeBlock)
+      {
+        var attr = obj.TryGetAttributes() ?? new();
+        attr.AddClass("prettyprint");
+        obj.SetAttributes(attr);
+      }
+
+      innerRenderer.Write(renderer, obj);
+    }
+  }
+}

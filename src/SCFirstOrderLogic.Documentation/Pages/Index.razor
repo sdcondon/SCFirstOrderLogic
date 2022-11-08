@@ -2,30 +2,4 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Home</h1>
-
-<p>
-The SCFirstOrderLogic NuGet package contains basic but fully functional and documented <a href="https://en.wikipedia.org/wiki/First-order_logic">first-order logic</a> implementations.
-It is heavily influenced by (chapters 8 and 9 of) <a href="https://www.google.com/search?q=isbn+978-1292153964">Artificial Intelligence: A Modern Approach" (Russell & Norvig)</a>.
-It is intended first and foremost to assist with learning and experimentation, but does include extension points (and async support) so that it is at least conceivable that it could be (extended to be) useful in a production scenario.
-Included are:
-</p>
-
-<ul>
-<li>Implementations of both raw and CNF sentence representation. Multiple ways of instantiating raw sentences, including a language-integrated approach that allows (the domain to be modelled as an IEnumerable&lt;T&gt; and) sentences to be provided as lambda expressions.</li>
-<li>Knowledge base implementations that, while using very simple versions of their respective algorithms, do use abstracted, asynchronous clause storage (thus providing an extension point) and expose properties for the retrieval of proof details.</li>
-<li>Sentence formatting logic that allows for (customisable) unique labelling of standardised variables and Skolem functions across a set of sentences.</li>
-</ul>
-
-<p>
-As mentioned above, the main goal here is for it to be a resource for learning and experimentation.
-As such, care has also been taken to include good type and member documentation, as well as <a href="https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink">Source Link</a> to allow for debugging - and explanatory inline comments in the source code where appropriate.
-</p>
-
-<p>The recommended initial learning path is as follows:</p>
-
-<ol>
-<li><b><a href="library-overview">Library Overview</a>:</b> This is the recommended first stop. Provides a quick overview of the library - useful context for diving a little deeper</li>
-<li><b><a href="getting-started">Getting Started</a>:</b> Guidance for writing your first code that consumes this library</li>
-<li><b><a href="docs">Beyond Getting Started</a>:</b> Brings attention to a few things not mentioned in 'getting started'</li>
-</ol>
+<Markdown MarkdownUri="md/index.md"></Markdown>
