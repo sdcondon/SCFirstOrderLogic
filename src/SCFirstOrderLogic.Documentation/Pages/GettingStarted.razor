@@ -194,7 +194,8 @@ Console.WriteLine(kb.Ask(querySentence)); // "True"
 var query = kb.CreateQuery(querySentence);
 query.Execute();
 Console.WriteLine(query.Result); // "True"
-Console.WriteLine(query.ResultExplanation); // A human-readable walkthrough of the proof tree 
+Console.WriteLine(query.ResultExplanation); // A human-readable walkthrough of the proof tree(s)
+// ..also note that there are also other properties that facilitate programmatic exploration of the proof tree(s)
 </code></pre>
 
 <h3>Using Backward Chaining</h3>
@@ -209,7 +210,7 @@ using SCFirstOrderLogic.Inference.BackwardChaining;
 // different namespace - this was perhaps a mistake, but is good for brevity..)
 var kb = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
 kb.Tell(rules);
-var result = kb.Ask(IsCriminal(West)); // will be true
+var result = kb.Ask(IsCriminal(West)); // == true
 // ..Or can get an explanation in the same way as above
 </code></pre>
 
@@ -228,7 +229,7 @@ var kb = new new SimpleResolutionKnowledgeBase(
     SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
 
 kb.Tell(rules);
-var result = kb.Ask(IsCriminal(West)); // will be true
+var result = kb.Ask(IsCriminal(West)); // == true
 // ..Or can get an explanation in the same way as above</code></pre>
 
 <p>Notice that:</p>
