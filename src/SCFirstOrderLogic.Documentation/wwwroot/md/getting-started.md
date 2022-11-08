@@ -111,7 +111,7 @@ Notice that:
 Being able to point a parser at "∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]" would be great,
 but I've not gotten around to that just yet. At some point in the future I may take a look at this (shouldn't be too tough, especially if I make use of something like ANTLR)
 
-## Storing Knowledge and Making Inferences<
+## Storing Knowledge and Making Inferences
 
 Once you have some sentences, storing them and making inferences is done with the aid of the types in the `Inference` namespace.
 The most important type here is the `IKnowledgeBase` interface. The library includes a few very simple knowledge bases - one that
@@ -193,7 +193,7 @@ var query = kb.CreateQuery(querySentence);
 query.Execute();
 Console.WriteLine(query.Result); // "True"
 Console.WriteLine(query.ResultExplanation); // A human-readable walkthrough of the proof tree(s)
-// ..also note that there are also other properties that facilitate programmatic exploration of the proof tree(s)
+// ..note that there are also other properties that facilitate programmatic exploration of the proof tree(s)
 ```
 
 ### Using Backward Chaining
