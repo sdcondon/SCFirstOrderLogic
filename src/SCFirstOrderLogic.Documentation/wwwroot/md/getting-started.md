@@ -34,7 +34,7 @@ Notice that:
 
 * This is very simple in that it involves nothing other than the sentence types themselves, but is obviously far too verbose to be workable. Hence the alternatives.
 
-### Writing Sentences with SentenceFactory<
+### Writing Sentences with SentenceFactory
 
 First, we have the `SentenceFactory` static class in the `SentenceCreation` namespace. It is intended to be used via a `using static` directive,
 and includes a number of static methods and properties to assist with succinct sentence creation. Here's how the example looks with this one:
@@ -179,7 +179,7 @@ using SCFirstOrderLogic.Inference.ForwardChaining;
 // Note that the knowledge base ctor has a "clause store" parameter.
 // The clause store takes responsibility for the storage and lookup of
 // individual clauses. The package provides only SimpleClauseStore, which stores
-// things in memory. This is an extension point - create your own implementation
+// things in memory. This is an extension point - you can create your own implementation
 // of IClauseStore to use secondary storage and/or customised indexing, for example.
 var kb = new SimpleForwardChainingKnowledgeBase(new SimpleClauseStore());
 kb.Tell(rules);
