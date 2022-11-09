@@ -118,6 +118,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// <inheritdoc />
         public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
+            // TODO-ROBUSTNESS: Improve behaviour if already in progress or complete.
             proofs = await ProvePredicate(queryGoal, new Proof()).ToListAsync(cancellationToken);
             return Result;
         }

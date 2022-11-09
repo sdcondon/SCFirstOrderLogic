@@ -30,6 +30,7 @@ namespace SCFirstOrderLogic.Inference
         /// <inheritdoc />
         public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
+            // TODO: improve thread safety, at least..
             while (!IsComplete)
             {
                 await NextStepAsync(cancellationToken);

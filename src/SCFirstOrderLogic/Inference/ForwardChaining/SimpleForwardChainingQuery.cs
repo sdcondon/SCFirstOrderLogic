@@ -116,6 +116,8 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// <inheritdoc />
         public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
+            //// TODO-ROBUSTNESS: Improve behaviour if already in progress or complete.
+
             // First, quickly check if we've been asked something that is in the KB directly.
             // Otherwise, we only check against the goal when we discover something we didn't already know.
             // This means that if we didn't do a quick check here, asking the KB something that 
