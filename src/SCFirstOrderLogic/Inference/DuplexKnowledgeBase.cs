@@ -7,7 +7,9 @@ namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
     /// Decorator knowledge base class that, when answering queries, will concurrently execute the query and the negation of the query
-    /// at the same time. This allows for returning a negative result in a reasonable timeframe when a query is known to be false.
+    /// at the same time. This allows for returning a negative result in a reasonable timeframe when a query is known to be false, though
+    /// at the cost of doing twice the work. And of course for statements that are unprovable either way, you may be waiting for a result
+    /// for a long time.
     /// </summary>
     public class DuplexKnowledgeBase : IKnowledgeBase
     {
@@ -44,6 +46,8 @@ namespace SCFirstOrderLogic.Inference
 
         public class DuplexKnowledgeBaseQuery : IQuery
         {
+            private DuplexResults? duplexResult;
+
             private DuplexKnowledgeBaseQuery(IQuery positiveQuery, IQuery negativeQuery)
             {
                 PositiveQuery = positiveQuery;
@@ -51,70 +55,98 @@ namespace SCFirstOrderLogic.Inference
             }
 
             /// <inheritdoc/>
-            public bool IsComplete { get; private set; }
+            public bool IsComplete => duplexResult.HasValue;
 
             /// <inheritdoc/>
-            public bool Result { get; private set; }
+            public bool Result
+            {
+                get
+                {
+                    if (!duplexResult.HasValue)
+                    {
+                        throw new InvalidOperationException("Query is not yet complete");
+                    }
+
+                    return duplexResult == DuplexResults.ProvenTrue;
+                }
+            }
+
+            public DuplexResults DuplexResult
+            {
+                get
+                {
+                    if (!duplexResult.HasValue)
+                    {
+                        throw new InvalidOperationException("Query is not yet complete");
+                    }
+
+                    return duplexResult.Value;
+                }
+            }
 
             /// <summary>
             /// Gets the positive version of the query being carried out.
             /// </summary>
-            public IQuery PositiveQuery { get; private set; }
+            public IQuery PositiveQuery { get; }
 
             /// <summary>
             /// Gets the negative version of the query being carried out.
             /// </summary>
-            public IQuery NegativeQuery { get; private set; }
+            public IQuery NegativeQuery { get; }
 
             /// <inheritdoc/>
-            public async Task NextStepAsync(CancellationToken cancellationToken = default)
+            public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
             {
-                if (IsComplete)
+                var resultIsKnownCts = new CancellationTokenSource();
+                var effectiveCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, resultIsKnownCts.Token);
+                var positiveQueryTask = PositiveQuery.ExecuteAsync(effectiveCts.Token);
+                var negativeQueryTask = NegativeQuery.ExecuteAsync(effectiveCts.Token);
+
+                // this could probably be written more succinctly..
+                var completedQueryTask = await Task.WhenAny(positiveQueryTask, negativeQueryTask);
+                if (completedQueryTask == positiveQueryTask)
                 {
-                    throw new InvalidOperationException("Query is complete");
+                    if (positiveQueryTask.Result == true)
+                    {
+                        duplexResult = DuplexResults.ProvenTrue;
+                        resultIsKnownCts.Cancel();
+                    }
+                    else
+                    {
+                        var negativeQueryResult = await negativeQueryTask;
+                        if (negativeQueryResult == true)
+                        {
+                            duplexResult = DuplexResults.ProvenFalse;
+                        }
+                        else
+                        {
+                            duplexResult = DuplexResults.Unproven;
+                        }
+                    }
                 }
                 else
                 {
-                    // Because we expose the two queries publicly, its possible that a caller has
-                    // executed them directly. These checks are just a very simple bit of robustness to that.
-                    // There are of course a bunch of alternative ways of handling this (all the way up to 
-                    // creating a readonly variant of query types), but this hits a sweet spot of simplicity
-                    // and robustness.
-                    if (PositiveQuery.IsComplete)
+                    if (positiveQueryTask.Result == true)
                     {
-                        IsComplete = true;
-                        Result = PositiveQuery.Result;
+                        duplexResult = DuplexResults.ProvenFalse;
+                        resultIsKnownCts.Cancel();
                     }
-                    else if (NegativeQuery.IsComplete)
+                    else
                     {
-                        IsComplete = true;
-                        Result = NegativeQuery.Result;
+                        var positiveQueryResult = await positiveQueryTask;
+                        if (positiveQueryResult == true)
+                        {
+                            duplexResult = DuplexResults.ProvenTrue;
+                        }
+                        else
+                        {
+                            duplexResult = DuplexResults.Unproven;
+                        }
                     }
                 }
 
-                var nextPositiveStepExecution = PositiveQuery.NextStepAsync(cancellationToken);
-                var nextNegativeStepExecution = NegativeQuery.NextStepAsync(cancellationToken);
-
-                // ..could await the first one to finish, but meh..
-                await nextPositiveStepExecution;
-                if (PositiveQuery.IsComplete)
-                {
-                    // NB: we don't bother awaiting the negative one. Might not be done by the time we return.
-                    // We own both queries, and disposal should them both away anyway - so not a big deal, probably..
-                    // TODO-ZZZ: If we were feeling keen we could cancel it (by creating our own linked cancellation
-                    // token above rather than just propogating the one we get).
-                    IsComplete = true;
-                    Result = PositiveQuery.Result;
-                }
-                else
-                {
-                    await nextNegativeStepExecution;
-                    if (NegativeQuery.IsComplete)
-                    {
-                        IsComplete = true;
-                        Result = !NegativeQuery.Result;
-                    }
-                }
+                await Task.WhenAll(positiveQueryTask, negativeQueryTask);
+                return Result;
             }
 
             /// <inheritdoc/>
@@ -130,6 +162,13 @@ namespace SCFirstOrderLogic.Inference
                 var negativeQueryCreation = innerKnowledgeBase.CreateQueryAsync(new Negation(sentence), cancellationToken);
                 return new DuplexKnowledgeBaseQuery(await positiveQueryCreation, await negativeQueryCreation);
             }
+        }
+
+        public enum DuplexResults
+        {
+            ProvenTrue,
+            ProvenFalse,
+            Unproven,
         }
     }
 }
