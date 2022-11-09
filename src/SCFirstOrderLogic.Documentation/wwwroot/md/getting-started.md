@@ -78,7 +78,7 @@ Notice that:
 
 * We've only used `&` (for a conjunction) above, but `|` works for disjunctions, and `!` for negations. In addition, `==` (applied to terms rather than sentences, of course) works for the equality predicate.
 * Other aspects of this factory are the same as `SentenceFactory` - it also offers `ThereExists`, `ForAll`, `Iff`, `If` and single-letter variable declaration properties.
-* The only proviso is that the supporting methods for domain specific elements now need to use `Operable..` as their return type - which is easy as these types are implicitly convertible from the normal equivalents.
+* The only proviso is that the supporting methods for domain-specific elements now need to use `Operable..` as their return type - which is easy as these types are implicitly convertible from the normal equivalents.
 
 ### Writing Sentences with LanguageIntegration
 
@@ -99,7 +99,7 @@ interface IPerson
 
 // Now the sentence itself looks like this:
 var grandparentDefn = 
-    SentenceFactory.Create&lt;IPerson&gt;(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
+    SentenceFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
 ```
 
 Notice that:
