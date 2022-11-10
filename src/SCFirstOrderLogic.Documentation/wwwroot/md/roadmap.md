@@ -5,6 +5,7 @@ In particular, I don't intend to add any particularly powerful or specialised in
 
 Priorities at the time of writing:
 
+* Improvements in the area of query execution robustness (in the face of re-execution, re-entry etc)
 * Take a look at creating a FoL syntax parser in the SentenceCreation namespace.
 * *As always, anything that's labelled as TODO in the code. Clone the repo and use your IDE's TODO/Task list functionality (TODOs are generally expressed as `// TODO..` or `/// TODO`) to see individual things I want to do.*
 
