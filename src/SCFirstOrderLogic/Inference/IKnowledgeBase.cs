@@ -20,10 +20,15 @@ namespace SCFirstOrderLogic.Inference
         /// <summary>
         /// Initiates a new query against the knowledge base.
         /// <para/>
-        /// NB: We don't define an Ask(Async) method directly on the knowledge base interface because of this library's
-        /// focus on learning outcomes. The <see cref="IQuery"/> interface allows for implementations that support step-by-step
-        /// execution and/or examination of the steps that lead to the result. Note that "Ask" extension methods do exist,
-        /// though (which create queries and immediately execute them to completion).
+        /// NB #1: We define an <see cref="IQuery"/> interface (as opposed to directly having an AskAsync method that returns
+        /// a <see cref="Task{Boolean}"/>) so that it is easy for implementations to add additional behaviours - such as
+        /// step-by-step execution (see <see cref="SteppableQuery{TStepResult}"/>) and result explanations. Note that 
+        /// Ask(Async) extension methods do exist (which create queries and immediately execute them to completion).
+        /// <para/>
+        /// NB #2: This method itself is async (rather than just returning an <see cref="IQuery"/>) to allow for implementations
+        /// that use IO to initialise the query before returning it (e.g. setting up secondary storage for intermediate clauses).
+        /// We view this kind of initialisation as a significant enough milestone to be separately monitorable (rather than requiring
+        /// it to just be folded into the query object's implementation). Note that a synchronous extension method does exist, though.
         /// </summary>
         /// <param name="query">The query sentence.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
