@@ -62,7 +62,7 @@ namespace SCFirstOrderLogic.Inference
         private class PredicateAndFunctionEqualityAxiomiser : RecursiveSentenceVisitor
         {
             private readonly IKnowledgeBase innerKnowledgeBase;
-            private readonly HashSet<object> knownPredicateSymbols = new();
+            private readonly HashSet<object> knownPredicateSymbols = new() { EqualitySymbol.Instance };
             private readonly HashSet<object> knownFunctionSymbols = new();
 
             public PredicateAndFunctionEqualityAxiomiser(IKnowledgeBase innerKnowledgeBase)
