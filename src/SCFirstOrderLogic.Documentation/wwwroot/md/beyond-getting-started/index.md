@@ -16,8 +16,10 @@ Having said all that, some hopefully useful notes do follow here.
 
 ### `SCFirstOrderLogic.Inference`
 
-* **EqualityAxiomisingKnowledgeBase:** None of the knowledge bases here use particular techniques (e.g. demodulation, paramodulation) to handle equality.
+* **Decorator knowledge bases:** this namespace directly contains some [decorator](https://en.wikipedia.org/wiki/Decorator_pattern) knowledge base implementations.
+  * **EqualityAxiomisingKnowledgeBase:** None of the knowledge bases here use particular techniques (e.g. demodulation, paramodulation) to handle equality.
   However, the Inference namespace does include EqualityAxiomisingKnowledgeBase, which is a decorator applied to an inner knowledge base - and adds rules pertaining to equality as knowledge is added.
+  * **UniqueNamesAxiomisingKnowledgeBase:** Adds "axioms" for the unique names assumption as knowledge is added. That is, Adds "not equal" statements for all constant pairs whose symbols do not match.
 
 ### `SCFirstOrderLogic.LanguageIntegration`
 
