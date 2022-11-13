@@ -1,5 +1,4 @@
-﻿#if FALSE
-using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,12 +7,12 @@ using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
-    /// Decorator knowledge base class that adds unique name axioms as knowledge is added to the underlying knowledge base.
+    /// Decorator knowledge base class that adds "axioms" for the unique names assumption as knowledge is added to the underlying knowledge base.
     /// <para/>
-    /// Keeps track of all constants that feature in sentences, and adds "not equal" statements for all pairs
+    /// Keeps track of all constants that feature in sentences, and adds "not equal" knowledge for all pairs
     /// with non-equal symbols. NB: only adds one ordering of arguments, and adds no knowledge that constants
     /// are equal to themselves - on the understanding that commutativity/reflexivity will be handled elsewhere
-    /// (e.g. with <see cref="EqualityAxiomisingKnowledgeBase"/>, or with para/demodulation).
+    /// (e.g. with <see cref="EqualityAxiomisingKnowledgeBase"/> or with para/demodulation).
     /// </summary>
     public class UniqueNamesAxiomisingKnowledgeBase : IKnowledgeBase
     {
@@ -43,7 +42,8 @@ namespace SCFirstOrderLogic.Inference
             return innerKnowledgeBase.CreateQueryAsync(query, cancellationToken);
         }
 
-        // NB the fact that Constant class equality uses the Symbol is VERY important here
+        // NB: The implementation doesn't need to look at the symbols because the
+        // Constant class uses the Symbol for its equality implementation.
         private class UniqueNamesAxiomiser : RecursiveSentenceVisitor
         {
             private readonly IKnowledgeBase innerKnowledgeBase;
@@ -60,14 +60,12 @@ namespace SCFirstOrderLogic.Inference
                 {
                     foreach (var knownConstant in knownConstants)
                     {
-                        // nb: only one direction, and we don't state reflexivity
-                        // here - on the assumption that equalityaxiomisingknowledgebase
-                        // and or a KB that does this algorithmically will do this..
                         innerKnowledgeBase.TellAsync(Not(AreEqual(constant, knownConstant))).Wait();
                     }
                 }
+
+                knownConstants.Add(constant);
             }
         }
     }
 }
-#endif
