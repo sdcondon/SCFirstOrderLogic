@@ -21,6 +21,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
     public class SimpleResolutionQuery : SteppableQuery<ClauseResolution>
     {
         private readonly IQueryClauseStore clauseStore;
+        // TODO: delegates not flexible enough - need to revisit the idea of full strategy object - perhaps fold
+        // clause storage under this..
         private readonly Func<ClauseResolution, bool> filter;
         private readonly MaxPriorityQueue<ClauseResolution> queue;
         private readonly Dictionary<CNFClause, ClauseResolution> steps;
