@@ -62,9 +62,9 @@ namespace SCFirstOrderLogic.Inference
                     {
                         innerKnowledgeBase.TellAsync(Not(AreEqual(constant, knownConstant))).Wait();
                     }
-                }
 
-                knownConstants.Add(constant);
+                    knownConstants.Add(constant);
+                }
             }
         }
     }

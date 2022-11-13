@@ -167,8 +167,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             // Queue up all initial clause pairings - adhering to our clause pair filter and priority comparer.
-            // TODO-PERFORMANCE: potentially repeating a lot of work here - could cache the results of pairings
-            // of KB clauses with each other. Is this in scope for this *simple* implementation?
+            // TODO-PERFORMANCE-MAJOR: potentially repeating a lot of work here - could cache the results of pairings
+            // of KB clauses with each other. Or at least don't keep re-attempting ones that we know fail.
+            // Is this in scope for this *simple* implementation?
             await foreach (var clause in queryClauseStore)
             {
                 await query.EnqueueUnfilteredResolventsAsync(clause, cancellationToken);
