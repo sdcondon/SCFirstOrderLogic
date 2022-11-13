@@ -41,7 +41,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                     },
                     ExpectedUnified: Knows(john, jane)),
 
-                new (
+                new ( // out of scope?
                     Literal1: Knows(john, x),
                     Literal2: Knows(y, Mother(y)),
                     ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
@@ -50,6 +50,26 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                         [y] = john,
                     },
                     ExpectedUnified: Knows(john, Mother(john))),
+
+                new ( // vars matched to vars - out of scope?
+                    Literal1: Knows(x, x),
+                    Literal2: Knows(y, john),
+                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    {
+                        [x] = john,
+                        [y] = john,
+                    },
+                    ExpectedUnified: Knows(john, john)),
+
+                new ( // vars matched to vars - out of scope?
+                    Literal1: Knows(y, john),
+                    Literal2: Knows(x, x),
+                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    {
+                        [x] = john,
+                        [y] = john,
+                    },
+                    ExpectedUnified: Knows(john, john)),
             })
             .When(tc =>
             {
