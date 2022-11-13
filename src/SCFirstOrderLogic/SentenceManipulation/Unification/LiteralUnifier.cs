@@ -127,17 +127,17 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             {
                 return true;
             }
-            else if (unifier.Bindings.TryGetValue(variable, out var value))
+            else if (unifier.Bindings.TryGetValue(variable, out var variableValue))
             {
                 // The variable is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.
-                return TryUpdate(value, other, unifier);
+                return TryUpdate(variableValue, other, unifier);
             }
-            else if (other is VariableReference otherVariable && unifier.Bindings.TryGetValue(otherVariable, out value))
+            else if (other is VariableReference otherVariable && unifier.Bindings.TryGetValue(otherVariable, out var otherVariableValue))
             {
                 // The other value is also a variable that is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.
-                return TryUpdate(variable, value, unifier);
+                return TryUpdate(variable, otherVariableValue, unifier);
             }
             else if (Occurs(variable, other))
             {
@@ -145,7 +145,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             }
             else
             {
-                // This substitution is not in the source book, but is so that e.g. unifying Knows(John, X) and Knows(Y, Mother(Y)) will give { X / Mother(John) }, not { X / Mother(Y) }
+                // This substitution is not in the source book, but is so that e.g.
+                // unifying Knows(John, X) and Knows(Y, Mother(Y)) will give { X / Mother(John) }, not { X / Mother(Y) }
                 // Might be duplicated effort in the broader scheme of things, but time will tell.
                 other = unifier.ApplyTo(other);
                 unifier.AddBinding(variable, other);
