@@ -70,8 +70,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                         // Conjuncts used:
                         foreach (var childPredicate in proofStep.Conjuncts)
                         {
-                            var unifiedChildPredicate = proof.GetUnified(childPredicate);
-                            resultExplanation.AppendLine($"  And Step #{orderedPredicates.IndexOf(unifiedChildPredicate):D2}: {formatter.Format(unifiedChildPredicate)}");
+                            resultExplanation.AppendLine($"  And Step #{orderedPredicates.IndexOf(childPredicate):D2}: {formatter.Format(childPredicate)}");
                         }
 
                         resultExplanation.AppendLine();
@@ -192,29 +191,6 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             /// of course have no conjuncts).
             /// </summary>
             public IReadOnlyDictionary<Predicate, CNFDefiniteClause> Steps => steps;
-
-            /// <summary>
-            /// Applies the proof's unifier to a given predicate.
-            /// <para/>
-            /// NB: the algorithm builds up the unifier step-by-step, so that it can (will probably) result in many
-            /// terms being bound indirectly. E.g. variable A is bound to variable B, which is in turn bound to constant C.
-            /// There's no sense in making the algorithm itself more complex (and thus slower) than it needs to be to streamline
-            /// this, but for the readability of explanations, this method follows the chain to the end by applying the
-            /// unifier until it doesn't make any more changes. The "full story" remains accessible via the unifier and proof steps.
-            /// </summary>
-            /// <param name="predicate"></param>
-            /// <returns>The input predicate transformed by the proof's unifier.</returns>
-            public Predicate GetUnified(Predicate predicate)
-            {
-                var newPredicate = ApplyUnifierTo(predicate);
-                while (!newPredicate.Equals(predicate))
-                {
-                    predicate = newPredicate;
-                    newPredicate = ApplyUnifierTo(predicate);
-                }
-
-                return predicate;
-            }
 
             internal Predicate ApplyUnifierTo(Predicate predicate) => Unifier.ApplyTo(predicate).Predicate;
 

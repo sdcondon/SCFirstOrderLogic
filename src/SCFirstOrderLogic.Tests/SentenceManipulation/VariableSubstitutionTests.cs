@@ -6,6 +6,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
 {
     public static class VariableSubstitutionTests
     {
+        // NB: Application tested via Literalunifier tests - probably shouldn't be
+
         private record EqualityTestCase(VariableSubstitution X, VariableSubstitution Y, bool ExpectedEquality);
 
         public static Test EqualityBehaviour => TestThat
@@ -17,23 +19,49 @@ namespace SCFirstOrderLogic.SentenceManipulation
                     ExpectedEquality: true),
 
                 new(
-                    X: new(new Dictionary<VariableReference, Term>() { [new VariableReference("V")] = new Constant("C") }),
-                    Y: new(new Dictionary<VariableReference, Term>() { [new VariableReference("V")] = new Constant("C") }),
+                    X: new(new Dictionary<VariableReference, Term>()
+                    {
+                        [new VariableReference("V")] = new Constant("C")
+                    }),
+                    Y: new(new Dictionary<VariableReference, Term>()
+                    {
+                        [new VariableReference("V")] = new Constant("C")
+                    }),
                     ExpectedEquality: true),
 
                 new(
-                    X: new(new Dictionary<VariableReference, Term>() { [new VariableReference("V")] = new Constant("C1") }),
-                    Y: new(new Dictionary<VariableReference, Term>() { [new VariableReference("V")] = new Constant("C2") }),
+                    X: new(new Dictionary<VariableReference, Term>()
+                    {
+                        [new VariableReference("V")] = new Constant("C1")
+                    }),
+                    Y: new(new Dictionary<VariableReference, Term>()
+                    {
+                        [new VariableReference("V")] = new Constant("C2")
+                    }),
                     ExpectedEquality: false),
 
                 new(
-                    X: new(new Dictionary<VariableReference, Term>() { [new VariableReference("V1")] = new Constant("C1") }),
-                    Y: new(new Dictionary<VariableReference, Term>() { [new VariableReference("V1")] = new Constant("C1"), [new VariableReference("V2")] = new Constant("C2") }),
+                    X: new(new Dictionary<VariableReference, Term>()
+                    {
+                        [new VariableReference("V1")] = new Constant("C1")
+                    }),
+                    Y: new(new Dictionary<VariableReference, Term>()
+                    {
+                        [new VariableReference("V1")] = new Constant("C1"),
+                        [new VariableReference("V2")] = new Constant("C2")
+                    }),
                     ExpectedEquality: false),
 
                 new(
-                    X: new(new Dictionary<VariableReference, Term>() { [new VariableReference("V1")] = new Constant("C1"), [new VariableReference("V2")] = new Constant("C2") }),
-                    Y: new(new Dictionary<VariableReference, Term>() { [new VariableReference("V1")] = new Constant("C1") }),
+                    X: new(new Dictionary<VariableReference, Term>()
+                    {
+                        [new VariableReference("V1")] = new Constant("C1"),
+                        [new VariableReference("V2")] = new Constant("C2")
+                    }),
+                    Y: new(new Dictionary<VariableReference, Term>()
+                    {
+                        [new VariableReference("V1")] = new Constant("C1")
+                    }),
                     ExpectedEquality: false),
             })
             .When(tc => (Equality: tc.X.Equals(tc.Y), HashCodeEquality: tc.X.GetHashCode() == tc.Y.GetHashCode()))

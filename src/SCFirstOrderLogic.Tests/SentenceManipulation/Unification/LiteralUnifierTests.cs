@@ -46,7 +46,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                     Literal2: Knows(y, Mother(y)),
                     ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
                     {
-                        [x] = Mother(john),
+                        [x] = Mother(y),
                         [y] = john,
                     },
                     ExpectedUnified: Knows(john, Mother(john))),
@@ -56,7 +56,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                     Literal2: Knows(y, john),
                     ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
                     {
-                        [x] = john,
+                        [x] = y,
                         [y] = john,
                     },
                     ExpectedUnified: Knows(john, john)),
@@ -67,7 +67,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                     ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
                     {
                         [x] = john,
-                        [y] = john,
+                        [y] = x,
                     },
                     ExpectedUnified: Knows(john, john)),
             })

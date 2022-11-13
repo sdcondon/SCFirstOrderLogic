@@ -145,10 +145,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             }
             else
             {
-                // This substitution is not in the source book, but is so that e.g.
-                // unifying Knows(John, X) and Knows(Y, Mother(Y)) will give { X / Mother(John) }, not { X / Mother(Y) }
-                // Might be duplicated effort in the broader scheme of things, but time will tell.
-                other = unifier.ApplyTo(other);
                 unifier.AddBinding(variable, other);
                 return true;
             }

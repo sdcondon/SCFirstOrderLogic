@@ -69,13 +69,16 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             if (Bindings.TryGetValue(variable, out var substitutedTerm))
             {
-                return substitutedTerm;
+                // We need to call base.ApplyTo because we might be switching in a term
+                // that itself is or contains variables that also need substituting
+                return base.ApplyTo(substitutedTerm);
             }
 
             return variable;
         }
 
         /// <inheritdoc />
+        // TODO: potential bug - no normalisation {X/Y, Y/C} and {X/C, Y/C} give the same result when applied but are not viewed as the same
         public override bool Equals(object? obj)
         {
             if (obj is not VariableSubstitution otherSubstitution)
