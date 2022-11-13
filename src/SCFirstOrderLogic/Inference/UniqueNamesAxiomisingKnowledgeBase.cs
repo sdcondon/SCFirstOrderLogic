@@ -11,9 +11,9 @@ namespace SCFirstOrderLogic.Inference
     /// Decorator knowledge base class that adds unique name axioms as knowledge is added to the underlying knowledge base.
     /// <para/>
     /// Keeps track of all constants that feature in sentences, and adds "not equal" statements for all pairs
-    /// with non-equal symbols. NB: only adds not equal in one ordering of arguments, and adds no knowledge that constants
-    /// are equal to themselves - on the understanding that commutativity/reflexivity will be handled elsewhere (e.g. with
-    /// <see cref="EqualityAxiomisingKnowledgeBase"/>, or with para/demodulation).
+    /// with non-equal symbols. NB: only adds one ordering of arguments, and adds no knowledge that constants
+    /// are equal to themselves - on the understanding that commutativity/reflexivity will be handled elsewhere
+    /// (e.g. with <see cref="EqualityAxiomisingKnowledgeBase"/>, or with para/demodulation).
     /// </summary>
     public class UniqueNamesAxiomisingKnowledgeBase : IKnowledgeBase
     {
@@ -63,7 +63,7 @@ namespace SCFirstOrderLogic.Inference
                         // nb: only one direction, and we don't state reflexivity
                         // here - on the assumption that equalityaxiomisingknowledgebase
                         // and or a KB that does this algorithmically will do this..
-                        innerKnowledgeBase.TellAsync(Not(AreEqual(constant, knownConstant)));
+                        innerKnowledgeBase.TellAsync(Not(AreEqual(constant, knownConstant))).Wait();
                     }
                 }
             }

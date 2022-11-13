@@ -16,7 +16,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// Notes:
     /// <list type="bullet">
     /// <item/>TODO: Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
-    /// </list>  
+    /// </list>
     /// </summary>
     public class SimpleResolutionQuery : SteppableQuery<ClauseResolution>
     {
@@ -167,6 +167,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             // Queue up all initial clause pairings - adhering to our clause pair filter and priority comparer.
+            // TODO-PERFORMANCE: potentially repeating a lot of work here - could cache the results of pairings
+            // of KB clauses with each other. Is this in scope for this *simple* implementation?
             await foreach (var clause in queryClauseStore)
             {
                 await query.EnqueueUnfilteredResolventsAsync(clause, cancellationToken);
