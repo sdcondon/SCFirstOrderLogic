@@ -70,7 +70,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
             if (Bindings.TryGetValue(variable, out var substitutedTerm))
             {
                 // We need to call base.ApplyTo because we might be switching in a term
-                // that itself is or contains variables that also need substituting
+                // that itself is or contains variables that also need substituting.
+                // In theory makes it possible to get us stuck in a loop, but that will
+                // only happen as a result of bad consumer behaviour, not with e.g. unification
+                // output.
                 return base.ApplyTo(substitutedTerm);
             }
 
