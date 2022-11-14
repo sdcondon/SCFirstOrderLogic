@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory;
+////using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory;
+using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory;
 using System.Collections.Generic;
-using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CrimeDomain;
-using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CuriousityAndTheCatDomain;
+////using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory.KinshipDomain;
+using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory.CrimeDomain;
+using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory.CuriousityAndTheCatDomain;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
@@ -142,14 +144,18 @@ namespace SCFirstOrderLogic.Inference.Resolution
         ////    .GivenTestContext()
         ////    .When(_ =>
         ////    {
-        ////        var kb = new EqualityAxiomisingKnowledgeBase(new SimpleResolutionKnowledgeBase(new ListClauseStore(), ClausePairFilters.None, ClausePairPriorityComparisons.TotalLiteralCountMinimisation));
+        ////        var innerKb = new SimpleResolutionKnowledgeBase(
+        ////            new SimpleClauseStore(),
+        ////            SimpleResolutionKnowledgeBase.Filters.None,
+        ////            SimpleResolutionKnowledgeBase.PriorityComparisons.TotalLiteralCountMinimisation);
+        ////        var kb = EqualityAxiomisingKnowledgeBase.CreateAsync(innerKb).GetAwaiter().GetResult();
         ////        kb.TellAsync(KinshipDomain.Axioms).Wait();
         ////        var query = kb.CreateQueryAsync(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X)))).GetAwaiter().GetResult();
-        ////        query.CompleteAsync(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token).Wait();
+        ////        query.ExecuteAsync().Wait();
         ////        return query;
         ////    })
         ////    .ThenReturns()
         ////    .And((_, retVal) => retVal.Result.Should().Be(true))
-        ////    .And((ctx, retVal) => ctx.WriteOutputLine(((SimpleResolutionQuery)retVal).Explain()));
+        ////    .And((ctx, retVal) => ctx.WriteOutputLine(((SimpleResolutionQuery)retVal).ResultExplanation));
     }
 }
