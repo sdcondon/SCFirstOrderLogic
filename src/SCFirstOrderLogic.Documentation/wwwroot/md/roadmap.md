@@ -6,13 +6,18 @@ I don't intend to add any particularly powerful or specialised inference logic t
 Priorities at the time of writing:
 
 * Improvements in the area of query execution robustness (in the face of re-execution, re-entry etc)
-* Take a look at creating a FoL syntax parser in the SentenceCreation namespace.
 * *As always, anything that's labelled as TODO in the code. Clone the repo and use your IDE's TODO/Task list functionality (TODOs are generally expressed as `// TODO..` or `/// TODO`) to see individual things I want to do.*
 
 Breaking changes on the list for v4 (though there's no particular timeline for this):
 
+* I want to improve the extensibility of the simple resolution knowledge base. The current approach that uses a store and two delegates is not flexible enough.
+I'm quietly confident that if I replace all three with a strategy object (that in all likelihood will still use the store) I can allow for e.g. linear recursion, while still not making it TOO complicated to fulfill the "learning" part of this project's remit.
 * Revisit sentence formatting
 
 On the back-burner, for later consideration:
 
-* *Nothing at the mo*
+* Take a look at creating a FoL syntax parser in the SentenceCreation namespace.
+Did take a brief look at using ANTLR to do this, but the "all .NET" way of doing this is old and no longer supported.
+If I go the route of using the Java tool, and want to do it via docker-integrated project - which would likely mean I'd want to put it into its own package.
+Either that I just implement a recursive-descent parser myself (in which case it could maybe go in the core package) - but I'd honestly rather use ANTLR.
+Either way, back burner for now.
