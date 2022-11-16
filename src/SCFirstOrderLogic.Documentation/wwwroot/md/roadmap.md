@@ -10,8 +10,9 @@ Priorities at the time of writing:
 
 Breaking changes on the list for v4 (though there's no particular timeline for this):
 
-* I want to improve the extensibility of the simple resolution knowledge base. The current approach that uses a store and two delegates is not flexible enough.
-I'm quietly confident that if I replace all three with a strategy object (that in all likelihood will still use the store) I can allow for e.g. linear recursion, while still not making it TOO complicated to fulfill the "learning" part of this project's remit.
+* I want to improve the extensibility of the simple resolution knowledge base, which will again likely mean breaking ctor changes.
+The current approach that uses a store and two delegates is not flexible enough.
+I'm quietly confident that if I replace all three with a strategy object (that in all likelihood will still use the store) I can allow for e.g. linear resolution, while still not making it TOO complicated to fulfill the "learning" part of this project's remit.
 * Revisit sentence formatting
 
 On the back-burner, for later consideration:
