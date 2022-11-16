@@ -20,6 +20,6 @@ On the back-burner, for later consideration:
 
 * Take a look at creating a FoL syntax parser in the SentenceCreation namespace.
 Did take a brief look at using ANTLR to do this, but the "all .NET" way of doing this is old and no longer supported.
-If I go the route of using the Java tool, and want to do it via docker-integrated project - which would likely mean I'd want to put it into its own package.
+If I go the route of using the Java tool, I'd want to do it via docker-integrated project (to avoid faffing around with JVM installation on my dev machine) - which would likely mean I'd want to put it into its own package.
 Either that I just implement a recursive-descent parser myself (in which case it could maybe go in the core package) - but I'd honestly rather use ANTLR.
 Either way, back burner for now.
