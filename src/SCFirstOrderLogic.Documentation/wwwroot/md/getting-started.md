@@ -240,11 +240,6 @@ Notice that:
 * The `Tell`, `Ask`, `CreateQuery` and `Execute` methods used above are actually extension methods that are are synchronous wrappers around underlying async versions.
   The library has deep async support - because "real-world" KBs will tend to need to do IO.
 
-## More Examples
-
-For some more examples, see the [example domains](https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.ExampleDomains) project (and, to a lesser extent, the [tests](https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.Tests)).
-Beyond that, see the XML documentation against the classes - which I hope is fairly decent.</p>
-
 ## Where Next?
 
 Take a look at [beyond getting started](beyond-getting-started).
