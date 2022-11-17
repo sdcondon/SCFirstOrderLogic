@@ -5,7 +5,9 @@ I don't intend to add any particularly powerful or specialised inference logic t
 
 Priorities at the time of writing:
 
-* Improvements in the area of query execution robustness (in the face of re-execution, re-entry etc)
+* A general review, figuring out if there's anything (among the TODOs or otherwise) that I want to do before starting to mess about with changes for v4.
+Approaching this fairly sedately - will definitely be spending some time working on some of my other projects before I push v4 out, in any case.
+Feedback is, as always, very welcome.
 * *As always, anything that's labelled as TODO in the code. Clone the repo and use your IDE's TODO/Task list functionality (TODOs are generally expressed as `// TODO..` or `/// TODO`) to see individual things I want to do.*
 
 Breaking changes on the list for v4 (though there's no particular timeline for this):
