@@ -17,8 +17,9 @@ The current approach that uses a store and two delegates is not flexible enough.
 I'm quietly confident that if I replace all three with a strategy object (that in all likelihood will still use the store) I can allow for e.g. linear resolution, while still not making it more complicated than the "simple" name implies.
 * Revisit sentence formatting. 
 Label sets currently used by SentenceFormatter likely to become full interfaces (ILabeller, maybe) - though the first implementation created is likely to be LabelSetLabeller.
-* Probbably move the SkolemFunctionSymbol and StandardisedVariableSymbol classes up out of the `SentenceManipulation` namespace.
-Really the only reason that they're here is that originally had all the CNF stuff in SentenceManipulation. Now that the CNF types are in the root namespace, there's really no reason for these not to be as well..
+* Probably move the SkolemFunctionSymbol and StandardisedVariableSymbol classes up out of the `SentenceManipulation` namespace.
+Really the only reason that they're here is that originally had all the CNF stuff in SentenceManipulation.
+Now that the CNF types are in the root namespace, there's really no reason for these not to be as well.
 
 On the back-burner, for later consideration:
 
