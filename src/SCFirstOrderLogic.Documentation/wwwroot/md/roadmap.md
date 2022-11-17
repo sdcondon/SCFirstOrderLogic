@@ -18,7 +18,7 @@ I'm quietly confident that if I replace all three with a strategy object (that i
 * Revisit sentence formatting. 
 Label sets currently used by SentenceFormatter likely to become full interfaces (ILabeller, maybe) - though the first implementation created is likely to be LabelSetLabeller.
 * Probably move the SkolemFunctionSymbol and StandardisedVariableSymbol classes up out of the `SentenceManipulation` namespace.
-Really the only reason that they're here is that originally had all the CNF stuff in SentenceManipulation.
+Really the only reason that they're here is that I originally had all the CNF stuff in SentenceManipulation.
 Now that the CNF types are in the root namespace, there's really no reason for these not to be as well.
 
 On the back-burner, for later consideration:
