@@ -12,13 +12,14 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
-    /// Query implementation used by <see cref="SimpleBackwardChainingKnowledgeBase"/>.
+    /// The implementation of <see cref="IQuery"/> used by <see cref="SimpleBackwardChainingKnowledgeBase"/>.
     /// </summary>
     public class SimpleBackwardChainingQuery : IQuery
     {
         private readonly Predicate queryGoal;
         private readonly IClauseStore clauseStore;
 
+        private int executeCount = 0;
         private List<Proof>? proofs;
 
         internal SimpleBackwardChainingQuery(Predicate queryGoal, IClauseStore clauseStore)
@@ -117,7 +118,17 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// <inheritdoc />
         public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
         {
-            // TODO-ROBUSTNESS: Improve behaviour if already in progress or complete.
+            // ..while it might be nice to allow for other threads to just get the existing task back
+            // if its already been started, the possibility of the cancellation token being different
+            // makes it awkward. The complexity added by attempting to deal with that simply isn't worth it.
+            // So, we just throw if the query is already in progress. Messing about with a query from
+            // multiple threads is fairly unlikely anyway (as opposed wanting an individual query to
+            // parallelise itself - which is definitely something I want to look at).
+            if (Interlocked.Exchange(ref executeCount, 1) == 1)
+            {
+                throw new InvalidOperationException("Query execution has already begun via a prior ExecuteAsync invocation");
+            }
+
             proofs = await ProvePredicate(queryGoal, new Proof()).ToListAsync(cancellationToken);
             return Result;
         }

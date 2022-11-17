@@ -2,7 +2,10 @@
 using FlUnit;
 ////using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory;
 using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory;
+using SCFirstOrderLogic.Inference.ForwardChaining;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 ////using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory.KinshipDomain;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory.CrimeDomain;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory.CuriousityAndTheCatDomain;
@@ -127,6 +130,33 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .ThenReturns()
             .And((_, rv) => rv.Should().BeFalse())
             .And((query, _) => query.Result.Should().BeFalse());
+
+        public static Test RepeatedQueryExecution => TestThat
+            .Given(() =>
+            {
+                var knowledgeBase = new SimpleResolutionKnowledgeBase(
+                    new SimpleClauseStore(),
+                    SimpleResolutionKnowledgeBase.Filters.None,
+                    SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+                return knowledgeBase.CreateQuery(IsGreedy(John));
+            })
+            .When(q =>
+            {
+                var task1 = q.ExecuteAsync();
+                var task2 = q.ExecuteAsync();
+
+                try
+                {
+                    Task.WhenAll(task1, task2).GetAwaiter().GetResult();
+                }
+                catch (InvalidOperationException) { }
+
+                return (task1, task2);
+            })
+            .ThenReturns((q, rv) =>
+            {
+                (rv.task1.IsFaulted ^ rv.task2.IsFaulted).Should().BeTrue();
+            });
 
         private static SimpleResolutionQuery MakeQuery(Sentence query, IEnumerable<Sentence> knowledge)
         {

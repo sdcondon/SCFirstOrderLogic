@@ -1,7 +1,10 @@
 ﻿using FluentAssertions;
+using FluentAssertions.Formatting;
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CrimeDomain;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
@@ -133,6 +136,30 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             })
             .ThenReturns()
             .And((_, query) => query.Result.Should().BeFalse());
+
+        public static Test RepeatedQueryExecution => TestThat
+            .Given(() =>
+            {
+                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
+                return knowledgeBase.CreateQuery(IsGreedy(John));
+            })
+            .When(q =>
+            {
+                var task1 = q.ExecuteAsync();
+                var task2 = q.ExecuteAsync();
+
+                try
+                {
+                    Task.WhenAll(task1, task2).GetAwaiter().GetResult();
+                }
+                catch (InvalidOperationException) { }
+
+                return (task1, task2);
+            })
+            .ThenReturns((q, rv) =>
+            {
+                (rv.task1.IsFaulted ^ rv.task2.IsFaulted).Should().BeTrue();
+            });
 
         private record TestCase(string Label, Sentence Query, IEnumerable<Sentence> Knowledge)
         {
