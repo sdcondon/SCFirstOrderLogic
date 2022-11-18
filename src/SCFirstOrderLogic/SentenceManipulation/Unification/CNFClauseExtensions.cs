@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
     /// <para/>
     /// NB: Of course, these methods COULD just be added to <see cref="CNFClause"/>. It felt a little messy
     /// to have CNFClause depend on code in the Unification namespace though. Perhaps a slightly idiosyncratic 
-    /// design decision (after all, I'm fine with CNFClause depending on SentenceManipulation(, but I'm sticking by it
+    /// design decision (after all, I'm fine with CNFClause depending on SentenceManipulation), but I'm sticking by it.
     /// </summary>
     public static class CNFClauseExtensions
     {
