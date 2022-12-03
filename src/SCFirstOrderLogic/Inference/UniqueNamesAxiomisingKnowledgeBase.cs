@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.Inference
     /// Keeps track of all constants that feature in sentences, and adds "not equal" knowledge for all pairs
     /// with non-equal symbols. NB: only adds one ordering of arguments, and adds no knowledge that constants
     /// are equal to themselves - on the understanding that commutativity/reflexivity will be handled elsewhere
-    /// (e.g. with <see cref="EqualityAxiomisingKnowledgeBase"/> or with para/demodulation).
+    /// (e.g. with <see cref="EqualityAxiomisingKnowledgeBase"/> or with an inner KB that utilises para/demodulation).
     /// </summary>
     public class UniqueNamesAxiomisingKnowledgeBase : IKnowledgeBase
     {

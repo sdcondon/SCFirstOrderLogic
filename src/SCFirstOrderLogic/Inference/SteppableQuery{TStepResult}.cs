@@ -25,7 +25,7 @@ namespace SCFirstOrderLogic.Inference
         /// </summary>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>A container for information on what happened during the step.</returns>
-        // TODO-BREAKING-V4?: Should this use ValueTask? Investigate me. Yeah, high-perf isn't the point of this package,
+        // TODO-BREAKING-V4?: Should this use ValueTask to reduce GC load? Investigate me. Yeah, high-perf isn't the point of this package,
         // but given that this is an abstraction, its constraining what people *could* achieve with it. So worth a look at least.
         public abstract Task<TStepResult> NextStepAsync(CancellationToken cancellationToken = default);
 
@@ -36,7 +36,7 @@ namespace SCFirstOrderLogic.Inference
             // if its already been started, the possibility of the cancellation token being different
             // makes it awkward. The complexity added by dealing with that simply isn't worth it.
             // So, we just throw if the query is already in progress. Messing about with a query from
-            // multiple threads is fairly unlikely anyway (as opposed wanting an individual query to
+            // multiple threads is fairly unlikely anyway (as opposed to wanting an individual query to
             // parallelise itself - which is definitely something I want to look at).
             if (Interlocked.Exchange(ref executeCount, 1) == 1)
             {
