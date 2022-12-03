@@ -4,7 +4,7 @@
 
 [![NuGet version (SCFirstOrderLogic)](https://img.shields.io/nuget/v/SCFirstOrderLogic.svg?style=flat-square)](https://www.nuget.org/packages/SCFirstOrderLogic/) [![NuGet downloads (SCFirstOrderLogic)](https://img.shields.io/nuget/dt/SCFirstOrderLogic.svg?style=flat-square)](https://www.nuget.org/packages/SCFirstOrderLogic/)
 
-This repository contains the source code for the SCFirstOrderLogic NuGet package.
+This repository contains the source code for the SCFirstOrderLogic NuGet package - in addition to its tests, benchmarks, alternative implementations, example domains and documentation website. 
 
 ## Package Documentation
 
@@ -21,7 +21,7 @@ When we reach the point where I feel that it does a good job of its "learning an
 
 You might also be interested in:
 
-* [My GitHub Profile](https://github.com/sdcondon): My profile README lists a whole bunch of stuff that I've made.
+* [My GitHub Profile](https://github.com/sdcondon): My profile README lists several of my more interesting public projects.
 * My other AI-related stuff: 
   * [SCClassicalPlanning](https://github.com/sdcondon/SCClassicalPlanning): Basic classical planning implementations. Based on chapter 10 of "Artificial Intelligence: A Modern Approach" - though perhaps a _little_ more loosely than this repo is based on chapters 8 and 9. Specifically, introduces a couple more PDDL concepts that the book doesn't bother with (but should IMO). Depends on this library (and [SCGraphTheory.Search](https://github.com/sdcondon/SCGraphTheory.Search)).
   * [SCPropositionalLogic](https://github.com/sdcondon/SCPropositionalLogic): Basic propositional logic implementations. Based on chapter 7 of "Artificial Intelligence: A Modern Approach". Mostly just a precursor to this repo - I haven't bothered publishing this one to NuGet - but might be of use if you find this repo a bit too much.

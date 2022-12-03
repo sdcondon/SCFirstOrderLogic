@@ -9,7 +9,7 @@ using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 namespace SCFirstOrderLogic.Inference
 {
-    public static class UniqueNamesAxiominsingKnowledgeBaseTests
+    public static class UniqueNamesAxiomisingKnowledgeBaseTests
     {
         public static Test Smoke => TestThat
             .Given(() => new MockKnowledgeBase())
