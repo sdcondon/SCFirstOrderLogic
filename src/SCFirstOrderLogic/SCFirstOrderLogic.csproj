@@ -24,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="SCFirstOrderLogic.md" Pack="true" PackagePath="README.md" />
-    <None Include="..\SCFirstOrderLogic-128.png" Pack="true" PackagePath="\" />
+    <None Include="_PackageFiles\SCFirstOrderLogic.md" Pack="true" PackagePath="README.md" />
+    <None Include="..\SCFirstOrderLogic-128.png" Pack="true" PackagePath="\" Link="_PackageFiles\SCFirstOrderLogic-128.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -50,7 +50,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <returns>Zero or more results, each consisting of a unifier and output clause.</returns>
         public static IEnumerable<ClauseResolution> Resolve(CNFClause clause1, CNFClause clause2)
         {
-            // Yes, this is a slow implementation. It is simple, though - and thus will serve
+            // TODO: Yes, this is a slow implementation. It is simple, though - and thus will serve
             // well as a baseline for improvements. (I'm thinking including LiteralUnifier tweak so that it accepts multiple
             // literals and examines the tree for them all "simultaneously" - i.e. do full resolution, not binary).
             foreach (var literal1 in clause1.Literals)
