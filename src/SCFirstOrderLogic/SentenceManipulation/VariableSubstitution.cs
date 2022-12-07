@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// In addition to the <see cref="RecursiveSentenceTransformation.ApplyTo(Sentence)"/> method
     /// offered by the base class, this also offers an <see cref="ApplyTo(Literal)"/> method.
     /// </summary>
-    // TODO-FEATURE/ROBUSTNESS: Make VariableSubstitution readonly (i.e. even internally), and add MutableVariableSubstitution : VariableSubstitution.
+    // TODO-FEATURE/ROBUSTNESS: Make VariableSubstitution read-only (i.e. even internally), and add MutableVariableSubstitution : VariableSubstitution.
     public class VariableSubstitution : RecursiveSentenceTransformation
     {
         private readonly Dictionary<VariableReference, Term> bindings;
@@ -71,9 +71,11 @@ namespace SCFirstOrderLogic.SentenceManipulation
             {
                 // We need to call base.ApplyTo because we might be switching in a term
                 // that itself is or contains variables that also need substituting.
-                // In theory makes it possible to get us stuck in a loop, but that will
+                // TODO: In theory makes it possible to get us stuck in a loop, but that will
                 // only happen as a result of bad consumer behaviour, not with e.g. unification
-                // output.
+                // output. Don't want to add the performance burden of checking for this
+                // every time, but could add a separate validation method to allow consumers
+                // to opt-in to it.
                 return base.ApplyTo(substitutedTerm);
             }
 

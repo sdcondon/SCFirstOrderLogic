@@ -16,8 +16,10 @@ namespace SCFirstOrderLogic
         public CNFSentence(Sentence sentence)
         {
             var cnfSentence = CNFConversion.ApplyTo(sentence);
+
             var clauses = new List<CNFClause>();
             new CNFClauseFinder(clauses).Visit(cnfSentence);
+
             // BUG: Potential equality bug on hash code collision..
             Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
         }
@@ -25,6 +27,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Gets the collection of clauses that comprise this CNF sentence.
         /// </summary>
+        // TODO-BREAKING: logically, this should be a set. Investigate perf impact of OrderedImmutableSet?
         public IReadOnlyCollection<CNFClause> Clauses { get; }
 
         /// <summary>

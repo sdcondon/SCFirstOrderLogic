@@ -259,31 +259,27 @@ namespace SCFirstOrderLogic.SentenceManipulation
         {
             public override Sentence ApplyTo(Disjunction disjunction)
             {
-                Sentence sentence;
-
                 if (disjunction.Right is Conjunction cRight)
                 {
                     // Apply distribution of ∨ over ∧: (α ∨ (β ∧ γ)) ≡ ((α ∨ β) ∧ (α ∨ γ))
                     // NB the "else if" below is fine (i.e. we don't need a seperate case for if they are both &&s)
                     // since if b.Left is also an &&, we'll end up distributing over it once we recurse down as far
                     // as the Disjunctions we create here.
-                    sentence = new Conjunction(
+                    return ApplyTo(new Conjunction(
                         new Disjunction(disjunction.Left, cRight.Left),
-                        new Disjunction(disjunction.Left, cRight.Right));
+                        new Disjunction(disjunction.Left, cRight.Right)));
                 }
                 else if (disjunction.Left is Conjunction cLeft)
                 {
                     // Apply distribution of ∨ over ∧: ((β ∧ γ) ∨ α) ≡ ((β ∨ α) ∧ (γ ∨ α))
-                    sentence = new Conjunction(
+                    return ApplyTo(new Conjunction(
                         new Disjunction(cLeft.Left, disjunction.Right),
-                        new Disjunction(cLeft.Right, disjunction.Right));
+                        new Disjunction(cLeft.Right, disjunction.Right)));
                 }
                 else
                 {
                     return base.ApplyTo(disjunction);
                 }
-
-                return ApplyTo(sentence);
             }
 
             public override Sentence ApplyTo(Predicate predicate)

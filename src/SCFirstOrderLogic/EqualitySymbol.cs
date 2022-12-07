@@ -16,9 +16,7 @@
     /// </summary>
     public sealed class EqualitySymbol
     {
-        private EqualitySymbol()
-        {
-        }
+        private EqualitySymbol() {}
 
         /// <summary>
         /// Gets the singleton instance of <see cref="EqualitySymbol"/>.

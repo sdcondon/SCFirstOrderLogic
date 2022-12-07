@@ -24,7 +24,7 @@ namespace SCFirstOrderLogic
             // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
             // its a super low-level class and I'd rather err on the side of using the smallest & simplest implementation possible.
             // Note that we order literals - which is important to justifiably consider the clause "normalised".
-            // BUG: Possible problems when hash code collisions occur. Probably worth a more robust approach at some point - but
+            // TODO-BUG: Possible problems when hash code collisions occur. Probably worth a more robust approach at some point - but
             // clause equality will be checked a LOT during resolution..
             Literals = ctor.Literals.OrderBy(l => l.GetHashCode()).ToArray();
         }
@@ -91,6 +91,7 @@ namespace SCFirstOrderLogic
         /// A clause that is the same as this one, except for the fact that all variable
         /// references are replaced with new ones.
         /// </returns>
+        // TODO-BREAKING-V4: un-Americanise the z, here? A little petulant perhaps, but meh.
         public CNFClause Restandardize()
         {
             var mapping = new Dictionary<StandardisedVariableSymbol, StandardisedVariableSymbol>();
@@ -105,19 +106,19 @@ namespace SCFirstOrderLogic
                 return newSymbol;
             }
 
-            Term VisitTerm(Term term) => term switch
+            Term RestandardiseTerm(Term term) => term switch
             {
                 Constant c => c,
                 VariableReference v => new VariableReference(GetOrAddNewSymbol((StandardisedVariableSymbol)v.Symbol)),
-                Function f => new Function(f.Symbol, f.Arguments.Select(a => VisitTerm(a)).ToArray()),
+                Function f => new Function(f.Symbol, f.Arguments.Select(RestandardiseTerm).ToArray()),
                 _ => throw new ArgumentException($"Unexpected term type '{term.GetType()}' encountered", nameof(term)),
             };
 
-            Predicate VisitPredicate(Predicate predicate) => new Predicate(predicate.Symbol, predicate.Arguments.Select(a => VisitTerm(a)).ToArray());
+            Predicate RestandardisePredicate(Predicate predicate) => new(predicate.Symbol, predicate.Arguments.Select(RestandardiseTerm).ToArray());
 
-            Literal VisitLiteral(Literal literal) => new Literal(VisitPredicate(literal.Predicate), literal.IsNegated);
+            Literal RestandardiseLiteral(Literal literal) => new(RestandardisePredicate(literal.Predicate), literal.IsNegated);
 
-            return new CNFClause(Literals.Select(l => VisitLiteral(l)));
+            return new CNFClause(Literals.Select(RestandardiseLiteral));
         }
 
         /// <summary>

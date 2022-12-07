@@ -26,7 +26,9 @@ namespace SCFirstOrderLogic
         /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
         /// string-returning 'Render' method. However, given that the only things we need of a symbol are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
+        /// object base class, we err on the side of simplicity and say that symbols can be any object. This of 
+        /// course has the added benefit of allowing certain likely types (i.e. strings) to be used as identifiers
+        /// without needing to wrap them.
         /// </param>
         /// <param name="arguments">The arguments of this predicate.</param>
         public Predicate(object symbol, params Term[] arguments)
