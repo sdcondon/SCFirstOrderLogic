@@ -10,6 +10,10 @@ This repository contains the source code for the SCFirstOrderLogic NuGet package
 
 For documentation of the package itself, see https://sdcondon.net/SCFirstOrderLogic/.
 
+## Source Documentation
+
+I've not bothered writing up any documentation of the source (e.g. repo signposting, build guidance…) - and likely won't unless someone else expresses an interest in contributing. I use Visual Studio, and once cloned, it should "just work" as far as compiling is concerned.
+
 ## Issues and Contributions
 
 I'm not expecting anyone to want to get involved given the low download figures on NuGet, but please feel free to do so.

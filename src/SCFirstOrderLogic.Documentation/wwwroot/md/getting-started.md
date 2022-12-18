@@ -139,7 +139,7 @@ OperablePredicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyO
 var rules = new Sentence[]
 {
     // "... it is a crime for an American to sell weapons to hostile nations":
-    // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x).
+    // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x)
     ForAll(X, Y, Z, If(IsAmerican(X) & IsWeapon(Y) & Sells(X, Y, Z) & IsHostile(Z), IsCriminal(X))),
 
     // "Nono... has some missiles."
