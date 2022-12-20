@@ -160,8 +160,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                         // so that this line is unecessary
                         var inferredClause = new CNFDefiniteClause(proofStep.InferredPredicate);
 
-                        // If we have a new conclusion..
-                        
+                        // If we have a new conclusion..    
                         if (!await clauseStore.MatchWithKnownFacts(inferredClause.Consequent, new VariableSubstitution(), cancellationToken).AnyAsync(cancellationToken) && !inferredClause.UnifiesWithAnyOf(newFacts))
                         {
                             // ..add it to the proof tree
