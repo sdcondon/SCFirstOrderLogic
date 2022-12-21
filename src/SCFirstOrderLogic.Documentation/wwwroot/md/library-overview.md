@@ -14,4 +14,4 @@ Here is a quick overview of the namespaces found within this library. Reading th
   * **`SentenceManipulation`:** assorted logic for the manipulation of sentences. Contains some interfaces and base classes for sentence visitors and transformations.
     * **`Unification`:** utility logic for [unifying](https://en.wikipedia.org/wiki/Unification_(computer_science)) literals and sentences.
 
-For a full type and member listing, the recommendation is to use the awesome [FuGet package explorer](https://www.fuget.org/packages/SCFirstOrderLogic/) tool - though going through [getting started](getting-started.md) first is probably a good idea, if you haven't already.
+For a full type and member listing, the recommendation is to use the [FuGet package explorer](https://www.fuget.org/packages/SCFirstOrderLogic/) - though going through [getting started](getting-started.md) first is probably a good idea, if you haven't already.
