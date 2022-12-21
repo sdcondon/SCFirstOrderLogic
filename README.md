@@ -12,7 +12,7 @@ For documentation of the package itself, see https://sdcondon.net/SCFirstOrderLo
 
 ## Source Documentation
 
-I have not written up any documentation of the source (e.g. repo summaries, design discussion, build guidance…) - and likely won't unless someone else expresses an interest in contributing. I use Visual Studio, and once cloned, it should "just work" as far as compiling is concerned.
+I have not written up any documentation of the source (e.g. repo summary, design discussion, build guidance…) - and likely won't unless someone else expresses an interest in contributing. I use Visual Studio, and once cloned, it should "just work" as far as compiling is concerned.
 
 ## Issues and Contributions
 
