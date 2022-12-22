@@ -7,10 +7,13 @@ using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.LanguageIntegration
 {
-    /// <typeparam name="TElement">
-    /// The type that the sentences passed to this class refer to.
-    /// </typeparam>
-    public class LinqKnowledgeBase<TElement> : ILinqKnowledgeBase<TElement>
+  /// <summary>
+  /// An implementation of the <see cref="ILinqKnowledgeBase{TElement}"/> interface that simply wraps an inner <see cref="IKnowledgeBase"/> instance.
+  /// </summary>
+  /// <typeparam name="TElement">
+  /// The type that the sentences passed to this class refer to.
+  /// </typeparam>
+  public class LinqKnowledgeBase<TElement> : ILinqKnowledgeBase<TElement>
     {
         private readonly IKnowledgeBase innerKnowledgeBase;
 

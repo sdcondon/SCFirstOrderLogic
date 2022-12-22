@@ -4,14 +4,14 @@ namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// A store of knowledge expressed as statements of propositional logic (in turn expressed as LINQ expressions).
+    /// <para/>
+    /// This interface is just a shorthand for <see cref="ILinqKnowledgeBase{TDomain, TElement}"/>, where <c>TDomain</c>
+    /// is <c>IEnumerable&lt;TElement&gt;</c>. It is explicitly included because a concrete type for TDomain is only
+    /// needed when there are constants or ground predicates - which is by no means all cases.
     /// </summary>
     /// <typeparam name="TElement">
     /// The type that the sentences passed to this class refer to.
     /// </typeparam>
-    /// <remarks>
-    /// This interface is just a shorthand for <c>IKnowledgeBase&lt;IEnumerable&lt;TElement&gt;, TElement&gt;</c>. It is explicitly included
-    /// because a particular type for TDomain is only needed when there are constants or ground predicates - which is by no means all cases.
-    /// </remarks>
     public interface ILinqKnowledgeBase<TElement> : ILinqKnowledgeBase<IEnumerable<TElement>, TElement>
     {
     }
