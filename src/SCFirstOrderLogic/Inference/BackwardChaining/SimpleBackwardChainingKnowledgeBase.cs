@@ -7,10 +7,13 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
+    /// <para>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a (depth-first) backward chaining algorithm.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// This is a VERY basic implementation - essentially just what is found in figure 9.6 of "Artificial Intelligence: A Modern Approach".
     /// More sophisticated implementations - for now at least - are outside of the scope of this package.
+    /// </para>
     /// </summary>
     public class SimpleBackwardChainingKnowledgeBase : IKnowledgeBase
     {

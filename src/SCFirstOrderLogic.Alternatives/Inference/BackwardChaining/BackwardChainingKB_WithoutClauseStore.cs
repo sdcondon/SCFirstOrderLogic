@@ -8,9 +8,12 @@ using System.Text;
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
+    /// <para>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a (depth-first) backward chaining algorithm.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// Differs from real version in that it doesn't use a clause store.
+    /// </para>
     /// </summary>
     public class BackwardChainingKB_WithoutClauseStore : IKnowledgeBase
     {
@@ -274,13 +277,16 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             public IReadOnlyDictionary<Predicate, CNFDefiniteClause> Steps => steps;
 
             /// <summary>
+            /// <para>
             /// Applies the proof's unifier to a given predicate.
-            /// <para/>
+            /// </para>
+            /// <para>
             /// NB: the algorithm builds up the unifier step-by-step, so that it can (will probably) result in many
             /// terms being bound indirectly. E.g. variable A is bound to variable B, which is in turn bound to constant C.
             /// There's no sense in making the algorithm itself more complex (and thus slower) than it needs to be to streamline
             /// this, but for the readability of explanations, this method follows the chain to the end by applying the
             /// unifier until it doesn't make any more changes. The "full story" remains accessible via the unifier and proof steps.
+            /// </para>
             /// </summary>
             /// <param name="predicate"></param>
             /// <returns>The input predicate transformed by the proof's unifier.</returns>

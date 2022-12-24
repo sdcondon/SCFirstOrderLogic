@@ -7,9 +7,12 @@ using static SCFirstOrderLogic.LanguageIntegration.Operators;
 namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingLanguageIntegration
 {
     /// <summary>
+    /// <para>
     /// The "curiousity and the cat" example from section 9.5 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// Example usage:
+    /// </para>
     /// <code>
     /// ILinqKnowledgeBase&lt;CuriousityAndTheCatDomain.IDomain, CuriousityAndTheCatDomain.IElement&gt; kb = .. // a LINQ knowledge base implementation
     /// kb.Tell(CuriousityAndTheCatDomain.Axioms);

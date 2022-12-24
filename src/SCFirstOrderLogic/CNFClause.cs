@@ -52,19 +52,25 @@ namespace SCFirstOrderLogic
         public IReadOnlyCollection<Literal> Literals { get; }
 
         /// <summary>
+        /// <para>
         /// Gets a value indicating whether this is a Horn clause - that is, whether at most one of its literals is positive.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// No caching here, but the class is immutable so recalculating every time is wasted effort, strictly speaking.
         /// Various things we could do, but for the moment I'm erring on the side of doing nothing, on the grounds that these
         /// properties are unlikely to be on the "hot" path of any given applicaiton.
+        /// </para>
         /// </summary>
         public bool IsHornClause => Literals.Count(l => l.IsPositive) <= 1;
 
         /// <summary>
+        /// <para>
         /// Gets a value indicating whether this is a definite clause - that is, whether exactly one of its literals is positive.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: this means that the clause can be written in the form L₁ ∧ L₂ ∧ .. ∧ Lₙ ⇒ L, where none of the literals is negated
         /// - or is simply a single non-negated literal.
+        /// </para>
         /// </summary>
         public bool IsDefiniteClause => Literals.Count(l => l.IsPositive) == 1;
 
@@ -122,12 +128,15 @@ namespace SCFirstOrderLogic
         }
 
         /// <summary>
+        /// <para>
         /// Returns a string that represents the current object.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to format the clause.
         /// Note that this will not guarantee unique labelling of normalisation terms (standardised variables or Skolem functions)
         /// across multiple calls, or provide any choice as to the sets of labels used for normalisation terms. If you want either
         /// of these things, instantiate your own <see cref="SentenceFormatter"/> instance.
+        /// </para>
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
         public override string ToString() => new SentenceFormatter().Format(this);

@@ -8,9 +8,12 @@ using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
+    /// <para>
     /// Decorator knowledge base class that adds equality axioms as knowledge is added to the underlying knowledge base.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// See §9.5.5 ("Equality") of Artifical Intelligence: A Modern Approach for more on dealing with equality by axiomising it.
+    /// </para>
     /// </summary>
     public class EqualityAxiomisingKnowledgeBase : IKnowledgeBase
     {
@@ -28,12 +31,15 @@ namespace SCFirstOrderLogic.Inference
         }
 
         /// <summary>
+        /// <para>
         /// Instantiates and initializes a new instance of the <see cref="EqualityAxiomisingKnowledgeBase"/> class.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// This method exists and the constructor for <see cref="EqualityAxiomisingKnowledgeBase"/> is private
         /// because complete initialisation here involves telling the knowledge base some things. Telling is asynchronous
         /// because it is potentially long-running (because in "real" clause stores it could easily involve IO), and
         /// including potentially long-running operations in a constructor is generally a bad idea.
+        /// </para>
         /// </summary>
         /// <returns>A task that returns a new <see cref="EqualityAxiomisingKnowledgeBase"/> instance.</returns>
         public static async Task<EqualityAxiomisingKnowledgeBase> CreateAsync(IKnowledgeBase innerKnowledgeBase)

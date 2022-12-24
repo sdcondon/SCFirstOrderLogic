@@ -19,9 +19,12 @@ namespace SCFirstOrderLogic.Inference
         public abstract bool Result { get; }
 
         /// <summary>
+        /// <para>
         /// Executes the next step of the query.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Calling <see cref="NextStepAsync"/> on a completed query should result in an <see cref="InvalidOperationException"/>.
+        /// </para>
         /// </summary>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>A container for information on what happened during the step.</returns>

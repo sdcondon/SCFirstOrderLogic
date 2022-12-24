@@ -9,11 +9,14 @@ namespace SCFirstOrderLogic.SentenceManipulation
     public abstract class RecursiveSentenceTransformation : ISentenceTransformation<Sentence>, ITermTransformation<Term>
     {
         /// <summary>
+        /// <para>
         /// Applies this transformation to a <see cref="Sentence"/> instance.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// The default implementation uses a pattern-matching switch expression to invoke the ApplyTo method appropriate to the actual type of the sentence.
         /// This is evidentally faster than calling <see cref="Sentence.Accept{TOut}(ISentenceTransformation{TOut})"/>.
         /// Whatever lookup-creating shenannigans the compiler gets up to are apparently quicker than a virtual method call.
+        /// </para>
         /// </summary>
         /// <param name="sentence">The sentence to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
@@ -194,11 +197,14 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
+        /// <para>
         /// Applies this transformation to a <see cref="Term"/> instance.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// The default implementation uses a pattern-matching switch expression to invoke the ApplyTo method appropriate to the actual type of the term.
         /// This is evidentally faster than calling <see cref="Term.Accept{TOut}(ITermTransformation{TOut})"/>.
         /// Whatever lookup-creating shenannigans the compiler gets up to are apparently quicker than a virtual method call.
+        /// </para>
         /// </summary>
         /// <param name="term">The term to visit.</param>
         /// <returns>The transformed term.</returns>

@@ -4,9 +4,12 @@ using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingSentenceFactory
 {
     /// <summary>
+    /// <para>
     /// The natural numbers example domain from chapter 8 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// Example usage:
+    /// </para>
     /// <code>
     /// IKnowledgeBase kb = .. // a knowledge base implementation
     /// kb.Tell(NaturalNumbersDomain.Axioms);

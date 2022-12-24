@@ -15,20 +15,25 @@ namespace SCFirstOrderLogic
         /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
         /// <param name="symbol">
+        /// <para>
         /// An object representing the symbol of the predicate.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Symbol equality should indicate that it is the same predicate in the domain.
         /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
         /// string-returning 'Render' method. However, given that the only things we need of a symbol are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
         /// object base class, we err on the side of simplicity and say that symbols can be any object. This of 
         /// course has the added benefit of allowing certain likely types (i.e. strings) to be used as identifiers
         /// without needing to wrap them.
+        /// </para>
         /// </param>
         /// <param name="arguments">The arguments of this predicate.</param>
         public Predicate(object symbol, params Term[] arguments)
@@ -40,18 +45,23 @@ namespace SCFirstOrderLogic
         /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
         /// <param name="symbol">
+        /// <para>
         /// An object representing the symbol of the predicate.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Symbol equality should indicate that it is the same predicate in the domain.
         /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
         /// string-returning 'Render' method. However, given that the only things we need of a symbol are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
         /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
+        /// </para>
         /// </param>
         /// <param name="arguments">The arguments of this predicate.</param>
         public Predicate(object symbol, IList<Term> arguments)
@@ -66,20 +76,26 @@ namespace SCFirstOrderLogic
         public ReadOnlyCollection<Term> Arguments { get; }
 
         /// <summary>
+        /// <para>
         /// Gets an object representing the symbol of the predicate.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Symbol equality should indicate that it is the same predicate in the domain.
         /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
         /// string-returning 'Render' method. However, given that the only things we need of a symbol are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
         /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Perhaps should be called 'Identifier'..
+        /// </para>
         /// </summary>
         public object Symbol { get; }
 

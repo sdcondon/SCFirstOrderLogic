@@ -106,12 +106,15 @@ namespace SCFirstOrderLogic.LanguageIntegration
         }
 
         /// <summary>
+        /// <para>
         /// Tries to create the <see cref="Sentence"/> instance that is logically equivalent to
         /// the proposition that a given lambda expression is guaranteed to evaluate as true for all possible domains.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// This method serves as a shorthand for <see cref="TryCreate{TDomain, TElement}"/> where the domain is
         /// just <c>IEnumerable&lt;TElement&gt;</c> - which suffices when the domain contains no constants or ground
         /// predicates.
+        /// </para>
         /// </summary>
         /// <typeparam name="TElement">The type that all elements of the domain are assignable to.</typeparam>
         /// <param name="lambda">The lambda expression.</param>

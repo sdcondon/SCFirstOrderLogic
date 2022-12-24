@@ -5,18 +5,24 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     /// <summary>
+    /// <para>
     /// Extension methods pertaining to the unification of clauses.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// NB: Of course, these methods COULD just be added to <see cref="CNFClause"/>. It felt a little messy
     /// to have CNFClause depend on code in the Unification namespace though. Perhaps a slightly idiosyncratic 
     /// design decision (after all, I'm fine with CNFClause depending on SentenceManipulation), but I'm sticking by it.
+    /// </para>
     /// </summary>
     public static class CNFClauseExtensions
     {
         /// <summary>
+        /// <para>
         /// Checks whether "this" clause unifies with any of an enumeration of other definite clauses.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: this logic is not specific to definite clauses - so perhaps belongs elsewhere?
+        /// </para>
         /// </summary>
         /// <param name="thisClause">"This" clause.</param>
         /// <param name="clauses">The clauses to check for unification with.</param>

@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
+    /// <para>
     /// Interface for types that facilitate the storage of CNF definite clauses for the purposes of backward chaining.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// NB: Clause storage and retrieval is necessary during the chaining process. We have an abstraction for it because
     /// knowledge bases of different sizes and natures will have different requirements for how the known clauses are stored
     /// (w.r.t. indexing approach, primary vs secondary storage, and so on) in order to be acceptably performant.
+    /// </para>
     /// </summary>
     public interface IClauseStore : IAsyncEnumerable<CNFDefiniteClause>
     {

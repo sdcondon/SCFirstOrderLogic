@@ -35,9 +35,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
+        /// <para>
         /// Transformation that "standardises apart" variables - essentially ensuring that variable symbols are unique.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Public to allow callers to mess about with the normalisation process.
+        /// </para>
         /// </summary>
         // Private inner class to hide necessarily short-lived object away from callers.
         // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.

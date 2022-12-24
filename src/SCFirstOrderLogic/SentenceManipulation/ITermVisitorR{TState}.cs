@@ -1,10 +1,13 @@
 ﻿namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
+    /// <para>
     /// Interface for visitors of <see cref="Term"/> instances.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// NB: This interface (in comparison to the non-generic <see cref="ITermVisitor"/>) is specifically for visitors that facilitate
     /// state accumulation outside of the visitor instance itself - state that is passed to the visitor by reference.
+    /// </para>
     /// </summary>
     /// <typeparam name="TState">The type of state that this visitor works with.</typeparam>
     public interface ITermVisitorR<TState>

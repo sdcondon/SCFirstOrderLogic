@@ -12,15 +12,19 @@ namespace SCFirstOrderLogic
         /// Initializes a new instance of the <see cref="Constant"/> class.
         /// </summary>
         /// <param name="symbol">
+        /// <para>
         /// An object representing the symbol of the constant.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Symbol equality should indicate that it is the same constant in the domain.
         /// <see cref="object.ToString"/> of the Symbol should be appropriate for rendering in FoL syntax.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
         /// string-returning 'Render' method. However, given that the only things we need of a symbol are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
         /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
+        /// </para>
         /// </param>
         public Constant(object symbol)
         {
@@ -31,18 +35,21 @@ namespace SCFirstOrderLogic
         public override sealed bool IsGroundTerm => true;
 
         /// <summary>
+        /// <para>
         /// Gets an object representing the symbol of the constant.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Symbol equality should indicate that it is the same constant in the domain.
         /// <see cref="object.ToString"/> of the Symbol should be appropriate for rendering in FoL syntax.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
         /// string-returning 'Render' method. However, given that the only things we need of a symbol are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
         /// object base class, we err on the side of simplicity and say that symbols can be any object. This of 
         /// course has the added benefit of allowing certain likely types (ints, strings) to be used as identifiers
         /// without needing to wrap them.
-        /// <para/>
+        /// </para>
         /// Perhaps should be called 'Identifier'..
         /// </summary>
         public object Symbol { get; }

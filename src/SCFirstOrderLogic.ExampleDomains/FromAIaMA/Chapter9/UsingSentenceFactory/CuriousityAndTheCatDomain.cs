@@ -4,9 +4,12 @@ using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory
 {
     /// <summary>
+    /// <para>
     /// The "curiousity and the cat" example from section 9.5 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// Example usage:
+    /// </para>
     /// <code>
     /// using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCatDomain;
     /// ..

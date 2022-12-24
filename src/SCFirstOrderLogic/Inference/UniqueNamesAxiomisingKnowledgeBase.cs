@@ -7,12 +7,15 @@ using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
+    /// <para>
     /// Decorator knowledge base class that adds "axioms" for the unique names assumption as knowledge is added to the underlying knowledge base.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// Keeps track of all constants that feature in sentences, and adds "not equal" knowledge for all pairs
     /// with non-equal symbols. NB: only adds one ordering of arguments, and adds no knowledge that constants
     /// are equal to themselves - on the understanding that commutativity/reflexivity will be handled elsewhere
     /// (e.g. with <see cref="EqualityAxiomisingKnowledgeBase"/> or with an inner KB that utilises para/demodulation).
+    /// </para>
     /// </summary>
     public class UniqueNamesAxiomisingKnowledgeBase : IKnowledgeBase
     {

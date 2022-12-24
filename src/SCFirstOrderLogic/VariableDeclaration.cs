@@ -3,16 +3,20 @@
 namespace SCFirstOrderLogic
 {
     /// <summary>
+    /// <para>
     /// Representation of a variable declaration within a sentence of first order logic. These occur in quantifier sentences.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// The existence of this type (as distinct from <see cref="VariableReference"/>) is for robust sentence transformations. When transforming a
     /// <see cref="VariableReference"/> (which is a <see cref="Term"/> - it can occur anywhere in a sentence where a <see cref="Term"/>
     /// is valid), it will always be valid to transform it into a different kind of <see cref="Term"/>. <see cref="VariableDeclaration"/>s
     /// however (which are NOT <see cref="Term"/>s), occur only in <see cref="Quantification"/> and <see cref="VariableReference"/> instances,
     /// both of which require the <see cref="VariableDeclaration"/> type exactly.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// <see cref="VariableDeclaration"/> instances are implicitly convertible to <see cref="VariableReference"/> instances referring to them,
     /// to aid in the succinct creation of sentences.
+    /// </para>
     /// </summary>
     public sealed class VariableDeclaration : IEquatable<VariableDeclaration>
     {
@@ -20,14 +24,18 @@ namespace SCFirstOrderLogic
         /// Initializes a new instance of the <see cref="VariableDeclaration"/> class.
         /// </summary>
         /// <param name="symbol">
+        /// <para>
         /// The symbol of the variable.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Equality of symbols should indicate that it is the same variable in the domain, and ToString of the symbol should be appropriate for rendering in FoL syntax.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
         /// string-returning 'Render' method. However, given that the only things we need of a symbol are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
         /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
+        /// </para>
         /// </param>
         public VariableDeclaration(object symbol) => Symbol = symbol;
 
@@ -35,17 +43,22 @@ namespace SCFirstOrderLogic
         /// Gets an object representing the symbol of the variable.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// Symbol equality should indicate that it is the same variable in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
         /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
         /// string-returning 'Render' method. However, given that the only things we need of a symbol are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
         /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// Perhaps should be called 'Identifier'..
+        /// </para>
         /// </remarks>
         public object Symbol { get; }
 

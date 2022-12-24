@@ -4,14 +4,17 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
+    /// <para>
     /// Converts sentences to conjunctive normal form.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// This type is internal because its output is not *completely* normalised, since it *doesn't* normalise the
     /// order of evaluation of the clauses (i.e. the conjunctions found at the root of the output sentence),
     /// or the literals within those clauses (i.e. disjunctions found below those top-level conjunctions).
     /// The <see cref="CNFSentence"/> class does that. If there is ever a need to expose this class publicly (unlikely -
     /// <see cref="CNFSentence"/> should suffice), I'd want to add some more robustness stuff to eliminate potential
     /// confusion.
+    /// </para>
     /// </summary>
     internal static class CNFConversion
     {

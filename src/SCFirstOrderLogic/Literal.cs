@@ -4,11 +4,14 @@ using System;
 namespace SCFirstOrderLogic
 {
     /// <summary>
+    /// <para>
     /// Streamlined representation of a literal (i.e. a predicate or a negated predicate) of first-order logic.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// Note that this type is NOT a subtype of <see cref="Sentence"/>. To represent literals as <see cref="Sentence"/>s, 
     /// <see cref="SCFirstOrderLogic.Predicate"/> and <see cref="Negation"/> should be used as appropriate. This type is used within
     /// our <see cref="CNFClause"/> type, and may also be of use to consumers who want a streamlined literal representation.
+    /// </para>
     /// </summary>
     public sealed class Literal : IEquatable<Literal>
     {
@@ -76,12 +79,15 @@ namespace SCFirstOrderLogic
         public Literal Negate() => new(Predicate, !IsNegated);
 
         /// <summary>
+        /// <para>
         /// Returns a string that represents the current object.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to format the literal.
         /// Note that this will not guarantee unique labelling of normalisation terms (standardised variables or Skolem functions)
         /// across multiple calls, or provide any choice as to the sets of labels used for normalisation terms. If you want either
         /// of these things, instantiate your own <see cref="SentenceFormatter"/> instance.
+        /// </para>
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
         public override string ToString() => new SentenceFormatter().Format(this);

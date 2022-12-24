@@ -7,10 +7,13 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
     /// <summary>
+    /// <para>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a forward chaining algorithm.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// This is a VERY simple (read - inefficient) implementation that differs from the implementation in figure 9.3 of
     /// "Artificial Intelligence: A Modern Approach" only by the inclusion of proof tree retrieval.
+    /// </para>
     /// </summary>
     public sealed class SimpleForwardChainingKnowledgeBase : IKnowledgeBase
     {

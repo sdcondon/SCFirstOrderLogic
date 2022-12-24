@@ -7,9 +7,12 @@ using static SCFirstOrderLogic.LanguageIntegration.Operators;
 namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingLanguageIntegration
 {
     /// <summary>
+    /// <para>
     /// The kinship example domain from chapter 8 of Artificial Intelligence: A Modern Approach, Global Edition by Stuart Russel and Peter Norvig.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// Example usage:
+    /// </para>
     /// <code>
     /// ILinqKnowledgeBase&lt;IPerson&gt; kb = .. // a LINQ knowledge base implementation
     /// kb.Tell(KinshipDomain.Axioms);

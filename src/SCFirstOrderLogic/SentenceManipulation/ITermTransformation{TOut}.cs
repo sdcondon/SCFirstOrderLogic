@@ -1,9 +1,12 @@
 ﻿namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
+    /// <para>
     /// Interface for transformations of <see cref="Term"/> instances.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// NB: Essentially an interface for visitors with a return value.
+    /// </para>
     /// </summary>
     /// <typeparam name="TOut">The type that the transformation transforms the term to.</typeparam>
     public interface ITermTransformation<out TOut>

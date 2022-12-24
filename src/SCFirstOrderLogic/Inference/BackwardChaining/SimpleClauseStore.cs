@@ -21,11 +21,14 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         public SimpleClauseStore() { }
 
         /// <summary>
+        /// <para>
         /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class that is pre-populated with some knowledge.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: Of course, most implementations of <see cref="IClauseStore"/> won't have a constructor for pre-population, because most
         /// clause stores will do IO when adding knowledge, and including long-running operations in a ctor is generally a bad idea.
         /// We only include it here because of (the in-memory nature of this implementation and) its usefulness for tests.
+        /// </para>
         /// </summary>
         /// <param name="sentences">The initial content of the store.</param>
         public SimpleClauseStore(IEnumerable<Sentence> sentences)

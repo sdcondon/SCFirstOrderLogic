@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
+    /// <para>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// See §9.5 ("Resolution") of 'Artificial Intelligence: A Modern Approach' for a detailed explanation of resolution.
     /// Notes:
+    /// </para>
     /// <list type="bullet">
     /// <item/>Has no in-built handling of equality - so, if equality appears in the knowledge base, its properties need to be axiomised - see §9.5.5 of 'Artifical Intelligence: A Modern Approach'.
     /// </list>
@@ -79,9 +82,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
+        /// <para>
         /// Useful filters for use by <see cref="SimpleResolutionKnowledgeBase"/>.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
+        /// </para>
         /// </summary>
         public class Filters
         {
@@ -97,9 +103,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
+        /// <para>
         /// Useful priority comparisons for use by <see cref="SimpleResolutionKnowledgeBase"/>.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
+        /// </para>
         /// </summary>
         public class PriorityComparisons
         {
@@ -112,11 +121,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
             };
 
             /// <summary>
+            /// <para>
             /// Comparison that gives priority to pairs where one of the clauses is a unit clause.
-            /// <para/>
+            /// </para>
+            /// <para>
             /// NB: falls back on hash code comparison when not ordering because of unit clause presence. Given that
             /// some sentence things use reference equality (notably, symbols of standardised variables and Skolem functions),
             /// means that things can be ordered differently from one execution to the next. Not ideal..
+            /// </para>
             /// </summary>
             public static Comparison<ClauseResolution> UnitPreference { get; } = (x, y) =>
             {
@@ -138,9 +150,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
             };
 
             /// <summary>
+            /// <para>
             /// Comparison that gives priority to pairs with a lower total literal count.
-            /// <para/>
+            /// </para>
+            /// <para>
             /// Not mentioned in source material, but I figured it was a logical variant of unit preference.
+            /// </para>
             /// </summary>
             public static Comparison<ClauseResolution> TotalLiteralCountMinimisation { get; } = (x, y) =>
             {

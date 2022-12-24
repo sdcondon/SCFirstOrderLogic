@@ -14,9 +14,12 @@
         public static bool If(bool antecedent, bool consequent) => !antecedent || consequent;
 
         /// <summary>
+        /// <para>
         /// Checks if material equivalence, ⇔, holds.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: The name of this method is a common abbreviation for "if and only if".
+        /// </para>
         /// </summary>
         /// <param name="equivalent1">The first equivalent.</param>
         /// <param name="equivalent2">The second equivalent.</param>

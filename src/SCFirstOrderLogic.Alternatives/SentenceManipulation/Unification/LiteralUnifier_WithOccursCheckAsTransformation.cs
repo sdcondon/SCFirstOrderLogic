@@ -3,10 +3,13 @@
 namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     /// <summary>
+    /// <para>
     /// Utility class for creating unifiers for literals.
     /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
-    /// <para/>
+    /// </para>
+    /// <para>
     /// Differs from production version by using an occurs check that is a SentenceTransformation.
+    /// </para>
     /// </summary>
     public static class LiteralUnifier_WithOccursCheckAsTransformation
     {

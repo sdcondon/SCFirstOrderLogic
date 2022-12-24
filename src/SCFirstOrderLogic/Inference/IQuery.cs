@@ -5,13 +5,16 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference
 {
     /// <summary>
+    /// <para>
     /// An interface for representations of an individual query. 
-    /// <para/>
+    /// </para>
+    /// <para>
     /// We define our own interface (instead of just using a <see cref="Task{Boolean}"/>) so that it is
     /// easy for implementations to add additional behaviours - such as step-by-step execution 
     /// (see <see cref="SteppableQuery{TStepResult}"/>) and result explanations. However, note the existence
     /// of the <see cref="IQueryExtensions.GetAwaiter(IQuery)"/> extension method - so that query instances
     /// can be awaited directly.
+    /// </para>
     /// </summary>
     public interface IQuery : IDisposable
     {
@@ -30,9 +33,12 @@ namespace SCFirstOrderLogic.Inference
         bool Result { get; }
 
         /// <summary>
+        /// <para>
         /// Executes the query to completion.
-        /// <para/>
+        /// </para>
+        /// <para>
         /// NB: This is an asynchronous method ultimately because "real" knowledge bases will often need to do IO to retrieve knowledge.
+        /// </para>
         /// </summary>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>A task, the result of which is the result of the query.</returns>
