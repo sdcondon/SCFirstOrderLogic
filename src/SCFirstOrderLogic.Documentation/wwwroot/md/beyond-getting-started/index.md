@@ -23,7 +23,7 @@ Having said all that, some hopefully useful notes do follow here.
 
 ### `SCFirstOrderLogic.LanguageIntegration`
 
-As mentioned briefly in 'getting started', a language-integrated appropach to sentence creation is available. See [here](beyond-getting-started/language-integration.md) for details.
+As mentioned briefly in 'getting started', a language-integrated approach to sentence creation is available. See [here](beyond-getting-started/language-integration.md) for details.
 
 ### `SCFirstOrderLogic.SentenceFormatting`
 
@@ -32,7 +32,7 @@ The sets of labels used can be specified by the caller (but defaults do exist).
 
 ## Learning Resources in the Repository
 
-The repo contains a few resources aside from the source of the library itself that people might find interesting and/or useful:
+The source repository contains a few resources aside from the source of the library itself that people might find interesting and/or useful:
 
 * **['ExampleDomains' project](https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.ExampleDomains):** Example domains, declared using each of the sentence creation options.
 * **['Alternatives' project](https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.Alternatives):** this class library contains a number of alternative implementations of things.
