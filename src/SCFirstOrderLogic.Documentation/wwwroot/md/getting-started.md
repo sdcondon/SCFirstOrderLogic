@@ -36,7 +36,7 @@ Notice that:
 
 ### Writing Sentences with SentenceFactory
 
-First, we have the `SentenceFactory` static class in the `SentenceCreation` namespace. It is intended to be used via a `using static` directive,
+The `SentenceCreation` namespace contains a static class called `SentenceFactory`. It is intended to be used via a `using static` directive,
 and includes a number of static methods and properties to assist with succinct sentence creation. Here's how the example looks with this one:
 
 ```
@@ -60,7 +60,7 @@ Notice that:
 
 ### Writing Sentences with OperableSentenceFactory
 
-Next, you'll also find `OperableSentenceFactory` in `SentenceCreation`. It works similarly to `SentenceFactory`, but lets you use operators:
+The `SentenceCreation` namespace also contains a static class called `OperableSentenceFactory`. It works similarly to `SentenceFactory`, but lets you use operators:
 
 ```
 using SCFirstOrderLogic;
@@ -109,7 +109,8 @@ Notice that:
 ### (Not) Writing Sentences as Strings
 
 Being able to point a parser at "∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]" would be great,
-but I've not gotten around to that just yet. At some point in the future I may take a look at this (shouldn't be too tough, especially if I make use of something like ANTLR)
+but I've not gotten around to that just yet. At some point in the future I may take a look at this (shouldn't be too tough, especially if I make use of something like ANTLR).
+See the [roadmap](roadmap.md) for more on this.
 
 ## Storing Knowledge and Making Inferences
 
