@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic.Benchmarks.SentenceManipulation
                 ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
                 ThereExists(Y, Loves(Y, X))));
 
-        public record TestCase(string Label, bool DoSomething, Sentence Sentence)
+        public record TestCase(string Label, Sentence Sentence)
         {
             public override string ToString() => Label;
         }
@@ -25,13 +25,7 @@ namespace SCFirstOrderLogic.Benchmarks.SentenceManipulation
         public static IEnumerable<TestCase> TestCases { get; } = new TestCase[]
         {
             new(
-                Label: "Non-Trivial NO-OP",
-                DoSomething: false,
-                Sentence: NonTrivialSentence),
-
-            new(
-                Label: "Non-Trivial ALL-LEAFS-OP",
-                DoSomething: true,
+                Label: "Non-Trivial Sentence",
                 Sentence: NonTrivialSentence),
         };
 
@@ -39,23 +33,17 @@ namespace SCFirstOrderLogic.Benchmarks.SentenceManipulation
         public TestCase? CurrentTestCase { get; set; }
 
         [Benchmark(Baseline = true)]
-        public void CurrentImpl() => new NullVisitor(CurrentTestCase!.DoSomething).Visit(CurrentTestCase!.Sentence);
+        public void CurrentImpl() => new NullVisitor().Visit(CurrentTestCase!.Sentence);
 
         [Benchmark]
-        public void Enumerators() => new NullVisitor_Enumerators(CurrentTestCase!.DoSomething).Visit(CurrentTestCase!.Sentence);
+        public void Enumerators() => new NullVisitor_Enumerators().Visit(CurrentTestCase!.Sentence);
 
         private class NullVisitor : RecursiveSentenceVisitor
         {
-            private readonly bool doSomething;
-
-            public NullVisitor(bool doSomething) => this.doSomething = doSomething;
         }
 
         private class NullVisitor_Enumerators : RecursiveSentenceVisitor_Enumerators
         {
-            private readonly bool doSomething;
-
-            public NullVisitor_Enumerators(bool doSomething) => this.doSomething = doSomething;
         }
     }
 }
