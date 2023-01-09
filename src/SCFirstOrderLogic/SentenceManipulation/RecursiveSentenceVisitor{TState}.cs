@@ -1,4 +1,6 @@
-﻿namespace SCFirstOrderLogic.SentenceManipulation
+﻿using System;
+
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state.
@@ -81,9 +83,9 @@
         /// <param name="state">The state of this visitation.</param>
         public virtual void Visit(Predicate predicate, TState state)
         {
-            foreach (var argument in predicate.Arguments)
+            for (int i = 0; i < predicate.Arguments.Count; i++)
             {
-                Visit(argument, state);
+                Visit(predicate.Arguments[i], state);
             }
         }
 
@@ -97,27 +99,6 @@
         {
             Visit(negation.Sentence, state);
         }
-
-        /////// <summary>
-        /////// Visits a <see cref="Quantification"/> instance. 
-        /////// The default implementation simply invokes the Visit method appropriate to the type of the quantification.
-        /////// </summary>
-        /////// <param name="quantification">The <see cref="Quantification"/> instance to visit.</param>
-        /////// <param name="state">The state of this visitation.</param>
-        ////public virtual void Visit(Quantification quantification, TState state)
-        ////{
-        ////    switch (quantification)
-        ////    {
-        ////        case ExistentialQuantification existentialQuantification:
-        ////            Visit(existentialQuantification, state);
-        ////            break;
-        ////        case UniversalQuantification universalQuantification:
-        ////            Visit(universalQuantification, state);
-        ////            break;
-        ////        default:
-        ////            throw new ArgumentException($"Unsupported Quantification type '{quantification.GetType()}'", nameof(quantification));
-        ////    }
-        ////}
 
         /// <summary>
         /// Visits a <see cref="UniversalQuantification"/> instance. 
@@ -168,9 +149,9 @@
         /// <param name="state">The state of this visitation.</param>
         public virtual void Visit(Function function, TState state)
         {
-            foreach (var argument in function.Arguments)
+            for (int i = 0; i < function.Arguments.Count; i++)
             {
-                Visit(argument, state);
+                Visit(function.Arguments[i], state);
             }
         }
 

@@ -1,28 +1,27 @@
 ﻿namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state.
+    /// Base class for recursive visitors of <see cref="Sentence"/> instances.
     /// </summary>
-    public abstract class RecursiveSentenceVisitorR<TState> : ISentenceVisitorR<TState>, ITermVisitorR<TState>
+    public abstract class RecursiveSentenceVisitor_Enumerators : ISentenceVisitor, ITermVisitor
     {
         /// <summary>
         /// Visits a <see cref="Sentence"/> instance.
-        /// The default implementation simply invokes the Visit method appropriate to the type of the sentence (via <see cref="Sentence.Accept{TState}(ISentenceVisitorR{TState}, ref TState)"/>.
+        /// The default implementation just invokes the Visit method appropriate to the type of the sentence (via <see cref="Sentence.Accept(ISentenceVisitor)"/>).
         /// </summary>
         /// <param name="sentence">The sentence to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Sentence sentence, ref TState state) => sentence.Accept(this, ref state);
+        /// <returns>The transformed <see cref="Sentence"/>.</returns>
+        public virtual void Visit(Sentence sentence) => sentence.Accept(this);
 
         /// <summary>
         /// Visits a <see cref="Conjunction"/> instance.
         /// The default implementation just visits both of the sub-sentences.
         /// </summary>
         /// <param name="conjunction">The <see cref="Conjunction"/> instance to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Conjunction conjunction, ref TState state)
+        public virtual void Visit(Conjunction conjunction)
         {
-            Visit(conjunction.Left, ref state);
-            Visit(conjunction.Right, ref state);
+            Visit(conjunction.Left);
+            Visit(conjunction.Right);
         }
 
         /// <summary>
@@ -30,11 +29,10 @@
         /// The default implementation just visits the both of the sub-sentences.
         /// </summary>
         /// <param name="disjunction">The <see cref="Disjunction"/> instance to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Disjunction disjunction, ref TState state)
+        public virtual void Visit(Disjunction disjunction)
         {
-            Visit(disjunction.Left, ref state);
-            Visit(disjunction.Right, ref state);
+            Visit(disjunction.Left);
+            Visit(disjunction.Right);
         }
 
         /// <summary>
@@ -42,11 +40,10 @@
         /// The default implementation just visits both of the sub-sentences.
         /// </summary>
         /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Equivalence equivalence, ref TState state)
+        public virtual void Visit(Equivalence equivalence)
         {
-            Visit(equivalence.Left, ref state);
-            Visit(equivalence.Right, ref state);
+            Visit(equivalence.Left);
+            Visit(equivalence.Right);
         }
 
         /// <summary>
@@ -54,11 +51,10 @@
         /// The default implementation just visits the variable declaration and sentence.
         /// </summary>
         /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(ExistentialQuantification existentialQuantification, ref TState state)
+        public virtual void Visit(ExistentialQuantification existentialQuantification)
         {
-            Visit(existentialQuantification.Variable, ref state);
-            Visit(existentialQuantification.Sentence, ref state);
+            Visit(existentialQuantification.Variable);
+            Visit(existentialQuantification.Sentence);
         }
 
         /// <summary>
@@ -66,11 +62,10 @@
         /// The default implementation just visits both of the sub-sentences.
         /// </summary>
         /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Implication implication, ref TState state)
+        public virtual void Visit(Implication implication)
         {
-            Visit(implication.Antecedent, ref state);
-            Visit(implication.Consequent, ref state);
+            Visit(implication.Antecedent);
+            Visit(implication.Consequent);
         }
 
         /// <summary>
@@ -78,12 +73,11 @@
         /// The default implementation just visits each of the arguments.
         /// </summary>
         /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Predicate predicate, ref TState state)
+        public virtual void Visit(Predicate predicate)
         {
-            for (int i = 0; i < predicate.Arguments.Count; i++)
+            foreach (var argument in predicate.Arguments)
             {
-                Visit(predicate.Arguments[i], ref state);
+                Visit(argument);
             }
         }
 
@@ -92,10 +86,9 @@
         /// The default implementation just visits the sub-sentence.
         /// </summary>
         /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Negation negation, ref TState state)
+        public virtual void Visit(Negation negation)
         {
-            Visit(negation.Sentence, ref state);
+            Visit(negation.Sentence);
         }
 
         /// <summary>
@@ -103,28 +96,25 @@
         /// The default implementation just visits the variable declaration and sentence.
         /// </summary>
         /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(UniversalQuantification universalQuantification, ref TState state)
+        public virtual void Visit(UniversalQuantification universalQuantification)
         {
-            Visit(universalQuantification.Variable, ref state);
-            Visit(universalQuantification.Sentence, ref state);
+            Visit(universalQuantification.Variable);
+            Visit(universalQuantification.Sentence);
         }
 
         /// <summary>
         /// Visits a <see cref="Term"/> instance.
-        /// The default implementation simply invokes the Visit method appropriate to the type of the term (via <see cref="Term.Accept{TState}(ITermVisitorR{TState}, ref TState)"/>.
+        /// The default implementation just invokes the Visit method appropriate to the type of the term (via <see cref="Term.Accept(ITermVisitor)"/>).
         /// </summary>
         /// <param name="term">The term to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Term term, ref TState state) => term.Accept(this, ref state);
+        public virtual void Visit(Term term) => term.Accept(this);
 
         /// <summary>
         /// Visits a <see cref="Constant"/> instance.
         /// The default implementation doesn't do anything.
         /// </summary>
         /// <param name="constant">The constant to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Constant constant, ref TState state)
+        public virtual void Visit(Constant constant)
         {
         }
 
@@ -133,10 +123,9 @@
         /// The default implementation just visits the variable declaration.
         /// </summary>
         /// <param name="variable">The variable reference to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(VariableReference variable, ref TState state)
+        public virtual void Visit(VariableReference variable)
         {
-            Visit(variable.Declaration, ref state);
+            Visit(variable.Declaration);
         }
 
         /// <summary>
@@ -144,12 +133,11 @@
         /// The default implementation just visits each of the arguments.
         /// </summary>
         /// <param name="function">The function to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(Function function, ref TState state)
+        public virtual void Visit(Function function)
         {
-            for (int i = 0; i < function.Arguments.Count; i++)
+            foreach (var argument in function.Arguments)
             {
-                Visit(function.Arguments[i], ref state);
+                Visit(argument);
             }
         }
 
@@ -158,8 +146,7 @@
         /// The default implementation doesn't do anything.
         /// </summary>
         /// <param name="variableDeclaration">The <see cref="VariableDeclaration"/> instance to visit.</param>
-        /// <param name="state">A reference to the state of this visitation.</param>
-        public virtual void Visit(VariableDeclaration variableDeclaration, ref TState state)
+        public virtual void Visit(VariableDeclaration variableDeclaration)
         {
         }
     }

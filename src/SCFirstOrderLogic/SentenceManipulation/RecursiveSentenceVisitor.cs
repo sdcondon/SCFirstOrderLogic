@@ -77,9 +77,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
         public virtual void Visit(Predicate predicate)
         {
-            foreach (var argument in predicate.Arguments)
+            for (int i = 0; i < predicate.Arguments.Count; i++)
             {
-                Visit(argument);
+                Visit(predicate.Arguments[i]);
             }
         }
 
@@ -137,9 +137,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <param name="function">The function to visit.</param>
         public virtual void Visit(Function function)
         {
-            foreach (var argument in function.Arguments)
+            for (int i = 0; i < function.Arguments.Count; i++)
             {
-                Visit(argument);
+                Visit(function.Arguments[i]);
             }
         }
 
