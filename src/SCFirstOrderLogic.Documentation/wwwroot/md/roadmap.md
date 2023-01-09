@@ -20,6 +20,7 @@ Label sets currently used by SentenceFormatter likely to become full interfaces 
 * Move the SkolemFunctionSymbol and StandardisedVariableSymbol classes up out of the `SentenceManipulation` namespace.
 Really the only reason that they're here is that I originally had all the CNF stuff in SentenceManipulation.
 Now that the CNF types are in the root namespace, there's really no reason for these not to be as well.
+* I'm almost certainly going to overheaul the collection types used in Predicate, Function, CNFClause and CNFSentence. There are some robustness issues as it stands. Will probably move away from ReadOnlyCollection and towards System.Collections.Immutable.
 * May rename/otherwise break the SentenceManipulation.CNFExaminer class - it irks me somewhat..
 
 On the back-burner, for later consideration:

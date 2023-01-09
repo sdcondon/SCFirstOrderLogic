@@ -66,6 +66,7 @@ namespace SCFirstOrderLogic
         public Function(object symbol, IList<Term> arguments)
         {
             Symbol = symbol;
+            // TODO-ROBUSTNESS: Its past time I sort this out - really should be doing some sort of clone here..
             Arguments = new ReadOnlyCollection<Term>(arguments);
         }
 
