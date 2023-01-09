@@ -82,7 +82,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
         /// <summary>
         /// Attempts to update a unifier (in place) so that it (also) unifies two given literals. Faster than <see cref="TryUpdate(Literal, Literal, VariableSubstitution)"/>,
-        /// but can partially update the subsitution on failure. Use only when you don't care about the substitution being modified if it fails.
+        /// but can partially update the substitution on failure. Use only when you don't care about the substitution being modified if it fails.
         /// </summary>
         /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
         /// <param name="y">One of the two literals to attempt to create a unifier for.</param>

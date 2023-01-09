@@ -5,8 +5,11 @@ namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Base class for recursive transformations of <see cref="Sentence"/> instances to other <see cref="Sentence"/> instances.
+    /// <para/>
+    /// ALTERNATIVE: old version - iterates twice for predicate and function args - once to transform, once to check for changes.
+    /// Demonstrably slower. Keeping this around only for reference purposes.
     /// </summary>
-    public abstract class RecursiveSentenceTransformation : ISentenceTransformation<Sentence>, ITermTransformation<Term>
+    public abstract class RecursiveSentenceTransformation_IterateTwice : ISentenceTransformation<Sentence>, ITermTransformation<Term>
     {
         /// <summary>
         /// <para>
@@ -134,21 +137,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
         public virtual Sentence ApplyTo(Predicate predicate)
         {
-            var isChanged = false;
+            var arguments = predicate.Arguments.Select(a => ApplyTo(a)).ToList();
 
-            var arguments = predicate.Arguments.Select(a =>
-            {
-                var transformed = ApplyTo(a);
-
-                if (transformed != a)
-                {
-                    isChanged = true;
-                }
-
-                return transformed;
-            }).ToList();
-
-            if (isChanged)
+            if (arguments.Zip(predicate.Arguments, (x, y) => (x, y)).Any(t => t.x != t.y))
             {
                 return new Predicate(predicate.Symbol, arguments);
             }
@@ -267,21 +258,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// <returns>The transformed term.</returns>
         public virtual Term ApplyTo(Function function)
         {
-            var isChanged = false;
+            var arguments = function.Arguments.Select(a => ApplyTo(a)).ToList();
 
-            var arguments = function.Arguments.Select(a =>
-            {
-                var transformed = ApplyTo(a);
-
-                if (transformed != a)
-                {
-                    isChanged = true;
-                }
-
-                return transformed;
-            }).ToList();
-
-            if (isChanged)
+            if (arguments.Zip(function.Arguments, (x, y) => (x, y)).Any(t => t.x != t.y))
             {
                 return new Function(function.Symbol, arguments);
             }
