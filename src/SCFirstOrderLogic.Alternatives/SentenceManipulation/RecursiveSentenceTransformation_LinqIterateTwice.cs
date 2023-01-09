@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
     /// ALTERNATIVE: old version - iterates twice for predicate and function args - once to transform, once to check for changes.
     /// Demonstrably slower. Keeping this around only for reference purposes.
     /// </summary>
-    public abstract class RecursiveSentenceTransformation_IterateTwice : ISentenceTransformation<Sentence>, ITermTransformation<Term>
+    public abstract class RecursiveSentenceTransformation_LinqIterateTwice : ISentenceTransformation<Sentence>, ITermTransformation<Term>
     {
         /// <summary>
         /// <para>

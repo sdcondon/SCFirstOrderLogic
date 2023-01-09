@@ -45,13 +45,13 @@ namespace SCFirstOrderLogic.Benchmarks.SentenceManipulation
         public Sentence Linq() => new VarTransform_Linq(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Sentence);
 
         [Benchmark]
-        public Sentence IterateTwice() => new VarTransform_IterateTwice(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Sentence);
+        public Sentence LinqIterateTwice() => new VarTransform_LinqIterateTwice(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Sentence);
 
-        private class VarTransform_IterateTwice : RecursiveSentenceTransformation_IterateTwice
+        private class VarTransform_LinqIterateTwice : RecursiveSentenceTransformation_LinqIterateTwice
         {
             private readonly bool doSomething;
 
-            public VarTransform_IterateTwice(bool doSomething) => this.doSomething = doSomething;
+            public VarTransform_LinqIterateTwice(bool doSomething) => this.doSomething = doSomething;
 
             public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
             {

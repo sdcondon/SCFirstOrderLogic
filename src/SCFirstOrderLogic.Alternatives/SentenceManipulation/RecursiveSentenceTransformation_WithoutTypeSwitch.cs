@@ -1,7 +1,9 @@
-﻿namespace SCFirstOrderLogic.SentenceManipulation
+﻿using System;
+
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Alternative version of <see cref="RecursiveSentenceTransformation_IterateTwice"/> that calls <see cref="Sentence.Accept{TOut}(ISentenceTransformation{TOut})"/> instead of using a pattern-matching type switch.
+    /// Alternative version of <see cref="RecursiveSentenceTransformation_LinqIterateTwice"/> that calls <see cref="Sentence.Accept{TOut}(ISentenceTransformation{TOut})"/> instead of using a pattern-matching type switch.
     /// </summary>
     public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransformation<Sentence>, ITermTransformation<Term>
     {
@@ -122,20 +124,21 @@
         public virtual Sentence ApplyTo(Predicate predicate)
         {
             var isChanged = false;
+            var transformed = new Term[predicate.Arguments.Count];
 
-            var arguments = predicate.Arguments.Select(a =>
+            for (int i = 0; i < predicate.Arguments.Count; i++)
             {
-                var transformed = a.Accept(this);
-                if (transformed != a)
+                transformed[i] = predicate.Arguments[i].Accept(this);
+
+                if (transformed[i] != predicate.Arguments[i])
                 {
                     isChanged = true;
                 }
-                return transformed;
-            }).ToList();
+            }
 
             if (isChanged)
             {
-                return new Predicate(predicate.Symbol, arguments);
+                return new Predicate(predicate.Symbol, transformed);
             }
             else
             {
@@ -223,20 +226,21 @@
         public virtual Term ApplyTo(Function function)
         {
             var isChanged = false;
+            var transformed = new Term[function.Arguments.Count];
 
-            var arguments = function.Arguments.Select(a =>
+            for (int i = 0; i < function.Arguments.Count; i++)
             {
-                var transformed = a.Accept(this);
-                if (transformed != a)
+                transformed[i] = function.Arguments[i].Accept(this);
+
+                if (transformed[i] != function.Arguments[i])
                 {
                     isChanged = true;
                 }
-                return transformed;
-            }).ToList();
+            }
 
             if (isChanged)
             {
-                return new Function(function.Symbol, arguments);
+                return new Function(function.Symbol, transformed);
             }
             else
             {
