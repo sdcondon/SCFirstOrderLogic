@@ -71,7 +71,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             {
                 // We need to call base.ApplyTo because we might be switching in a term
                 // that itself is or contains variables that also need substituting.
-                // TODO: In theory makes it possible to get us stuck in a loop, but that will
+                // TODO-ROBUSTNESS: In theory makes it possible to get us stuck in a loop, but that will
                 // only happen as a result of bad consumer behaviour, not with e.g. unification
                 // output. Don't want to add the performance burden of checking for this
                 // every time, but could add a separate validation method to allow consumers
