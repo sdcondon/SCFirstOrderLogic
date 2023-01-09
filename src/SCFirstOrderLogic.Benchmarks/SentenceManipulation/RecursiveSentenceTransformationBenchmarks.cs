@@ -42,6 +42,9 @@ namespace SCFirstOrderLogic.Benchmarks.SentenceManipulation
         public Sentence CurrentImpl() => new VarTransform(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Sentence);
 
         [Benchmark]
+        public Sentence Linq() => new VarTransform_Linq(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Sentence);
+
+        [Benchmark]
         public Sentence IterateTwice() => new VarTransform_IterateTwice(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Sentence);
 
         private class VarTransform_IterateTwice : RecursiveSentenceTransformation_IterateTwice
@@ -49,6 +52,18 @@ namespace SCFirstOrderLogic.Benchmarks.SentenceManipulation
             private readonly bool doSomething;
 
             public VarTransform_IterateTwice(bool doSomething) => this.doSomething = doSomething;
+
+            public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
+            {
+                return doSomething ? new VariableDeclaration("X") : variableDeclaration;
+            }
+        }
+
+        private class VarTransform_Linq : RecursiveSentenceTransformation_Linq
+        {
+            private readonly bool doSomething;
+
+            public VarTransform_Linq(bool doSomething) => this.doSomething = doSomething;
 
             public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
             {

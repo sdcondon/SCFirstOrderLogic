@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Base class for recursive transformations of <see cref="Sentence"/> instances to other <see cref="Sentence"/> instances.
     /// </summary>
-    public abstract class RecursiveSentenceTransformation : ISentenceTransformation<Sentence>, ITermTransformation<Term>
+    public abstract class RecursiveSentenceTransformation_Linq : ISentenceTransformation<Sentence>, ITermTransformation<Term>
     {
         /// <summary>
         /// <para>
@@ -134,21 +135,22 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public virtual Sentence ApplyTo(Predicate predicate)
         {
             var isChanged = false;
-            var transformed = new Term[predicate.Arguments.Count];
 
-            for (int i = 0; i < predicate.Arguments.Count; i++)
+            var arguments = predicate.Arguments.Select(a =>
             {
-                transformed[i] = ApplyTo(predicate.Arguments[i]);
+                var transformed = ApplyTo(a);
 
-                if (transformed[i] != predicate.Arguments[i])
+                if (transformed != a)
                 {
                     isChanged = true;
                 }
-            }
+
+                return transformed;
+            }).ToList();
 
             if (isChanged)
             {
-                return new Predicate(predicate.Symbol, transformed);
+                return new Predicate(predicate.Symbol, arguments);
             }
 
             return predicate;
@@ -266,21 +268,22 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public virtual Term ApplyTo(Function function)
         {
             var isChanged = false;
-            var transformed = new Term[function.Arguments.Count];
 
-            for (int i = 0; i < function.Arguments.Count; i++)
+            var arguments = function.Arguments.Select(a =>
             {
-                transformed[i] = ApplyTo(function.Arguments[i]);
+                var transformed = ApplyTo(a);
 
-                if (transformed[i] != function.Arguments[i])
+                if (transformed != a)
                 {
                     isChanged = true;
                 }
-            }
+
+                return transformed;
+            }).ToList();
 
             if (isChanged)
             {
-                return new Function(function.Symbol, transformed);
+                return new Function(function.Symbol, arguments);
             }
 
             return function;
