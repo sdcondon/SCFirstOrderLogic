@@ -1,8 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
-using System.Collections.Generic;
-using System;
-using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 using SCFirstOrderLogic.SentenceManipulation;
+using System.Collections.Generic;
+using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 namespace SCFirstOrderLogic.Benchmarks.SentenceManipulation
 {

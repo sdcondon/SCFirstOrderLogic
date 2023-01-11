@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://sdcondon.net/SCFirstOrderLogic/</PackageProjectUrl>
     <PackageReleaseNotes>See https://github.com/sdcondon/SCFirstOrderLogic/releases.</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Copyright>2021-2022 Simon Condon</Copyright>
+    <Copyright>2021-2023 Simon Condon</Copyright>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
