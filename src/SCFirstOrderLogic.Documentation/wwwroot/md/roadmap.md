@@ -22,6 +22,7 @@ Really the only reason that they're here is that I originally had all the CNF st
 Now that the CNF types are in the root namespace, there's really no reason for these not to be as well.
 * I'm almost certainly going to overheaul the collection types used in Predicate, Function, CNFClause and CNFSentence. There are some robustness issues as it stands. Will probably move away from ReadOnlyCollection and towards System.Collections.Immutable.
 * May rename/otherwise break the SentenceManipulation.CNFExaminer class - it irks me somewhat..
+* Also want to rename the clause store implementations - MemoryClauseStore, perhaps.
 
 On the back-burner, for later consideration:
 

@@ -101,7 +101,7 @@ namespace SCFirstOrderLogic.Inference
                 var positiveQueryTask = PositiveQuery.ExecuteAsync(effectiveCts.Token);
                 var negativeQueryTask = NegativeQuery.ExecuteAsync(effectiveCts.Token);
 
-                // this could probably be written more succinctly..
+                // TODO: this could probably be written more succinctly. Do so before uncommenting this.
                 var completedQueryTask = await Task.WhenAny(positiveQueryTask, negativeQueryTask);
                 if (completedQueryTask == positiveQueryTask)
                 {
