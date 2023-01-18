@@ -88,7 +88,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                     explanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
                     explanation.AppendLine("}");
 
-                    foreach (var term in CNFExaminer.FindNormalisationTerms(proofStep.KnownPredicates.Append(UsefulPredicates[i])))
+                    foreach (var term in CNFInspector.FindNormalisationTerms(proofStep.KnownPredicates.Append(UsefulPredicates[i])))
                     {
                         explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
                     }

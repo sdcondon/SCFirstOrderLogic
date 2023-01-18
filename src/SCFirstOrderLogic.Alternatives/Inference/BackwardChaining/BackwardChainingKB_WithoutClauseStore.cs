@@ -165,7 +165,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                         resultExplanation.AppendLine("Where:");
                         var normalisationTermsToExplain = new HashSet<Term>();
 
-                        foreach (var term in CNFExaminer.FindNormalisationTerms(proof.Steps.Keys))
+                        foreach (var term in CNFInspector.FindNormalisationTerms(proof.Steps.Keys))
                         {
                             normalisationTermsToExplain.Add(term);
                         }

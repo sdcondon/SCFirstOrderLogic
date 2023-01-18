@@ -6,8 +6,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
     /// <summary>
     /// Utility logic for the interrogation of sentences - specifically, the normalisation terms (standardised variables and Skolem functions) within them.
     /// </summary>
-    // TODO-BREAKING-V4: I don't like this name. CNFInspector, maybe?
-    public static class CNFExaminer
+    public static class CNFInspector
     {
         /// <summary>
         /// Returns an enumerable of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
