@@ -11,18 +11,18 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     /// <summary>
     /// Implementation of <see cref="IClauseStore"/> that just uses an in-memory dictionary (keyed by consequent symbol) to store known clauses.
     /// </summary>
-    public class SimpleClauseStore : IClauseStore
+    public class DictionaryClauseStore : IClauseStore
     {
         private readonly Dictionary<object, HashSet<CNFDefiniteClause>> clausesByConsequentSymbol = new();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class.
+        /// Initializes a new instance of the <see cref="DictionaryClauseStore"/> class.
         /// </summary>
-        public SimpleClauseStore() { }
+        public DictionaryClauseStore() { }
 
         /// <summary>
         /// <para>
-        /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class that is pre-populated with some knowledge.
+        /// Initializes a new instance of the <see cref="DictionaryClauseStore"/> class that is pre-populated with some knowledge.
         /// </para>
         /// <para>
         /// NB: Of course, most implementations of <see cref="IClauseStore"/> won't have a constructor for pre-population, because most
@@ -31,7 +31,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// </para>
         /// </summary>
         /// <param name="sentences">The initial content of the store.</param>
-        public SimpleClauseStore(IEnumerable<Sentence> sentences)
+        public DictionaryClauseStore(IEnumerable<Sentence> sentences)
         {
             foreach (var sentence in sentences)
             {

@@ -126,7 +126,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         public static Test RepeatedQueryExecution => TestThat
             .Given(() =>
             {
-                var knowledgeBase = new SimpleForwardChainingKnowledgeBase(new SimpleClauseStore());
+                var knowledgeBase = new SimpleForwardChainingKnowledgeBase(new HashSetClauseStore());
                 return knowledgeBase.CreateQuery(IsGreedy(John));
             })
             .When(q =>
@@ -149,7 +149,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 
         private static SimpleForwardChainingQuery MakeQuery(Sentence query, IEnumerable<Sentence> kb)
         {
-            var knowledgeBase = new SimpleForwardChainingKnowledgeBase(new SimpleClauseStore(kb));
+            var knowledgeBase = new SimpleForwardChainingKnowledgeBase(new HashSetClauseStore(kb));
             return knowledgeBase.CreateQuery(query);
         }
     }

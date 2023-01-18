@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         [Benchmark(Baseline = true)]
         public static bool CrimeExample_SimpleBackwardChainingKnowledgeBase()
         {
-            var kb = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
+            var kb = new SimpleBackwardChainingKnowledgeBase(new DictionaryClauseStore());
             kb.TellAsync(Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
         }

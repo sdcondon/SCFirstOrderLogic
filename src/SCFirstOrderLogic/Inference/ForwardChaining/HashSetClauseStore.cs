@@ -11,18 +11,18 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     /// <summary>
     /// A (rather inefficient) implementation of <see cref="IClauseStore"/> that just uses a <see cref="HashSet{T}"/> to store knowledge.
     /// </summary>
-    public class SimpleClauseStore : IKnowledgeBaseClauseStore
+    public class HashSetClauseStore : IKnowledgeBaseClauseStore
     {
         private readonly HashSet<CNFDefiniteClause> clauses = new();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class.
+        /// Initializes a new instance of the <see cref="HashSetClauseStore"/> class.
         /// </summary>
-        public SimpleClauseStore() { }
+        public HashSetClauseStore() { }
 
         /// <summary>
         /// <para>
-        /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class that is pre-populated with some knowledge.
+        /// Initializes a new instance of the <see cref="HashSetClauseStore"/> class that is pre-populated with some knowledge.
         /// </para>
         /// <para>
         /// NB: Of course, most implementations of <see cref="IClauseStore"/> won't have a constructor for pre-population, because most
@@ -31,7 +31,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// </para>
         /// </summary>
         /// <param name="sentences">The initial content of the store.</param>
-        public SimpleClauseStore(IEnumerable<Sentence> sentences)
+        public HashSetClauseStore(IEnumerable<Sentence> sentences)
         {
             foreach (var sentence in sentences)
             {
@@ -72,7 +72,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         }
 
         /// <summary>
-        /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="SimpleClauseStore"/>.
+        /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="HashSetClauseStore"/>.
         /// </summary>
         private class QueryStore : IQueryClauseStore
         {

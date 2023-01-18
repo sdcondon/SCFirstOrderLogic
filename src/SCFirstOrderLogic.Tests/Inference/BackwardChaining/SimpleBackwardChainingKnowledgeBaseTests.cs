@@ -83,7 +83,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             })
             .When((_, tc) =>
             {
-                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
+                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new DictionaryClauseStore());
                 knowledgeBase.Tell(tc.Knowledge);
 
                 var query = knowledgeBase.CreateQuery(tc.Query);
@@ -128,7 +128,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             })
             .When(tc =>
             {
-                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore(tc.Knowledge));
+                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new DictionaryClauseStore(tc.Knowledge));
                 var query = knowledgeBase.CreateQuery(tc.Query);
                 query.Execute();
 
@@ -140,7 +140,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         public static Test RepeatedQueryExecution => TestThat
             .Given(() =>
             {
-                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
+                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new DictionaryClauseStore());
                 return knowledgeBase.CreateQuery(IsGreedy(John));
             })
             .When(q =>
