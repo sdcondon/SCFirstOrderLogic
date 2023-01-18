@@ -1,5 +1,4 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
-using System;
+﻿using System;
 
 namespace SCFirstOrderLogic.SentenceFormatting
 {

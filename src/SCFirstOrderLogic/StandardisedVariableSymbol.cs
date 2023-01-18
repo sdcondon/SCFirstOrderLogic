@@ -1,6 +1,6 @@
 ﻿using SCFirstOrderLogic.SentenceFormatting;
 
-namespace SCFirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic
 {
     /// <summary>
     /// <para>
