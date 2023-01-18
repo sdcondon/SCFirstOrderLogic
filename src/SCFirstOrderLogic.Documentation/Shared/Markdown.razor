@@ -23,6 +23,7 @@
 
     var pipeline = new MarkdownPipelineBuilder()
         .Use(new Extension(Nav.Uri))
+        .UseTaskLists()
         .UsePipeTables()
         .UseBootstrap()
         .Build();
