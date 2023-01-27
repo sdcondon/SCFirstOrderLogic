@@ -11,6 +11,8 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     /// <summary>
     /// Implementation of <see cref="IClauseStore"/> that just uses an in-memory dictionary (keyed by consequent symbol) to store known clauses.
     /// </summary>
+    // TODO: given the fact that all the methods are async, putting some degree of thread-safety in here would probably be a good idea.
+    // Keep it simple - just lock. There's no way a serious KB with a high-concurrency requirement is going to use this.
     public class DictionaryClauseStore : IClauseStore
     {
         private readonly Dictionary<object, HashSet<CNFDefiniteClause>> clausesByConsequentSymbol = new();

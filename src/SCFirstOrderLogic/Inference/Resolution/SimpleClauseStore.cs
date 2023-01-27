@@ -8,8 +8,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// A basic implementation of <see cref="IKnowledgeBaseClauseStore"/> that just maintains all known clauses in
-    /// an (un-indexed) in-memory collection and iterates through them all to find resolvents.
+    /// a <see cref="ConcurrentBag{T}"/> without any indexing and iterates through them all to find resolvents.
     /// </summary>
+    // TODO: Maybe move away from ConcurrentBag to just a HashSet with some concurrency stuff added manually.
+    // Mostly 'cos I'd much rather have a HashSetClauseStore as our simple example store, rather than have to
+    // talk about ConcurrentBags with additional uniqueness check..
     public class SimpleClauseStore : IKnowledgeBaseClauseStore
     {
         private readonly ConcurrentBag<CNFClause> clauses = new();
