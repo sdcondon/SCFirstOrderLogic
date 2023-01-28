@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// Encapsulates a query, allowing for step-by-step execution, as well as examination of those steps, as or after they are carried out.
     /// Notes:
     /// <list type="bullet">
-    /// <item/>TODO: Not thread-safe (i.e. not re-entrant) - despite the fact that resolution is ripe for parallelisation.
+    /// <item/>TODO: Not thread-safe - despite the fact that resolution is ripe for parallelisation.
     /// </list>
     /// </summary>
     public class SimpleResolutionQuery : SteppableQuery<ClauseResolution>

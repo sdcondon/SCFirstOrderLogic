@@ -44,7 +44,7 @@ namespace SCFirstOrderLogic.Inference
         /// <returns>A task that returns a new <see cref="EqualityAxiomisingKnowledgeBase"/> instance.</returns>
         public static async Task<EqualityAxiomisingKnowledgeBase> CreateAsync(IKnowledgeBase innerKnowledgeBase)
         {
-            // ..could invoke these in parallel if we wanted to. At the time of writing the only KB we have isn't re-entrant though..
+            // ..could invoke these in parallel if we wanted to. At the time of writing the only KB we have isn't thread-safe, though..
             await innerKnowledgeBase.TellAsync(ForAll(X, AreEqual(X, X))); // Reflexivity
             await innerKnowledgeBase.TellAsync(ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X)))); // Commutativity
             await innerKnowledgeBase.TellAsync(ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z)))); // Transitivity
