@@ -83,11 +83,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 new(
                     Clause1: new CNFClause(S(C) | !T(C)),
                     Clause2: new CNFClause(!S(C) | T(C)),
-                    ExpectedResolvents: new[]
+                    ExpectedResolvents: new CNFClause[]
                     {
-                        // Both of these resolvents are trivially true - so largely useless - TODO: the expectation should probably be no resolvents in this case?
-                        new CNFClause(S(C) | !S(C)),
-                        new CNFClause(T(C) | !T(C))
+                        // Both of these resolvents are trivially true - we expect them to not be returned
+                        //new CNFClause(S(C) | !S(C)),
+                        //new CNFClause(T(C) | !T(C))
                     }),
 
                 // Variable chain (y=x/x=d) - ordering shouldn't matter

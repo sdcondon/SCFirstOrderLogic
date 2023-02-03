@@ -80,7 +80,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                                         break;
                                     }
 
-                                    if (rLiteral1.Predicate.Equals(rLiteral2) && rLiteral1.IsPositive != rLiteral2.IsPositive)
+                                    if (rLiteral1.Predicate.Equals(rLiteral2.Predicate) && rLiteral1.IsPositive != rLiteral2.IsPositive)
                                     {
                                         clauseIsTriviallyTrue = true;
                                         break;
