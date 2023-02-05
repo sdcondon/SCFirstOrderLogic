@@ -20,18 +20,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public static Test Resolution => TestThat
             .GivenEachOf<TestCase>(() => new TestCase[]
             {
-                                // Unresolvable - Multiple trivially true resolvents (factoring is significant..)
-                new(
-                    Clause1: new CNFClause(V(X, Y) | !V(Y, X)),
-                    Clause2: new CNFClause(V(X, Y) | !V(Y, X)),
-                    ExpectedResolvents: new CNFClause[]
-                    {
-                        // Both of these resolvents are trivially true - we expect them to not be returned
-                        //new CNFClause(V(X, X) | !V(X, X)),
-                        //new CNFClause(V(Y, Y) | !V(Y, Y))
-                    }),
-
-
                 // Modus Ponens resolution with a constant
                 new(
                     Clause1: new CNFClause(!S(C) | T(C)), // S(C) => T(C)
@@ -122,7 +110,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         //new CNFClause(T(C) | !T(C))
                     }),
 
-                // Unresolvable - Multiple trivially true resolvents (factoring is significant..)
+                // Unresolvable - Multiple trivially true resolvents (with variables..)
                 new(
                     Clause1: new CNFClause(V(X, Y) | !V(Y, X)),
                     Clause2: new CNFClause(V(X, Y) | !V(Y, X)),
