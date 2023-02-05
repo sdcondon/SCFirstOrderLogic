@@ -62,7 +62,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         var unifiedLiterals = new HashSet<Literal>(
                             clause1.Literals.Where(l => l != literal1)
                             .Concat(clause2.Literals.Where(l => l != literal2))
-                            .Select(l => unifier.ApplyTo(l))); ;
+                            .Select(l => unifier.ApplyTo(l)));
 
                         var factoringCarriedOut = false;
                         var clauseIsTriviallyTrue = false;
