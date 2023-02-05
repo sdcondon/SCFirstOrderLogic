@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         private record TestCase(CNFClause Clause1, CNFClause Clause2, params CNFClause[] ExpectedResolvents);
 
-        public static Test ResolutionOfResolvableClauses => TestThat
+        public static Test Resolution => TestThat
             .GivenEachOf<TestCase>(() => new TestCase[]
             {
                 // Modus Ponens resolution with a constant
@@ -56,12 +56,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     Clause2: new CNFClause(!S(C)),
                     ExpectedResolvents: CNFClause.Empty),
 
-                // Unresolvable clauses
-                new(
-                    Clause1: new CNFClause(S(C)),
-                    Clause2: new CNFClause(T(C)),
-                    ExpectedResolvents: Array.Empty<CNFClause>()),
-
                 // Multiply-resolvable clauses
                 // There's probably a better (more intuitive) human-language example, here
                 new(
@@ -77,17 +71,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         // {Y/D} gives ∀X, T(C) ∨ ¬T(X) (that is, T(X) ⇒ T(C)). If anything is T, C is. (If anyone is wearing a T-shirt, TShirtLover is)
                         // NB: becomes obvious by forward chaining contrapositive of Clause1 to contrapositive of Clause2.
                         new CNFClause(T(C) | !T(X)),
-                    }),
-
-                // Multiple trivially true resolvents
-                new(
-                    Clause1: new CNFClause(S(C) | !T(C)),
-                    Clause2: new CNFClause(!S(C) | T(C)),
-                    ExpectedResolvents: new CNFClause[]
-                    {
-                        // Both of these resolvents are trivially true - we expect them to not be returned
-                        //new CNFClause(S(C) | !S(C)),
-                        //new CNFClause(T(C) | !T(C))
                     }),
 
                 // Variable chain (y=x/x=d) - ordering shouldn't matter
@@ -109,6 +92,23 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 ////        new CNFClause(!V(C, D)), // ¬Equals(C, D) 
                 ////        new CNFClause(!V(C, D)), // ¬Equals(C, D) - don't mind that its returned twice. 
                 ////    }),
+
+                // Unresolvable - different predicates only
+                new(
+                    Clause1: new CNFClause(S(C)),
+                    Clause2: new CNFClause(T(C)),
+                    ExpectedResolvents: Array.Empty<CNFClause>()),
+
+                // Unresolvable - Multiple trivially true resolvents
+                new(
+                    Clause1: new CNFClause(S(C) | !T(C)),
+                    Clause2: new CNFClause(!S(C) | T(C)),
+                    ExpectedResolvents: new CNFClause[]
+                    {
+                        // Both of these resolvents are trivially true - we expect them to not be returned
+                        //new CNFClause(S(C) | !S(C)),
+                        //new CNFClause(T(C) | !T(C))
+                    }),
             })
             .When(g => ClauseResolution.Resolve(g.Clause1, g.Clause2))
             .ThenReturns(((g, r) => r.Select(u => u.Resolvent).Should().BeEquivalentTo(g.ExpectedResolvents)));
