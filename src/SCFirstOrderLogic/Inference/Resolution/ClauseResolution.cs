@@ -60,9 +60,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     if (LiteralUnifier.TryCreate(literal1, literal2.Negate(), out var unifier))
                     {
                         var unifiedLiterals = new HashSet<Literal>(
-                            clause1.Literals.Except(new[] { literal1 })
-                            .Concat(clause2.Literals.Except(new[] { literal2 }))
-                            .Select(l => unifier.ApplyTo(l)));
+                            clause1.Literals.Where(l => l != literal1)
+                            .Concat(clause2.Literals.Where(l => l != literal2))
+                            .Select(l => unifier.ApplyTo(l))); ;
 
                         var factoringCarriedOut = false;
                         var clauseIsTriviallyTrue = false;
@@ -80,7 +80,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                                         break;
                                     }
 
-                                    if (rLiteral1.Predicate.Equals(rLiteral2.Predicate) && rLiteral1.IsPositive != rLiteral2.IsPositive)
+                                    if (rLiteral1.Equals(rLiteral2.Negate()))
                                     {
                                         clauseIsTriviallyTrue = true;
                                         break;
