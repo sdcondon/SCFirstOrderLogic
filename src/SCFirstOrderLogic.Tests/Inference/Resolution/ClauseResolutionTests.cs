@@ -117,8 +117,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     ExpectedResolvents: new CNFClause[]
                     {
                         // Both of these resolvents are trivially true - we expect them to not be returned
-                        //new CNFClause(V(X, X) | !V(X, X)),
-                        //new CNFClause(V(Y, Y) | !V(Y, Y))
+                        //new CNFClause(V(X, X) | !V(X, X)), // with {Y/X}
+                        //new CNFClause(V(Y, Y) | !V(Y, Y)), // with {X/Y}
                     }),
             })
             .When(g => ClauseResolution.Resolve(g.Clause1, g.Clause2))
