@@ -2,7 +2,6 @@
 using FlUnit;
 ////using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory;
 using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory;
-using SCFirstOrderLogic.Inference.ForwardChaining;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -130,6 +129,23 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .ThenReturns()
             .And((_, rv) => rv.Should().BeFalse())
             .And((query, _) => query.Result.Should().BeFalse());
+
+        public static Test CriticalBug => TestThat
+            .GivenTestContext()
+            .When(_ =>
+            {
+                var resolutionKb = new SimpleResolutionKnowledgeBase(
+                    new SimpleClauseStore(),
+                    SimpleResolutionKnowledgeBase.Filters.None,
+                    SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+                var equalityKb = EqualityAxiomisingKnowledgeBase.CreateAsync(resolutionKb).GetAwaiter().GetResult();
+                var query = equalityKb.CreateQuery(new Predicate("Foo"));
+                query.ExecuteAsync().Wait();
+                return (SimpleResolutionQuery)query;
+            })
+            .ThenReturns()
+            .And((_, query) => query.Result.Should().BeFalse())
+            .And((cxt, query) => cxt.WriteOutputLine(query.ResultExplanation));
 
         public static Test RepeatedQueryExecution => TestThat
             .Given(() =>
