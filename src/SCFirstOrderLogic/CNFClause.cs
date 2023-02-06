@@ -13,32 +13,28 @@ namespace SCFirstOrderLogic
     public class CNFClause : IEquatable<CNFClause>
     {
         /// <summary>
-        /// Initialises a new instance of the <see cref="CNFClause"/> class from a sentence that is a disjunction of literals (a literal being a predicate or a negated predicate).
-        /// </summary>
-        /// <param name="sentence">The clause, represented as a <see cref="Sentence"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a disjunction of literals.</param>
-        public CNFClause(Sentence sentence)
-        {
-            var ctor = new ClauseConstructor();
-            ctor.Visit(sentence);
-
-            // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
-            // its a super low-level class and I'd rather err on the side of using the smallest & simplest implementation possible.
-            // Note that we order literals - which is important to justifiably consider the clause "normalised".
-            // TODO-BUG: Possible problems when hash code collisions occur. Probably worth a more robust approach at some point - but
-            // clause equality will be checked a LOT during resolution..
-            Literals = ctor.Literals.OrderBy(l => l.GetHashCode()).ToArray();
-        }
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="CNFClause"/> class from an enumerable of literals (removing any mutually-negating literals and duplicates as it does so).
+        /// Initialises a new instance of the <see cref="CNFClause"/> class from an enumerable of literals.
         /// </summary>
         /// <param name="literals">The set of literals to be included in the clause.</param>
         public CNFClause(IEnumerable<Literal> literals)
         {
-            // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
-            // its a super low-level class and I'd rather err on the side of using the simplest/smallest implementation possible.
-            // Note that we order literals - important to justifiably consider the clause "normalised".
+            // NB #1: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
+            // but its a super low-level class and I'd so far I've erred on the side of using the simplest/smallest
+            // implementation possible - that is, an array.
+            // NB #2: Note that we order literals - important to justifiably consider the clause "normalised".
+            // TODO-BUG-MAJOR: Potential equality bug on hash code collision.
+            // One would hope that OrderedImmutableSet handles equality well.
+            // Using a set would also deal with being handed something containing dups.
             Literals = literals.OrderBy(l => l.GetHashCode()).ToArray();
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="CNFClause"/> class from a sentence that is a disjunction of literals (a literal being a predicate or a negated predicate).
+        /// </summary>
+        /// <param name="sentence">The clause, represented as a <see cref="Sentence"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a disjunction of literals.</param>
+        public CNFClause(Sentence sentence)
+            : this(ConstructionVisitor.GetLiterals(sentence))
+        {
         }
 
         /// <summary>
@@ -49,6 +45,8 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Gets the collection of literals that comprise this clause (ordered by hash code).
         /// </summary>
+        // TODO: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
+        // Investigate perf impact of OrderedImmutableSet?
         public IReadOnlyCollection<Literal> Literals { get; }
 
         /// <summary>
@@ -181,9 +179,16 @@ namespace SCFirstOrderLogic
             return hash.ToHashCode();
         }
 
-        private class ClauseConstructor : RecursiveSentenceVisitor
+        private class ConstructionVisitor : RecursiveSentenceVisitor
         {
-            public HashSet<Literal> Literals { get; } = new HashSet<Literal>();
+            private HashSet<Literal> literals = new HashSet<Literal>();
+
+            public static HashSet<Literal> GetLiterals(Sentence sentence)
+            {
+                var visitor = new ConstructionVisitor();
+                visitor.Visit(sentence);
+                return visitor.literals;
+            }
 
             public override void Visit(Sentence sentence)
             {
@@ -197,7 +202,7 @@ namespace SCFirstOrderLogic
                     // Assume we've hit a literal. NB will throw if its not actually a literal.
                     // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the Literal ctor that
                     // we invoke here does so to figure out the details of the literal). So we can just return rather than invoking base.Visit.
-                    Literals.Add(new Literal(sentence));
+                    literals.Add(new Literal(sentence));
                 }
             }
         }

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using SCFirstOrderLogic.SentenceManipulation;
+using System.Collections.Generic;
 using System.Linq;
-using SCFirstOrderLogic.SentenceManipulation;
 
 namespace SCFirstOrderLogic
 {
@@ -10,34 +10,50 @@ namespace SCFirstOrderLogic
     public class CNFSentence
     {
         /// <summary>
+        /// Initialises a new instance of the <see cref="CNFSentence"/> class from an enumerable of clauses.
+        /// </summary>
+        /// <param name="clauses">The set of clauses to be included in the sentence.</param>
+        public CNFSentence(IEnumerable<CNFClause> clauses)
+        {
+            // NB #1: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
+            // but its a super low-level class and I'd so far I've erred on the side of using the simplest/smallest
+            // implementation possible - that is, an array.
+            // NB #2: Note that we order clauses - important to justifiably consider the sentence "normalised".
+            // TODO-BUG-MAJOR: Potential equality bug on hash code collision..
+            // One would hope that OrderedImmutableSet handles equality well.
+            // Using a set would also deal with being handed something containing dups.
+            Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
+        }
+
+        /// <summary>
         /// Initialises a new instance of the <see cref="CNFSentence"/> class, implicitly converting the provided sentence to CNF in the process.
         /// </summary>
         /// <param name="sentence">The sentence to (convert and) represent.</param>
         public CNFSentence(Sentence sentence)
+            : this(ConstructionVisitor.GetClauses(sentence))
         {
-            var cnfSentence = CNFConversion.ApplyTo(sentence);
-
-            var clauses = new List<CNFClause>();
-            new CNFClauseFinder(clauses).Visit(cnfSentence);
-
-            // BUG: Potential equality bug on hash code collision..
-            Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
         }
 
         /// <summary>
         /// Gets the collection of clauses that comprise this CNF sentence.
         /// </summary>
-        // TODO-BREAKING: logically, this should be a set. Investigate perf impact of OrderedImmutableSet?
+        // TODO: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
+        // Investigate perf impact of ImmutableSortedSet?
         public IReadOnlyCollection<CNFClause> Clauses { get; }
 
         /// <summary>
         /// Sentence visitor that constructs a set of <see cref="CNFClause"/> objects from a <see cref="Sentence"/> in CNF.
         /// </summary>
-        private class CNFClauseFinder : RecursiveSentenceVisitor
+        private class ConstructionVisitor : RecursiveSentenceVisitor
         {
-            private readonly ICollection<CNFClause> clauses;
+            private readonly ICollection<CNFClause> clauses = new List<CNFClause>();
 
-            public CNFClauseFinder(ICollection<CNFClause> clauses) => this.clauses = clauses;
+            public static IEnumerable<CNFClause> GetClauses(Sentence sentence)
+            {
+                var visitor = new ConstructionVisitor();
+                visitor.Visit(CNFConversion.ApplyTo(sentence));
+                return visitor.clauses;
+            }
 
             /// <inheritdoc />
             public override void Visit(Sentence sentence)
