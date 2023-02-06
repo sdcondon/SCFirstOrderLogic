@@ -49,6 +49,6 @@ namespace SCFirstOrderLogic
         /// A clause that is the same as this one, except for the fact that all variable
         /// references are replaced with new ones.
         /// </returns>
-        public new CNFDefiniteClause Restandardize() => new CNFDefiniteClause(base.Restandardize());
+        public new CNFDefiniteClause Restandardise() => new CNFDefiniteClause(base.Restandardise());
     }
 }

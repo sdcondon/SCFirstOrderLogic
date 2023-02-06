@@ -135,7 +135,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 {
                     foreach (var clause in clausesWithThisGoal)
                     {
-                        var restandardisedClause = clause.Restandardize();
+                        var restandardisedClause = clause.Restandardise();
 
                         var lhs = restandardisedClause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
                         var rhs = restandardisedClause.Literals.Single(l => l.IsPositive);

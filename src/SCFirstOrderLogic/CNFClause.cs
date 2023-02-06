@@ -95,8 +95,7 @@ namespace SCFirstOrderLogic
         /// A clause that is the same as this one, except for the fact that all variable
         /// references are replaced with new ones.
         /// </returns>
-        // TODO-BREAKING-V4: un-Americanise the z, here? A little petulant perhaps, but meh.
-        public CNFClause Restandardize()
+        public CNFClause Restandardise()
         {
             var mapping = new Dictionary<StandardisedVariableSymbol, StandardisedVariableSymbol>();
 

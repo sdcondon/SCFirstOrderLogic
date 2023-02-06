@@ -211,7 +211,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 {
                     foreach (var clause in clausesWithThisGoal)
                     {
-                        var restandardisedClause = clause.Restandardize();
+                        var restandardisedClause = clause.Restandardise();
                         var clauseProofPrototype = new Proof(parentProof);
 
                         if (LiteralUnifier.TryUpdate(restandardisedClause.Consequent, goal, clauseProofPrototype.Unifier))
