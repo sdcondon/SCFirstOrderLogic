@@ -12,8 +12,6 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     /// <summary>
     /// A (rather inefficient) implementation of <see cref="IClauseStore"/> that just uses a <see cref="HashSet{T}"/> to store clauses.
     /// </summary>
-    // TODO: given the fact that all the methods are async, putting some degree of thread-safety in here would probably be a good idea.
-    // keep it simple - just lock stuff. There's no way a serious KB with a high-concurrency requirement is going to use this.
     public class HashSetClauseStore : IKnowledgeBaseClauseStore
     {
         // Yes, not a hash set - System.Collections.Concurrent doesn't include a hash set implementation.

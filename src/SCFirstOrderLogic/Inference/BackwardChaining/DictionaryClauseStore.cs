@@ -1,6 +1,7 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
 using SCFirstOrderLogic.SentenceManipulation.Unification;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -11,11 +12,9 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     /// <summary>
     /// Implementation of <see cref="IClauseStore"/> that just uses an in-memory dictionary (keyed by consequent symbol) to store known clauses.
     /// </summary>
-    // TODO: given the fact that all the methods are async, putting some degree of thread-safety in here would probably be a good idea.
-    // Keep it simple - just lock. There's no way a serious KB with a high-concurrency requirement is going to use this.
     public class DictionaryClauseStore : IClauseStore
     {
-        private readonly Dictionary<object, HashSet<CNFDefiniteClause>> clausesByConsequentSymbol = new();
+        private readonly ConcurrentDictionary<object, ConcurrentDictionary<CNFDefiniteClause, byte>> clausesByConsequentSymbol = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryClauseStore"/> class.
@@ -54,10 +53,10 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             if (!clausesByConsequentSymbol.TryGetValue(clause.Consequent.Symbol, out var clausesWithThisConsequentSymbol))
             {
-                clausesWithThisConsequentSymbol = clausesByConsequentSymbol[clause.Consequent.Symbol] = new HashSet<CNFDefiniteClause>();
+                clausesWithThisConsequentSymbol = clausesByConsequentSymbol[clause.Consequent.Symbol] = new ConcurrentDictionary<CNFDefiniteClause, byte>();
             }
 
-            return Task.FromResult(clausesWithThisConsequentSymbol.Add(clause));
+            return Task.FromResult(clausesWithThisConsequentSymbol.TryAdd(clause, 0));
         }
 
 #pragma warning disable CS1998 // async lacks await.. Could add await Task.Yield() to silence this, but it is not worth the overhead.
@@ -66,7 +65,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             foreach (var clauseList in clausesByConsequentSymbol.Values)
             {
-                foreach (var clause in clauseList)
+                foreach (var clause in clauseList.Keys)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     yield return clause;
@@ -82,7 +81,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
             {
-                foreach (var clause in clausesWithThisGoal)
+                foreach (var clause in clausesWithThisGoal.Keys)
                 {
                     var restandardisedClause = clause.Restandardise();
                     var substitution = new VariableSubstitution(constraints);
