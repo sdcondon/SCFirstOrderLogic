@@ -21,7 +21,10 @@ Label sets currently used by SentenceFormatter likely to become full interfaces 
 Really the only reason that they're here is that I originally had all the CNF stuff in SentenceManipulation.
 Now that the CNF types are in the root namespace, there's really no reason for these not to be as well.
 * [x] May rename/otherwise break the SentenceManipulation.CNFExaminer class - it irks me somewhat..
-* [x] Also want to rename the clause store implementations - MemoryClauseStore, perhaps.
+* [ ] Also want to rename the clause store implementations
+  * [x] BackwardChaining.SimpleClauseStore -> DictionaryClauseStore
+  * [x] ForwardChaining.SimpleClauseStore -> HashSetClauseStore
+  * [ ] Resolution.SimpleClauseStore -> HashSetClauseStore
 
 On the back-burner, for later consideration:
 
