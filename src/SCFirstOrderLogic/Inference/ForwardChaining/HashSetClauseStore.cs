@@ -1,6 +1,7 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
 using SCFirstOrderLogic.SentenceManipulation.Unification;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -15,7 +16,11 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     // keep it simple - just lock stuff. There's no way a serious KB with a high-concurrency requirement is going to use this.
     public class HashSetClauseStore : IKnowledgeBaseClauseStore
     {
-        private readonly HashSet<CNFDefiniteClause> clauses = new();
+        // Yes, not a hash set - System.Collections.Concurrent doesn't include a hash set implementation.
+        // I want some degree of concurrency support, though. Using a concurrent dictionary means some overhead,
+        // but its not worth doing anything else for this basic implementation. Might consider using
+        // a third-party package for an actual concurrent hash set at some point, but.. probably won't.
+        private readonly ConcurrentDictionary<CNFDefiniteClause, byte> clauses = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HashSetClauseStore"/> class.
@@ -44,7 +49,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                         throw new ArgumentException($"All forward chaining knowledge must be expressable as definite clauses. The normalisation of {sentence} includes {clause}, which is not a definite clause");
                     }
 
-                    clauses.Add(new CNFDefiniteClause(clause));
+                    clauses.TryAdd(new CNFDefiniteClause(clause), 0);
                 }
             }
         }
@@ -52,14 +57,14 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// <inheritdoc/>
         public Task<bool> AddAsync(CNFDefiniteClause clause, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(clauses.Add(clause));
+            return Task.FromResult(clauses.TryAdd(clause, 0));
         }
 
 #pragma warning disable CS1998 // async lacks await.. Could add await Task.Yield() to silence this, but it is not worth the overhead.
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFDefiniteClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
-            foreach (var clause in clauses)
+            foreach (var clause in clauses.Keys)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 yield return clause;
@@ -78,21 +83,21 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// </summary>
         private class QueryStore : IQueryClauseStore
         {
-            private readonly HashSet<CNFDefiniteClause> clauses;
+            private readonly ConcurrentDictionary<CNFDefiniteClause, byte> clauses;
 
-            public QueryStore(IEnumerable<CNFDefiniteClause> clauses) => this.clauses = new HashSet<CNFDefiniteClause>(clauses);
+            public QueryStore(IEnumerable<KeyValuePair<CNFDefiniteClause, byte>> clauses) => this.clauses = new(clauses);
 
             /// <inheritdoc />
             public Task<bool> AddAsync(CNFDefiniteClause clause, CancellationToken cancellationToken = default)
             {
-                return Task.FromResult(clauses.Add(clause));
+                return Task.FromResult(clauses.TryAdd(clause, 0));
             }
 
 #pragma warning disable CS1998 // async lacks await.. Could add await Task.Yield() to silence this, but it is not worth the overhead.
             /// <inheritdoc />
             public async IAsyncEnumerator<CNFDefiniteClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
             {
-                foreach (var clause in clauses)
+                foreach (var clause in clauses.Keys)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     yield return clause;

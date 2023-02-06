@@ -134,7 +134,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .Given(() =>
             {
                 var knowledgeBase = new SimpleResolutionKnowledgeBase(
-                    new SimpleClauseStore(),
+                    new HashSetClauseStore(),
                     SimpleResolutionKnowledgeBase.Filters.None,
                     SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
                 return knowledgeBase.CreateQuery(IsGreedy(John));
@@ -160,7 +160,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private static SimpleResolutionQuery MakeQuery(Sentence query, IEnumerable<Sentence> knowledge)
         {
             var knowledgeBase = new SimpleResolutionKnowledgeBase(
-                new SimpleClauseStore(knowledge),
+                new HashSetClauseStore(knowledge),
                 SimpleResolutionKnowledgeBase.Filters.None,
                 SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
             return knowledgeBase.CreateQuery(query);

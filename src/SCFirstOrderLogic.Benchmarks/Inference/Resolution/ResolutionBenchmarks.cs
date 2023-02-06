@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         [Benchmark(Baseline = true)]
         public static bool CrimeExample_SimpleResolutionKnowledgeBase()
         {
-            var kb = new SimpleResolutionKnowledgeBase(new SimpleClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+            var kb = new SimpleResolutionKnowledgeBase(new HashSetClauseStore(), SimpleResolutionKnowledgeBase.Filters.None, SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
             kb.TellAsync(CrimeDomain.Axioms).Wait();
             return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
         }

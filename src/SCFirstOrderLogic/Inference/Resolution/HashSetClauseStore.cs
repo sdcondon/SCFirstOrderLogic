@@ -13,19 +13,22 @@ namespace SCFirstOrderLogic.Inference.Resolution
     // TODO*-V4: Rename me. Also maybe move away from ConcurrentBag to just a HashSet with some concurrency stuff added manually.
     // Mostly 'cos I'd much rather have a "HashSetClauseStore" as our simple example store, rather than having to
     // talk about ConcurrentBags with additional uniqueness check..
-    public class SimpleClauseStore : IKnowledgeBaseClauseStore
+    public class HashSetClauseStore : IKnowledgeBaseClauseStore
     {
-        private readonly ConcurrentBag<CNFClause> clauses = new();
-        private readonly SemaphoreSlim addLock = new(1);
+        // Yes, not a hash set - System.Collections.Concurrent doesn't include a hash set implementation.
+        // I want some degree of concurrency support, though. Using a concurrent dictionary means some overhead,
+        // but its not worth doing anything else for this basic implementation. Might consider using
+        // a third-party package for an actual concurrent hash set at some point, but.. probably won't.
+        private readonly ConcurrentDictionary<CNFClause, byte> clauses = new();
         
         /// <summary>
-        /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class.
+        /// Initializes a new instance of the <see cref="HashSetClauseStore"/> class.
         /// </summary>
-        public SimpleClauseStore() { }
+        public HashSetClauseStore() { }
 
         /// <summary>
         /// <para>
-        /// Initializes a new instance of the <see cref="SimpleClauseStore"/> class that is pre-populated with some knowledge.
+        /// Initializes a new instance of the <see cref="HashSetClauseStore"/> class that is pre-populated with some knowledge.
         /// </para>
         /// <para>
         /// NB: Of course, most implementations of <see cref="IClauseStore"/> won't have a constructor for pre-population, because most
@@ -34,49 +37,28 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// </para>
         /// </summary>
         /// <param name="sentences">The initial content of the store.</param>
-        public SimpleClauseStore(IEnumerable<Sentence> sentences)
+        public HashSetClauseStore(IEnumerable<Sentence> sentences)
         {
             foreach (var sentence in sentences)
             {
                 foreach (var clause in sentence.ToCNF().Clauses)
                 {
-                    clauses.Add(clause);
+                    clauses.TryAdd(clause, 0);
                 }
             }
         }
 
         /// <inheritdoc />
-        public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
+        public Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
         {
-            // We need to lock here to avoid an issue when a clause is added by another
-            // thread between us checking and adding.
-            await addLock.WaitAsync(cancellationToken);
-
-            try
-            {
-                // NB: a limitation of this implementation - we only check if the clause is already present exactly - we don't check for clauses that subsume it.
-                await foreach (var existingClause in this.WithCancellation(cancellationToken))
-                {
-                    if (existingClause.Equals(clause))
-                    {
-                        return false;
-                    }
-                }
-
-                clauses.Add(clause);
-                return true;
-            }
-            finally
-            {
-                addLock.Release();
-            }
+            return Task.FromResult(clauses.TryAdd(clause, 0));
         }
 
 #pragma warning disable CS1998 // async lacks await.. Could stick a Task.Yield in there, but not worth it.
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
-            foreach (var clause in clauses)
+            foreach (var clause in clauses.Keys)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 yield return clause;
@@ -91,47 +73,25 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <summary>
-        /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="SimpleClauseStore"/>.
+        /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="HashSetClauseStore"/>.
         /// </summary>
         private class QueryStore : IQueryClauseStore
         {
-            private readonly ConcurrentBag<CNFClause> clauses;
-            private readonly SemaphoreSlim addLock = new(1);
+            private readonly ConcurrentDictionary<CNFClause, byte> clauses = new();
 
-            public QueryStore(IEnumerable<CNFClause> clauses) => this.clauses = new ConcurrentBag<CNFClause>(clauses);
+            public QueryStore(IEnumerable<KeyValuePair<CNFClause, byte>> clauses) => this.clauses = new(clauses);
 
             /// <inheritdoc />
-            public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
+            public Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
             {
-                // We need to lock here to avoid an issue when a clause is added by another
-                // thread between us checking and adding.
-                await addLock.WaitAsync(cancellationToken);
-
-                try
-                {
-                    // NB: a limitation of this implementation - we only check if the clause is already present exactly - we don't check for clauses that subsume it.
-                    await foreach (var existingClause in this.WithCancellation(cancellationToken))
-                    {
-                        if (existingClause.Equals(clause))
-                        {
-                            return false;
-                        }
-                    }
-
-                    clauses.Add(clause);
-                    return true;
-                }
-                finally
-                {
-                    addLock.Release();
-                }
+                return Task.FromResult(clauses.TryAdd(clause, 0));
             }
 
 #pragma warning disable CS1998 // async lacks await.. Could add await Task.Yield() to silence this, but it is not worth the overhead.
             /// <inheritdoc />
             public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
             {
-                foreach (var clause in clauses)
+                foreach (var clause in clauses.Keys)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     yield return clause;
