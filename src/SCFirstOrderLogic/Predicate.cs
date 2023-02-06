@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace SCFirstOrderLogic
 {
@@ -64,11 +65,10 @@ namespace SCFirstOrderLogic
         /// </para>
         /// </param>
         /// <param name="arguments">The arguments of this predicate.</param>
-        public Predicate(object symbol, IList<Term> arguments)
+        public Predicate(object symbol, IEnumerable<Term> arguments)
         {
             Symbol = symbol;
-            // TODO-ROBUSTNESS: Its past time I sort this out - really should be doing some sort of clone here..
-            Arguments = new ReadOnlyCollection<Term>(arguments);
+            Arguments = new ReadOnlyCollection<Term>(arguments.ToArray());
         }
 
         /// <summary>

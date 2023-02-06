@@ -63,11 +63,10 @@ namespace SCFirstOrderLogic
         /// </para>
         /// </param>
         /// <param name="arguments">The arguments of this function.</param>
-        public Function(object symbol, IList<Term> arguments)
+        public Function(object symbol, IEnumerable<Term> arguments)
         {
             Symbol = symbol;
-            // TODO-ROBUSTNESS: Its past time I sort this out - really should be doing some sort of clone here..
-            Arguments = new ReadOnlyCollection<Term>(arguments);
+            Arguments = new ReadOnlyCollection<Term>(arguments.ToArray());
         }
 
         /// <summary>
