@@ -20,12 +20,14 @@ Label sets currently used by SentenceFormatter likely to become full interfaces 
 * [x] Move the SkolemFunctionSymbol and StandardisedVariableSymbol classes up out of the `SentenceManipulation` namespace.
 Really the only reason that they're here is that I originally had all the CNF stuff in SentenceManipulation.
 Now that the CNF types are in the root namespace, there's really no reason for these not to be as well.
-* [ ] I'm almost certainly going to overheaul the collection types used in Predicate, Function, CNFClause and CNFSentence. There are some robustness issues as it stands. Will probably move away from ReadOnlyCollection and towards System.Collections.Immutable.
 * [x] May rename/otherwise break the SentenceManipulation.CNFExaminer class - it irks me somewhat..
 * [x] Also want to rename the clause store implementations - MemoryClauseStore, perhaps.
 
 On the back-burner, for later consideration:
 
+* I'm almost certainly going to overheaul the collection types used in Predicate, Function, CNFClause and CNFSentence.
+There are some robustness issues as it stands. Will probably move away from ReadOnlyCollection and towards System.Collections.Immutable.
+Can be done in a non-breaking fashion.
 * Take a look at creating a FoL syntax parser in the SentenceCreation namespace.
 Did take a brief look at using ANTLR to do this, but the "all .NET" way of doing this is old and no longer supported.
 If I go the route of using the Java tool, I'd want to do it via docker-integrated project (to avoid faffing around with JVM installation on my dev machine) - which would likely mean I'd want to put it into its own package.
