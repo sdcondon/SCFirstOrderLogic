@@ -145,7 +145,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 
             do
             {
-                var applicableRules = await clauseStore.GetApplicableRules(newFacts.Select(f => f.Consequent), cancellationToken).ToListAsync();
+                var applicableRules = await clauseStore.GetApplicableRules(newFacts.Select(f => f.Consequent), cancellationToken).ToListAsync(cancellationToken);
 
                 newFacts.Clear();
 
