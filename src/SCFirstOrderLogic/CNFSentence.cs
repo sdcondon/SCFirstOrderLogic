@@ -19,9 +19,10 @@ namespace SCFirstOrderLogic
             // but its a super low-level class and I'd so far I've erred on the side of using the simplest/smallest
             // implementation possible - that is, an array.
             // NB #2: Note that we order clauses - important to justifiably consider the sentence "normalised".
-            // TODO-BUG-MAJOR: Potential equality bug on hash code collision..
-            // One would hope that OrderedImmutableSet handles equality well.
-            // Using a set would also deal with being handed something containing dups.
+            // TODO-BUG-ROBUSTNESS: Potential equality bug on hash code collision.
+            // TODO-BUG-ROBUSTNESS: No handling of being handed an enumerable containing dups.
+            // One would hope that ImmutableSortedSet would deal with both. This is quite low-level code,
+            // though - need to assess the options for performance cost.
             Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
         }
 
@@ -38,7 +39,7 @@ namespace SCFirstOrderLogic
         /// Gets the collection of clauses that comprise this CNF sentence.
         /// </summary>
         // TODO: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
-        // Investigate perf impact of ImmutableSortedSet?
+        // Investigate perf impact of ImmutableSortedSet (sorted to facilitate quick equality comparison, hopefully)?
         public IReadOnlyCollection<CNFClause> Clauses { get; }
 
         /// <summary>
