@@ -16,44 +16,44 @@ namespace SCFirstOrderLogic.SentenceFormatting
     /// </summary>
     public class SentenceFormatter
     {
-        private readonly IEnumerator<string> standardisedVariableLabels;
-        private readonly Dictionary<StandardisedVariableSymbol, string> labelsByStandardisedVariableSymbol = new();
-        private readonly IEnumerator<string> skolemFunctionLabels;
-        private readonly Dictionary<SkolemFunctionSymbol, string> labelsBySkolemFunctionSymbol = new();
+        private readonly ILabellingScope<StandardisedVariableSymbol> standardisedVariableLabellingScope;
+        private readonly ILabellingScope<SkolemFunctionSymbol> skolemFunctionLabellingScope;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SentenceFormatter"/> class that uses the <see cref="DefaultStandardisedVariableLabelSet"/>
-        /// and <see cref="DefaultSkolemFunctionLabelSet"/>.
+        /// Initializes a new instance of the <see cref="SentenceFormatter"/> class that uses the <see cref="DefaultStandardisedVariableLabeller"/>
+        /// and <see cref="DefaultSkolemFunctionLabeller"/>.
         /// </summary>
         public SentenceFormatter()
-            : this(DefaultStandardisedVariableLabelSet, DefaultSkolemFunctionLabelSet)
+            : this(DefaultStandardisedVariableLabeller, DefaultSkolemFunctionLabeller)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SentenceFormatter"/> class.
         /// </summary>
-        /// <param name="standardisedVariableLabels">The set of labels to use for standardised variables.</param>
-        /// <param name="skolemFunctionLabels">The set of labels to use for Skolem functions.</param>
-        public SentenceFormatter(IEnumerable<string> standardisedVariableLabels, IEnumerable<string> skolemFunctionLabels)
+        /// <param name="standardisedVariableLabeller">The labeller to use for standardised variables.</param>
+        /// <param name="skolemFunctionLabeller">The labeller to use for Skolem functions.</param>
+        public SentenceFormatter(ILabeller<StandardisedVariableSymbol> standardisedVariableLabeller, ILabeller<SkolemFunctionSymbol> skolemFunctionLabeller)
         {
-            this.standardisedVariableLabels = standardisedVariableLabels.GetEnumerator();
-            this.skolemFunctionLabels = skolemFunctionLabels.GetEnumerator();
+            this.standardisedVariableLabellingScope = standardisedVariableLabeller.MakeLabellingScope();
+            this.skolemFunctionLabellingScope = skolemFunctionLabeller.MakeLabellingScope();
         }
 
         /// <summary>
-        /// Gets or sets the default label set to use for standardised variables. Used by
+        /// Gets or sets the default labeller to use for standardised variables. Used by
         /// <see cref="SentenceFormatter"/> instances constructed with the parameterless constructor.
-        /// Defaults to the (lower-case) Greek alphabet.
+        /// Defaults to a <see cref="LabelSetLabeller{T}"/> using the (lower-case) Greek alphabet.
         /// </summary>
-        public static IEnumerable<string> DefaultStandardisedVariableLabelSet { get; set; } = LabelSets.LowerGreekAlphabet;
+        public static ILabeller<StandardisedVariableSymbol> DefaultStandardisedVariableLabeller { get; set; } = 
+            new LabelSetLabeller<StandardisedVariableSymbol>(LabelSets.LowerGreekAlphabet);
 
         /// <summary>
-        /// Gets or sets the default label set to use for Skolem functions. Used by
+        /// Gets or sets the default labeller to use for Skolem functions. Used by
         /// <see cref="SentenceFormatter"/> instances constructed with the parameterless constructor.
-        /// Defaults to the (upper-case) modern Latin alphabet;
+        /// Defaults to a <see cref="LabelSetLabeller{T}"/> using the (upper-case) modern Latin alphabet;
         /// </summary>
-        public static IEnumerable<string> DefaultSkolemFunctionLabelSet { get; set; } = LabelSets.UpperModernLatinAlphabet;
+        public static ILabeller<SkolemFunctionSymbol> DefaultSkolemFunctionLabeller { get; set; } =
+            new LabelSetLabeller<SkolemFunctionSymbol>(LabelSets.UpperModernLatinAlphabet);
 
         /// <summary>
         /// Returns a string representation of a given <see cref="CNFClause"/> instance.
@@ -213,30 +213,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="symbol">The symbol to be formatted.</param>
         /// <returns>A string representation of the given symbol.</returns>
-        public string Format(SkolemFunctionSymbol symbol)
-        {
-            if (labelsBySkolemFunctionSymbol.TryGetValue(symbol, out var label))
-            {
-                return label;
-            }
-            else if (skolemFunctionLabels.MoveNext())
-            {
-                return labelsBySkolemFunctionSymbol[symbol] = skolemFunctionLabels.Current;
-            }
-            else
-            {
-                // I suppose we *could* fall back on the ToString of the underlying variable symbol here.
-                // But obviously then we lose the unique representation guarentee, and it should be relatively
-                // easy to use essentially infinite label sets - so I'd rather just fail.
-                throw new InvalidOperationException("Skolem function label set is exhausted");
-                // Should come back to this at some point though. Difficult to use a common formatter
-                // when e.g. debugging.
-                // Perhaps add asterisks - supposed to represent some kind of puff of smoke for the existential instantiation..
-                ////return $"*{symbol.StandardisedVariableSymbol.OriginalSymbol}*";
-                // TODO-BREAKING-V4?: ..Or ILabeller instead of IEnumerable<string>? Then can offer different behaviours.
-                // Probably look at general formatting stuff at the same time (e.g. would IFormattable and format strings be useful) 
-            }
-        }
+        public string Format(SkolemFunctionSymbol symbol) => skolemFunctionLabellingScope.GetLabel(symbol);
 
         /// <summary>
         /// Returns a string representation of a given <see cref="VariableDeclaration"/> instance.
@@ -257,29 +234,6 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="symbol">The symbol to be formatted.</param>
         /// <returns>A string representation of the given standardised variable symbol.</returns>
-        public string Format(StandardisedVariableSymbol symbol)
-        {
-            if (labelsByStandardisedVariableSymbol.TryGetValue(symbol, out var label))
-            {
-                return label;
-            }
-            else if (standardisedVariableLabels.MoveNext())
-            {
-                return labelsByStandardisedVariableSymbol[symbol] = standardisedVariableLabels.Current;
-            }
-            else
-            {
-                // I suppose we *could* fall back on the ToString of the underlying variable symbol here.
-                // But obviously then we lose the unique representation guarantee, and it should be relatively
-                // easy to use essentially infinite label sets - so I'd rather just fail.
-                throw new InvalidOperationException("Skolem function label set is exhausted");
-                // Should come back to this at some point though. Difficult to use a common formatter
-                // when e.g. debugging.
-                // Perhaps add arrows: supposed to represent standardising variables "apart".
-                ////return $"←{symbol.OriginalSymbol}→";
-                // TODO-BREAKING-V4?: ..Or ILabeller instead of IEnumerable<string>? Then can offer different behaviours.
-                // Probably look at general formatting stuff at the same time (e.g. would IFormattable and format strings be useful) 
-            }
-        }
+        public string Format(StandardisedVariableSymbol symbol) => standardisedVariableLabellingScope.GetLabel(symbol);
     }
 }
