@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     [MemoryDiagnoser]
     [InProcess]
-    public class ResolutionBenchmarks
+    public class ResolutionKBBenchmarks
     {
         [Benchmark(Baseline = true)]
         public static bool CrimeExample_SimpleResolutionKnowledgeBase()

@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     [MemoryDiagnoser]
     [InProcess]
-    public class BackwardChainingBenchmarks
+    public class BackwardChainingKBBenchmarks
     {
         [Benchmark(Baseline = true)]
         public static bool CrimeExample_SimpleBackwardChainingKnowledgeBase()
