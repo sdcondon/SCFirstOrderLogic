@@ -53,34 +53,34 @@ namespace SCFirstOrderLogic.Inference.Resolution
             // TODO: Yes, this is a slow implementation. It is simple, though - and thus will serve
             // well as a baseline for improvements. (I'm thinking including LiteralUnifier tweak so that it accepts multiple
             // literals and examines the tree for them all "simultaneously" - i.e. do full resolution, not binary).
-            foreach (var literal1 in clause1.Literals)
+            foreach (var clause1Literal in clause1.Literals)
             {
-                foreach (var literal2 in clause2.Literals)
+                foreach (var clause2Literal in clause2.Literals)
                 {
-                    if (LiteralUnifier.TryCreate(literal1, literal2.Negate(), out var unifier))
+                    if (LiteralUnifier.TryCreate(clause1Literal, clause2Literal.Negate(), out var resolvingUnifier))
                     {
-                        var unifiedLiterals = new HashSet<Literal>(
-                            clause1.Literals.Where(l => l != literal1)
-                            .Concat(clause2.Literals.Where(l => l != literal2))
-                            .Select(l => unifier.ApplyTo(l)));
+                        var clause1OtherLiterals = clause1.Literals.Where(l => l != clause1Literal);
+                        var clause2OtherLiterals = clause2.Literals.Where(l => l != clause2Literal);
+                        HashSet<Literal> unifiedLiterals = new(clause1OtherLiterals.Concat(clause2OtherLiterals).Select(l => resolvingUnifier.ApplyTo(l)));
 
                         var factoringCarriedOut = false;
                         var clauseIsTriviallyTrue = false;
                         do
                         {
                             factoringCarriedOut = false;
-                            foreach (var rLiteral1 in unifiedLiterals)
+                            var literalIndex = 0;
+                            foreach (var literal in unifiedLiterals)
                             {
-                                foreach (var rLiteral2 in unifiedLiterals)
+                                foreach (var otherLiteral in unifiedLiterals.Take(literalIndex))
                                 {
-                                    if (!rLiteral1.Equals(rLiteral2) && LiteralUnifier.TryCreate(rLiteral1, rLiteral2, out var factoringUnifier))
+                                    if (LiteralUnifier.TryCreate(literal, otherLiteral, out var factoringUnifier))
                                     {
                                         unifiedLiterals = new HashSet<Literal>(unifiedLiterals.Select(l => factoringUnifier.ApplyTo(l)));
                                         factoringCarriedOut = true;
                                         break;
                                     }
 
-                                    if (rLiteral1.Equals(rLiteral2.Negate()))
+                                    if (literal.Equals(otherLiteral.Negate()))
                                     {
                                         clauseIsTriviallyTrue = true;
                                         break;
@@ -91,18 +91,15 @@ namespace SCFirstOrderLogic.Inference.Resolution
                                 {
                                     break;
                                 }
-                            }
 
-                            if (clauseIsTriviallyTrue)
-                            {
-                                break;
+                                literalIndex++;
                             }
                         }
-                        while (factoringCarriedOut);
+                        while (factoringCarriedOut && !clauseIsTriviallyTrue);
 
                         if (!clauseIsTriviallyTrue)
                         {
-                            yield return new ClauseResolution(clause1, clause2, unifier, new CNFClause(unifiedLiterals));
+                            yield return new ClauseResolution(clause1, clause2, resolvingUnifier, new CNFClause(unifiedLiterals));
                         }
                     }
                 }
