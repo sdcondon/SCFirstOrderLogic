@@ -63,6 +63,7 @@ namespace SCFirstOrderLogic.Inference
                 {
                     foreach (var knownConstant in knownConstants)
                     {
+                        // TODO: potentially long-running. Perhaps add some async visitor types?
                         innerKnowledgeBase.TellAsync(Not(AreEqual(constant, knownConstant))).Wait();
                     }
 

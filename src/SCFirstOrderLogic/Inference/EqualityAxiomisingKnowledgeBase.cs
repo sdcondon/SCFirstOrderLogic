@@ -44,7 +44,7 @@ namespace SCFirstOrderLogic.Inference
         /// <returns>A task that returns a new <see cref="EqualityAxiomisingKnowledgeBase"/> instance.</returns>
         public static async Task<EqualityAxiomisingKnowledgeBase> CreateAsync(IKnowledgeBase innerKnowledgeBase)
         {
-            // ..could invoke these in parallel if we wanted to. At the time of writing the only KB we have isn't thread-safe, though..
+            // ..could invoke these in parallel if we wanted to.
             await innerKnowledgeBase.TellAsync(ForAll(X, AreEqual(X, X))); // Reflexivity
             await innerKnowledgeBase.TellAsync(ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X)))); // Commutativity
             await innerKnowledgeBase.TellAsync(ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z)))); // Transitivity
@@ -87,7 +87,7 @@ namespace SCFirstOrderLogic.Inference
                     // For all predicates, we have something like this,
                     // depending on the argument count:
                     // ∀ l0, r0, l0 = r0 ⇒ [P(l0) ⇔ P(r0)]
-                    // ∀ l0, r0, l1, r1 [l0 = r0 ∧ l1 = r1] ⇒ [P(l0, l1) ⇔ P(r0, r1)]
+                    // ∀ l0, r0, l1, r1, [l0 = r0 ∧ l1 = r1] ⇒ [P(l0, l1) ⇔ P(r0, r1)]
                     // ... and so on
                     var leftArgs = predicate.Arguments.Select((_, i) => new VariableReference($"l{i}")).ToArray();
                     var rightArgs = predicate.Arguments.Select((_, i) => new VariableReference($"r{i}")).ToArray();
@@ -105,7 +105,8 @@ namespace SCFirstOrderLogic.Inference
                         sentence = ForAll(leftArgs[i].Declaration, ForAll(rightArgs[i].Declaration, sentence));
                     }
 
-                    innerKnowledgeBase.TellAsync(sentence).Wait(); // potentially long-running..
+                    // TODO: potentially long-running. Perhaps add some async visitor types?
+                    innerKnowledgeBase.TellAsync(sentence).Wait();
                 }
 
                 base.Visit(predicate);
@@ -115,7 +116,7 @@ namespace SCFirstOrderLogic.Inference
             {
                 // NB: we check only for the symbol, not for the symbol with the particular
                 // argument count. A fairly safe assumption that we could nevertheless eliminate at some point.
-                if (!knownFunctionSymbols.Contains(function.Symbol))
+                if (!knownFunctionSymbols.Contains(function.Symbol) && function.Arguments.Count > 0)
                 {
                     knownFunctionSymbols.Add(function.Symbol);
 
@@ -140,7 +141,8 @@ namespace SCFirstOrderLogic.Inference
                         sentence = ForAll(leftArgs[i].Declaration, ForAll(rightArgs[i].Declaration, sentence));
                     }
 
-                    innerKnowledgeBase.TellAsync(sentence).Wait(); // potentially long-running..
+                    // TODO: potentially long-running. Perhaps add some async visitor types?
+                    innerKnowledgeBase.TellAsync(sentence).Wait(); 
                 }
 
                 base.Visit(function);

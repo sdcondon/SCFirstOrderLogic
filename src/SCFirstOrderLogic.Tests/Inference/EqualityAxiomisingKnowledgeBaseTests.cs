@@ -11,39 +11,62 @@ namespace SCFirstOrderLogic.Inference
 {
     public static class EqualityAxiomisingKnowledgeBaseTests
     {
+        private record TestCase(Sentence Sentence, Sentence[] ExpectedKnowledge)
+        {
+            private EqualityAxiomisingKnowledgeBase? kb;
+
+            public MockKnowledgeBase InnerKB { get; } = new MockKnowledgeBase();
+
+            public EqualityAxiomisingKnowledgeBase KB => kb ??= EqualityAxiomisingKnowledgeBase.CreateAsync(InnerKB).GetAwaiter().GetResult();
+        }
+
         public static Test Smoke => TestThat
-            .Given(() => new MockKnowledgeBase())
-            .When(kb => EqualityAxiomisingKnowledgeBase.CreateAsync(kb).GetAwaiter().GetResult().TellAsync(ForAll(X, IsMale(Father(X)))).Wait())
-            .ThenReturns()
-            .And(kb =>
+            .GivenEachOf(() => new TestCase[]
             {
-                kb.Sentences.Should().BeEquivalentTo(
-                    expectation: new Sentence[]
+                new( // Unary predicate and function
+                    Sentence: ForAll(X, IsMale(Father(X))),
+                    ExpectedKnowledge: new Sentence[]
                     {
                         ForAll(X, AreEqual(X, X)), // Equality reflexivity
                         ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X))), // Equality commutativity
                         ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z))), // Equality transitivity
+
                         ForAll(X, IsMale(Father(X))), // Sentence that we told it
+
                         ForAll(X, Y, If(AreEqual(X, Y), Iff(IsMale(X), IsMale(Y)))), // Equality and IsMale predicate
                         ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Father(X), Father(Y)))), // Equality and Father function
-                    },
-                    config: EquivalencyOptions.UsingOnlyConsistencyForVariables);
-            });
+                    }),
 
-        public static Test GroundPredicate => TestThat
-            .Given(() => new MockKnowledgeBase())
-            .When(kb => EqualityAxiomisingKnowledgeBase.CreateAsync(kb).GetAwaiter().GetResult().TellAsync(new Predicate("GroundPredicate")).Wait())
-            .ThenReturns()
-            .And(kb =>
-            {
-                kb.Sentences.Should().BeEquivalentTo(
-                    expectation: new Sentence[]
+                new( // Ground predicate
+                    Sentence: new Predicate("MyGroundPredicate"),
+                    ExpectedKnowledge: new Sentence[]
                     {
                         ForAll(X, AreEqual(X, X)), // Equality reflexivity
                         ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X))), // Equality commutativity
                         ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z))), // Equality transitivity
-                        new Predicate("GroundPredicate"), // Sentence that we told it
-                    },
+
+                        new Predicate("MyGroundPredicate"), // Sentence that we told it
+                    }),
+
+                new( // (Unary predicate and) Ground function
+                    Sentence: IsMale(new Function("MyGroundFunction")),
+                    ExpectedKnowledge: new Sentence[]
+                    {
+                        ForAll(X, AreEqual(X, X)), // Equality reflexivity
+                        ForAll(X, Y, If(AreEqual(X, Y), AreEqual(Y, X))), // Equality commutativity
+                        ForAll(X, Y, Z, If(And(AreEqual(X, Y), AreEqual(Y, Z)), AreEqual(X, Z))), // Equality transitivity
+
+                        IsMale(new Function("MyGroundFunction")), // Sentence that we told it
+
+                        ForAll(X, Y, If(AreEqual(X, Y), Iff(IsMale(X), IsMale(Y)))), // Equality and IsMale predicate
+                    }),
+            })
+            .When(tc => tc.KB.TellAsync(tc.Sentence).Wait())
+            .ThenReturns()
+            .And(tc =>
+            {
+                tc.InnerKB.Sentences.Should().BeEquivalentTo(
+                    expectation: tc.ExpectedKnowledge,
                     config: EquivalencyOptions.UsingOnlyConsistencyForVariables);
             });
 
