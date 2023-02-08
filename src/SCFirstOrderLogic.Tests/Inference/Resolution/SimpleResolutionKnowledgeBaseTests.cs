@@ -133,10 +133,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public static Test RepeatedQueryExecution => TestThat
             .Given(() =>
             {
-                var knowledgeBase = new SimpleResolutionKnowledgeBase(
+                var knowledgeBase = new SimpleResolutionKnowledgeBase(new DelegateResolutionStrategy(
                     new HashSetClauseStore(),
-                    SimpleResolutionKnowledgeBase.Filters.None,
-                    SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+                    DelegateResolutionStrategy.Filters.None,
+                    DelegateResolutionStrategy.PriorityComparisons.UnitPreference));
+
                 return knowledgeBase.CreateQuery(IsGreedy(John));
             })
             .When(q =>
@@ -159,10 +160,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         private static SimpleResolutionQuery MakeQuery(Sentence query, IEnumerable<Sentence> knowledge)
         {
-            var knowledgeBase = new SimpleResolutionKnowledgeBase(
+            var knowledgeBase = new SimpleResolutionKnowledgeBase(new DelegateResolutionStrategy(
                 new HashSetClauseStore(knowledge),
-                SimpleResolutionKnowledgeBase.Filters.None,
-                SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+                DelegateResolutionStrategy.Filters.None,
+                DelegateResolutionStrategy.PriorityComparisons.UnitPreference));
+
             return knowledgeBase.CreateQuery(query);
         }
 

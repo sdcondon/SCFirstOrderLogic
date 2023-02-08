@@ -11,11 +11,17 @@ namespace SCFirstOrderLogic.Inference.Resolution
     public interface IQueryClauseStore : IClauseStore, IDisposable
     {
         /// <summary>
+        /// <para>
         /// Returns all possible resolutions of a given clause with some clause in the store.
+        /// </para>
+        /// <para>
+        /// NB: store implementations might limit what resolutions are "possible", depending
+        /// on the resolution strategy they implement.
+        /// </para>
         /// </summary>
         /// <param name="clause">The clause to find resolutions for.</param>
         /// <param name="cancellationToken">Cancellation token for the operation.</param>
-        /// <returns></returns>
+        /// <returns>An enumerable of resolutions of the given clause with a clause in the store.</returns>
         IAsyncEnumerable<ClauseResolution> FindResolutions(CNFClause clause, CancellationToken cancellationToken = default);
     }
 }

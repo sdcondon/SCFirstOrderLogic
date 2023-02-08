@@ -1,5 +1,4 @@
-﻿using SCFirstOrderLogic.InternalUtilities;
-using SCFirstOrderLogic.SentenceFormatting;
+﻿using SCFirstOrderLogic.SentenceFormatting;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,10 +20,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     public class SimpleResolutionQuery : SteppableQuery<ClauseResolution>
     {
         private readonly IQueryClauseStore clauseStore;
-        // TODO: delegates not flexible enough - need to revisit the idea of full strategy object - perhaps fold
-        // clause storage under this..
-        private readonly Func<ClauseResolution, bool> filter;
-        private readonly MaxPriorityQueue<ClauseResolution> queue;
+        private readonly ISimpleResolutionQueue resolutionQueue;
         private readonly Dictionary<CNFClause, ClauseResolution> steps;
         private readonly Lazy<ReadOnlyCollection<CNFClause>> discoveredClauses;
 
@@ -32,15 +28,13 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private bool result;
 
         private SimpleResolutionQuery(
+            Sentence querySentence,
             IQueryClauseStore clauseStore,
-            Func<ClauseResolution, bool> filter,
-            Comparison<ClauseResolution> priorityComparison,
-            Sentence querySentence)
+            ISimpleResolutionQueue resolutionQueue)
         {
             this.clauseStore = clauseStore;
-            this.filter = filter;
-            queue = new MaxPriorityQueue<ClauseResolution>(priorityComparison);
-            steps = new Dictionary<CNFClause, ClauseResolution>();
+            this.resolutionQueue = resolutionQueue;
+            steps = new();
             discoveredClauses = new(MakeDiscoveredClauses);
 
             NegatedQuery = new Negation(querySentence).ToCNF();
@@ -145,22 +139,17 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// Creates and initialises a new instance of the <see cref="SimpleResolutionQuery"/> class. Initialisation can potentially
         /// be a long-running operation (and long-running constructors are a bad idea) - so the constructor is private and this method exists.
         /// </summary>
-        /// <param name="clauseStore">A knowledge base clause store to use to create the clause store for this query.</param>
-        /// <param name="filter">A filter to apply to clause pairings during this query.</param>
-        /// <param name="priorityComparison">A comparison delegate to use to prioritise clause pairings during this query.</param>
         /// <param name="querySentence">The query itself.</param>
+        /// <param name="strategy">The resolution strategy to use.</param>
         /// <param name="cancellationToken">The cancellation token for this operation.</param>
         /// <returns>A new query instance.</returns>
         internal static async Task<SimpleResolutionQuery> CreateAsync(
-            IKnowledgeBaseClauseStore clauseStore,
-            Func<ClauseResolution, bool> filter,
-            Comparison<ClauseResolution> priorityComparison,
             Sentence querySentence,
+            ISimpleResolutionStrategy strategy,
             CancellationToken cancellationToken = default)
         {
-            var queryClauseStore = await clauseStore.CreateQueryStoreAsync(cancellationToken);
-
-            var query = new SimpleResolutionQuery(queryClauseStore, filter, priorityComparison, querySentence);
+            var queryClauseStore = await strategy.ClauseStore.CreateQueryStoreAsync(cancellationToken);
+            var query = new SimpleResolutionQuery(querySentence, queryClauseStore, strategy.MakeResolutionQueue());
 
             // Initialise the query clause store with the clauses from the negation of the query:
             foreach (var clause in query.NegatedQuery.Clauses)
@@ -168,16 +157,19 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 await queryClauseStore.AddAsync(clause, cancellationToken);
             }
 
-            // Queue up all initial clause pairings - adhering to our clause pair filter and priority comparer.
+            // Queue up initial clause pairings.
             // TODO-PERFORMANCE-MAJOR: potentially repeating a lot of work here - could cache the results of pairings
             // of KB clauses with each other. Or at least don't keep re-attempting ones that we know fail.
             // Is this in scope for this *simple* implementation?
             await foreach (var clause in queryClauseStore)
             {
-                await query.EnqueueUnfilteredResolventsAsync(clause, cancellationToken);
+                await foreach (var resolution in query.clauseStore.FindResolutions(clause, cancellationToken))
+                {
+                    query.resolutionQueue.Enqueue(resolution);
+                }
             }
 
-            if (query.queue.Count == 0)
+            if (query.resolutionQueue.IsEmpty)
             {
                 query.result = false;
                 query.isComplete = true;
@@ -191,11 +183,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
         {
             if (IsComplete)
             {
-                throw new InvalidOperationException("Query is complete");
+                throw new InvalidOperationException("Query is already complete");
             }
 
-            // Grab the next resolution (including the resolvent, the clauses it originates from, and the variable substitution) from the queue..
-            var resolution = queue.Dequeue();
+            // Grab the next resolution from the queue, and make a note of it in the 'steps' field (for the proof tree).
+            var resolution = resolutionQueue.Dequeue();
             steps[resolution.Resolvent] = resolution;
 
             // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
@@ -210,20 +202,19 @@ namespace SCFirstOrderLogic.Inference.Resolution
             // Upside of using Add to implicitly check for existence: it means we don't need a separate "Contains" method
             // on the store (which would raise potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
             // Downside of using Add: clause store will encounter itself when looking for unifiers - not a big deal,
-            // but a performance/maintainability tradeoff nonetheless
+            // but a performance/maintainability tradeoff nonetheless.
             if (await clauseStore.AddAsync(resolution.Resolvent, cancellationToken))
             {
-                // This is a new clause, so we queue up some more clause pairings -
-                // (combinations of the resolvent and existing known clauses)
-                // adhering to any filtering and ordering we have in place.
-
-                // ..and iterate through its resolvents (if any) - also make a note of the unifier so that we can include it in the record of steps that we maintain:
-                await EnqueueUnfilteredResolventsAsync(resolution.Resolvent, cancellationToken);
+                // This is a new clause, so find and queue up its resolutions.
+                await foreach (var newResolution in clauseStore.FindResolutions(resolution.Resolvent, cancellationToken))
+                {
+                    resolutionQueue.Enqueue(newResolution);
+                }
             }
-            
-            if (queue.Count == 0)
+
+            // Check if we've run out of clauses to smash together - return a negative result if so.
+            if (resolutionQueue.IsEmpty)
             {
-                // We've run out of clauses to smash together - return a negative result.
                 result = false;
                 isComplete = true;
             }
@@ -235,24 +226,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public override void Dispose()
         {
             clauseStore.Dispose();
-        }
-
-        private async Task EnqueueUnfilteredResolventsAsync(CNFClause clause, CancellationToken cancellationToken = default)
-        {
-            await foreach (var resolution in clauseStore.FindResolutions(clause, cancellationToken))
-            {
-                // NB: Throwing away clauses returned by the unifier store has a performance impact.
-                // Could instead/also use a store that knows to not look for certain clause pairings in the first place..
-                // However, REQUIRING the store to do this felt a little ugly from a code perspective, since the store is
-                // then a mix of implementation (how unifiers are stored/indexed) and strategy, plus there's a bit more
-                // strategy in the form of the priority comparer. This feels a good compromise - there are of course
-                // alternatives (e.g. some kind of strategy object that encapsulates both) - but they felt like overkill
-                // for this *simple* implementation.
-                if (filter(resolution))
-                {
-                    queue.Enqueue(resolution);
-                }
-            }
         }
 
         private ReadOnlyCollection<CNFClause> MakeDiscoveredClauses()
