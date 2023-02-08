@@ -198,8 +198,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 return resolution;
             }
 
-            // Otherwise, check if we've found a new clause (i.e. something that we didn't know already)..
-            // Upside of using Add to implicitly check for existence: it means we don't need a separate "Contains" method
+            // Otherwise, check if we've found a new clause (i.e. something that we didn't know already).
+            // NB: Upside of using Add to implicitly check for existence: it means we don't need a separate "Contains" method
             // on the store (which would raise potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
             // Downside of using Add: clause store will encounter itself when looking for unifiers - not a big deal,
             // but a performance/maintainability tradeoff nonetheless.
