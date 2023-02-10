@@ -15,11 +15,11 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     /// </summary>
     public class HashSetClauseStore : IKnowledgeBaseClauseStore
     {
-        // Yes, not actually a hash set - System.Collections.Concurrent doesn't include a hash set implementation.
-        // I want some degree of concurrency support, though. Using a concurrent dictionary means some overhead,
-        // but its not worth doing anything else for this basic implementation. Might consider using
-        // a third-party package for an actual concurrent hash set at some point, but.. probably won't. Consumers
-        // to whom this matters can always create their own implementation.
+        // Yes, not actually a hash set, despite the name of the class. I want strong concurrency support,
+        // but System.Collections.Concurrent doesn't include a hash set implementation. Using a ConcurrentDictionary
+        // means some overhead (the values), but its not worth doing anything else for this basic implementation.
+        // Might consider using a third-party package for an actual concurrent hash set at some point, but.. probably won't.
+        // Consumers to whom this matters can always create their own implementation.
         private readonly ConcurrentDictionary<CNFDefiniteClause, byte> clauses = new();
 
         /// <summary>

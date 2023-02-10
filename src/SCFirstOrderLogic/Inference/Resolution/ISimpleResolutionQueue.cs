@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Interface for types that implement resolution queuing logic for a <see cref="ISimpleResolutionStrategy"/>.
+    /// Such logic might be a plain old queue, might be prioritised in some way, or may be something more complex.
     /// </summary>
     public interface ISimpleResolutionQueue
     {

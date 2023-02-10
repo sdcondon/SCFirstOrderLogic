@@ -110,6 +110,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
                 else
                 {
+                    // TODO: This probably *should* be 0..
                     return x.GetHashCode().CompareTo(y.GetHashCode());
                 }
             };
@@ -137,6 +138,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
                 else
                 {
+                    // TODO: This probably *should* be 0..
                     return x.GetHashCode().CompareTo(y.GetHashCode());
                 }
             };

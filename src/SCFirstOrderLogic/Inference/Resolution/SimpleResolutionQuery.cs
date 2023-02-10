@@ -12,10 +12,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// <summary>
     /// Implementation of <see cref="IQuery"/> used by <see cref="SimpleResolutionKnowledgeBase"/>.
     /// Encapsulates a query, allowing for step-by-step execution, as well as examination of those steps, as or after they are carried out.
-    /// Notes:
-    /// <list type="bullet">
-    /// <item/>TODO: Not thread-safe - despite the fact that resolution is ripe for parallelisation.
-    /// </list>
     /// </summary>
     public class SimpleResolutionQuery : SteppableQuery<ClauseResolution>
     {
@@ -148,20 +144,22 @@ namespace SCFirstOrderLogic.Inference.Resolution
             ISimpleResolutionStrategy strategy,
             CancellationToken cancellationToken = default)
         {
-            var queryClauseStore = await strategy.ClauseStore.CreateQueryStoreAsync(cancellationToken);
-            var query = new SimpleResolutionQuery(querySentence, queryClauseStore, strategy.MakeResolutionQueue());
+            var query = new SimpleResolutionQuery(
+                querySentence,
+                await strategy.ClauseStore.CreateQueryStoreAsync(cancellationToken),
+                strategy.MakeResolutionQueue());
 
             // Initialise the query clause store with the clauses from the negation of the query:
             foreach (var clause in query.NegatedQuery.Clauses)
             {
-                await queryClauseStore.AddAsync(clause, cancellationToken);
+                await query.clauseStore.AddAsync(clause, cancellationToken);
             }
 
-            // Queue up initial clause pairings.
+            // Queue up initial clause pairings:
             // TODO-PERFORMANCE-MAJOR: potentially repeating a lot of work here - could cache the results of pairings
             // of KB clauses with each other. Or at least don't keep re-attempting ones that we know fail.
             // Is this in scope for this *simple* implementation?
-            await foreach (var clause in queryClauseStore)
+            await foreach (var clause in query.clauseStore)
             {
                 await foreach (var resolution in query.clauseStore.FindResolutions(clause, cancellationToken))
                 {
@@ -169,6 +167,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
             }
 
+            // Double-check that we actually managed to enqueue some initial clause pairings:
             if (query.resolutionQueue.IsEmpty)
             {
                 query.result = false;
