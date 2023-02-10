@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using FluentAssertions.Formatting;
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory;
 using System;

@@ -14,6 +14,9 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     /// </summary>
     public class DictionaryClauseStore : IClauseStore
     {
+        // NB: the inner dictionary here is intended more as a hash set - but system.collections.concurrent doesn't
+        // offer a concurrent hash set (and I want strong concurrency support). Not worth adding a third-party package for
+        // this though. Consumers to whom this matters will likely be considering creating their own clause store anyway.
         private readonly ConcurrentDictionary<object, ConcurrentDictionary<CNFDefiniteClause, byte>> clausesByConsequentSymbol = new();
 
         /// <summary>
@@ -83,7 +86,11 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             {
                 foreach (var clause in clausesWithThisGoal.Keys)
                 {
-                    var restandardisedClause = clause.Restandardise();
+                    // TODO-CODE-STINK: restandardisation doesn't belong here - the need to restandardise is due to the algorithm we use.
+                    // A query other than SimpleBackwardChain might not need this (if e.g. it had a different unifier instance for each step).
+                    // TODO*-BUG?: hmm, looks odd. we restandardise, THEN do a thing involving the constraint.. When could the constraint ever
+                    // kick in? Verify test coverage here..
+                    var restandardisedClause = clause.Restandardise(); 
                     var substitution = new VariableSubstitution(constraints);
 
                     if (LiteralUnifier.TryUpdate(restandardisedClause.Consequent, goal, substitution))

@@ -1,7 +1,6 @@
 ﻿using SCFirstOrderLogic;
 using SCFirstOrderLogic.InternalUtilities;
 using SCFirstOrderLogic.SentenceFormatting;
-using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +19,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         private readonly IClauseStore clauseStore;
 
         private int executeCount = 0;
-        private List<Proof>? proofs;
+        private List<SimpleBackwardChainingProof>? proofs;
 
         internal SimpleBackwardChainingQuery(Predicate queryGoal, IClauseStore clauseStore)
         {
@@ -41,67 +40,13 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             get
             {
-                // Don't bother lazy.. Won't be critical path - not worth the complexity hit. Might revisit.
-                var formatter = new SentenceFormatter();
-                var cnfExplainer = new CNFExplainer(formatter);
                 var resultExplanation = new StringBuilder();
 
-                var proofNum = 1;
-
-                foreach (var proof in Proofs)
+                for (int i = 0; i < Proofs!.Count; i++)
                 {
-                    resultExplanation.AppendLine($"--- PROOF #{proofNum++}");
+                    resultExplanation.AppendLine($"--- PROOF #{i + 1}");
                     resultExplanation.AppendLine();
-
-                    // Now build the explanation string.
-                    var proofStepsByPredicate = proof.Steps;
-                    var orderedPredicates = proofStepsByPredicate.Keys.ToList();
-
-                    for (var i = 0; i < orderedPredicates.Count; i++)
-                    {
-                        var predicate = orderedPredicates[i];
-                        var proofStep = proofStepsByPredicate[predicate];
-
-                        // Consequent:
-                        resultExplanation.AppendLine($"Step #{i:D2}: {formatter.Format(predicate)}");
-
-                        // Rule applied:
-                        resultExplanation.AppendLine($"  By Rule: {formatter.Format(proofStep)}");
-
-                        // Conjuncts used:
-                        foreach (var childPredicate in proofStep.Conjuncts)
-                        {
-                            resultExplanation.AppendLine($"  And Step #{orderedPredicates.IndexOf(childPredicate):D2}: {formatter.Format(childPredicate)}");
-                        }
-
-                        resultExplanation.AppendLine();
-                    }
-
-                    // Output the unifier:
-                    resultExplanation.Append("Using: {");
-                    resultExplanation.Append(string.Join(", ", proof.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
-                    resultExplanation.AppendLine("}");
-                    resultExplanation.AppendLine();
-
-                    // Explain all the normalisation terms (standardised variables and skolem functions)
-                    resultExplanation.AppendLine("Where:");
-                    var normalisationTermsToExplain = new HashSet<Term>();
-
-                    foreach (var term in CNFInspector.FindNormalisationTerms(proof.Steps.Keys))
-                    {
-                        normalisationTermsToExplain.Add(term);
-                    }
-
-                    foreach (var term in proof.Unifier.Bindings.SelectMany(kvp => new[] { kvp.Key, kvp.Value }).Where(t => t is VariableReference vr && vr.Symbol is StandardisedVariableSymbol))
-                    {
-                        normalisationTermsToExplain.Add(term);
-                    }
-
-                    foreach (var term in normalisationTermsToExplain)
-                    {
-                        resultExplanation.AppendLine($"  {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
-                    }
-
+                    resultExplanation.Append(Proofs[i].GetExplanation(new SentenceFormatter()));
                     resultExplanation.AppendLine();
                 }
 
@@ -110,10 +55,10 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         }
 
         /// <summary>
-        /// Gets the set of proofs of the query..
+        /// Gets a list of proofs of the query.
         /// Result will be empty if and only if the query returned a negative result.
         /// </summary>
-        public IEnumerable<Proof> Proofs => proofs ?? throw new InvalidOperationException("Query is not yet complete");
+        public IReadOnlyList<SimpleBackwardChainingProof> Proofs => proofs ?? throw new InvalidOperationException("Query is not yet complete");
 
         /// <inheritdoc />
         public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
@@ -129,23 +74,24 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 throw new InvalidOperationException("Query execution has already begun via a prior ExecuteAsync invocation");
             }
 
-            proofs = await ProvePredicate(queryGoal, new Proof()).ToListAsync(cancellationToken);
+            proofs = await ProvePredicate(queryGoal, new SimpleBackwardChainingProof()).ToListAsync(cancellationToken);
             return Result;
         }
 
         /// <inheritdoc />
         public void Dispose()
         {
-            //// Nothing to do
+            // Nothing to do..
+            GC.SuppressFinalize(this);
         }
 
-        private async IAsyncEnumerable<Proof> ProvePredicate(Predicate goal, Proof parentProof)
+        private async IAsyncEnumerable<SimpleBackwardChainingProof> ProvePredicate(Predicate goal, SimpleBackwardChainingProof parentProof)
         {
-            // NB: This implementation is coded to be a depth-first and-or search, but the clause store can at least
+            // NB: This implementation is a depth-first and-or search, but the clause store can at least
             // control which branches get explored first by ordering the returned clause applications appropriately.
             await foreach (var (clause, substitution) in clauseStore.GetClauseApplications(goal, parentProof.Unifier))
             {
-                await foreach (var clauseProof in ProvePredicates(clause.Conjuncts, new Proof(parentProof.Steps, substitution)))
+                await foreach (var clauseProof in ProvePredicates(clause.Conjuncts, new SimpleBackwardChainingProof(parentProof.Steps, substitution)))
                 {
                     clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), clause);
                     yield return clauseProof;
@@ -153,7 +99,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             }
         }
 
-        private async IAsyncEnumerable<Proof> ProvePredicates(IEnumerable<Predicate> goals, Proof proof)
+        private async IAsyncEnumerable<SimpleBackwardChainingProof> ProvePredicates(IEnumerable<Predicate> goals, SimpleBackwardChainingProof proof)
         {
             if (!goals.Any())
             {
@@ -169,43 +115,6 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Container for a proof of a query.
-        /// </summary>
-        public class Proof
-        {
-            private readonly Dictionary<Predicate, CNFDefiniteClause> steps;
-
-            internal Proof()
-            {
-                Unifier = new VariableSubstitution();
-                steps = new();
-            }
-
-            internal Proof(IEnumerable<KeyValuePair<Predicate, CNFDefiniteClause>> steps, VariableSubstitution unifier)
-            {
-                Unifier = unifier;
-                this.steps = steps.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            }
-
-            /// <summary>
-            /// Gets the unifier used by this proof.
-            /// </summary>
-            public VariableSubstitution Unifier { get; }
-
-            /// <summary>
-            /// Gets the steps of the proof. Each predicate used in the proof (including the goal) is present as a key.
-            /// The associated value is the clause that was used to prove it. Each conjunct of that clause will also be present
-            /// as a key - all the way back to and inclusive of the relevant unit clauses that are present in the KB (which
-            /// of course have no conjuncts).
-            /// </summary>
-            public IReadOnlyDictionary<Predicate, CNFDefiniteClause> Steps => steps;
-
-            internal Predicate ApplyUnifierTo(Predicate predicate) => Unifier.ApplyTo(predicate).Predicate;
-
-            internal void AddStep(Predicate predicate, CNFDefiniteClause rule) => steps[predicate] = rule;
         }
     }
 }

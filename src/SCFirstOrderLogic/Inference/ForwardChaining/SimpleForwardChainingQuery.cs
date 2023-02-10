@@ -20,7 +20,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     {
         private readonly Predicate queryGoal;
         private readonly IQueryClauseStore clauseStore;
-        private readonly Dictionary<Predicate, ProofStep> proof = new();
+        private readonly Dictionary<Predicate, SimpleForwardChainingProofStep> proof = new();
         private readonly Lazy<ReadOnlyCollection<Predicate>> usefulPredicates;
 
         private int executeCount = 0;
@@ -104,7 +104,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// Gets the proof tree generated during execution of the query. Each discovered fact (not including those from the knowledge
         /// base) is present as a key. The value associated with each is information about the step used to discover it.
         /// </summary>
-        public IReadOnlyDictionary<Predicate, ProofStep> Proof => proof;
+        public IReadOnlyDictionary<Predicate, SimpleForwardChainingProofStep> Proof => proof;
 
         /// <summary>
         /// Gets a list of the useful (in that they led to the result) predicates discovered by a query that has returned a positive result.
@@ -138,7 +138,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                 return true;
             }
 
-            // This knowledge base does incremental chaining - at each step, only the rules that
+            // This query does incremental chaining - at each step, only the rules that
             // are applicable to newly discovered facts are considered. This means that prior to
             // the first step, we need to populate the "new" list with all of the facts from the KB.
             List<CNFDefiniteClause> newFacts = (await clauseStore.ToListAsync(cancellationToken)).Where(c => c.IsUnitClause).ToList();
@@ -146,7 +146,6 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             do
             {
                 var applicableRules = await clauseStore.GetApplicableRules(newFacts.Select(f => f.Consequent), cancellationToken).ToListAsync(cancellationToken);
-
                 newFacts.Clear();
 
                 foreach (var rule in applicableRules)
@@ -196,20 +195,19 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             clauseStore.Dispose();
         }
 
-        /// <summary>
-        /// Finds the variable substitutions t such that t.ApplyTo(clause) = t.ApplyTo(p1 ∧ ... ∧ pₙ) for some p1, .., pₙ in KB
-        /// </summary>
-        private IAsyncEnumerable<ProofStep> MatchWithKnownFacts(CNFDefiniteClause rule)
+        private IAsyncEnumerable<SimpleForwardChainingProofStep> MatchWithKnownFacts(CNFDefiniteClause rule)
         {
             // NB: there's no specific conjunct ordering here - just look at them in the order they happen to fall.
             // To improve performance we could at least TRY to order the conjuncts in a way that minimises
             // the amount of work we have to do. And this is where we'd do it.
             // TODO-FEATURE: would be relatively easy to add an (optional) ctor parameter for controlling 
             // conjunct ordering.
-            return MatchWithKnownFacts(rule.Conjuncts, new ProofStep(rule));
+            return MatchWithKnownFacts(rule.Conjuncts, new SimpleForwardChainingProofStep(rule));
         }
 
-        private async IAsyncEnumerable<ProofStep> MatchWithKnownFacts(IEnumerable<Predicate> conjuncts, ProofStep proofStep)
+        private async IAsyncEnumerable<SimpleForwardChainingProofStep> MatchWithKnownFacts(
+            IEnumerable<Predicate> conjuncts,
+            SimpleForwardChainingProofStep proofStep)
         {
             if (!conjuncts.Any())
             {
@@ -219,7 +217,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             {
                 await foreach (var (knownFact, unifier) in clauseStore.MatchWithKnownFacts(conjuncts.First(), proofStep.Unifier))
                 {
-                    await foreach (var restOfConjunctsProof in MatchWithKnownFacts(conjuncts.Skip(1), new ProofStep(proofStep, knownFact, unifier)))
+                    await foreach (var restOfConjunctsProof in MatchWithKnownFacts(conjuncts.Skip(1), new SimpleForwardChainingProofStep(proofStep, knownFact, unifier)))
                     {
                         yield return restOfConjunctsProof;
                     }
@@ -271,52 +269,6 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             orderedSteps.Reverse();
 
             return orderedSteps.AsReadOnly();
-        }
-
-        /// <summary>
-        /// Container for information about an attempt to apply a specific rule from the knowledge base, given what we've already discerned.
-        /// </summary>
-        public class ProofStep
-        {
-            internal ProofStep(CNFDefiniteClause rule)
-            {
-                Rule = rule;
-                KnownPredicates = Enumerable.Empty<Predicate>();
-                Unifier = new VariableSubstitution();
-            }
-
-            /// <summary>
-            /// Extends a proof step with an additional predicate and updated unifier.
-            /// </summary>
-            /// <param name="parent">The existing proof step.</param>
-            /// <param name="additionalPredicate">The predicate to add.</param>
-            /// <param name="updatedUnifier">The updated unifier.</param>
-            internal ProofStep(ProofStep parent, Predicate additionalPredicate, VariableSubstitution updatedUnifier)
-            {
-                Rule = parent.Rule;
-                KnownPredicates = parent.KnownPredicates.Append(additionalPredicate); // Hmm. Nesting.. Though we can probably realise it lazily, given the usage.
-                Unifier = updatedUnifier;
-            }
-
-            /// <summary>
-            /// The rule that was applied by this step.
-            /// </summary>
-            public CNFDefiniteClause Rule { get; }
-
-            /// <summary>
-            /// The known predicates that were used to make this step.
-            /// </summary>
-            public IEnumerable<Predicate> KnownPredicates { get; }
-
-            /// <summary>
-            /// The substitution that is applied to the rule's conjuncts to make them match the known predicates.
-            /// </summary>
-            public VariableSubstitution Unifier { get; }
-
-            /// <summary>
-            /// Gets the predicate that was inferred by this step by the application of the rule to the known unit clauses.
-            /// </summary>
-            public Predicate InferredPredicate => Unifier.ApplyTo(Rule.Consequent).Predicate;
         }
     }
 }
