@@ -14,7 +14,8 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
     /// <summary>
-    /// Query implementation used by <see cref="SimpleForwardChainingKnowledgeBase"/>.
+    /// An implementation of <see cref="IQuery"/> that uses a (breadth-first, incremental) forward chaining algorithm.
+    /// Used by <see cref="SimpleForwardChainingKnowledgeBase"/>.
     /// </summary>
     public sealed class SimpleForwardChainingQuery : IQuery
     {
@@ -40,65 +41,9 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         public bool Result => result ?? throw new InvalidOperationException("Query is not yet complete");
 
         /// <summary>
-        /// Gets a (very raw) explanation of the steps that led to the result of the query.
+        /// Gets a (very raw, English) explanation of the steps that led to the result of the query.
         /// </summary>
-        public string ResultExplanation
-        {
-            get
-            {
-                if (!IsComplete)
-                {
-                    throw new InvalidOperationException("Query is not yet complete");
-                }
-                else if (!Result)
-                {
-                    throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
-                }
-
-                var formatter = new SentenceFormatter();
-                var cnfExplainer = new CNFExplainer(formatter);
-
-                // Now build the explanation string.
-                var explanation = new StringBuilder();
-                for (var i = 0; i < UsefulPredicates.Count; i++)
-                {
-                    var proofStep = Proof[UsefulPredicates[i]];
-
-                    string GetSource(Predicate predicate)
-                    {
-                        if (UsefulPredicates.Contains(predicate))
-                        {
-                            return $"#{UsefulPredicates.IndexOf(predicate):D2}";
-                        }
-                        else
-                        {
-                            return " KB";
-                        }
-                    }
-
-                    explanation.AppendLine($"#{i:D2}: {formatter.Format(UsefulPredicates[i])}");
-                    explanation.AppendLine($"     By Rule : {formatter.Format(proofStep.Rule)}");
-
-                    foreach (var knownUnitClause in proofStep.KnownPredicates)
-                    {
-                        explanation.AppendLine($"     From {GetSource(knownUnitClause)}: {formatter.Format(knownUnitClause)}");
-                    }
-
-                    explanation.Append("     Using   : {");
-                    explanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
-                    explanation.AppendLine("}");
-
-                    foreach (var term in CNFInspector.FindNormalisationTerms(proofStep.KnownPredicates.Append(UsefulPredicates[i])))
-                    {
-                        explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
-                    }
-
-                    explanation.AppendLine();
-                }
-
-                return explanation.ToString();
-            }
-        }
+        public string ResultExplanation => GetResultExplanation(new SentenceFormatter());
 
         /// <summary>
         /// Gets the proof tree generated during execution of the query. Each discovered fact (not including those from the knowledge
@@ -187,6 +132,62 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 
             result = false;
             return false;
+        }
+
+        /// <summary>
+        /// Gets a (very raw, English) explanation of the steps that led to the result of the query, using a specified <see cref="SentenceFormatter"/>.
+        /// </summary>
+        /// <param name="formatter">The sentence formatter to use.</param>
+        public string GetResultExplanation(SentenceFormatter formatter)
+        {
+            if (!IsComplete)
+            {
+                throw new InvalidOperationException("Query is not yet complete");
+            }
+            else if (!Result)
+            {
+                throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
+            }
+
+            var cnfExplainer = new CNFExplainer(formatter);
+            var explanation = new StringBuilder();
+            for (var i = 0; i < UsefulPredicates.Count; i++)
+            {
+                var proofStep = Proof[UsefulPredicates[i]];
+
+                string GetSource(Predicate predicate)
+                {
+                    if (UsefulPredicates.Contains(predicate))
+                    {
+                        return $"#{UsefulPredicates.IndexOf(predicate):D2}";
+                    }
+                    else
+                    {
+                        return " KB";
+                    }
+                }
+
+                explanation.AppendLine($"#{i:D2}: {formatter.Format(UsefulPredicates[i])}");
+                explanation.AppendLine($"     By Rule : {formatter.Format(proofStep.Rule)}");
+
+                foreach (var knownUnitClause in proofStep.KnownPredicates)
+                {
+                    explanation.AppendLine($"     From {GetSource(knownUnitClause)}: {formatter.Format(knownUnitClause)}");
+                }
+
+                explanation.Append("     Using   : {");
+                explanation.Append(string.Join(", ", proofStep.Unifier.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
+                explanation.AppendLine("}");
+
+                foreach (var term in CNFInspector.FindNormalisationTerms(proofStep.KnownPredicates.Append(UsefulPredicates[i])))
+                {
+                    explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
+                }
+
+                explanation.AppendLine();
+            }
+
+            return explanation.ToString();
         }
 
         /// <inheritdoc />

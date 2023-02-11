@@ -43,12 +43,11 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         public IReadOnlyDictionary<Predicate, CNFDefiniteClause> Steps => steps;
 
         /// <summary>
-        /// Gets a human-readable explanation of the proof.
+        /// Gets a human-readable (English) explanation of the proof.
         /// </summary>
         /// <param name="formatter">The sentence formatter to use.</param>
         // NB: we don't bother caching the resulting string.
         // This won't be anywhere near a critical path - not worth the complexity hit.
-        // TODO-L11N: If this ever takes off, worth supporting localisation here.
         public string GetExplanation(SentenceFormatter formatter)
         {
             var explanationBuilder = new StringBuilder();

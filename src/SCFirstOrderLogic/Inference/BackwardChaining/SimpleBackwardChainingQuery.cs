@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
-    /// The implementation of <see cref="IQuery"/> used by <see cref="SimpleBackwardChainingKnowledgeBase"/>.
+    /// An implementation of <see cref="IQuery"/> that uses a (depth-first) backward chaining algorithm.
+    /// Used by <see cref="SimpleBackwardChainingKnowledgeBase"/>.
     /// </summary>
     public class SimpleBackwardChainingQuery : IQuery
     {
@@ -36,23 +37,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// <summary>
         /// Gets a human-readable explanation of the query result.
         /// </summary>
-        public string ResultExplanation
-        {
-            get
-            {
-                var resultExplanation = new StringBuilder();
-
-                for (int i = 0; i < Proofs!.Count; i++)
-                {
-                    resultExplanation.AppendLine($"--- PROOF #{i + 1}");
-                    resultExplanation.AppendLine();
-                    resultExplanation.Append(Proofs[i].GetExplanation(new SentenceFormatter()));
-                    resultExplanation.AppendLine();
-                }
-
-                return resultExplanation.ToString();
-            }
-        }
+        public string ResultExplanation => GetResultExplanation(new SentenceFormatter());
 
         /// <summary>
         /// Gets a list of proofs of the query.
@@ -78,6 +63,25 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             return Result;
         }
 
+        /// <summary>
+        /// Gets a human-readable explanation of the query result, using a specified <see cref="SentenceFormatter"/> instance.
+        /// </summary>
+        /// <param name="sentenceFormatter">The sentence formatter to use.</param>
+        public string GetResultExplanation(SentenceFormatter sentenceFormatter)
+        {
+            var resultExplanation = new StringBuilder();
+
+            for (int i = 0; i < Proofs.Count; i++)
+            {
+                resultExplanation.AppendLine($"--- PROOF #{i + 1}");
+                resultExplanation.AppendLine();
+                resultExplanation.Append(Proofs[i].GetExplanation(sentenceFormatter));
+                resultExplanation.AppendLine();
+            }
+
+            return resultExplanation.ToString();
+        }
+
         /// <inheritdoc />
         public void Dispose()
         {
@@ -99,15 +103,15 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             }
         }
 
-        private async IAsyncEnumerable<SimpleBackwardChainingProof> ProvePredicates(IEnumerable<Predicate> goals, SimpleBackwardChainingProof proof)
+        private async IAsyncEnumerable<SimpleBackwardChainingProof> ProvePredicates(IEnumerable<Predicate> goals, SimpleBackwardChainingProof currentProof)
         {
             if (!goals.Any())
             {
-                yield return proof;
+                yield return currentProof;
             }
             else
             {
-                await foreach (var firstGoalProof in ProvePredicate(proof.ApplyUnifierTo(goals.First()), proof))
+                await foreach (var firstGoalProof in ProvePredicate(currentProof.ApplyUnifierTo(goals.First()), currentProof))
                 {
                     await foreach (var restOfGoalsProof in ProvePredicates(goals.Skip(1), firstGoalProof))
                     {
