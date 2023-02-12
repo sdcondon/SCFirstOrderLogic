@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
 using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory;
-using SCFirstOrderLogic.Inference.Resolution.Strategies;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CrimeDomain;
 
 namespace SCFirstOrderLogic.Inference.Resolution
