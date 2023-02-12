@@ -11,11 +11,11 @@ using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
 namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
-    public static class SimpleForwardChainingKnowledgeBaseTests
+    public static class ForwardChainingKnowledgeBaseTests
     {
         public static Test PositiveScenarios => TestThat
             .GivenTestContext()
-            .AndEachOf(() => new SimpleForwardChainingQuery[]
+            .AndEachOf(() => new ForwardChainingQuery[]
             {
                 // trivial
                 MakeQuery(
@@ -88,7 +88,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             .And((cxt, query, _) => cxt.WriteOutput(query.ResultExplanation));
 
         public static Test NegativeScenarios => TestThat
-            .GivenEachOf(() => new SimpleForwardChainingQuery[]
+            .GivenEachOf(() => new ForwardChainingQuery[]
             {
                 // no matching clause
                 MakeQuery(
@@ -126,7 +126,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         public static Test RepeatedQueryExecution => TestThat
             .Given(() =>
             {
-                var knowledgeBase = new SimpleForwardChainingKnowledgeBase(new HashSetClauseStore());
+                var knowledgeBase = new ForwardChainingKnowledgeBase(new HashSetClauseStore());
                 return knowledgeBase.CreateQuery(IsGreedy(John));
             })
             .When(q =>
@@ -147,9 +147,9 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                 (rv.task1.IsFaulted ^ rv.task2.IsFaulted).Should().BeTrue();
             });
 
-        private static SimpleForwardChainingQuery MakeQuery(Sentence query, IEnumerable<Sentence> kb)
+        private static ForwardChainingQuery MakeQuery(Sentence query, IEnumerable<Sentence> kb)
         {
-            var knowledgeBase = new SimpleForwardChainingKnowledgeBase(new HashSetClauseStore(kb));
+            var knowledgeBase = new ForwardChainingKnowledgeBase(new HashSetClauseStore(kb));
             return knowledgeBase.CreateQuery(query);
         }
     }

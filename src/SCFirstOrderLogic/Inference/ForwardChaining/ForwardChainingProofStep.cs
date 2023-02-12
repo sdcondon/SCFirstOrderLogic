@@ -7,9 +7,9 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     /// <summary>
     /// Container for information about an attempt to apply a specific rule from the knowledge base, given what we've already discerned.
     /// </summary>
-    public class SimpleForwardChainingProofStep
+    public class ForwardChainingProofStep
     {
-        internal SimpleForwardChainingProofStep(CNFDefiniteClause rule)
+        internal ForwardChainingProofStep(CNFDefiniteClause rule)
         {
             Rule = rule;
             KnownPredicates = Enumerable.Empty<Predicate>();
@@ -22,8 +22,8 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// <param name="parent">The existing proof step.</param>
         /// <param name="additionalPredicate">The predicate to add.</param>
         /// <param name="updatedUnifier">The updated unifier.</param>
-        internal SimpleForwardChainingProofStep(
-            SimpleForwardChainingProofStep parent,
+        internal ForwardChainingProofStep(
+            ForwardChainingProofStep parent,
             Predicate additionalPredicate,
             VariableSubstitution updatedUnifier)
         {

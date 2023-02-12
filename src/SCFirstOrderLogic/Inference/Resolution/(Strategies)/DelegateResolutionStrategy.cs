@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// <summary>
     /// Basic resolution strategy that filters and prioritises resolutions using given delegates.
     /// </summary>
-    public class DelegateResolutionStrategy : ISimpleResolutionStrategy
+    public class DelegateResolutionStrategy : IResolutionStrategy
     {
         private readonly Func<ClauseResolution, bool> filter;
         private readonly Comparison<ClauseResolution> priorityComparison;
@@ -38,7 +38,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public IKnowledgeBaseClauseStore ClauseStore { get; }
 
         /// <inheritdoc/>
-        public ISimpleResolutionQueue MakeResolutionQueue() => new PrioritisedAndFilteredResolutionQueue(filter, priorityComparison);
+        public IResolutionQueue MakeResolutionQueue() => new PrioritisedAndFilteredResolutionQueue(filter, priorityComparison);
 
         /// <summary>
         /// <para>
@@ -144,7 +144,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             };
         }
 
-        private class PrioritisedAndFilteredResolutionQueue : ISimpleResolutionQueue
+        private class PrioritisedAndFilteredResolutionQueue : IResolutionQueue
         {
             private readonly Func<ClauseResolution, bool> filter;
             private readonly MaxPriorityQueue<ClauseResolution> priorityQueue;

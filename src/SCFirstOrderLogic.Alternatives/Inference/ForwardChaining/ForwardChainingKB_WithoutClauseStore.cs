@@ -54,7 +54,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// </summary>
         /// <param name="query">The query sentence.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        /// <returns>A task that returns an <see cref="SimpleForwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
+        /// <returns>A task that returns an <see cref="ForwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
         public Task<Query> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default)
         {
             if (query is not Predicate p)

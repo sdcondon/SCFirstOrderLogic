@@ -18,7 +18,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         // Might consider using a third-party package for an actual concurrent hash set at some point, but.. probably won't.
         // Consumers to whom this matters can always create their own implementation.
         private readonly ConcurrentDictionary<CNFClause, byte> clauses = new();
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="HashSetClauseStore"/> class.
         /// </summary>

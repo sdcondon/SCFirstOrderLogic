@@ -12,17 +12,17 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
     /// An implementation of <see cref="IQuery"/> that uses a (depth-first) backward chaining algorithm.
-    /// Used by <see cref="SimpleBackwardChainingKnowledgeBase"/>.
+    /// Used by <see cref="BackwardChainingKnowledgeBase"/>.
     /// </summary>
-    public class SimpleBackwardChainingQuery : IQuery
+    public class BackwardChainingQuery : IQuery
     {
         private readonly Predicate queryGoal;
         private readonly IClauseStore clauseStore;
 
         private int executeCount = 0;
-        private List<SimpleBackwardChainingProof>? proofs;
+        private List<BackwardChainingProof>? proofs;
 
-        internal SimpleBackwardChainingQuery(Predicate queryGoal, IClauseStore clauseStore)
+        internal BackwardChainingQuery(Predicate queryGoal, IClauseStore clauseStore)
         {
             this.queryGoal = queryGoal;
             this.clauseStore = clauseStore;
@@ -43,7 +43,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// Gets a list of proofs of the query.
         /// Result will be empty if and only if the query returned a negative result.
         /// </summary>
-        public IReadOnlyList<SimpleBackwardChainingProof> Proofs => proofs ?? throw new InvalidOperationException("Query is not yet complete");
+        public IReadOnlyList<BackwardChainingProof> Proofs => proofs ?? throw new InvalidOperationException("Query is not yet complete");
 
         /// <inheritdoc />
         public async Task<bool> ExecuteAsync(CancellationToken cancellationToken = default)
@@ -59,7 +59,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 throw new InvalidOperationException("Query execution has already begun via a prior ExecuteAsync invocation");
             }
 
-            proofs = await ProvePredicate(queryGoal, new SimpleBackwardChainingProof()).ToListAsync(cancellationToken);
+            proofs = await ProvePredicate(queryGoal, new BackwardChainingProof()).ToListAsync(cancellationToken);
             return Result;
         }
 
@@ -89,13 +89,13 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             GC.SuppressFinalize(this);
         }
 
-        private async IAsyncEnumerable<SimpleBackwardChainingProof> ProvePredicate(Predicate goal, SimpleBackwardChainingProof parentProof)
+        private async IAsyncEnumerable<BackwardChainingProof> ProvePredicate(Predicate goal, BackwardChainingProof parentProof)
         {
             // NB: This implementation is a depth-first and-or search, but the clause store can at least
             // control which branches get explored first by ordering the returned clause applications appropriately.
             await foreach (var (clause, substitution) in clauseStore.GetClauseApplications(goal, parentProof.Unifier))
             {
-                await foreach (var clauseProof in ProvePredicates(clause.Conjuncts, new SimpleBackwardChainingProof(parentProof.Steps, substitution)))
+                await foreach (var clauseProof in ProvePredicates(clause.Conjuncts, new BackwardChainingProof(parentProof.Steps, substitution)))
                 {
                     clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), clause);
                     yield return clauseProof;
@@ -103,7 +103,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             }
         }
 
-        private async IAsyncEnumerable<SimpleBackwardChainingProof> ProvePredicates(IEnumerable<Predicate> goals, SimpleBackwardChainingProof currentProof)
+        private async IAsyncEnumerable<BackwardChainingProof> ProvePredicates(IEnumerable<Predicate> goals, BackwardChainingProof currentProof)
         {
             if (!goals.Any())
             {

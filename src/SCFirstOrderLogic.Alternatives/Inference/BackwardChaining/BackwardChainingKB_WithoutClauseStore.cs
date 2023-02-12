@@ -59,7 +59,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// </summary>
         /// <param name="query">The query sentence.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        /// <returns>A task that returns an <see cref="SimpleBackwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
+        /// <returns>A task that returns an <see cref="BackwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
         public Task<Query> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default)
         {
             if (query is not Predicate p)
@@ -80,14 +80,14 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// Initiates a new query against the knowledge base.
         /// </summary>
         /// <param name="query">The query sentence.</param>
-        /// <returns>An <see cref="SimpleBackwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
+        /// <returns>An <see cref="BackwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
         public Query CreateQuery(Sentence query)
         {
             return CreateQueryAsync(query).GetAwaiter().GetResult();
         }
 
         /// <summary>
-        /// Query implementation used by <see cref="SimpleBackwardChainingKnowledgeBase"/>.
+        /// Query implementation used by <see cref="BackwardChainingKnowledgeBase"/>.
         /// </summary>
         public class Query : IQuery
         {

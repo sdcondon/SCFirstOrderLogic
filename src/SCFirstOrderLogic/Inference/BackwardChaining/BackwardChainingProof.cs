@@ -7,19 +7,19 @@ using System.Text;
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
-    /// Container for a proof of a <see cref="SimpleBackwardChainingQuery"/>.
+    /// Container for a proof of a <see cref="BackwardChainingQuery"/>.
     /// </summary>
-    public class SimpleBackwardChainingProof
+    public class BackwardChainingProof
     {
         private readonly Dictionary<Predicate, CNFDefiniteClause> steps;
 
-        internal SimpleBackwardChainingProof()
+        internal BackwardChainingProof()
         {
             steps = new();
             Unifier = new VariableSubstitution();
         }
 
-        internal SimpleBackwardChainingProof(IEnumerable<KeyValuePair<Predicate, CNFDefiniteClause>> steps, VariableSubstitution unifier)
+        internal BackwardChainingProof(IEnumerable<KeyValuePair<Predicate, CNFDefiniteClause>> steps, VariableSubstitution unifier)
         {
             this.steps = new(steps);
             Unifier = unifier;

@@ -13,11 +13,11 @@ using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {
-    public static class SimpleResolutionKnowledgeBaseTests
+    public static class ResolutionKnowledgeBaseTests
     {
         public static Test PositiveScenarios => TestThat
             .GivenTestContext()
-            .AndEachOf(() => new SimpleResolutionQuery[]
+            .AndEachOf(() => new ResolutionQuery[]
             {
                 // trivial
                 MakeQuery(
@@ -95,7 +95,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .And((cxt, query, _) => cxt.WriteOutput(query.ResultExplanation));
 
         public static Test NegativeScenarios => TestThat
-            .GivenEachOf(() => new SimpleResolutionQuery[]
+            .GivenEachOf(() => new ResolutionQuery[]
             {
                 // no matching clause
                 MakeQuery(
@@ -133,7 +133,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public static Test RepeatedQueryExecution => TestThat
             .Given(() =>
             {
-                var knowledgeBase = new SimpleResolutionKnowledgeBase(new DelegateResolutionStrategy(
+                var knowledgeBase = new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
                     new HashSetClauseStore(),
                     DelegateResolutionStrategy.Filters.None,
                     DelegateResolutionStrategy.PriorityComparisons.UnitPreference));
@@ -158,9 +158,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 (rv.task1.IsFaulted ^ rv.task2.IsFaulted).Should().BeTrue();
             });
 
-        private static SimpleResolutionQuery MakeQuery(Sentence query, IEnumerable<Sentence> knowledge)
+        private static ResolutionQuery MakeQuery(Sentence query, IEnumerable<Sentence> knowledge)
         {
-            var knowledgeBase = new SimpleResolutionKnowledgeBase(new DelegateResolutionStrategy(
+            var knowledgeBase = new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
                 new HashSetClauseStore(knowledge),
                 DelegateResolutionStrategy.Filters.None,
                 DelegateResolutionStrategy.PriorityComparisons.UnitPreference));

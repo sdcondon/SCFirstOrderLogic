@@ -1,10 +1,10 @@
 ﻿namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Interface for types that implement resolution queuing logic for a <see cref="ISimpleResolutionStrategy"/>.
+    /// Interface for types that implement resolution queuing logic for a <see cref="IResolutionStrategy"/>.
     /// Such logic might be a plain old queue, might be prioritised in some way, or may be something more complex.
     /// </summary>
-    public interface ISimpleResolutionQueue
+    public interface IResolutionQueue
     {
         /// <summary>
         /// Gets a value indicating whether the queue is empty.

@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
     /// <summary>
-    /// An implementation of <see cref="IKnowledgeBase"/> that uses a (breadth-first, incremental) forward chaining algorithm.
+    /// An implementation of <see cref="IKnowledgeBase"/> that uses a breadth-first, incremental forward chaining algorithm.
     /// </summary>
-    public sealed class SimpleForwardChainingKnowledgeBase : IKnowledgeBase
+    public sealed class ForwardChainingKnowledgeBase : IKnowledgeBase
     {
         private readonly IKnowledgeBaseClauseStore clauseStore;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SimpleForwardChainingKnowledgeBase"/> class.
+        /// Initialises a new instance of the <see cref="ForwardChainingKnowledgeBase"/> class.
         /// </summary>
         /// <param name="clauseStore">the clause store to use to store and look up clauses.</param>
-        public SimpleForwardChainingKnowledgeBase(IKnowledgeBaseClauseStore clauseStore) => this.clauseStore = clauseStore;
+        public ForwardChainingKnowledgeBase(IKnowledgeBaseClauseStore clauseStore) => this.clauseStore = clauseStore;
 
         /// <inheritdoc />
         public async Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
@@ -50,8 +50,8 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// </summary>
         /// <param name="query">The query sentence.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        /// <returns>A task that returns an <see cref="SimpleForwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
-        public async Task<SimpleForwardChainingQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default)
+        /// <returns>A task that returns an <see cref="ForwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
+        public async Task<ForwardChainingQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default)
         {
             if (query is not Predicate p)
             {
@@ -62,15 +62,15 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             // (assuming the symbols in the query don't have weird equality rules)..
             // ..and in any case our standardisation logic assumes all variables to be quantified, otherwise it crashes..
 
-            return new SimpleForwardChainingQuery(p, await clauseStore.CreateQueryStoreAsync(cancellationToken));
+            return new ForwardChainingQuery(p, await clauseStore.CreateQueryStoreAsync(cancellationToken));
         }
 
         /// <summary>
         /// Initiates a new query against the knowledge base.
         /// </summary>
         /// <param name="query">The query sentence.</param>
-        /// <returns>An <see cref="SimpleForwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
-        public SimpleForwardChainingQuery CreateQuery(Sentence query)
+        /// <returns>An <see cref="ForwardChainingQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
+        public ForwardChainingQuery CreateQuery(Sentence query)
         {
             return CreateQueryAsync(query).GetAwaiter().GetResult();
         }

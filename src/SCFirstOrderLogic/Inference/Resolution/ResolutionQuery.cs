@@ -10,23 +10,23 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Implementation of <see cref="IQuery"/> used by <see cref="SimpleResolutionKnowledgeBase"/>.
+    /// Implementation of <see cref="IQuery"/> used by <see cref="ResolutionKnowledgeBase"/>.
     /// Encapsulates a query, allowing for step-by-step execution, as well as examination of those steps, as or after they are carried out.
     /// </summary>
-    public class SimpleResolutionQuery : SteppableQuery<ClauseResolution>
+    public class ResolutionQuery : SteppableQuery<ClauseResolution>
     {
         private readonly IQueryClauseStore clauseStore;
-        private readonly ISimpleResolutionQueue resolutionQueue;
+        private readonly IResolutionQueue resolutionQueue;
         private readonly Dictionary<CNFClause, ClauseResolution> steps;
         private readonly Lazy<ReadOnlyCollection<CNFClause>> discoveredClauses;
 
         private bool isComplete;
         private bool result;
 
-        private SimpleResolutionQuery(
+        private ResolutionQuery(
             Sentence querySentence,
             IQueryClauseStore clauseStore,
-            ISimpleResolutionQueue resolutionQueue)
+            IResolutionQueue resolutionQueue)
         {
             this.clauseStore = clauseStore;
             this.resolutionQueue = resolutionQueue;
@@ -132,19 +132,19 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public IReadOnlyDictionary<CNFClause, ClauseResolution> Steps => steps;
 
         /// <summary>
-        /// Creates and initialises a new instance of the <see cref="SimpleResolutionQuery"/> class. Initialisation can potentially
+        /// Creates and initialises a new instance of the <see cref="ResolutionQuery"/> class. Initialisation can potentially
         /// be a long-running operation (and long-running constructors are a bad idea) - so the constructor is private and this method exists.
         /// </summary>
         /// <param name="querySentence">The query itself.</param>
         /// <param name="strategy">The resolution strategy to use.</param>
         /// <param name="cancellationToken">The cancellation token for this operation.</param>
         /// <returns>A new query instance.</returns>
-        internal static async Task<SimpleResolutionQuery> CreateAsync(
+        internal static async Task<ResolutionQuery> CreateAsync(
             Sentence querySentence,
-            ISimpleResolutionStrategy strategy,
+            IResolutionStrategy strategy,
             CancellationToken cancellationToken = default)
         {
-            var query = new SimpleResolutionQuery(
+            var query = new ResolutionQuery(
                 querySentence,
                 await strategy.ClauseStore.CreateQueryStoreAsync(cancellationToken),
                 strategy.MakeResolutionQueue());

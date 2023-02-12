@@ -10,7 +10,7 @@ using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
 
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
-    public static class SimpleBackwardChainingKnowledgeBaseTests
+    public static class BackwardChainingKnowledgeBaseTests
     {
         public static Test PositiveScenarios => TestThat
             .GivenTestContext()
@@ -82,7 +82,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             })
             .When((_, tc) =>
             {
-                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new DictionaryClauseStore());
+                var knowledgeBase = new BackwardChainingKnowledgeBase(new DictionaryClauseStore());
                 knowledgeBase.Tell(tc.Knowledge);
 
                 var query = knowledgeBase.CreateQuery(tc.Query);
@@ -127,7 +127,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             })
             .When(tc =>
             {
-                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new DictionaryClauseStore(tc.Knowledge));
+                var knowledgeBase = new BackwardChainingKnowledgeBase(new DictionaryClauseStore(tc.Knowledge));
                 var query = knowledgeBase.CreateQuery(tc.Query);
                 query.Execute();
 
@@ -139,7 +139,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         public static Test RepeatedQueryExecution => TestThat
             .Given(() =>
             {
-                var knowledgeBase = new SimpleBackwardChainingKnowledgeBase(new DictionaryClauseStore());
+                var knowledgeBase = new BackwardChainingKnowledgeBase(new DictionaryClauseStore());
                 return knowledgeBase.CreateQuery(IsGreedy(John));
             })
             .When(q =>

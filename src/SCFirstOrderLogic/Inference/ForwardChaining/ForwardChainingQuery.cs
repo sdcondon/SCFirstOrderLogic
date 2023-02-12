@@ -15,19 +15,19 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
     /// <summary>
     /// An implementation of <see cref="IQuery"/> that uses a (breadth-first, incremental) forward chaining algorithm.
-    /// Used by <see cref="SimpleForwardChainingKnowledgeBase"/>.
+    /// Used by <see cref="ForwardChainingKnowledgeBase"/>.
     /// </summary>
-    public sealed class SimpleForwardChainingQuery : IQuery
+    public sealed class ForwardChainingQuery : IQuery
     {
         private readonly Predicate queryGoal;
         private readonly IQueryClauseStore clauseStore;
-        private readonly Dictionary<Predicate, SimpleForwardChainingProofStep> proof = new();
+        private readonly Dictionary<Predicate, ForwardChainingProofStep> proof = new();
         private readonly Lazy<ReadOnlyCollection<Predicate>> usefulPredicates;
 
         private int executeCount = 0;
         private bool? result;
 
-        internal SimpleForwardChainingQuery(Predicate queryGoal, IQueryClauseStore clauseStore)
+        internal ForwardChainingQuery(Predicate queryGoal, IQueryClauseStore clauseStore)
         {
             this.queryGoal = queryGoal;
             this.clauseStore = clauseStore;
@@ -49,7 +49,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// Gets the proof tree generated during execution of the query. Each discovered fact (not including those from the knowledge
         /// base) is present as a key. The value associated with each is information about the step used to discover it.
         /// </summary>
-        public IReadOnlyDictionary<Predicate, SimpleForwardChainingProofStep> Proof => proof;
+        public IReadOnlyDictionary<Predicate, ForwardChainingProofStep> Proof => proof;
 
         /// <summary>
         /// Gets a list of the useful (in that they led to the result) predicates discovered by a query that has returned a positive result.
@@ -196,19 +196,19 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             clauseStore.Dispose();
         }
 
-        private IAsyncEnumerable<SimpleForwardChainingProofStep> MatchWithKnownFacts(CNFDefiniteClause rule)
+        private IAsyncEnumerable<ForwardChainingProofStep> MatchWithKnownFacts(CNFDefiniteClause rule)
         {
             // NB: there's no specific conjunct ordering here - just look at them in the order they happen to fall.
             // To improve performance we could at least TRY to order the conjuncts in a way that minimises
             // the amount of work we have to do. And this is where we'd do it.
             // TODO-FEATURE: would be relatively easy to add an (optional) ctor parameter for controlling 
             // conjunct ordering.
-            return MatchWithKnownFacts(rule.Conjuncts, new SimpleForwardChainingProofStep(rule));
+            return MatchWithKnownFacts(rule.Conjuncts, new ForwardChainingProofStep(rule));
         }
 
-        private async IAsyncEnumerable<SimpleForwardChainingProofStep> MatchWithKnownFacts(
+        private async IAsyncEnumerable<ForwardChainingProofStep> MatchWithKnownFacts(
             IEnumerable<Predicate> conjuncts,
-            SimpleForwardChainingProofStep proofStep)
+            ForwardChainingProofStep proofStep)
         {
             if (!conjuncts.Any())
             {
@@ -218,7 +218,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             {
                 await foreach (var (knownFact, unifier) in clauseStore.MatchWithKnownFacts(conjuncts.First(), proofStep.Unifier))
                 {
-                    await foreach (var restOfConjunctsProof in MatchWithKnownFacts(conjuncts.Skip(1), new SimpleForwardChainingProofStep(proofStep, knownFact, unifier)))
+                    await foreach (var restOfConjunctsProof in MatchWithKnownFacts(conjuncts.Skip(1), new ForwardChainingProofStep(proofStep, knownFact, unifier)))
                     {
                         yield return restOfConjunctsProof;
                     }

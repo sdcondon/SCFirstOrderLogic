@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory;
+using SCFirstOrderLogic.Inference.Resolution.Strategies;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CrimeDomain;
 
 namespace SCFirstOrderLogic.Inference.Resolution
@@ -11,7 +12,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         [Benchmark(Baseline = true)]
         public static bool CrimeExample_SimpleResolutionKnowledgeBase()
         {
-            var kb = new SimpleResolutionKnowledgeBase(new DelegateResolutionStrategy(
+            var kb = new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
                 new HashSetClauseStore(CrimeDomain.Axioms),
                 DelegateResolutionStrategy.Filters.None,
                 DelegateResolutionStrategy.PriorityComparisons.UnitPreference));

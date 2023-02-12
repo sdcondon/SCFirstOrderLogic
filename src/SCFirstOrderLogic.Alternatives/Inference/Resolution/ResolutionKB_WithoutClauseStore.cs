@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// A knowledge base that uses a very simple implementation of resolution to answer queries.
-    /// Even simpler than <see cref="SimpleResolutionKnowledgeBase"/> in that it doesn't use a clause store.
+    /// Even simpler than <see cref="ResolutionKnowledgeBase"/> in that it doesn't use a clause store.
     /// </summary>
     public sealed class ResolutionKB_WithoutClauseStore
     {
@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private readonly Comparison<(CNFClause, CNFClause)> clausePairPriorityComparison;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SimpleResolutionKnowledgeBase"/> class.
+        /// Initialises a new instance of the <see cref="ResolutionKnowledgeBase"/> class.
         /// </summary>
         /// <param name="clausePairFilter">A delegate to use to filter the pairs of clauses to be queued for a unification attempt. A true value indicates that the pair should be enqueued.</param>
         /// <param name="clausePairPriorityComparison">A delegate to use to compare the pairs of clauses to be queued for a unification attempt.</param>
