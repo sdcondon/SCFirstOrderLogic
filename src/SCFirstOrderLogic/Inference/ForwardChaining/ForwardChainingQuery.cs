@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
     /// <summary>
-    /// An implementation of <see cref="IQuery"/> that uses a (breadth-first, incremental) forward chaining algorithm.
+    /// An implementation of <see cref="IQuery"/> that uses a breadth-first, incremental forward chaining algorithm.
     /// Used by <see cref="ForwardChainingKnowledgeBase"/>.
     /// </summary>
     public sealed class ForwardChainingQuery : IQuery
