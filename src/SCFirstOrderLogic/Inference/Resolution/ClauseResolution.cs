@@ -48,11 +48,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <param name="clause1">The first of the clauses to resolve.</param>
         /// <param name="clause2">The second of the clauses to resolve.</param>
         /// <returns>Zero or more results, each consisting of a unifier and output clause.</returns>
+        // TODO: Yes, this is a slow implementation - essentially because it does binary resolution.
+        // It is simple, though - and thus will serve well as a baseline for improvements. Ultimately could
+        // look at adding a method to LiteralUnifier that accepts multiple literals and examines the tree
+        // for them all "simultaneously" - i.e. do full resolution, not binary.
         public static IEnumerable<ClauseResolution> Resolve(CNFClause clause1, CNFClause clause2)
         {
-            // TODO: Yes, this is a slow implementation. It is simple, though - and thus will serve
-            // well as a baseline for improvements. (I'm thinking including LiteralUnifier tweak so that it accepts multiple
-            // literals and examines the tree for them all "simultaneously" - i.e. do full resolution, not binary).
             foreach (var clause1Literal in clause1.Literals)
             {
                 foreach (var clause2Literal in clause2.Literals)
@@ -63,8 +64,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         var clause2OtherLiterals = clause2.Literals.Where(l => l != clause2Literal);
                         HashSet<Literal> unifiedLiterals = new(clause1OtherLiterals.Concat(clause2OtherLiterals).Select(l => resolvingUnifier.ApplyTo(l)));
 
-                        var factoringCarriedOut = false;
+                        // Because we're doing binary resolution, we need to factor the result in order to contribute to a "complete" inference process.
+                        // We also check if the resolvent is trivially true (i.e. contains a mutually-negating literal pair), and omit it if so.
+                        // (NTS: what if a factoring operation results in the clause being trivially true? is that a concerning situation? research me)
                         var clauseIsTriviallyTrue = false;
+                        var factoringCarriedOut = false;
                         do
                         {
                             factoringCarriedOut = false;
@@ -73,21 +77,21 @@ namespace SCFirstOrderLogic.Inference.Resolution
                             {
                                 foreach (var otherLiteral in unifiedLiterals.Take(literalIndex))
                                 {
+                                    if (literal.Equals(otherLiteral.Negate()))
+                                    {
+                                        clauseIsTriviallyTrue = true;
+                                        break;
+                                    }
+
                                     if (LiteralUnifier.TryCreate(literal, otherLiteral, out var factoringUnifier))
                                     {
                                         unifiedLiterals = new HashSet<Literal>(unifiedLiterals.Select(l => factoringUnifier.ApplyTo(l)));
                                         factoringCarriedOut = true;
                                         break;
                                     }
-
-                                    if (literal.Equals(otherLiteral.Negate()))
-                                    {
-                                        clauseIsTriviallyTrue = true;
-                                        break;
-                                    }
                                 }
 
-                                if (factoringCarriedOut || clauseIsTriviallyTrue)
+                                if (clauseIsTriviallyTrue || factoringCarriedOut)
                                 {
                                     break;
                                 }
@@ -95,7 +99,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                                 literalIndex++;
                             }
                         }
-                        while (factoringCarriedOut && !clauseIsTriviallyTrue);
+                        while (!clauseIsTriviallyTrue && factoringCarriedOut);
 
                         if (!clauseIsTriviallyTrue)
                         {
