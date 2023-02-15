@@ -58,7 +58,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             /// <summary>
             /// Filter that requires that one of the clauses be a unit clause.
             /// </summary>
-            public static Func<ClauseResolution, bool> UnitResolution { get; } = pair => pair.Clause1.Literals.Count == 1 || pair.Clause2.Literals.Count == 1;
+            public static Func<ClauseResolution, bool> UnitResolution { get; } = pair => pair.Clause1.IsUnitClause || pair.Clause2.IsUnitClause;
         }
 
         /// <summary>
