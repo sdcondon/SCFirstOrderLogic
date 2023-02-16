@@ -12,7 +12,15 @@ namespace SCFirstOrderLogic.Inference
     /// Decorator knowledge base class that adds equality axioms as knowledge is added to the underlying knowledge base.
     /// </para>
     /// <para>
-    /// See §9.5.5 ("Equality") of Artifical Intelligence: A Modern Approach for more on dealing with equality by axiomising it.
+    /// NB #1: works only as knowledge is *added* - knowledge already in the inner knowledge base at the time of instantiation
+    /// will NOT be examined for functions and predicates to add equality rules for. This limitation is ultimately because IKnowledgeBase
+    /// offers no way to enumerate known facts - and I'm rather reluctant to add this, for several reasons. A decorator clause store
+    /// for each of the inference algorithms (which absolutely can be enumerated) would be another way to go - but this has its own 
+    /// problems. Consumers to whom this matters are invited to examine the source code and implement whatever they need based on it.
+    /// TODO: extract the core logic here into a utility class so that I can refer people to that rather than the source code.
+    /// </para>
+    /// <para>
+    /// NB #2: See §9.5.5 ("Equality") of Artifical Intelligence: A Modern Approach for more on dealing with equality by axiomising it.
     /// </para>
     /// </summary>
     public class EqualityAxiomisingKnowledgeBase : IKnowledgeBase

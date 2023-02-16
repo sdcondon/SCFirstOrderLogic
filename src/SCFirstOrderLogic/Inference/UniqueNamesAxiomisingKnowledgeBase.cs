@@ -11,10 +11,18 @@ namespace SCFirstOrderLogic.Inference
     /// Decorator knowledge base class that adds "axioms" for the unique names assumption as knowledge is added to the underlying knowledge base.
     /// </para>
     /// <para>
-    /// Keeps track of all constants that feature in sentences, and adds "not equal" knowledge for all pairs
+    /// Keeps track of all constants that feature in sentences, and adds "not equal" sentences for all pairs
     /// with non-equal symbols. NB: only adds one ordering of arguments, and adds no knowledge that constants
     /// are equal to themselves - on the understanding that commutativity/reflexivity will be handled elsewhere
     /// (e.g. with <see cref="EqualityAxiomisingKnowledgeBase"/> or with an inner KB that utilises para/demodulation).
+    /// </para>
+    /// <para>
+    /// NB: works only as knowledge is *added* - knowledge already in the inner knowledge base at the time of instantiation
+    /// will NOT be examined for constants to add unique names knowledge for. This limitation is ultimately because IKnowledgeBase
+    /// offers no way to enumerate known facts - and I'm rather reluctant to add this, for several reasons. A decorator clause store
+    /// for each of the inference algorithms (which absolutely can be enumerated) would be another way to go - but this has its own
+    /// problems. Consumers to whom this matters are invited to examine the source code and implement whatever they need based on it.
+    /// TODO: extract the core logic here into a utility class so that I can refer people to that rather than the source code.
     /// </para>
     /// </summary>
     public class UniqueNamesAxiomisingKnowledgeBase : IKnowledgeBase
@@ -45,8 +53,6 @@ namespace SCFirstOrderLogic.Inference
             return innerKnowledgeBase.CreateQueryAsync(query, cancellationToken);
         }
 
-        // NB: The implementation doesn't need to look at the symbols because the
-        // Constant class uses the Symbol for its equality implementation.
         private class UniqueNamesAxiomiser : RecursiveSentenceVisitor
         {
             private readonly IKnowledgeBase innerKnowledgeBase;
@@ -59,6 +65,8 @@ namespace SCFirstOrderLogic.Inference
 
             public override void Visit(Constant constant)
             {
+                // NB: We only need to consider the constant (i.e. not the symbol) here
+                // because the Constant class uses the Symbol for its equality implementation.
                 if (!knownConstants.Contains(constant))
                 {
                     foreach (var knownConstant in knownConstants)
