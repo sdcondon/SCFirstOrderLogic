@@ -24,10 +24,11 @@ namespace SCFirstOrderLogic.SentenceManipulation
         private static readonly DisjunctionDistribution disjunctionDistribution = new();
 
         /// <summary>
-        /// Converts a given <see cref="Sentence"/> instance to a <see cref="CNFSentence"/> instance.
+        /// Applies the various normalisation transformations (variable standardisation, implication elimination, negation normalisation, Skolemisation,
+        /// universal quantifier elimination, and disjunction distribution) to a given sentence <see cref="Sentence"/> instance.
         /// </summary>
         /// <param name="sentence">The sentence to convert.</param>
-        /// <returns>The converted sentence.</returns>
+        /// <returns>The transformed sentence.</returns>
         public static Sentence ApplyTo(Sentence sentence)
         {
             // We do variable standardisation first, before altering the sentence in any
