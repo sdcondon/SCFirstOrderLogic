@@ -3,7 +3,7 @@
 namespace SCFirstOrderLogic.InternalUtilities
 {
     /// <summary>
-    /// Max priority queue implementation that uses a binary heap.
+    /// A max priority queue implementation that uses a binary heap.
     /// </summary>
     /// <typeparam name="TElement">The type of objects to be stored.</typeparam>
     internal sealed class MaxPriorityQueue<TElement>
@@ -15,10 +15,10 @@ namespace SCFirstOrderLogic.InternalUtilities
         /// <summary>
         /// Initializes a new instance of the <see cref="MaxPriorityQueue{TElement}"/> class.
         /// </summary>
-        /// <param name="priorityComparer">The comparer to use to compare elements.</param>
-        public MaxPriorityQueue(Comparison<TElement> priorityComparer)
+        /// <param name="priorityComparison">The comparison to use to compare elements.</param>
+        public MaxPriorityQueue(Comparison<TElement> priorityComparison)
         {
-            this.priorityComparison = priorityComparer ?? throw new ArgumentNullException(nameof(priorityComparer));
+            this.priorityComparison = priorityComparison ?? throw new ArgumentNullException(nameof(priorityComparison));
         }
 
         /// <summary>
