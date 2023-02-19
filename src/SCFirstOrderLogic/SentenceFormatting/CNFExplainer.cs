@@ -36,6 +36,8 @@ namespace SCFirstOrderLogic.SentenceFormatting
             }
             else if (term is VariableReference variable && variable.Symbol is StandardisedVariableSymbol standardisedVariableSymbol)
             {
+                // ..doesn't necessarily help if the original symbol occurs more than once (in different scopes, of course - else normalisation
+                // should have thrown). "Xth occurence (left-to-right) of.."? Not a big deal - an edge case to deal with at a later date.
                 return $"a standardisation of {standardisedVariableSymbol.OriginalSymbol} from {sentenceFormatter.Format(standardisedVariableSymbol.OriginalSentence)}";
             }
             else

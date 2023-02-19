@@ -41,10 +41,10 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <summary>
         /// Gets or sets the default labeller to use for standardised variables. Used by
         /// <see cref="SentenceFormatter"/> instances constructed with the parameterless constructor.
-        /// Defaults to a <see cref="LabelSetLabeller{T}"/> using the (lower-case) Greek alphabet.
+        /// Defaults to a <see cref="SubscriptSuffixLabeller"/>.
         /// </summary>
-        public static ILabeller<StandardisedVariableSymbol> DefaultStandardisedVariableLabeller { get; set; } = 
-            new LabelSetLabeller<StandardisedVariableSymbol>(LabelSets.LowerGreekAlphabet);
+        public static ILabeller<StandardisedVariableSymbol> DefaultStandardisedVariableLabeller { get; set; } =
+            new SubscriptSuffixLabeller();
 
         /// <summary>
         /// Gets or sets the default labeller to use for Skolem functions. Used by
