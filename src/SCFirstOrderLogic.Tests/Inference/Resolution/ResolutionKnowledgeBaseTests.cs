@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using FlUnit;
-////using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory;
+using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory;
 using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-////using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory.KinshipDomain;
+using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory.KinshipDomain;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory.CrimeDomain;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory.CuriousityAndTheCatDomain;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
@@ -175,10 +175,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
         ////    .GivenTestContext()
         ////    .When(_ =>
         ////    {
-        ////        var innerKb = new SimpleResolutionKnowledgeBase(
-        ////            new SimpleClauseStore(),
-        ////            SimpleResolutionKnowledgeBase.Filters.None,
-        ////            SimpleResolutionKnowledgeBase.PriorityComparisons.TotalLiteralCountMinimisation);
+        ////        var resolutionStrategy = new LinearResolutionStrategy(new HashSetClauseStore());
+        ////        var innerKb = new ResolutionKnowledgeBase(resolutionStrategy);
         ////        var kb = EqualityAxiomisingKnowledgeBase.CreateAsync(innerKb).GetAwaiter().GetResult();
         ////        kb.TellAsync(KinshipDomain.Axioms).Wait();
         ////        var query = kb.CreateQueryAsync(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X)))).GetAwaiter().GetResult();
@@ -187,6 +185,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
         ////    })
         ////    .ThenReturns()
         ////    .And((_, retVal) => retVal.Result.Should().Be(true))
-        ////    .And((ctx, retVal) => ctx.WriteOutputLine(((SimpleResolutionQuery)retVal).ResultExplanation));
+        ////    .And((ctx, retVal) => ctx.WriteOutputLine(((ResolutionQuery)retVal).ResultExplanation));
     }
 }

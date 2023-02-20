@@ -45,6 +45,9 @@ namespace SCFirstOrderLogic
         /// </summary>
         public StandardisedVariableSymbol StandardisedVariableSymbol => (StandardisedVariableSymbol)OriginalVariableScope.Variable.Symbol;
 
+        // TODO: We should probably include some information about what the function parameters (if any) represent.
+        // (i.e. what universally declared vars are in scope).
+
         /// <inheritdoc/>
         public override string ToString() => new SentenceFormatter().Format(this);
     }
