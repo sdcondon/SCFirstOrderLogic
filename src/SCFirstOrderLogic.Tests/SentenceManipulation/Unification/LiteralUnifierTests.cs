@@ -92,11 +92,11 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                     Literal1: Knows(john, x),
                     Literal2: Knows(x, jane)),
 
-                new (
+                new ( // trivial occurs check faiure
                     Literal1: Knows(john, x),
                     Literal2: Knows(john, Mother(x))),
 
-                new (
+                new ( // non-trivial occurs check failure
                     Literal1: Knows(x, Mother(x)),
                     Literal2: Knows(Father(y), y)),
             })

@@ -139,8 +139,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 // mapping is consistent with the "other" value.
                 return TryUpdate(variable, otherVariableValue, unifier);
             }
-            else if (Occurs(variable, other))
+            else if (Occurs(variable, unifier.ApplyTo(other)))
             {
+                // We'd be adding a cycle if we added this binding - so fail instead.
                 return false;
             }
             else
