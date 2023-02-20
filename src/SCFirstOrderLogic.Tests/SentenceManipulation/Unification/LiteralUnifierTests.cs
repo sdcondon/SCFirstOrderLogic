@@ -7,6 +7,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
     public class LiteralUnifierTests
     {
         private static Function Mother(Term child) => new(nameof(Mother), child);
+        private static Function Father(Term child) => new(nameof(Father), child);
 
         private static Predicate Knows(Term knower, Term known) => new(nameof(Knows), knower, known);
 
@@ -94,6 +95,10 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new (
                     Literal1: Knows(john, x),
                     Literal2: Knows(john, Mother(x))),
+
+                new (
+                    Literal1: Knows(x, Mother(x)),
+                    Literal2: Knows(Father(y), y)),
             })
             .When(tc =>
             {
@@ -241,21 +246,21 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         public static Test TryUpdateUnsafeNegative => TestThat
             .GivenEachOf(() => new TryUpdateNegativeTestCase[]
             {
-                    new (
-                        Literal1: Knows(x, y),
-                        Literal2: Knows(john, jane),
-                        InitialSubstitutions: new Dictionary<VariableReference, Term>()
-                        {
-                            [y] = john,
-                        }),
+                new (
+                    Literal1: Knows(x, y),
+                    Literal2: Knows(john, jane),
+                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    {
+                        [y] = john,
+                    }),
 
-                    new (
-                        Literal1: Knows(x, y),
-                        Literal2: Knows(john, jane),
-                        InitialSubstitutions: new Dictionary<VariableReference, Term>()
-                        {
-                            [x] = jane,
-                        }),
+                new (
+                    Literal1: Knows(x, y),
+                    Literal2: Knows(john, jane),
+                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    {
+                        [x] = jane,
+                    }),
             })
             .When(tc =>
             {
