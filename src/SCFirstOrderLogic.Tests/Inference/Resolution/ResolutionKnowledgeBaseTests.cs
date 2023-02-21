@@ -4,6 +4,7 @@ using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceF
 using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory.KinshipDomain;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSentenceFactory.CrimeDomain;
@@ -17,18 +18,21 @@ namespace SCFirstOrderLogic.Inference.Resolution
     {
         public static Test PositiveScenarios => TestThat
             .GivenTestContext()
-            .AndEachOf(() => new ResolutionQuery[]
+            .AndEachOf(() => new StrategyFactory[]
             {
-                // trivial
-                MakeQuery(
+                new(NewDelegateResolutionStrategy),
+                ////new(NewLinearResolutionStrategy),
+            })
+            .AndEachOf(() => new TestCase[]
+            {
+                new( // trivial
                     query: IsKing(John),
                     knowledge: new Sentence[]
                     {
                         IsKing(John)
                     }),
 
-                // single conjunct, single step
-                MakeQuery(
+                new( // single conjunct, single step
                     query: IsEvil(John),
                     knowledge: new Sentence[]
                     {
@@ -36,8 +40,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         AllGreedyAreEvil
                     }),
 
-                // two conjuncts, single step
-                MakeQuery(
+                new( // two conjuncts, single step
                     query: IsEvil(John),
                     knowledge: new Sentence[]
                     {
@@ -46,8 +49,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         AllGreedyKingsAreEvil
                     }),
 
-                // Two applicable rules, each with two conjuncts, single step
-                MakeQuery(
+                new( // Two applicable rules, each with two conjuncts, single step
                     query: IsEvil(X),
                     knowledge: new Sentence[]
                     {
@@ -58,8 +60,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         AllGreedyQueensAreEvil,
                     }),
 
-                // Multiple possible substitutions
-                MakeQuery(
+                new( // Multiple possible substitutions
                     query: IsKing(X),
                     knowledge: new Sentence[]
                     {
@@ -67,8 +68,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         IsKing(Richard),
                     }),
 
-                // Uses same var twice in same proof
-                MakeQuery(
+                new( // Uses same var twice in same proof
                     query: Knows(John, Mary),
                     knowledge: new Sentence[]
                     {
@@ -78,46 +78,52 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         IsGreedy(Mary),
                     }),
 
-                // More complex - Crime example domain
-                MakeQuery(
+                new( // More complex - Crime example domain
                     query: IsCriminal(West),
                     knowledge: CrimeDomain.Axioms),
 
-                // More complex with some non-definite clauses - curiousity and the cat example domain
-                MakeQuery(
+                new( // More complex with some non-definite clauses - curiousity and the cat example domain
                     query: Kills(Curiousity, Tuna),
                     knowledge: CuriousityAndTheCatDomain.Axioms),
             })
-            .When((cxt, query) => query.Execute())
+            .When((_, sf, tc) =>
+            {
+                var knowledgeBase = new ResolutionKnowledgeBase(sf.makeStrategy());
+                knowledgeBase.Tell(tc.knowledge);
+                var query = knowledgeBase.CreateQuery(tc.query);
+                query.Execute();
+                return query;
+            })
             .ThenReturns()
-            .And((_, _, rv) => rv.Should().BeTrue())
-            .And((_, query, _) => query.Result.Should().BeTrue())
-            .And((cxt, query, _) => cxt.WriteOutput(query.ResultExplanation));
+            .And((_, _, _, q) => q.Result.Should().BeTrue())
+            .And((cxt, _, _, q) => cxt.WriteOutput(q.ResultExplanation));
 
         public static Test NegativeScenarios => TestThat
-            .GivenEachOf(() => new ResolutionQuery[]
+            .GivenEachOf(() => new StrategyFactory[]
             {
-                // no matching clause
-                MakeQuery(
-                    query: IsEvil(X),
+                new(NewDelegateResolutionStrategy),
+                ////new(NewLinearResolutionStrategy),
+            })
+            .AndEachOf(() => new TestCase[]
+            {
+                new( // no matching clause
+                    query: IsEvil(John),
                     knowledge: new Sentence[]
                     {
                         IsKing(John),
                         IsGreedy(John),
                     }),
 
-                // clause with not all conjuncts satisfied
-                MakeQuery(
-                    query: IsEvil(X),
+                new( // clause with not all conjuncts satisfied
+                    query: IsEvil(John),
                     knowledge: new Sentence[]
                     {
                         IsKing(John),
                         AllGreedyKingsAreEvil,
                     }),
 
-                // no unifier will work - x is either John or Richard - it can't be both:
-                MakeQuery(
-                    query: IsEvil(X),
+                new( // no unifier will work - x is either John or Richard - it can't be both:
+                    query: ThereExists(X, IsEvil(X)),
                     knowledge: new Sentence[]
                     {
                         IsKing(John),
@@ -125,10 +131,16 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         AllGreedyKingsAreEvil,
                     }),
             })
-            .When(query => query.Execute())
+            .When((sf, tc) =>
+            {
+                var knowledgeBase = new ResolutionKnowledgeBase(sf.makeStrategy());
+                knowledgeBase.Tell(tc.knowledge);
+                var query = knowledgeBase.CreateQuery(tc.query);
+                query.Execute();
+                return query;
+            })
             .ThenReturns()
-            .And((_, rv) => rv.Should().BeFalse())
-            .And((query, _) => query.Result.Should().BeFalse());
+            .And((_, _, q) => q.Result.Should().BeFalse());
 
         public static Test RepeatedQueryExecution => TestThat
             .Given(() =>
@@ -158,19 +170,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 (rv.task1.IsFaulted ^ rv.task2.IsFaulted).Should().BeTrue();
             });
 
-        private static ResolutionQuery MakeQuery(Sentence query, IEnumerable<Sentence> knowledge)
-        {
-            var knowledgeBase = new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
-                new HashSetClauseStore(knowledge),
-                DelegateResolutionStrategy.Filters.None,
-                DelegateResolutionStrategy.PriorityComparisons.UnitPreference));
-
-            return knowledgeBase.CreateQuery(query);
-        }
-
-        // This one needs equality (so not really a test of this KB alone), and in practice doesn't terminate in any reasonable time frame.
-        // Would need smarter clause prioritisation, and possibly smarter treatment of equality (e.g. demodulation)
-        // NB can vary across executions because priority comparison used not stable across executions because of hash code reliance
+        // TODO*: This.. is a complex query, but should pass now? What am I missing?
+        // Add simple tests for Linear strat first, though..
         ////public static Test KinshipExample => TestThat
         ////    .GivenTestContext()
         ////    .When(_ =>
@@ -186,5 +187,27 @@ namespace SCFirstOrderLogic.Inference.Resolution
         ////    .ThenReturns()
         ////    .And((_, retVal) => retVal.Result.Should().Be(true))
         ////    .And((ctx, retVal) => ctx.WriteOutputLine(((ResolutionQuery)retVal).ResultExplanation));
+
+        private static IResolutionStrategy NewDelegateResolutionStrategy() => new DelegateResolutionStrategy(
+            new HashSetClauseStore(),
+            DelegateResolutionStrategy.Filters.None,
+            DelegateResolutionStrategy.PriorityComparisons.UnitPreference);
+
+        //private static IResolutionStrategy NewLinearResolutionStrategy() => new LinearResolutionStrategy(new HashSetClauseStore());
+
+        private record StrategyFactory(
+            Func<IResolutionStrategy> makeStrategy,
+            [CallerArgumentExpression("makeStrategy")] string? makeStrategyExpression = null)
+        {
+            public override string ToString() => makeStrategyExpression!;
+        }
+
+        private record TestCase(
+            Sentence query,
+            IEnumerable<Sentence> knowledge,
+            [CallerArgumentExpression("knowledge")] string? knowledgeExpression = null)
+        {
+            public override string ToString() => $"{query}; given knowledge: {knowledgeExpression}";
+        }
     }
 }

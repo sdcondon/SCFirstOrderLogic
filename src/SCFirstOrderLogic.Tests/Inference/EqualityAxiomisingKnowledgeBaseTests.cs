@@ -11,15 +11,6 @@ namespace SCFirstOrderLogic.Inference
 {
     public static class EqualityAxiomisingKnowledgeBaseTests
     {
-        private record TestCase(Sentence Sentence, Sentence[] ExpectedKnowledge)
-        {
-            private EqualityAxiomisingKnowledgeBase? kb;
-
-            public MockKnowledgeBase InnerKB { get; } = new MockKnowledgeBase();
-
-            public EqualityAxiomisingKnowledgeBase KB => kb ??= EqualityAxiomisingKnowledgeBase.CreateAsync(InnerKB).GetAwaiter().GetResult();
-        }
-
         public static Test Smoke => TestThat
             .GivenEachOf(() => new TestCase[]
             {
@@ -69,6 +60,15 @@ namespace SCFirstOrderLogic.Inference
                     expectation: tc.ExpectedKnowledge,
                     config: EquivalencyOptions.UsingOnlyConsistencyForVariables);
             });
+
+        private record TestCase(Sentence Sentence, Sentence[] ExpectedKnowledge)
+        {
+            private EqualityAxiomisingKnowledgeBase? kb;
+
+            public MockKnowledgeBase InnerKB { get; } = new MockKnowledgeBase();
+
+            public EqualityAxiomisingKnowledgeBase KB => kb ??= EqualityAxiomisingKnowledgeBase.CreateAsync(InnerKB).GetAwaiter().GetResult();
+        }
 
         private class MockKnowledgeBase : IKnowledgeBase
         {

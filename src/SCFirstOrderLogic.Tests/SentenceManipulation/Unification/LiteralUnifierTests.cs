@@ -8,7 +8,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
     {
         private static Function Mother(Term child) => new(nameof(Mother), child);
         private static Function Father(Term child) => new(nameof(Father), child);
-
         private static Predicate Knows(Term knower, Term known) => new(nameof(Knows), knower, known);
 
         private static readonly Constant john = new("John");
@@ -18,15 +17,13 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         private static readonly VariableDeclaration a = new(nameof(a));
         private static readonly VariableDeclaration b = new(nameof(b));
 
-        private record TryUnifyPositiveTestCase(Literal Literal1, Literal Literal2, Dictionary<VariableReference, Term> ExpectedSubstitutions, Literal ExpectedUnified);
-
         public static Test TryCreatePositive => TestThat
             .GivenEachOf(() => new TryUnifyPositiveTestCase[]
             {
                 new (
                     Literal1: Knows(john, x),
                     Literal2: Knows(john, jane),
-                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new()
                     {
                         [x] = jane,
                     },
@@ -35,7 +32,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new (
                     Literal1: Knows(john, x),
                     Literal2: Knows(y, jane),
-                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new()
                     {
                         [x] = jane,
                         [y] = john,
@@ -45,7 +42,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new ( // out of scope?
                     Literal1: Knows(john, x),
                     Literal2: Knows(y, Mother(y)),
-                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new()
                     {
                         [x] = Mother(y),
                         [y] = john,
@@ -55,7 +52,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new ( // vars matched to vars - out of scope?
                     Literal1: Knows(x, x),
                     Literal2: Knows(y, john),
-                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new()
                     {
                         [x] = y,
                         [y] = john,
@@ -65,7 +62,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new ( // vars matched to vars - out of scope?
                     Literal1: Knows(y, john),
                     Literal2: Knows(x, x),
-                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new()
                     {
                         [x] = john,
                         [y] = x,
@@ -82,8 +79,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal1).Should().Be(tc.ExpectedUnified))
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal2).Should().Be(tc.ExpectedUnified));
-
-        private record TryUnifyNegativeTestCase(Literal Literal1, Literal Literal2);
 
         public static Test TryCreateNegative => TestThat
             .GivenEachOf(() => new TryUnifyNegativeTestCase[]
@@ -109,19 +104,17 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())
             .And((tc, r) => r.unifier.Should().BeNull());
 
-        private record TryUpdatePositiveTestCase(Literal Literal1, Literal Literal2, Dictionary<VariableReference, Term> InitialSubstitutions, Dictionary<VariableReference, Term> ExpectedSubstitutions, Literal? ExpectedUnified);
-
         public static Test TryUpdatePositive => TestThat
             .GivenEachOf(() => new TryUpdatePositiveTestCase[]
             {
                 new (
                     Literal1: Knows(x, y),
                     Literal2: Knows(john, jane),
-                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    InitialSubstitutions: new()
                     {
                         [x] = john,
                     },
-                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new()
                     {
                         [x] = john,
                         [y] = jane,
@@ -131,11 +124,11 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new (
                     Literal1: Knows(x, y),
                     Literal2: Knows(john, jane),
-                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    InitialSubstitutions: new()
                     {
                         [y] = jane,
                     },
-                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new()
                     {
                         [x] = john,
                         [y] = jane,
@@ -145,12 +138,12 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new (
                     Literal1: Knows(x, y),
                     Literal2: Knows(a, b),
-                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    InitialSubstitutions: new()
                     {
                         [x] = a,
                         [y] = b,
                     },
-                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new()
                     {
                         [x] = a,
                         [y] = b,
@@ -175,11 +168,11 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new (
                     Literal1: Knows(x, y),
                     Literal2: Knows(john, jane),
-                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    InitialSubstitutions: new()
                     {
                         [x] = john,
                     },
-                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new()
                     {
                         [x] = john,
                         [y] = jane,
@@ -189,11 +182,11 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new (
                     Literal1: Knows(x, y),
                     Literal2: Knows(john, jane),
-                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    InitialSubstitutions: new()
                     {
                         [y] = jane,
                     },
-                    ExpectedSubstitutions: new Dictionary<VariableReference, Term>()
+                    ExpectedSubstitutions: new()
                     {
                         [x] = john,
                         [y] = jane,
@@ -212,15 +205,13 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal1).Should().Be(tc.ExpectedUnified))
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal2).Should().Be(tc.ExpectedUnified));
 
-        private record TryUpdateNegativeTestCase(Literal Literal1, Literal Literal2, Dictionary<VariableReference, Term> InitialSubstitutions);
-
         public static Test TryUpdateNegative => TestThat
             .GivenEachOf(() => new TryUpdateNegativeTestCase[]
             {
                 new (
                     Literal1: Knows(x, y),
                     Literal2: Knows(john, jane),
-                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    InitialSubstitutions: new()
                     {
                         [y] = john,
                     }),
@@ -228,7 +219,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new (
                     Literal1: Knows(x, y),
                     Literal2: Knows(john, jane),
-                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    InitialSubstitutions: new()
                     {
                         [x] = jane,
                     }),
@@ -249,7 +240,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new (
                     Literal1: Knows(x, y),
                     Literal2: Knows(john, jane),
-                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    InitialSubstitutions: new()
                     {
                         [y] = john,
                     }),
@@ -257,7 +248,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 new (
                     Literal1: Knows(x, y),
                     Literal2: Knows(john, jane),
-                    InitialSubstitutions: new Dictionary<VariableReference, Term>()
+                    InitialSubstitutions: new()
                     {
                         [x] = jane,
                     }),
@@ -270,5 +261,27 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse());
+
+        private record TryUnifyPositiveTestCase(
+            Literal Literal1,
+            Literal Literal2,
+            Dictionary<VariableReference, Term> ExpectedSubstitutions,
+            Literal ExpectedUnified);
+
+        private record TryUnifyNegativeTestCase(
+            Literal Literal1,
+            Literal Literal2);
+
+        private record TryUpdatePositiveTestCase(
+            Literal Literal1,
+            Literal Literal2,
+            Dictionary<VariableReference, Term> InitialSubstitutions,
+            Dictionary<VariableReference, Term> ExpectedSubstitutions,
+            Literal? ExpectedUnified);
+
+        private record TryUpdateNegativeTestCase(
+            Literal Literal1,
+            Literal Literal2,
+            Dictionary<VariableReference, Term> InitialSubstitutions);
     }
 }
