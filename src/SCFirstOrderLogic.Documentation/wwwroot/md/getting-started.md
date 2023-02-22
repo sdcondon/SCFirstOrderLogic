@@ -17,9 +17,9 @@ The most basic way to express sentences is to directly compose instances of the 
 ```
 using SCFirstOrderLogic;
 
-// Helper methods for creating your predicates (and functions) are recommended:
-Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
-Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
+// Helper methods for creating your predicates (and functions) are recommended to avoid repetition:
+Predicate IsGrandparent(Term grandparent, Term grandchild) => new(nameof(IsGrandparent), grandparent, grandchild);
+Predicate IsParent(Term parent, Term child) => new(nameof(IsParent), parent, child);
 
 // Now the sentence itself, with some intermediate variables so that it isn't completely unreadable:
 var g = new VariableDeclaration("g");
@@ -43,7 +43,7 @@ and includes a number of static methods and properties to assist with succinct s
 using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
-// Helper methods for your predicates (and functions) are also recommended with this approach:
+// Helper methods for creating your predicates (and functions) are recommended to avoid repetition:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
@@ -66,7 +66,7 @@ The `SentenceCreation` namespace also contains a static class called `OperableSe
 using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
-// Helper methods for your predicates (and functions) are also recommended with this approach:
+// Helper methods for creating your predicates (and functions) are recommended to avoid repetition:
 OperablePredicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 OperablePredicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
@@ -97,7 +97,10 @@ interface IPerson
     bool IsGrandparentOf(IPerson person);
 }
 
-// Now the sentence itself looks like this:
+// The sentence is expressed as a boolean-valued lambda that we are asserting will evaluate
+// as true when provided an enumerable representing the domain. Quantifiers are provided
+// via the "Any" and "All" LINQ to objects extension methods (the library provides some overloads
+// for declaring multiple variables at once).
 var grandparentDefn = 
     SentenceFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
 ```
@@ -124,9 +127,9 @@ forward and backward chaining on it:
 using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
-Constant America = new Constant(nameof(America));
-Constant Nono = new Constant(nameof(Nono));
-Constant West = new Constant(nameof(West));
+Constant America = new(nameof(America));
+Constant Nono = new(nameof(Nono));
+Constant West = new(nameof(West));
 
 OperablePredicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
 OperablePredicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);
