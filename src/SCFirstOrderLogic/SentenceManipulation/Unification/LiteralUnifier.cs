@@ -6,8 +6,13 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     /// <summary>
+    /// <para>
     /// Utility class for creating unifiers for literals.
+    /// </para>
+    /// <para>
+    /// This implementation includes an occurs check.
     /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
+    /// </para>
     /// </summary>
     public static class LiteralUnifier
     {
@@ -115,8 +120,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 (VariableReference variable, _) => TryUpdate(variable, y, unifier),
                 (_, VariableReference variable) => TryUpdate(variable, x, unifier),
                 (Function functionX, Function functionY) => TryUpdate(functionX, functionY, unifier),
-                // only potential for equality is if they're both constants. Perhaps worth testing this vs that explicitly and a default that just returns false.
-                // Very similar from a performace perspective (constant equality does type check)
+                // Below, the only potential for equality is if they're both constants. Perhaps worth testing this
+                // versus that explicitly and a default that just returns false. Similar from a performance
+                // perspective.
                 _ => x.Equals(y),
             };
         }
