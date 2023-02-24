@@ -69,5 +69,38 @@ namespace SCFirstOrderLogic.InternalUtilities
                 }
             }
         }
+
+        /// <summary>
+        /// Asynchronously determines if a given <see cref="IAsyncEnumerable{T}"/> contains a particular element.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of the enumerable in question.</typeparam>
+        /// <param name="asyncEnumerable">The enumerable to examine.</param>
+        /// <param name="target">The element to look for.</param>
+        /// <param name="cancellationToken">A cancellation token for the operation.</param>
+        /// <returns>A task that returns true if and only if the given enumerable contains the given element.</returns>
+        public static async Task<bool> ContainsAsync<T>(this IAsyncEnumerable<T> asyncEnumerable, T target, CancellationToken cancellationToken = default)
+        {
+            IAsyncEnumerator<T>? enumerator = null;
+            try
+            {
+                enumerator = asyncEnumerable.GetAsyncEnumerator(cancellationToken);
+                while (await enumerator.MoveNextAsync())
+                {
+                    if (object.Equals(target, enumerator.Current))
+                    {
+                        return true;
+                    }
+                }
+            }
+            finally
+            {
+                if (enumerator != null)
+                {
+                    await enumerator.DisposeAsync();
+                }
+            }
+
+            return false;
+        }
     }
 }
