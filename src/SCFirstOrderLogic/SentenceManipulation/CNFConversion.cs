@@ -40,13 +40,14 @@ namespace SCFirstOrderLogic.SentenceManipulation
             // Trying to write some tests for this should help in establishing 'nice' behaviour.
             // Also should probably complain when nested definitions uses the same symbol (i.e. symbols that are equal).
             sentence = new VariableStandardisation(sentence).ApplyTo(sentence);
+            var standardisedSentence = sentence;
 
             // It might be possible to do some of these conversions at the same time, but for now
             // at least we do them sequentially - and in so doing favour maintainability over performance.
             // Perhaps revisit this later (but given that the main purpose of this library is learning, probably not).
             sentence = implicationElimination.ApplyTo(sentence);
             sentence = nnfConversion.ApplyTo(sentence);
-            sentence = new Skolemisation(sentence).ApplyTo(sentence);
+            sentence = new Skolemisation(standardisedSentence).ApplyTo(sentence);
             sentence = universalQuantifierElimination.ApplyTo(sentence);
             sentence = disjunctionDistribution.ApplyTo(sentence);
 
@@ -219,8 +220,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
             {
+                // NB: don't need to validate that the variable is standardised here, because this class is private.
                 existentialVariableMap[existentialQuantification.Variable] = new Function(
-                    new SkolemFunctionSymbol(existentialQuantification, rootSentence),
+                    new SkolemFunctionSymbol((StandardisedVariableSymbol)existentialQuantification.Variable.Symbol, rootSentence),
                     universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
 
                 return ApplyTo(existentialQuantification.Sentence);

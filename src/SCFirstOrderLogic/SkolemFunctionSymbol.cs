@@ -20,17 +20,13 @@ namespace SCFirstOrderLogic
     {
         /// <remarks>
         /// Intended only for construction by the normalisation process.
+        /// (Internal means we don't have to validate tat the variable is standardised).
         /// </remarks>
-        internal SkolemFunctionSymbol(ExistentialQuantification originalVariableScope, Sentence originalSentence)
+        internal SkolemFunctionSymbol(StandardisedVariableSymbol variableSymbol, Sentence originalSentence)
         {
-            OriginalVariableScope = originalVariableScope;
+            VariableSymbol = variableSymbol;
             OriginalSentence = originalSentence;
         }
-
-        /// <summary>
-        /// Gets the quantification in which the original variable was declared.
-        /// </summary>
-        public ExistentialQuantification OriginalVariableScope { get; }
 
         /// <summary>
         /// Gets the original top-level sentence in which the variable was declared.
@@ -43,10 +39,15 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Gets the underlying (existentially quantified) variable symbol that this Skolem function represents the existential instantiation of.
         /// </summary>
-        public StandardisedVariableSymbol StandardisedVariableSymbol => (StandardisedVariableSymbol)OriginalVariableScope.Variable.Symbol;
+        public StandardisedVariableSymbol VariableSymbol { get; }
 
-        // TODO: We should probably include some information about what the function parameters (if any) represent.
-        // (i.e. what universally declared vars are in scope).
+        /////// <summary>
+        /////// Gets the quantification in which the original variable was declared.
+        /////// </summary>
+        ////public ExistentialQuantification OriginalVariableScope => .. // Find the variable's declaration in OriginalSentence. It's standardised, so we know it's unique.
+
+        //// TODO: We should probably include some information about what the function parameters (if any) represent.
+        //// (i.e. what universally declared vars are in scope).
 
         /// <inheritdoc/>
         public override string ToString() => new SentenceFormatter().Format(this);

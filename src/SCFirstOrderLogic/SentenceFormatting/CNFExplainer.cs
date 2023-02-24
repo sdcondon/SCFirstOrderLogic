@@ -32,7 +32,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         {
             if (term is Function function && function.Symbol is SkolemFunctionSymbol skolemFunctionSymbol)
             {
-                return $"some {sentenceFormatter.Format(skolemFunctionSymbol.StandardisedVariableSymbol)} from {sentenceFormatter.Format(skolemFunctionSymbol.OriginalSentence)}";
+                return $"some {sentenceFormatter.Format(skolemFunctionSymbol.VariableSymbol)} from {sentenceFormatter.Format(skolemFunctionSymbol.OriginalSentence)}";
             }
             else if (term is VariableReference variable && variable.Symbol is StandardisedVariableSymbol standardisedVariableSymbol)
             {

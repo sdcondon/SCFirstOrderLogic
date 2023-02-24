@@ -208,7 +208,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
             {
                 existentialVariableMap[existentialQuantification.Variable] = new Function(
-                    new SkolemFunctionSymbol(existentialQuantification, rootSentence),
+                    new SkolemFunctionSymbol((StandardisedVariableSymbol)existentialQuantification.Variable.Symbol, rootSentence),
                     universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
 
                 return existentialQuantification.Sentence.Accept(this);
