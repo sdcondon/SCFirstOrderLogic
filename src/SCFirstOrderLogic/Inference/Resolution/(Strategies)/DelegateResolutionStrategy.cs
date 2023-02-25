@@ -4,7 +4,7 @@ using System;
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
-    /// Basic resolution strategy that filters and prioritises resolutions using given delegates.
+    /// A basic resolution strategy that just filters and prioritises clause resolutions using given delegates.
     /// </summary>
     public class DelegateResolutionStrategy : IResolutionStrategy
     {
@@ -16,12 +16,12 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// </summary>
         /// <param name="clauseStore">The clause store to use.</param>
         /// <param name="filter">
-        /// A delegate to use to filter the pairs of clauses to be queued for a unification attempt.
+        /// A delegate to use to filter the pairs of clauses to be queued for a resolution attempt.
         /// A true value indicates that the pair should be enqueued. See the <see cref="Filters"/>
         /// inner class for some useful examples.
         /// </param>
         /// <param name="priorityComparison">
-        /// A delegate to use to compare the pairs of clauses to be queued for a unification attempt.
+        /// A delegate to use to compare the pairs of clauses to be queued for a resolution attempt.
         /// See the <see cref="PriorityComparisons"/> inner class for some useful examples.
         /// </param>
         public DelegateResolutionStrategy(
@@ -110,8 +110,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
                 else
                 {
-                    // TODO: This probably *should* be 0..
-                    return x.GetHashCode().CompareTo(y.GetHashCode());
+                    return 0;
                 }
             };
 
@@ -138,8 +137,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
                 else
                 {
-                    // TODO: This probably *should* be 0..
-                    return x.GetHashCode().CompareTo(y.GetHashCode());
+                    return 0;
                 }
             };
         }
@@ -163,9 +161,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             public void Enqueue(ClauseResolution resolution)
             {
-                // NB: Throwing away clauses returned by (an arbitrary) clause store has a performance impact.
+                // NB: Throwing away clauses returned by (an arbitrary) clause store obviously has a performance impact.
                 // Better to use a store that knows to not look for certain clause pairings in the first place.
-                // However, the purpose of this strategy implementation is flexibility, not performance, so this is fine.
+                // However, the purpose of this strategy implementation is demonstration, not performance, so this is fine.
                 if (filter(resolution))
                 {
                     priorityQueue.Enqueue(resolution);

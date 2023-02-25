@@ -12,7 +12,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// Notes:
     /// </para>
     /// <list type="bullet">
-    /// <item/>Has no in-built handling of equality - so, if equality appears in the knowledge base, its properties need to be axiomised - see §9.5.5 of 'Artifical Intelligence: A Modern Approach'.
+    /// <item/>Has no in-built handling of equality - so, if equality appears in the knowledge base,
+    /// its properties need to be axiomised - see §9.5.5 of 'Artifical Intelligence: A Modern Approach'.
     /// </list>
     /// </summary>
     public sealed partial class ResolutionKnowledgeBase : IKnowledgeBase

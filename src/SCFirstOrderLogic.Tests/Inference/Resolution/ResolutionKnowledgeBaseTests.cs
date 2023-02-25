@@ -21,7 +21,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .AndEachOf(() => new StrategyFactory[]
             {
                 new(NewDelegateResolutionStrategy),
-                ////new(NewLinearResolutionStrategy),
+                new(NewLinearResolutionStrategy),
             })
             .AndEachOf(() => new TestCase[]
             {
@@ -40,7 +40,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                         AllGreedyAreEvil
                     }),
 
-                new( // two conjuncts, single step
+                new( // Two conjuncts, single step
                     query: IsEvil(John),
                     knowledge: new Sentence[]
                     {
@@ -50,7 +50,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     }),
 
                 new( // Two applicable rules, each with two conjuncts, single step
-                    query: IsEvil(X),
+                    query: ThereExists(X, IsEvil(X)),
                     knowledge: new Sentence[]
                     {
                         IsKing(John),
@@ -61,7 +61,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     }),
 
                 new( // Multiple possible substitutions
-                    query: IsKing(X),
+                    query: ThereExists(X, IsKing(X)),
                     knowledge: new Sentence[]
                     {
                         IsKing(John),
@@ -102,7 +102,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .GivenEachOf(() => new StrategyFactory[]
             {
                 new(NewDelegateResolutionStrategy),
-                ////new(NewLinearResolutionStrategy),
+                //new(NewLinearResolutionStrategy),
             })
             .AndEachOf(() => new TestCase[]
             {
@@ -170,8 +170,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 (rv.task1.IsFaulted ^ rv.task2.IsFaulted).Should().BeTrue();
             });
 
-        // TODO*: This.. is a complex query, but should pass now? What am I missing?
-        // Add simple tests for Linear strat first, though..
+        // This is a difficult query. Would need more complex algo to deal with it
+        // in a timely fashion. Better way of handling equality, better prioritisation, etc.
         ////public static Test KinshipExample => TestThat
         ////    .GivenTestContext()
         ////    .When(_ =>
@@ -193,7 +193,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             DelegateResolutionStrategy.Filters.None,
             DelegateResolutionStrategy.PriorityComparisons.UnitPreference);
 
-        //private static IResolutionStrategy NewLinearResolutionStrategy() => new LinearResolutionStrategy(new HashSetClauseStore());
+        private static IResolutionStrategy NewLinearResolutionStrategy() => new LinearResolutionStrategy(new HashSetClauseStore());
 
         private record StrategyFactory(
             Func<IResolutionStrategy> makeStrategy,
