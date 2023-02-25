@@ -9,12 +9,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// </para>
     /// <para>
     /// See §9.5 ("Resolution") of 'Artificial Intelligence: A Modern Approach' for a detailed explanation of resolution.
-    /// Notes:
     /// </para>
-    /// <list type="bullet">
-    /// <item/>Has no in-built handling of equality - so, if equality appears in the knowledge base,
-    /// its properties need to be axiomised - see §9.5.5 of 'Artifical Intelligence: A Modern Approach'.
-    /// </list>
     /// </summary>
     public sealed partial class ResolutionKnowledgeBase : IKnowledgeBase
     {
@@ -31,7 +26,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         {
             foreach(var clause in sentence.ToCNF().Clauses)
             {
-                await strategy.ClauseStore.AddAsync(clause, cancellationToken);
+                await strategy.AddClauseAsync(clause, cancellationToken);
             }
         }
 
@@ -47,9 +42,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <param name="sentence">The query sentence.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>A task that returns an <see cref="ResolutionQuery"/> instance that can be used to execute the query and examine the details of the result.</returns>
-        public async Task<ResolutionQuery> CreateQueryAsync(Sentence sentence, CancellationToken cancellationToken = default)
+        public Task<ResolutionQuery> CreateQueryAsync(Sentence sentence, CancellationToken cancellationToken = default)
         {
-            return await ResolutionQuery.CreateAsync(sentence, strategy, cancellationToken);
+            return ResolutionQuery.CreateAsync(sentence, strategy, cancellationToken);
         }
 
         /// <summary>

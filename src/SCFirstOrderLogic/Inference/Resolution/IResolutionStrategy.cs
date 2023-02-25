@@ -1,4 +1,7 @@
-﻿namespace SCFirstOrderLogic.Inference.Resolution
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
     /// Interface for types that implement a resolution strategy that can
@@ -7,14 +10,19 @@
     public interface IResolutionStrategy
     {
         /// <summary>
-        /// Gets the clause store to use.
+        /// Informs the strategy of a new clause added to the knowledge base.
         /// </summary>
-        IKnowledgeBaseClauseStore ClauseStore { get; }
+        /// <param name="clause">The clause that has been added to the knowledge base.</param>
+        /// <param name="cancellationToken">A cancellation token for the operation.</param>
+        /// <returns></returns>
+        Task<bool> AddClauseAsync(CNFClause clause, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Creates a resolution queue for use by a particular query.
+        /// Creates a strategy for use by a particular query.
         /// </summary>
-        /// <returns>A resolution queue for use by a particular query.</returns>
-        IResolutionQueue MakeResolutionQueue();
+        /// <param name="query">The query to create a strategy object for.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>A resolution strategy for use by a particular query.</returns>
+        Task<IResolutionQueryStrategy> MakeQueryStrategyAsync(ResolutionQuery query, CancellationToken cancellationToken);
     }
 }

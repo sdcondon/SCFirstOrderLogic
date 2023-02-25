@@ -15,8 +15,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// </summary>
     public class ResolutionQuery : SteppableQuery<ClauseResolution>
     {
-        private readonly IQueryClauseStore clauseStore;
-        private readonly IResolutionQueue resolutionQueue;
+        private readonly IResolutionQueryStrategy strategy;
         private readonly Dictionary<CNFClause, ClauseResolution> steps;
         private readonly Lazy<ReadOnlyCollection<CNFClause>> discoveredClauses;
 
@@ -25,15 +24,13 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         private ResolutionQuery(
             Sentence querySentence,
-            IQueryClauseStore clauseStore,
-            IResolutionQueue resolutionQueue)
+            IResolutionStrategy strategy,
+            CancellationToken cancellationToken)
         {
-            this.clauseStore = clauseStore;
-            this.resolutionQueue = resolutionQueue;
+            this.NegatedQuery = new Negation(querySentence).ToCNF();
+            this.strategy = strategy.MakeQueryStrategyAsync(this, cancellationToken).GetAwaiter().GetResult(); // TODO: <-- bad, change me.
             steps = new();
             discoveredClauses = new(MakeDiscoveredClauses);
-
-            NegatedQuery = new Negation(querySentence).ToCNF();
         }
 
         /// <summary>
@@ -144,31 +141,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
             IResolutionStrategy strategy,
             CancellationToken cancellationToken = default)
         {
-            var query = new ResolutionQuery(
-                querySentence,
-                await strategy.ClauseStore.CreateQueryStoreAsync(cancellationToken),
-                strategy.MakeResolutionQueue());
+            var query = new ResolutionQuery(querySentence, strategy, cancellationToken);
 
-            // Initialise the query clause store with the clauses from the negation of the query:
-            foreach (var clause in query.NegatedQuery.Clauses)
-            {
-                await query.clauseStore.AddAsync(clause, cancellationToken);
-            }
+            // Ask the strategy to enqueue the initial clause pairings for the query:
+            await query.strategy.EnqueueInitialResolutionsAsync(cancellationToken);
 
-            // Queue up initial clause pairings:
-            // TODO-PERFORMANCE-MAJOR: potentially repeating a lot of work here - could cache the results of pairings
-            // of KB clauses with each other. Or at least don't keep re-attempting ones that we know fail.
-            // Is this in scope for this *simple* implementation?
-            await foreach (var clause in query.clauseStore)
-            {
-                await foreach (var resolution in query.clauseStore.FindResolutions(clause, cancellationToken))
-                {
-                    query.resolutionQueue.Enqueue(resolution);
-                }
-            }
-
-            // Double-check that we actually managed to enqueue some initial clause pairings:
-            if (query.resolutionQueue.IsEmpty)
+            // Double-check that we actually managed to enqueue some initial clause pairings.
+            // Mark the query as failed if not:
+            if (query.strategy.IsQueueEmpty)
             {
                 query.result = false;
                 query.isComplete = true;
@@ -185,9 +165,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 throw new InvalidOperationException("Query is already complete");
             }
 
-            // Grab the next resolution from the queue, and make a note of it in the 'steps' field (for the proof tree).
-            var resolution = resolutionQueue.Dequeue();
-            steps[resolution.Resolvent] = resolution;
+            // Grab the next resolution from the queue.
+            var resolution = strategy.DequeueResolution();
 
             // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
             if (resolution.Resolvent.Equals(CNFClause.Empty))
@@ -197,34 +176,25 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 return resolution;
             }
 
-            // Otherwise, check if we've found a new clause (i.e. something that we didn't know already).
-            // NB: Upside of using Add to implicitly check for existence: it means we don't need a separate "Contains" method
-            // on the store (which would raise potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
-            // Downside of using Add: clause store will encounter itself when looking for unifiers - not a big deal,
-            // but a performance/maintainability tradeoff nonetheless.
-            if (await clauseStore.AddAsync(resolution.Resolvent, cancellationToken))
-            {
-                // This is a new clause, so find and queue up its resolutions.
-                await foreach (var newResolution in clauseStore.FindResolutions(resolution.Resolvent, cancellationToken))
-                {
-                    resolutionQueue.Enqueue(newResolution);
-                }
-            }
+            // Ask the strategy to take a look at the resolvent and enqueue any new resolutions for it:
+            await strategy.EnqueueResolutionsAsync(resolution.Resolvent, cancellationToken);
 
-            // Check if we've run out of clauses to smash together - return a negative result if so.
-            if (resolutionQueue.IsEmpty)
+            // Check if we've run out of clauses to smash together. Mark the query as failed if so.
+            if (strategy.IsQueueEmpty)
             {
                 result = false;
                 isComplete = true;
             }
 
+            // Finally, make a note of the latest resolution in the 'steps' field (for the proof tree), and return it.
+            steps[resolution.Resolvent] = resolution;
             return resolution;
         }
 
         /// <inheritdoc/>
         public override void Dispose()
         {
-            clauseStore.Dispose();
+            strategy.Dispose();
         }
 
         private ReadOnlyCollection<CNFClause> MakeDiscoveredClauses()

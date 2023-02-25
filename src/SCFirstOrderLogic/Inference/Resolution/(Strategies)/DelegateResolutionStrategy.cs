@@ -1,16 +1,28 @@
 ﻿using SCFirstOrderLogic.InternalUtilities;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {
     /// <summary>
+    /// <para>
     /// A basic resolution strategy that just filters and prioritises clause resolutions using given delegates.
+    /// </para>
+    /// <para>
+    /// Notes:
+    /// </para>
+    /// <list type="bullet">
+    /// <item/>Has no in-built handling of equality - so, if equality appears in the knowledge base,
+    /// its properties need to be axiomised - see §9.5.5 of 'Artifical Intelligence: A Modern Approach'.
+    /// </list>
     /// </summary>
     public class DelegateResolutionStrategy : IResolutionStrategy
     {
+        private readonly IKnowledgeBaseClauseStore clauseStore;
         private readonly Func<ClauseResolution, bool> filter;
         private readonly Comparison<ClauseResolution> priorityComparison;
-
+        
         /// <summary>
         /// Initialises a new instance of the <see cref="DelegateResolutionStrategy"/> class.
         /// </summary>
@@ -29,16 +41,22 @@ namespace SCFirstOrderLogic.Inference.Resolution
             Func<ClauseResolution, bool> filter,
             Comparison<ClauseResolution> priorityComparison)
         {
-            ClauseStore = clauseStore;
+            this.clauseStore = clauseStore;
             this.filter = filter;
             this.priorityComparison = priorityComparison;
         }
 
         /// <inheritdoc/>
-        public IKnowledgeBaseClauseStore ClauseStore { get; }
+        public Task<bool> AddClauseAsync(CNFClause clause, CancellationToken cancellationToken)
+        {
+            return clauseStore.AddAsync(clause, cancellationToken);
+        }
 
         /// <inheritdoc/>
-        public IResolutionQueue MakeResolutionQueue() => new PrioritisedAndFilteredResolutionQueue(filter, priorityComparison);
+        public Task<IResolutionQueryStrategy> MakeQueryStrategyAsync(ResolutionQuery query, CancellationToken cancellationToken)
+        {
+            return Task.FromResult((IResolutionQueryStrategy)new QueryStrategy(query, clauseStore, filter, priorityComparison, cancellationToken));
+        }
 
         /// <summary>
         /// <para>
@@ -142,31 +160,86 @@ namespace SCFirstOrderLogic.Inference.Resolution
             };
         }
 
-        private class PrioritisedAndFilteredResolutionQueue : IResolutionQueue
+        /// <summary>
+        /// The strategy implementation for individual queries.
+        /// </summary>
+        private class QueryStrategy : IResolutionQueryStrategy
         {
+            private readonly ResolutionQuery query;
             private readonly Func<ClauseResolution, bool> filter;
             private readonly MaxPriorityQueue<ClauseResolution> priorityQueue;
+            private readonly Task<IQueryClauseStore> clauseStoreCreation;
+            private IQueryClauseStore? clauseStore;
 
-            public PrioritisedAndFilteredResolutionQueue(
+            public QueryStrategy(
+                ResolutionQuery query,
+                IKnowledgeBaseClauseStore kbClauseStore,
                 Func<ClauseResolution, bool> filter,
-                Comparison<ClauseResolution> priorityComparison)
+                Comparison<ClauseResolution> priorityComparison,
+                CancellationToken cancellationToken)
             {
+                this.query = query;
                 this.filter = filter;
-                priorityQueue = new(priorityComparison);
+                this.priorityQueue = new MaxPriorityQueue<ClauseResolution>(priorityComparison);
+                this.clauseStoreCreation = kbClauseStore.CreateQueryStoreAsync(cancellationToken);
             }
 
-            public bool IsEmpty => priorityQueue.Count == 0;
+            public bool IsQueueEmpty => priorityQueue.Count == 0;
 
-            public ClauseResolution Dequeue() => priorityQueue.Dequeue();
+            public ClauseResolution DequeueResolution() => priorityQueue.Dequeue();
 
-            public void Enqueue(ClauseResolution resolution)
+            // TODO: race cond here. Minor issue, handle-able with a little work.
+            public void Dispose() => clauseStore?.Dispose();
+
+            public async Task EnqueueInitialResolutionsAsync(CancellationToken cancellationToken)
             {
-                // NB: Throwing away clauses returned by (an arbitrary) clause store obviously has a performance impact.
-                // Better to use a store that knows to not look for certain clause pairings in the first place.
-                // However, the purpose of this strategy implementation is demonstration, not performance, so this is fine.
-                if (filter(resolution))
+                clauseStore = await clauseStoreCreation;
+
+                // Initialise the query clause store with the clauses from the negation of the query:
+                foreach (var clause in query.NegatedQuery.Clauses)
                 {
-                    priorityQueue.Enqueue(resolution);
+                    await clauseStore.AddAsync(clause, cancellationToken);
+                }
+
+                // Queue up initial clause pairings:
+                // TODO-PERFORMANCE-MAJOR: potentially repeating a lot of work here - could cache the results of pairings
+                // of KB clauses with each other. Or at least don't keep re-attempting ones that we know fail.
+                // Is this in scope for this *simple* implementation?
+                await foreach (var clause in clauseStore)
+                {
+                    await foreach (var resolution in clauseStore.FindResolutions(clause, cancellationToken))
+                    {
+                        // NB: Throwing away clauses returned by (an arbitrary) clause store obviously has a performance impact.
+                        // Better to use a store that knows to not look for certain clause pairings in the first place.
+                        // However, the purpose of this strategy implementation is demonstration, not performance, so this is fine.
+                        if (filter(resolution))
+                        {
+                            priorityQueue.Enqueue(resolution);
+                        }
+                    }
+                }
+            }
+
+            public async Task EnqueueResolutionsAsync(CNFClause clause, CancellationToken cancellationToken)
+            {
+                // Check if we've found a new clause (i.e. something that we didn't know already).
+                // NB: Upside of using Add to implicitly check for existence: it means we don't need a separate "Contains" method
+                // on the store (which would raise potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
+                // Downside of using Add: clause store will encounter itself when looking for unifiers - not a big deal,
+                // but a performance/maintainability tradeoff nonetheless.
+                if (await clauseStore!.AddAsync(clause, cancellationToken))
+                {
+                    // This is a new clause, so find and queue up its resolutions.
+                    await foreach (var newResolution in clauseStore.FindResolutions(clause, cancellationToken))
+                    {
+                        // NB: Throwing away clauses returned by (an arbitrary) clause store obviously has a performance impact.
+                        // Better to use a store that knows to not look for certain clause pairings in the first place.
+                        // However, the purpose of this strategy implementation is demonstration, not performance, so this is fine.
+                        if (filter(newResolution))
+                        {
+                            priorityQueue.Enqueue(newResolution);
+                        }
+                    }
                 }
             }
         }

@@ -1,8 +1,12 @@
-﻿#if false
+﻿// NB: Not quite ready yet. In truth, I'm not completely sure that it's doing the right thing.
+// It was created just to prove out the strategy abstraction more than anything else.
+#if false
 using SCFirstOrderLogic.InternalUtilities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,125 +16,139 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// <summary>
     /// Resolution strategy that applies linear resolution.
     /// </summary>
-    public class LinearResolutionStrategy : ISimpleResolutionStrategy
+    public class LinearResolutionStrategy : IResolutionStrategy
     {
+        private readonly IKnowledgeBaseClauseStore clauseStore;
+
         /// <summary>
         /// Initialises a new instance of the <see cref="LinearResolutionStrategy"/> class.
         /// </summary>
         /// <param name="clauseStore">The clause store to use.</param>
         public LinearResolutionStrategy(IKnowledgeBaseClauseStore clauseStore)
         {
-            ClauseStore = new LinearClauseStore(clauseStore);
+            this.clauseStore = clauseStore;
         }
 
         /// <inheritdoc/>
-        public IKnowledgeBaseClauseStore ClauseStore { get; }
-
-        /// <inheritdoc/>
-        public ISimpleResolutionQueue MakeResolutionQueue() => new LinearResolutionQueue();
-
-        // linear clause store wraps the iknowledgebaseclausestore
-        // we DONT add intermediate clauses to the provided one, we just use
-        // it for the lookup of resolutions with KB knowledge. we use a separate
-        // (always in-mem) tree structure for resolutions with proof tree ancestors.
-        private class LinearClauseStore : IKnowledgeBaseClauseStore
+        public async Task<bool> AddClauseAsync(CNFClause clause, CancellationToken cancellationToken)
         {
-            private readonly IKnowledgeBaseClauseStore innerClauseStore;
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="LinearClauseStore"/> class.
-            /// </summary>
-            public LinearClauseStore(IKnowledgeBaseClauseStore innerClauseStore) => this.innerClauseStore = innerClauseStore;
-
-            /// <inheritdoc />
-            public Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
-            {
-                // Shouldn't ever be called, but this is consistent behaviour,
-                // so no point in throwing if we don't have to.
-                return innerClauseStore.AddAsync(clause, cancellationToken);
-            }
-
-            /// <inheritdoc />
-            public IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-            {
-                return innerClauseStore.GetAsyncEnumerator(cancellationToken);
-            }
-
-            /// <inheritdoc />
-            public async Task<IQueryClauseStore> CreateQueryStoreAsync(CancellationToken cancellationToken = default)
-            {
-                return await QueryStore.CreateAsync(innerClauseStore, cancellationToken);
-            }
-
-            /// <summary>
-            /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="LinearClauseStore"/>.
-            /// </summary>
-            private class QueryStore : IQueryClauseStore
-            {
-                private readonly IQueryClauseStore kbClauseStore;
-                private Dictionary<CNFClause, (CNFClause Clause1, CNFClause Clause2)> proofTree = new();
-
-                public QueryStore(IQueryClauseStore kbClauseStore) => this.kbClauseStore = kbClauseStore;
-
-                public static async Task<QueryStore> CreateAsync(IKnowledgeBaseClauseStore innerClauseStore, CancellationToken cancellationToken = default)
-                {
-                    return new QueryStore(await innerClauseStore.CreateQueryStoreAsync(cancellationToken));
-                }
-
-                /// <inheritdoc />
-                public Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
-                {
-                    if (kbClauseStore.)
-                    {
-                        return false;
-                    }
-
-                    return Task.FromResult(clauses.TryAdd(clause, 0));
-                }
-
-#pragma warning disable CS1998 // async lacks await.. Could add await Task.Yield() to silence this, but it is not worth the overhead.
-                /// <inheritdoc />
-                public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-                {
-                    foreach (var clause in clauses.Keys)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        yield return clause;
-                    }
-                }
-#pragma warning restore CS1998
-
-                /// <inheritdoc />
-                public async IAsyncEnumerable<ClauseResolution> FindResolutions(
-                    CNFClause clause,
-                    [EnumeratorCancellation] CancellationToken cancellationToken = default)
-                {
-                    await foreach (var otherClause in this.WithCancellation(cancellationToken))
-                    {
-                        foreach (var resolution in ClauseResolution.Resolve(clause, otherClause))
-                        {
-                            yield return resolution;
-                        }
-                    }
-                }
-
-                /// <inheritdoc />
-                public void Dispose()
-                {
-                    //// Nothing to do..
-                }
-            }
+            return await clauseStore.AddAsync(clause, cancellationToken);
         }
 
-        private class LinearResolutionQueue : ISimpleResolutionQueue
+        /// <inheritdoc/>
+        public Task<IResolutionQueryStrategy> MakeQueryStrategyAsync(ResolutionQuery query, CancellationToken cancellationToken)
         {
-            private readonly Queue<ClauseResolution> queue = new();
+            return Task.FromResult((IResolutionQueryStrategy)new QueryStrategy(query, clauseStore, cancellationToken));
+        }
 
-            public bool IsEmpty => queue.Count == 0;
+        private class QueryStrategy : IResolutionQueryStrategy
+        {
+            private readonly ResolutionQuery query;
+            private readonly Queue<ClauseResolution> queue = new(); // jus' a plain old queue for the mo. Not really good enough.
+            private readonly Task<IQueryClauseStore> clauseStoreCreation;
+            private IQueryClauseStore? clauseStore;
 
-            public ClauseResolution Dequeue() => queue.Dequeue();
+            public QueryStrategy(
+                ResolutionQuery query,
+                IKnowledgeBaseClauseStore kbClauseStore,
+                CancellationToken cancellationToken)
+            {
+                this.query = query;
+                this.clauseStoreCreation = kbClauseStore.CreateQueryStoreAsync(cancellationToken);
+            }
 
-            public void Enqueue(ClauseResolution resolution) => queue.Enqueue(resolution);
+            /// <inheritdoc />
+            public bool IsQueueEmpty => queue.Count == 0;
+
+            /// <inheritdoc />
+            public ClauseResolution DequeueResolution() => queue.Dequeue();
+
+            /// <inheritdoc />
+            public void Dispose()
+            {
+                clauseStore?.Dispose();
+            }
+
+            /// <inheritdoc />
+            public async Task EnqueueInitialResolutionsAsync(CancellationToken cancellationToken)
+            {
+                clauseStore = await clauseStoreCreation;
+
+                // Initialise the query clause store with the clauses from the negation of the query:
+                foreach (var clause in query.NegatedQuery.Clauses)
+                {
+                    await clauseStore.AddAsync(clause, cancellationToken);
+                }
+
+                // Queue up initial clause pairings:
+                // TODO-PERFORMANCE-MAJOR: potentially repeating a lot of work here - could cache the results of pairings
+                // of KB clauses with each other. Or at least don't keep re-attempting ones that we know fail.
+                // Is this in scope for this *simple* implementation?
+                await foreach (var clause in clauseStore)
+                {
+                    await foreach (var resolution in clauseStore.FindResolutions(clause, cancellationToken))
+                    {
+                        // NB: Throwing away clauses returned by (an arbitrary) clause store obviously has a performance impact.
+                        // Better to use a store that knows to not look for certain clause pairings in the first place.
+                        // However, the purpose of this strategy implementation is demonstration, not performance, so this is fine.
+                        queue.Enqueue(resolution);
+                    }
+                }
+            }
+
+            /// <inheritdoc />
+            public async Task EnqueueResolutionsAsync(CNFClause clause, CancellationToken cancellationToken)
+            {
+                if (!await clauseStore!.ContainsAsync(clause, cancellationToken) && !query.Steps.Keys.Contains(clause))
+                {
+                    await foreach (var newResolution in FindResolutions(clause, cancellationToken))
+                    {
+                        queue.Enqueue(newResolution);
+                    }
+                }
+            }
+
+            private async IAsyncEnumerable<ClauseResolution> FindResolutions(
+                CNFClause clause,
+                [EnumeratorCancellation] CancellationToken cancellationToken = default)
+            {
+                // Can resolve with clauses from the KB and negated query - which we use the inner clause store for
+                await foreach (var resolution in clauseStore!.FindResolutions(clause, cancellationToken))
+                {
+                    yield return resolution;
+                }
+
+                // Can also resolve with ancestors of this clause in the proof tree as it stands:
+                foreach (var ancestorClause in GetAncestors(clause))
+                {
+                    foreach (var resolution in ClauseResolution.Resolve(clause, ancestorClause))
+                    {
+                        yield return resolution;
+                    }
+                }
+            }
+
+            IEnumerable<CNFClause> GetAncestors(CNFClause clause)
+            {
+                // TODO-PERFORMANCE-BREAKING: lots of dictionary lookups. could be avoided if our proof tree actually 
+                // had direct references to ancestors..
+                if (query.Steps.TryGetValue(clause, out var resolution))
+                {
+                    yield return resolution.Clause1;
+
+                    foreach (var ancestor in GetAncestors(resolution.Clause1))
+                    {
+                        yield return ancestor;
+                    }
+
+                    yield return resolution.Clause2;
+
+                    foreach (var ancestor in GetAncestors(resolution.Clause2))
+                    {
+                        yield return ancestor;
+                    }
+                }
+            }
         }
     }
 }
