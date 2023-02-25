@@ -5,8 +5,8 @@ I don't intend to add any particularly powerful or specialised inference logic t
 
 Priorities at the time of writing:
 
-* Version 4 - see below.
-* *As always, anything that's labelled as TODO in the code. Clone the repo and use your IDE's TODO/Task list functionality (TODOs are generally expressed as `// TODO..` or `/// TODO`) to see individual things I want to do.*
+* Version 4 - see below (and the [release notes of the latest pre-release](https://github.com/sdcondon/SCFirstOrderLogic/releases)).
+* *As always, anything that's labelled as TODO in the code. Head over to [https://github.dev/sdcondon/SCFirstOrderLogic/](https://github.dev/sdcondon/SCFirstOrderLogic/) (GitHub's regular search functionality is still a bit naff) and do a case-sensitive search for TODO.*
 
 Breaking changes on the list for v4 (though there's no particular timeline for this):
 
