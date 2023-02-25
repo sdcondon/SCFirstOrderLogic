@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
-using SCFirstOrderLogic.SentenceManipulation.Unification;
 
-namespace SCFirstOrderLogic.Inference.Unification
+namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     [MemoryDiagnoser]
     [InProcess]
