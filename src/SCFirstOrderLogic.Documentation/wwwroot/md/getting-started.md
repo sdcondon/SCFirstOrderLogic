@@ -242,7 +242,7 @@ Notice that:
   Depending on your environment, you might need to take action so that these are outputted properly.
   E.g. For running on Windows it might be worth adding `Console.OutputEncoding = Encoding.Unicode;` to your application start-up.
 * The `Tell`, `Ask`, `CreateQuery` and `Execute` methods used above are actually extension methods that are are synchronous wrappers around underlying async versions.
-  The library has deep async support - because "real-world" KBs will tend to need to do IO.
+  The library has deep async support - because "real-world" KBs (or rather, real-world clause stores) will tend to need to do IO.
 
 ## Where Next?
 

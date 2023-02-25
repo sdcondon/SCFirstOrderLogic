@@ -20,7 +20,7 @@ namespace SCFirstOrderLogic
     {
         /// <remarks>
         /// Intended only for construction by the normalisation process.
-        /// (Internal means we don't have to validate tat the variable is standardised).
+        /// (Internal means we don't have to validate that the variable is standardised).
         /// </remarks>
         internal SkolemFunctionSymbol(StandardisedVariableSymbol variableSymbol, Sentence originalSentence)
         {
