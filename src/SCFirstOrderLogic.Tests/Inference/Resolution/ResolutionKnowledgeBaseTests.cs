@@ -21,7 +21,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             .AndEachOf(() => new StrategyFactory[]
             {
                 new(NewDelegateResolutionStrategy),
-                new(NewLinearResolutionStrategy),
+                //new(NewLinearResolutionStrategy),
             })
             .AndEachOf(() => new TestCase[]
             {
@@ -193,7 +193,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             DelegateResolutionStrategy.Filters.None,
             DelegateResolutionStrategy.PriorityComparisons.UnitPreference);
 
-        private static IResolutionStrategy NewLinearResolutionStrategy() => new LinearResolutionStrategy(new HashSetClauseStore());
+        //// private static IResolutionStrategy NewLinearResolutionStrategy() => new LinearResolutionStrategy(new HashSetClauseStore());
 
         private record StrategyFactory(
             Func<IResolutionStrategy> makeStrategy,

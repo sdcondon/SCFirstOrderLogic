@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
     /// <summary>
     /// <para>
     /// This class provides functionality for rendering <see cref="Sentence"/> instances (and <see cref="CNFSentence"/> instances) in the standard first-order logic syntax.
-    /// Using a single <see cref="SentenceFormatter"/> instance guarantees unique (and customisable) labelling of standardised variables and Skolem functions for all sentences formatted with the instance.
+    /// Using a single <see cref="SentenceFormatter"/> instance allows for unique (and customisable) labelling of standardised variables and Skolem functions for all sentences formatted with the instance.
     /// </para>
     /// <para>
     /// NB: fairly likely to change in future. This implementation will suffice while I figure out what I want (IFormatProvider and ICustomFormatter/s, probably).
