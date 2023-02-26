@@ -182,10 +182,10 @@ using SCFirstOrderLogic.Inference.ForwardChaining;
 
 // Note that the knowledge base ctor has a "clause store" parameter.
 // The clause store takes responsibility for the storage and lookup of
-// individual clauses. The package provides only SimpleClauseStore, which stores
+// individual clauses. The package provides only HashSetClauseStore, which stores
 // things in memory. This is an extension point - you can create your own implementation
 // of IClauseStore to use secondary storage and/or customised indexing, for example.
-var kb = new SimpleForwardChainingKnowledgeBase(new SimpleClauseStore());
+var kb = new ForwardChainingKnowledgeBase(new HashSetClauseStore());
 kb.Tell(rules);
 var querySentence = IsCriminal(West);
 
@@ -208,10 +208,10 @@ using SCFirstOrderLogic.Inference.BackwardChaining;
 
 // .. paste the domain listing here ..
 
-// As with forward chaining, backward chaining KB uses a clause store
-// (note that while it has the same name, it is a different class in a
-// different namespace - this was perhaps a mistake, but is good for brevity..)
-var kb = new SimpleBackwardChainingKnowledgeBase(new SimpleClauseStore());
+// As with forward chaining, backward chaining KB uses a clause store.
+// Also as with forward chaining, the only store provided by the library
+// just stores things in memory.
+var kb = new BackwardChainingKnowledgeBase(new DictionaryClauseStore());
 kb.Tell(rules);
 var result = kb.Ask(IsCriminal(West)); // == true
 // ..Or can get an explanation in the same way as above
@@ -226,10 +226,10 @@ using SCFirstOrderLogic.Inference.Resolution;
 // .. paste the domain listing here ..
 
 // The resolution KB has a little more configurability/extensibility than the other two:
-var kb = new new SimpleResolutionKnowledgeBase(
-    new SimpleClauseStore(),
-    SimpleResolutionKnowledgeBase.Filters.None,
-    SimpleResolutionKnowledgeBase.PriorityComparisons.UnitPreference);
+var kb = new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
+    new HashSetClauseStore(),
+    DelegateResolutionStrategy.Filters.None,
+    DelegateResolutionStrategy.PriorityComparisons.UnitPreference));
 
 kb.Tell(rules);
 var result = kb.Ask(IsCriminal(West)); // == true

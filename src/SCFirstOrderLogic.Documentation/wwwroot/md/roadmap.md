@@ -5,24 +5,8 @@ I don't intend to add any particularly powerful or specialised inference logic t
 
 Priorities at the time of writing:
 
-* Version 4 - see below (and the [release notes of the latest pre-release](https://github.com/sdcondon/SCFirstOrderLogic/releases)).
 * *As always, anything that's labelled as TODO in the code. Head over to [https://github.dev/sdcondon/SCFirstOrderLogic/](https://github.dev/sdcondon/SCFirstOrderLogic/) (GitHub's regular search functionality is still a bit naff) and do a case-sensitive search for TODO.*
-
-Breaking changes on the list for v4 (though there's no particular timeline for this):
-
-* [ ] I want to improve the extensibility of the simple resolution knowledge base, which will again likely mean breaking ctor changes.
-The current approach that uses a store and two delegates is not flexible enough.
-I'm quietly confident that if I replace all three with a strategy object (that in all likelihood will still use the store) I can allow for e.g. linear resolution, while still not making it more complicated than the "simple" name implies.
-* [x] Revisit sentence formatting. 
-Label sets currently used by SentenceFormatter likely to become full interfaces (ILabeller, maybe) - though the first implementation created is likely to be LabelSetLabeller.
-* [x] Move the SkolemFunctionSymbol and StandardisedVariableSymbol classes up out of the `SentenceManipulation` namespace.
-Really the only reason that they're here is that I originally had all the CNF stuff in SentenceManipulation.
-Now that the CNF types are in the root namespace, there's really no reason for these not to be as well.
-* [x] May rename/otherwise break the SentenceManipulation.CNFExaminer class - it irks me somewhat..
-* [x] Also want to rename the clause store implementations
-  * [x] BackwardChaining.SimpleClauseStore -> DictionaryClauseStore
-  * [x] ForwardChaining.SimpleClauseStore -> HashSetClauseStore
-  * [x] Resolution.SimpleClauseStore -> HashSetClauseStore
+* Nothing else for the mo. I've been major rev-ing this a bit too much (ultimately as a result of publishing it a bit before it was ready..), so turning my attention to other things for a while.
 
 On the back-burner, for later consideration:
 
