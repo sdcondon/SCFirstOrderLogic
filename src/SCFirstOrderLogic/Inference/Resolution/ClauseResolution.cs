@@ -48,7 +48,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <param name="clause1">The first of the clauses to resolve.</param>
         /// <param name="clause2">The second of the clauses to resolve.</param>
         /// <returns>Zero or more results, each consisting of a unifier and output clause.</returns>
-        // TODO: Yes, this is a slow implementation - essentially because it does binary resolution.
+        // TODO-PERFORMANCE: Yes, this is a slow implementation - essentially because it does binary resolution.
         // It is simple, though - and thus will serve well as a baseline for improvements. Ultimately could
         // look at adding a method to LiteralUnifier that accepts multiple literals and examines the tree
         // for them all "simultaneously" - i.e. do full resolution, not binary.

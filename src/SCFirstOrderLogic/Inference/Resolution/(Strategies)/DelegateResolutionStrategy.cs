@@ -96,7 +96,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             // such a comparison would cause our priority queue to behave more like a stack (see its code - noting
             // that it sensibly doesn't bubble in either direction when the comparison is 0). It'd of course be faster,
             // but I suspect the resulting "depth-first" behaviour of the resolution would be hands-down unhelpful.
-            // TODO-MINOR: Better to allow for the strategy to use a regular queue, not a heap-based one - e.g if a ctor overload
+            // TODO-ZZ-PERFORMANCE: Better to allow for the strategy to use a regular queue, not a heap-based one - e.g if a ctor overload
             // that simply doesn't have a comparison parameter is invoked. Or of course a different strategy class entirely.
             public static Comparison<ClauseResolution> None { get; } = (x, y) =>
             {

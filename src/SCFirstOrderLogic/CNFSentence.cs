@@ -38,7 +38,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Gets the collection of clauses that comprise this CNF sentence.
         /// </summary>
-        // TODO: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
+        // TODO-FEATURE: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
         // Investigate perf impact of ImmutableSortedSet (sorted to facilitate quick equality comparison, hopefully)?
         public IReadOnlyCollection<CNFClause> Clauses { get; }
 

@@ -46,7 +46,7 @@ namespace SCFirstOrderLogic
         /////// </summary>
         ////public ExistentialQuantification OriginalVariableScope => .. // Find the variable's declaration in OriginalSentence. It's standardised, so we know it's unique.
 
-        //// TODO: We should probably include some information about what the function parameters (if any) represent.
+        //// TODO-ZZ-FEATURE: We could (should?) include some information about what the function parameters (if any) represent.
         //// (i.e. what universally declared vars are in scope).
 
         /// <inheritdoc/>

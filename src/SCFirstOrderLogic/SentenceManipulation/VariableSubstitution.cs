@@ -84,7 +84,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <inheritdoc />
-        // TODO: potential bug - no normalisation {X/Y, Y/C} and {X/C, Y/C} give the same result when applied but are not viewed as the same
+        // TODO-BUG-ARGUABLE: potential bug - no normalisation {X/Y, Y/C} and {X/C, Y/C} give the same result when applied but are not viewed as the same
         public override bool Equals(object? obj)
         {
             if (obj is not VariableSubstitution otherSubstitution)

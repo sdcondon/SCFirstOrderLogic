@@ -23,7 +23,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// Outputs a human-readable string for a given normalisation term (standardised variable or Skolem function). Throws an exception if the passed term is not a normalisation term.
         /// </para>
         /// <para>
-        /// TODO-LOCALISATION: (if I get bored or this ever takes off for whatever reason): Allow for localisation and allow specification of culture in ctor (optional - default to current culture).
+        /// TODO-ZZ-LOCALISATION: (if I get bored or this ever takes off for whatever reason): Allow for localisation and allow specification of culture in ctor (optional - default to current culture).
         /// </para>
         /// </summary>
         /// <param name="term">The term to examine.</param>
