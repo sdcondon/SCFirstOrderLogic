@@ -21,7 +21,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// Creates a strategy for use by a particular query.
         /// </summary>
         /// <param name="query">The query to create a strategy object for.</param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>A resolution strategy for use by a particular query.</returns>
         Task<IResolutionQueryStrategy> MakeQueryStrategyAsync(ResolutionQuery query, CancellationToken cancellationToken);
     }

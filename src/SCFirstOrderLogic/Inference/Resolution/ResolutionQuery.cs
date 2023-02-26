@@ -58,62 +58,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <summary>
         /// Gets a (very raw) explanation of the steps that led to the result of the query.
         /// </summary>
-        public string ResultExplanation
-        {
-            get
-            {
-                if (!IsComplete)
-                {
-                    throw new InvalidOperationException("Query is not yet complete");
-                }
-                else if (!Result)
-                {
-                    throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
-                }
-
-                var formatter = new SentenceFormatter();
-                var cnfExplainer = new CNFExplainer(formatter);
-
-                // Now build the explanation string.
-                var explanation = new StringBuilder();
-                for (var i = 0; i < DiscoveredClauses.Count; i++)
-                {
-                    var resolution = Steps[DiscoveredClauses[i]];
-
-                    string GetSource(CNFClause clause)
-                    {
-                        if (DiscoveredClauses.Contains(clause))
-                        {
-                            return $"#{DiscoveredClauses.IndexOf(clause):D2}";
-                        }
-                        else if (NegatedQuery.Clauses.Contains(clause))
-                        {
-                            return " ¬Q";
-                        }
-                        else
-                        {
-                            return " KB";
-                        }
-                    }
-
-                    explanation.AppendLine($"#{i:D2}: {formatter.Format(DiscoveredClauses[i])}");
-                    explanation.AppendLine($"     From {GetSource(resolution.Clause1)}: {formatter.Format(resolution.Clause1)}");
-                    explanation.AppendLine($"     And  {GetSource(resolution.Clause2)}: {formatter.Format(resolution.Clause2)} ");
-                    explanation.Append("     Using   : {");
-                    explanation.Append(string.Join(", ", resolution.Substitution.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
-                    explanation.AppendLine("}");
-
-                    foreach (var term in CNFInspector.FindNormalisationTerms(DiscoveredClauses[i], resolution.Clause1, resolution.Clause2))
-                    {
-                        explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
-                    }
-
-                    explanation.AppendLine();
-                }
-
-                return explanation.ToString();
-            }
-        }
+        public string ResultExplanation => GetResultExplanation(new SentenceFormatter());
 
         /// <summary>
         /// Gets a list of the (useful) clauses discovered by a query that has returned a positive result.
@@ -155,6 +100,63 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             return query;
+        }
+
+        /// <summary>
+        /// Gets a human-readable explanation of the query result, using a specified <see cref="SentenceFormatter"/> instance.
+        /// </summary>
+        /// <param name="formatter">The sentence formatter to use.</param>
+        public string GetResultExplanation(SentenceFormatter formatter)
+        {
+            if (!IsComplete)
+            {
+                throw new InvalidOperationException("Query is not yet complete");
+            }
+            else if (!Result)
+            {
+                throw new InvalidOperationException("Explanation of a negative result (which could be massive) is not supported");
+            }
+
+            var cnfExplainer = new CNFExplainer(formatter);
+
+            // Now build the explanation string.
+            var explanation = new StringBuilder();
+            for (var i = 0; i < DiscoveredClauses.Count; i++)
+            {
+                var resolution = Steps[DiscoveredClauses[i]];
+
+                string GetSource(CNFClause clause)
+                {
+                    if (DiscoveredClauses.Contains(clause))
+                    {
+                        return $"#{DiscoveredClauses.IndexOf(clause):D2}";
+                    }
+                    else if (NegatedQuery.Clauses.Contains(clause))
+                    {
+                        return " ¬Q";
+                    }
+                    else
+                    {
+                        return " KB";
+                    }
+                }
+
+                explanation.AppendLine($"#{i:D2}: {formatter.Format(DiscoveredClauses[i])}");
+                explanation.AppendLine($"     From {GetSource(resolution.Clause1)}: {formatter.Format(resolution.Clause1)}");
+                explanation.AppendLine($"     And  {GetSource(resolution.Clause2)}: {formatter.Format(resolution.Clause2)} ");
+                explanation.Append("     Using   : {");
+                explanation.Append(string.Join(", ", resolution.Substitution.Bindings.Select(s => $"{formatter.Format(s.Key)}/{formatter.Format(s.Value)}")));
+                explanation.AppendLine("}");
+
+                foreach (var term in CNFInspector.FindNormalisationTerms(DiscoveredClauses[i], resolution.Clause1, resolution.Clause2))
+                {
+                    explanation.AppendLine($"     ..where {formatter.Format(term)} is {cnfExplainer.ExplainNormalisationTerm(term)}");
+                }
+
+                explanation.AppendLine();
+            }
+
+            return explanation.ToString();
         }
 
         /// <inheritdoc/>
