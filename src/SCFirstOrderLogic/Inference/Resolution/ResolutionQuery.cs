@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// </summary>
     public class ResolutionQuery : SteppableQuery<ClauseResolution>
     {
-        private readonly Task<IResolutionQueryStrategy> strategyCreation;
+        private readonly Task strategyCreation;
         private readonly Dictionary<CNFClause, ClauseResolution> steps;
         private readonly Lazy<ReadOnlyCollection<CNFClause>> discoveredClauses;
 
@@ -28,13 +28,13 @@ namespace SCFirstOrderLogic.Inference.Resolution
             CancellationToken cancellationToken)
         {
             NegatedQuery = new Negation(querySentence).ToCNF();
-            strategyCreation = strategy.MakeQueryStrategyAsync(this, cancellationToken);
+            strategyCreation = strategy.MakeQueryStrategyAsync(this, cancellationToken).ContinueWith(t => this.strategy = t.Result);
             steps = new();
             discoveredClauses = new(MakeDiscoveredClauses);
         }
 
         /// <summary>
-        /// Gets the (CNF representation of) the negation of the query.
+        /// Gets the (CNF representation of the) negation of the query sentence.
         /// </summary>
         public CNFSentence NegatedQuery { get; }
         
@@ -142,13 +142,13 @@ namespace SCFirstOrderLogic.Inference.Resolution
             CancellationToken cancellationToken = default)
         {
             var query = new ResolutionQuery(querySentence, strategy, cancellationToken);
-            query.strategy = await query.strategyCreation;
 
-            // Ask the strategy to enqueue the initial clause pairings for the query:
-            await query.strategy.EnqueueInitialResolutionsAsync(cancellationToken);
+            // NB: By awaiting here (as opposed to synchronising in the ctor itself),
+            // we don't tie up a thread for any longer than we need to.
+            await query.strategyCreation;
 
-            // Double-check that we actually managed to enqueue some initial clause pairings.
-            // Mark the query as failed if not:
+            await query.strategy!.EnqueueInitialResolutionsAsync(cancellationToken);
+
             if (query.strategy.IsQueueEmpty)
             {
                 query.result = false;
@@ -165,27 +165,23 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 throw new InvalidOperationException("Query is already complete");
             }
 
-            // Ask the strategy for the next resolution from the queue.
             var resolution = strategy!.DequeueResolution();
+            steps[resolution.Resolvent] = resolution; // todo: does this need an 'if not contains key..'?
 
-            // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
             if (resolution.Resolvent.Equals(CNFClause.Empty))
             {
                 result = true;
                 return resolution;
             }
 
-            // Ask the strategy to take a look at the resolvent and enqueue any new resolutions for it:
             await strategy.EnqueueResolutionsAsync(resolution.Resolvent, cancellationToken);
 
-            // Ask the strategy if we've run out of resolutions. Mark the query as failed if so.
             if (strategy.IsQueueEmpty)
             {
                 result = false;
             }
 
-            // Finally, make a note of the latest resolution in the 'steps' field (for the proof tree), and return it.
-            return steps[resolution.Resolvent] = resolution;
+            return resolution;
         }
 
         /// <inheritdoc/>
