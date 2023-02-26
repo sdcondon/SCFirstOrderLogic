@@ -1,5 +1,5 @@
-﻿// NB: Not quite ready yet. In truth, I'm not completely sure that it's doing the right thing.
-// It was created just to prove out the strategy abstraction more than anything else.
+﻿// NB: Not quite ready yet. In truth, I'm not completely sure that it's even trying to do the right thing.
+// It was created to prove out the strategy abstraction more than anything else.
 #if false
 using SCFirstOrderLogic.InternalUtilities;
 using System;
@@ -99,6 +99,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             /// <inheritdoc />
             public async Task EnqueueResolutionsAsync(CNFClause clause, CancellationToken cancellationToken)
             {
+                // TODO: steps problem here - might not be able to use query's steps record, looks like.
                 if (!await clauseStore!.ContainsAsync(clause, cancellationToken) && !query.Steps.Keys.Contains(clause))
                 {
                     await foreach (var newResolution in FindResolutions(clause, cancellationToken))
@@ -128,7 +129,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
             }
 
-            IEnumerable<CNFClause> GetAncestors(CNFClause clause)
+            private IEnumerable<CNFClause> GetAncestors(CNFClause clause)
             {
                 // TODO-PERFORMANCE-BREAKING: lots of dictionary lookups. could be avoided if our proof tree actually 
                 // had direct references to ancestors..

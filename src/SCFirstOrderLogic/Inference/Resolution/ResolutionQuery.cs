@@ -19,8 +19,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private readonly Dictionary<CNFClause, ClauseResolution> steps;
         private readonly Lazy<ReadOnlyCollection<CNFClause>> discoveredClauses;
 
-        private bool isComplete;
-        private bool result;
+        private bool? result;
 
         private ResolutionQuery(
             Sentence querySentence,
@@ -37,21 +36,21 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// Gets the (CNF representation of) the negation of the query.
         /// </summary>
         public CNFSentence NegatedQuery { get; }
-
+        
         /// <inheritdoc/>
-        public override bool IsComplete => isComplete;
+        public override bool IsComplete => result.HasValue;
 
         /// <inheritdoc/>
         public override bool Result
         {
             get
             {
-                if (!IsComplete)
+                if (!result.HasValue)
                 {
                     throw new InvalidOperationException("Query is not yet complete");
                 }
 
-                return result;
+                return result.Value;
             }
         }
 
@@ -151,7 +150,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
             if (query.strategy.IsQueueEmpty)
             {
                 query.result = false;
-                query.isComplete = true;
             }
 
             return query;
@@ -165,30 +163,27 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 throw new InvalidOperationException("Query is already complete");
             }
 
-            // Grab the next resolution from the queue.
+            // Ask the strategy for the next resolution from the queue.
             var resolution = strategy.DequeueResolution();
 
             // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
             if (resolution.Resolvent.Equals(CNFClause.Empty))
             {
                 result = true;
-                isComplete = true;
                 return resolution;
             }
 
             // Ask the strategy to take a look at the resolvent and enqueue any new resolutions for it:
             await strategy.EnqueueResolutionsAsync(resolution.Resolvent, cancellationToken);
 
-            // Check if we've run out of clauses to smash together. Mark the query as failed if so.
+            // Ask the strategy if we've run out of resolutions. Mark the query as failed if so.
             if (strategy.IsQueueEmpty)
             {
                 result = false;
-                isComplete = true;
             }
 
             // Finally, make a note of the latest resolution in the 'steps' field (for the proof tree), and return it.
-            steps[resolution.Resolvent] = resolution;
-            return resolution;
+            return steps[resolution.Resolvent] = resolution;
         }
 
         /// <inheritdoc/>
