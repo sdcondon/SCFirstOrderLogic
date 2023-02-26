@@ -142,8 +142,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                 [EnumeratorCancellation] CancellationToken cancellationToken = default)
             {
                 // Here we just iterate through ALL known predicates trying to find something that unifies with the fact.
-                // A better implementation would do some kind of indexing:
-                // TODO-PERFORMANCE: ..we don't even store facts and rules separately..
+                // A better implementation would do some kind of indexing (or at least store facts and rules separately):
                 await foreach (var knownClause in this.WithCancellation(cancellationToken))
                 {
                     if (knownClause.IsUnitClause)

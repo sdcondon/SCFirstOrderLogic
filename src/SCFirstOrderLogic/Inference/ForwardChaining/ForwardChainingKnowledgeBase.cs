@@ -33,6 +33,9 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 
             // Store clauses in the clause store:
             // NB: we go one-by-one rather than assuming the clause store is thread-safe.
+            // This is perhaps a needless performance hit - we should perhaps be assuming thread-safe clause stores and using Parallel.ForEach.
+            // Then again, sentences in general won't have many clauses in them - so the overhead may dominate (in non-IO bound cases at least)?
+            // This is fine for now at least.
             foreach (var clause in cnfSentence.Clauses)
             {
                 await clauseStore.AddAsync(new CNFDefiniteClause(clause), cancellationToken);

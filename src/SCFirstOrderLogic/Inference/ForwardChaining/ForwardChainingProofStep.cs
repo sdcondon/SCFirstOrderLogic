@@ -48,7 +48,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         public VariableSubstitution Unifier { get; }
 
         /// <summary>
-        /// Gets the predicate that was inferred by this step by the application of the rule to the known unit clauses.
+        /// Gets the predicate that was inferred by this step by the application of the rule to the known predicates.
         /// </summary>
         public Predicate InferredPredicate => Unifier.ApplyTo(Rule.Consequent).Predicate;
     }

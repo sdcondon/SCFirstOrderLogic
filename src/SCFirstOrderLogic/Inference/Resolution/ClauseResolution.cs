@@ -66,7 +66,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
                         // Because we're doing binary resolution, we need to factor the result in order to contribute to a "complete" inference process.
                         // We also check if the resolvent is trivially true (i.e. contains a mutually-negating literal pair), and omit it if so.
-                        // (NTS: what if a factoring operation results in the clause being trivially true? is that a concerning situation? research me)
                         var clauseIsTriviallyTrue = false;
                         var factoringCarriedOut = false;
                         do

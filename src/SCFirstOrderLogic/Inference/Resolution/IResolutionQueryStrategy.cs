@@ -23,14 +23,14 @@ namespace SCFirstOrderLogic.Inference.Resolution
         ClauseResolution DequeueResolution();
 
         /// <summary>
-        /// Initialises the strategy by enqueuing the initial resolutions for a query. That is, enqueues all of the relevant pairings of the clauses in the knowledge base and negation of the query sentence.
+        /// Initialises the strategy by enqueuing the initial resolutions for a query. That is, enqueues all of the appropriate pairings of the clauses in the knowledge base and negation of the query sentence.
         /// </summary>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>A task representing completion of the operation.</returns>
         Task EnqueueInitialResolutionsAsync(CancellationToken cancellationToken);
 
         /// <summary>
-        /// Enqueue all of the relevant resolutions for a new intermediate clause.
+        /// Enqueue all of the appropriate resolutions for a new intermediate clause.
         /// </summary>
         /// <param name="clause">The new clause to find and enqueue all of the resolutions for.</param>
         /// <param name="cancellationToken">A cancellation token for the operation.</param>

@@ -29,7 +29,7 @@ namespace SCFirstOrderLogic.Inference
         /// <param name="cancellationToken">A cancellation token for the operation.</param>
         /// <returns>A container for information on what happened during the step.</returns>
         // TODO-BREAKING?: Should this use ValueTask to reduce GC load? Investigate me. Yeah, high-perf isn't the point of this package,
-        // but given that this is an abstraction, its constraining what people *could* achieve with it. So worth a look at least.
+        // but given that this is an abstraction, its constraining what people *could* achieve with it. So worth a look at some point.
         public abstract Task<TStepResult> NextStepAsync(CancellationToken cancellationToken = default);
 
         /// <inheritdoc />

@@ -47,11 +47,11 @@ namespace SCFirstOrderLogic
         /// string-returning 'Render' method. However, given that the only things we need of a symbol are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
         /// object base class, we err on the side of simplicity and say that symbols can be any object. This
-        /// simplicity of course has the added benefit of allowing certain likely types (ints, strings) to be used
+        /// simplicity of course has the added benefit of allowing certain likely types (strings, integers..) to be used
         /// as identifiers without needing to wrap them.
         /// </para>
         /// </summary>
-        // TODO: SCClassicalPlanning uses 'Identifier'.. get into the nitty-gritty of the difference between a
+        // TODO-BREAKING: SCClassicalPlanning uses 'Identifier'.. get into the nitty-gritty of the difference between a
         // symbol and an identifier, and rename this if necessary. 
         public object Symbol { get; }
 

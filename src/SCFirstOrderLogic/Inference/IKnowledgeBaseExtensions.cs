@@ -20,7 +20,9 @@ namespace SCFirstOrderLogic.Inference
             foreach (var sentence in sentences)
             {
                 // No guarantee of thread-safety - so go one at a time.
-                // TODO: this is dumb - not this class' responsibility
+                // This is perhaps a needless performance hit - we should perhaps be assuming thread-safe clause stores and using Parallel.ForEach.
+                // Then again, we probably aren't adding a crazy amount of sentences - so the overhead may dominate (in non-IO bound cases, anyway)?
+                // This is fine for now at least.
                 await knowledgeBase.TellAsync(sentence, cancellationToken);
             }
         }
