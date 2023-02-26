@@ -53,9 +53,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <inheritdoc/>
-        public Task<IResolutionQueryStrategy> MakeQueryStrategyAsync(ResolutionQuery query, CancellationToken cancellationToken)
+        public async Task<IResolutionQueryStrategy> MakeQueryStrategyAsync(ResolutionQuery query, CancellationToken cancellationToken)
         {
-            return Task.FromResult((IResolutionQueryStrategy)new QueryStrategy(query, clauseStore, filter, priorityComparison, cancellationToken));
+            return new QueryStrategy(query, await clauseStore.CreateQueryStoreAsync(cancellationToken), filter, priorityComparison);
         }
 
         /// <summary>
@@ -166,35 +166,30 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private class QueryStrategy : IResolutionQueryStrategy
         {
             private readonly ResolutionQuery query;
+            private readonly IQueryClauseStore clauseStore;
             private readonly Func<ClauseResolution, bool> filter;
             private readonly MaxPriorityQueue<ClauseResolution> priorityQueue;
-            private readonly Task<IQueryClauseStore> clauseStoreCreation;
-            private IQueryClauseStore? clauseStore;
 
             public QueryStrategy(
                 ResolutionQuery query,
-                IKnowledgeBaseClauseStore kbClauseStore,
+                IQueryClauseStore clauseStore,
                 Func<ClauseResolution, bool> filter,
-                Comparison<ClauseResolution> priorityComparison,
-                CancellationToken cancellationToken)
+                Comparison<ClauseResolution> priorityComparison)
             {
                 this.query = query;
+                this.clauseStore = clauseStore;
                 this.filter = filter;
                 this.priorityQueue = new MaxPriorityQueue<ClauseResolution>(priorityComparison);
-                this.clauseStoreCreation = kbClauseStore.CreateQueryStoreAsync(cancellationToken);
             }
 
             public bool IsQueueEmpty => priorityQueue.Count == 0;
 
             public ClauseResolution DequeueResolution() => priorityQueue.Dequeue();
 
-            // TODO: race cond here. Minor issue, handle-able with a little work.
             public void Dispose() => clauseStore?.Dispose();
 
             public async Task EnqueueInitialResolutionsAsync(CancellationToken cancellationToken)
             {
-                clauseStore = await clauseStoreCreation;
-
                 // Initialise the query clause store with the clauses from the negation of the query:
                 foreach (var clause in query.NegatedQuery.Clauses)
                 {
@@ -234,7 +229,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     {
                         // NB: Throwing away clauses returned by (an arbitrary) clause store obviously has a performance impact.
                         // Better to use a store that knows to not look for certain clause pairings in the first place.
-                        // However, the purpose of this strategy implementation is demonstration, not performance, so this is fine.
+                        // However, the purpose of this strategy implementation is to be a basic example, not a high performance one, so this is fine.
                         if (filter(newResolution))
                         {
                             priorityQueue.Enqueue(newResolution);

@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
     /// <summary>
     /// An implementation of <see cref="IKnowledgeBase"/> that uses a breadth-first, incremental forward chaining algorithm.
     /// </summary>
-    public sealed class ForwardChainingKnowledgeBase : IKnowledgeBase
+    public class ForwardChainingKnowledgeBase : IKnowledgeBase
     {
         private readonly IKnowledgeBaseClauseStore clauseStore;
 

@@ -26,7 +26,7 @@ Now that the CNF types are in the root namespace, there's really no reason for t
 
 On the back-burner, for later consideration:
 
-* I'm almost certainly going to overheaul the collection types used in Predicate, Function, CNFClause and CNFSentence.
+* I'm almost certainly going to overheaul the collection types used in Predicate, Function, CNFClause and CNFSentence at some point.
 There are some robustness issues as it stands. Will probably move away from ReadOnlyCollection and towards System.Collections.Immutable.
 Can be done in a non-breaking fashion.
 * Take a look at creating a FoL syntax parser in the SentenceCreation namespace.

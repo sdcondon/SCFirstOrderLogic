@@ -15,10 +15,11 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// </summary>
     public class ResolutionQuery : SteppableQuery<ClauseResolution>
     {
-        private readonly IResolutionQueryStrategy strategy;
+        private readonly Task<IResolutionQueryStrategy> strategyCreation;
         private readonly Dictionary<CNFClause, ClauseResolution> steps;
         private readonly Lazy<ReadOnlyCollection<CNFClause>> discoveredClauses;
 
+        private IResolutionQueryStrategy? strategy;
         private bool? result;
 
         private ResolutionQuery(
@@ -26,8 +27,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
             IResolutionStrategy strategy,
             CancellationToken cancellationToken)
         {
-            this.NegatedQuery = new Negation(querySentence).ToCNF();
-            this.strategy = strategy.MakeQueryStrategyAsync(this, cancellationToken).GetAwaiter().GetResult(); // TODO: <-- bad, change me.
+            NegatedQuery = new Negation(querySentence).ToCNF();
+            strategyCreation = strategy.MakeQueryStrategyAsync(this, cancellationToken);
             steps = new();
             discoveredClauses = new(MakeDiscoveredClauses);
         }
@@ -135,12 +136,13 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <param name="strategy">The resolution strategy to use.</param>
         /// <param name="cancellationToken">The cancellation token for this operation.</param>
         /// <returns>A new query instance.</returns>
-        internal static async Task<ResolutionQuery> CreateAsync(
+        public static async Task<ResolutionQuery> CreateAsync(
             Sentence querySentence,
             IResolutionStrategy strategy,
             CancellationToken cancellationToken = default)
         {
             var query = new ResolutionQuery(querySentence, strategy, cancellationToken);
+            query.strategy = await query.strategyCreation;
 
             // Ask the strategy to enqueue the initial clause pairings for the query:
             await query.strategy.EnqueueInitialResolutionsAsync(cancellationToken);
@@ -164,7 +166,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             // Ask the strategy for the next resolution from the queue.
-            var resolution = strategy.DequeueResolution();
+            var resolution = strategy!.DequeueResolution();
 
             // If the resolvent is an empty clause, we've found a contradiction and can thus return a positive result:
             if (resolution.Resolvent.Equals(CNFClause.Empty))
@@ -189,7 +191,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <inheritdoc/>
         public override void Dispose()
         {
-            strategy.Dispose();
+            strategy!.Dispose();
         }
 
         private ReadOnlyCollection<CNFClause> MakeDiscoveredClauses()

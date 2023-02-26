@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
     /// See §9.5 ("Resolution") of 'Artificial Intelligence: A Modern Approach' for a detailed explanation of resolution.
     /// </para>
     /// </summary>
-    public sealed partial class ResolutionKnowledgeBase : IKnowledgeBase
+    public class ResolutionKnowledgeBase : IKnowledgeBase
     {
         private readonly IResolutionStrategy strategy;
 
