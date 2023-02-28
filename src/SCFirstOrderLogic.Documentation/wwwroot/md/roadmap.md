@@ -6,13 +6,12 @@ I don't intend to add any particularly powerful or specialised inference logic t
 Priorities at the time of writing:
 
 * *As always, anything that's labelled as TODO in the code. Head over to [https://github.dev/sdcondon/SCFirstOrderLogic/](https://github.dev/sdcondon/SCFirstOrderLogic/) (GitHub's regular search functionality is still a bit naff) and do a case-sensitive search for TODO.*
-* Nothing else for the mo. I've been major rev-ing this a bit too much (ultimately as a result of publishing it a bit before it was ready..), so turning my attention to other things for a while.
+* Nothing much else for the mo. I've been major version rev-ing this a bit too much (ultimately as a result of publishing it a bit before it was ready..), so turning my attention to other things for a while to let things settle.
 
 On the back-burner, for later consideration:
 
-* I'm almost certainly going to overheaul the collection types used in Predicate, Function, CNFClause and CNFSentence at some point.
-There are some robustness issues as it stands. Will probably move away from ReadOnlyCollection and towards System.Collections.Immutable.
-Can be done in a non-breaking fashion.
+* Improvements to inference algorithms may appear at some point. Handling of infinite loops when chaining, leveraging subsumption etc.
+As alluded to above and elsewhere, this package is more about the fundamentals than especially powerful inference logic - but we should probably cover such relatively fundamental problems and techniques.
 * Take a look at creating a FoL syntax parser in the SentenceCreation namespace.
 Did take a brief look at using ANTLR to do this, but the "all .NET" way of doing this is old and no longer supported.
 If I go the route of using the Java tool, I'd want to do it via docker-integrated project (to avoid faffing around with JVM installation on my dev machine) - which would likely mean I'd want to put it into its own package.

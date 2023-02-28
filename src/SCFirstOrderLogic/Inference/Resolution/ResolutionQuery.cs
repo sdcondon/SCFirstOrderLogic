@@ -168,7 +168,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
             }
 
             var resolution = strategy!.DequeueResolution();
-            steps[resolution.Resolvent] = resolution; // TODO-BUG-MAYBE: does this need an 'if not contains key..'?
+
+            // TODO-BUG-PROBABLY: does we need an 'if not contains key..'?
+            steps[resolution.Resolvent] = resolution; 
 
             if (resolution.Resolvent.Equals(CNFClause.Empty))
             {
