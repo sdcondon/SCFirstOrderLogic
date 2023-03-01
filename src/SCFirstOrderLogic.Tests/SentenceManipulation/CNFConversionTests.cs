@@ -2,7 +2,7 @@
 using FlUnit;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation.ConjunctiveNormalForm
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     public static partial class CNFConversionTests
     {

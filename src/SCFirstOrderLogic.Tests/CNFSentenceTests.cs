@@ -200,6 +200,6 @@ namespace SCFirstOrderLogic
             .When(tc => (Equality: tc.X.Equals(tc.Y), HashCodeEquality: tc.X.GetHashCode() == tc.Y.GetHashCode()))
             .ThenReturns()
             .And((tc, rv) => rv.Equality.Should().Be(tc.ExpectedEquality))
-            .And((tc, rv) => rv.HashCodeEquality.Should().Be(tc.ExpectedEquality));
+            .And((tc, rv) => rv.HashCodeEquality.Should().Be(tc.ExpectedEquality)); // <- yeah yeah, strictly speaking not the right thing to be asserting, but..
     }
 }
