@@ -169,16 +169,20 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             var resolution = strategy!.DequeueResolution();
 
-            // TODO-BUG-PROBABLY: does we need an 'if not contains key..'?
-            steps[resolution.Resolvent] = resolution; 
-
-            if (resolution.Resolvent.Equals(CNFClause.Empty))
+            // While we generally expect the strategy not to repeat resolvents,
+            // checking if we've seen this resolvent before is cheap, and eliminates any
+            // performance hit or proof tree confusion if so. NB: we look only for the resolvent
+            // itself - not any clause that subsumes it.
+            if (steps.TryAdd(resolution.Resolvent, resolution))
             {
-                result = true;
-                return resolution;
-            }
+                if (resolution.Resolvent.Equals(CNFClause.Empty))
+                {
+                    result = true;
+                    return resolution;
+                }
 
-            await strategy.EnqueueResolutionsAsync(resolution.Resolvent, cancellationToken);
+                await strategy.EnqueueResolutionsAsync(resolution.Resolvent, cancellationToken);
+            }
 
             if (strategy.IsQueueEmpty)
             {

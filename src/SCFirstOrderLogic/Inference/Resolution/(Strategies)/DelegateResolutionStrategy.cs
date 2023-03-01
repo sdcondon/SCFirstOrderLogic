@@ -179,7 +179,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             public ClauseResolution DequeueResolution() => priorityQueue.Dequeue();
 
-            public void Dispose() => clauseStore?.Dispose();
+            public void Dispose() => clauseStore.Dispose();
 
             public async Task EnqueueInitialResolutionsAsync(CancellationToken cancellationToken)
             {
@@ -190,9 +190,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 }
 
                 // Queue up initial clause pairings:
-                // TODO-PERFORMANCE: potentially repeating a lot of work here - could cache the results of pairings
-                // of KB clauses with each other. Or at least don't keep re-attempting ones that we know fail.
-                // Is this in scope for this *simple* implementation?
+                // TODO-PERFORMANCE: potentially repeating a lot of work here. Some of this (i.e. clause pairings that are just
+                // from the KB - not from the negated query sentence) will be repeated every query, and some will produce the same
+                // resolvent as each other - note that we don't filter out such dupes. Some caching here would be useful - is this
+                // in scope for this *simple* implementation?
                 await foreach (var clause in clauseStore)
                 {
                     await foreach (var resolution in clauseStore.FindResolutions(clause, cancellationToken))
@@ -215,7 +216,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 // on the store (which would raise potential misunderstandings about what the store means by "contains" - c.f. subsumption..)
                 // Downside of using Add: clause store will encounter itself when looking for unifiers - not a big deal,
                 // but a performance/maintainability tradeoff nonetheless.
-                if (await clauseStore!.AddAsync(clause, cancellationToken))
+                if (await clauseStore.AddAsync(clause, cancellationToken))
                 {
                     // This is a new clause, so find and queue up its resolutions.
                     await foreach (var newResolution in clauseStore.FindResolutions(clause, cancellationToken))

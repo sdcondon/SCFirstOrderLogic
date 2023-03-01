@@ -10,7 +10,7 @@ Priorities at the time of writing:
 
 On the back-burner, for later consideration:
 
-* Improvements to inference algorithms may appear at some point. Handling of infinite loops when chaining, leveraging subsumption etc.
+* Improvements to inference algorithms may appear at some point. Handling of infinite loops when chaining, leveraging subsumption (e.g. a trie-like structure for fast lookup of subsuming clauses - SubsumptionTrie or somesuch, used by ResolutionQuery for its steps record instead of a dictionary) etc.
 As alluded to above and elsewhere, this package is more about the fundamentals than especially powerful inference logic - but we should probably cover such relatively fundamental problems and techniques.
 * Take a look at creating a FoL syntax parser in the SentenceCreation namespace.
 Did take a brief look at using ANTLR to do this, but the "all .NET" way of doing this is old and no longer supported.
