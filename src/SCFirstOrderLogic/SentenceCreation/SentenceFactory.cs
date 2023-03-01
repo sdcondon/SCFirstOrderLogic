@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Shorthand static factory methods for <see cref="Sentence"/> instances. Intended to be used with a 'using static' directive to make method invocations acceptably succinct:
-    /// <code>using static SCFirstOrderLogic.SentenceManipulation.SentenceFactory;</code>
+    /// <code>using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;</code>
     /// For domain-specific sentence elements (i.e. predicates, functions and constants), the recommendation is to create appropriate methods and properties to create them. For example:
     /// <code>Predicate MyBinaryPredicate(Term arg1, Term arg2) => new Predicate(nameof(MyBinaryPredicate), arg1, arg2);</code>
     /// ..which means you can then write things like:

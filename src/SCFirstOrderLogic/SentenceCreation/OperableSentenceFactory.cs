@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.SentenceCreation
     /// <summary>
     /// <para>
     /// Shorthand static factory methods for <see cref="Sentence"/> instances. Intended to be used with a 'using static' directive to make method invocations acceptably succinct:
-    /// <code>using static SCFirstOrderLogic.SentenceManipulation.OperableSentenceFactory;</code>
+    /// <code>using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;</code>
     /// This class provides a compromise between <see cref="SentenceFactory"/> and the full language integration provided by the types in the LanguageIntegration namespace.
     /// The objects returned by this factory (are implicitly convertible to <see cref="Sentence"/>s and) override operators in a way that is perhaps intuitive: | for disjunctions, &amp; for conjunctions, ! for negations, and == for the equality predicate.
     /// For domain-specific sentence elements (predicates, functions &amp; constants), their operable surrogate is implicitly convertible from (and to) the regular type, so the recommendation is to create appropriate properties and methods to create them - declaring
