@@ -1,4 +1,5 @@
 ﻿using SCFirstOrderLogic.SentenceManipulation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +8,7 @@ namespace SCFirstOrderLogic
     /// <summary>
     /// Representation of a <see cref="Sentence"/> in conjunctive normal form (CNF).
     /// </summary>
-    public class CNFSentence
+    public class CNFSentence : IEquatable<CNFSentence>
     {
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFSentence"/> class from an enumerable of clauses.
@@ -19,7 +20,7 @@ namespace SCFirstOrderLogic
             // but its a super low-level class and I'd so far I've erred on the side of using the simplest/smallest
             // implementation possible - that is, an array.
             // NB #2: Note that we order clauses - important to justifiably consider the sentence "normalised".
-            // TODO-BUG-ROBUSTNESS: Potential equality bug on hash code collision.
+            // TODO-BUG-ROBUSTNESS: Potential equality incorrectness on hash code collision.
             // TODO-BUG-ROBUSTNESS: No handling of being handed an enumerable containing dups.
             // One would hope that ImmutableSortedSet would deal with both. This is quite low-level code,
             // though - need to assess the options for performance cost.
@@ -41,6 +42,46 @@ namespace SCFirstOrderLogic
         // TODO-FEATURE: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
         // Investigate perf impact of ImmutableSortedSet (sorted to facilitate quick equality comparison, hopefully)?
         public IReadOnlyCollection<CNFClause> Clauses { get; }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is CNFSentence sentence && Equals(sentence);
+
+        /// <inheritdoc />
+        /// <remarks>
+        /// Sentences that contain exactly the same collection of clauses are considered equal.
+        /// </remarks>
+        public bool Equals(CNFSentence? other)
+        {
+            if (other == null || Clauses.Count != other.Clauses.Count)
+            {
+                return false;
+            }
+
+            foreach (var (xClause, yClause) in Clauses.Zip(other.Clauses, (x, y) => (x, y)))
+            {
+                if (!xClause.Equals(yClause))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc />
+        /// <remarks>
+        /// Sentences that contain exactly the same collection of clauses are considered equal.
+        /// </remarks>
+        public override int GetHashCode()
+        {
+            var hash = new HashCode();
+            foreach (var clause in Clauses)
+            {
+                hash.Add(clause);
+            }
+
+            return hash.ToHashCode();
+        }
 
         /// <summary>
         /// Sentence visitor that constructs a set of <see cref="CNFClause"/> objects from a <see cref="Sentence"/> in CNF.
