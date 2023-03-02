@@ -27,7 +27,7 @@ var c = new VariableDeclaration("c");
 var p = new VariableDeclaration("p");
 var equivalenceLHS = IsGrandparent(g, c);
 var equivalenceRHS = new ExistentialQuantification(p, new Conjunction(IsParent(g, p), IsParent(p, c)));
-Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantification(c, new Equivalence(equivalenceLHS, equivalenceRHS));
+Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantification(c, new Equivalence(equivalenceLHS, equivalenceRHS)));
 ```
 
 Notice that:
@@ -175,6 +175,7 @@ var rules = new Sentence[]
 ### Using Forward Chaining
 
 ```
+using System;
 using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods - IKnowledgeBase is very async
 using SCFirstOrderLogic.Inference.ForwardChaining;
 
