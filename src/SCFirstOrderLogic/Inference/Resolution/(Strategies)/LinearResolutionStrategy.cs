@@ -88,9 +88,6 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 {
                     await foreach (var resolution in clauseStore.FindResolutions(clause, cancellationToken))
                     {
-                        // NB: Throwing away clauses returned by (an arbitrary) clause store obviously has a performance impact.
-                        // Better to use a store that knows to not look for certain clause pairings in the first place.
-                        // However, the purpose of this strategy implementation is demonstration, not performance, so this is fine.
                         queue.Enqueue(resolution);
                     }
                 }
@@ -99,13 +96,9 @@ namespace SCFirstOrderLogic.Inference.Resolution
             /// <inheritdoc />
             public async Task EnqueueResolutionsAsync(CNFClause clause, CancellationToken cancellationToken)
             {
-                // TODO: steps problem here - might not be able to use query's steps record, looks like.
-                if (!await clauseStore!.ContainsAsync(clause, cancellationToken) && !query.Steps.Keys.Contains(clause))
+                await foreach (var newResolution in FindResolutions(clause, cancellationToken))
                 {
-                    await foreach (var newResolution in FindResolutions(clause, cancellationToken))
-                    {
-                        queue.Enqueue(newResolution);
-                    }
+                    queue.Enqueue(newResolution);
                 }
             }
 
