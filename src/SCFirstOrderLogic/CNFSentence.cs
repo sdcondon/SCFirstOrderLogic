@@ -1,4 +1,5 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.SentenceFormatting;
+using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,20 @@ namespace SCFirstOrderLogic
         // TODO-FEATURE: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
         // Investigate perf impact of ImmutableSortedSet (sorted to facilitate quick equality comparison, hopefully)?
         public IReadOnlyCollection<CNFClause> Clauses { get; }
+
+        /// <summary>
+        /// <para>
+        /// Returns a string that represents the current object.
+        /// </para>
+        /// <para>
+        /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to format the sentence.
+        /// Note that this will not guarantee unique labelling of normalisation terms (standardised variables or Skolem functions)
+        /// across multiple calls, or provide any choice as to the sets of labels used for normalisation terms. If you want either
+        /// of these things, instantiate your own <see cref="SentenceFormatter"/> instance.
+        /// </para>
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString() => new SentenceFormatter().Format(this);
 
         /// <inheritdoc />
         public override bool Equals(object? obj) => obj is CNFSentence sentence && Equals(sentence);

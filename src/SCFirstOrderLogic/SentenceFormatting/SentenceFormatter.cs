@@ -79,6 +79,13 @@ namespace SCFirstOrderLogic.SentenceFormatting
         }
 
         /// <summary>
+        /// Returns a string representation of a given <see cref="CNFSentence"/> instance.
+        /// </summary>
+        /// <param name="sentence">The sentence to be formatted.</param>
+        /// <returns>A string representation of the given sentence.</returns>
+        public string Format(CNFSentence sentence) => string.Join(" ∧ ", sentence.Clauses.Select(c => $"[{Format(c)}]"));
+
+        /// <summary>
         /// Returns a string representation of a given <see cref="Literal"/> instance.
         /// </summary>
         /// <param name="literal">The literal to be formatted.</param>
