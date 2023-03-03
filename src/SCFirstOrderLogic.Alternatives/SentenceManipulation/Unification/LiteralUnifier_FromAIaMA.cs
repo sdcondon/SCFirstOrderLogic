@@ -166,7 +166,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             return l.Skip(1).ToList();
         }
 
-        // NB: we use the algorithm exactly as listed in the book, not even subsituting in a thrown exception
+        // NB: we use the algorithm exactly as listed in the book, not even substituting in a thrown exception
         // for the "failure" value - the book plays it a little fast and loose with types - I guess assuming
         // a dynamically typed system (but why then does it say that theta is a substitation..).
         // ..anyway, we create our own "substitution" type so that we can exactly copy the algorithm as listed

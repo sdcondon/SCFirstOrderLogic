@@ -183,7 +183,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
-        /// Transformation that eliminate existential quantification via the process of "Skolemisation". Replaces all existentially declared variables
+        /// Transformation that eliminates existential quantification via the process of "Skolemisation". Replaces all existentially declared variables
         /// with a generated "Skolem" function that acts on all universally declared variables in scope when the existential variable was declared.
         /// </summary>
         private class Skolemisation : RecursiveSentenceTransformation

@@ -181,7 +181,7 @@ namespace SCFirstOrderLogic
 
         private class ConstructionVisitor : RecursiveSentenceVisitor
         {
-            private HashSet<Literal> literals = new HashSet<Literal>();
+            private readonly HashSet<Literal> literals = new();
 
             public static HashSet<Literal> GetLiterals(Sentence sentence)
             {

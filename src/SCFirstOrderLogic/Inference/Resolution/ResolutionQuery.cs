@@ -196,6 +196,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         public override void Dispose()
         {
             strategy!.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         private ReadOnlyCollection<CNFClause> MakeDiscoveredClauses()
