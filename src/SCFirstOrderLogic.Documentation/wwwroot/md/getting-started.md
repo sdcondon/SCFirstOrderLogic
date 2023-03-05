@@ -120,8 +120,7 @@ See the [roadmap](roadmap.md) for more on this.
 Once you have some sentences, storing them and making inferences is done with the aid of the types in the `Inference` namespace.
 The most important type here is the `IKnowledgeBase` interface. The library includes a few very simple knowledge bases - one that
 uses forward chaining, one that uses backward chaining, and one that uses resolution. Some examples follow, but first, here's our domain,
-taken from section 9.3 of 'Artificial Intelligence: A Modern Approach'. Note that it consists only of definite clauses, so we can use
-forward and backward chaining on it:
+taken from section 9.3 of 'Artificial Intelligence: A Modern Approach':
 
 ```
 using SCFirstOrderLogic;
