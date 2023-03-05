@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
-    /// An implementation of <see cref="IKnowledgeBase"/> that uses a simple depth-first backward chaining algorithm.
+    /// An implementation of <see cref="IKnowledgeBase"/> that uses a (very basic) depth-first backward chaining algorithm.
     /// </summary>
     public class BackwardChainingKnowledgeBase : IKnowledgeBase
     {
