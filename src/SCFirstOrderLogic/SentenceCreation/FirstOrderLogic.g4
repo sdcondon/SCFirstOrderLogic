@@ -1,16 +1,16 @@
 ﻿grammar FirstOrderLogic;
 
-sentence: ('∀'|'FOR-ALL') identifierList ','? sentence      # UniversalQuantification
-        | ('∃'|'THERE-EXISTS') identifierList ','? sentence # ExistentialQuantification
-        | sentence ('∧'|'AND') sentence                     # Conjunction
-        | sentence ('∨'|'OR') sentence                      # Disjunction
-        | sentence ('⇒'|'->'|'=>') sentence                 # Implication
-        | sentence ('⇔'|'<->'|'<=>') sentence               # Equivalence
-        | ('¬'|'NOT') sentence                               # Negation
+sentence: '(' sentence ')'                                   # BracketedSentence
+        | '[' sentence ']'                                   # BracketedSentence
         | ID '(' termList ')'                                # Predicate
         | term '=' term                                      # PredicateEquality
-        | '(' sentence ')'                                   # BracketedSentence
-        | '[' sentence ']'                                   # BracketedSentence
+        | ('¬'|'NOT') sentence                               # Negation
+        | sentence ('∨'|'OR') sentence                      # Disjunction
+        | sentence ('∧'|'AND') sentence                     # Conjunction
+        | sentence ('⇒'|'->'|'=>') sentence                 # Implication
+        | sentence ('⇔'|'<->'|'<=>') sentence               # Equivalence
+        | ('∀'|'FOR-ALL') identifierList ','? sentence      # UniversalQuantification
+        | ('∃'|'THERE-EXISTS') identifierList ','? sentence # ExistentialQuantification
         ;
 
 identifierList: elements+=ID (','? elements+=ID)*;
