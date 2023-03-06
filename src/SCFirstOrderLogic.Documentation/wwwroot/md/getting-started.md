@@ -66,11 +66,12 @@ The `SentenceCreation` namespace also contains a static class called `OperableSe
 using SCFirstOrderLogic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
-// Helper methods for creating your predicates (and functions) are recommended to avoid repetition:
+// Helper methods for creating your predicates (and functions) are recommended to avoid repetition
+// (NB: the return type here is OperablePredicate, not Predicate):
 OperablePredicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 OperablePredicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
-// This is probably the most succinct of the approaches:
+// This is the most succinct of the code-based approaches:
 var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, IsParent(G, P) & IsParent(P, C))));
 ```
 
@@ -142,7 +143,7 @@ OperablePredicate IsEnemyOf(Term t, Term other) => new Predicate(nameof(IsEnemyO
 var rules = new Sentence[]
 {
     // "... it is a crime for an American to sell weapons to hostile nations":
-    // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x)
+    // ∀ x, y, z, American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x)
     ForAll(X, Y, Z, If(IsAmerican(X) & IsWeapon(Y) & Sells(X, Y, Z) & IsHostile(Z), IsCriminal(X))),
 
     // "Nono... has some missiles."
@@ -150,15 +151,15 @@ var rules = new Sentence[]
     ThereExists(X, IsMissile(X) & Owns(Nono, X)),
 
     // "All of its missiles were sold to it by Colonel West":
-    // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
+    // ∀ x, Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
     ForAll(X, If(IsMissile(X) & Owns(Nono, X), Sells(West, X, Nono))),
 
     // We will also need to know that missiles are weapons: 
-    // Missile(x) ⇒ Weapon(x)
+    // ∀ x, Missile(x) ⇒ Weapon(x)
     ForAll(X, If(IsMissile(X), IsWeapon(X))),
 
     // And we must know that an enemy of America counts as “hostile”:
-    // Enemy(x, America) ⇒ Hostile(x)
+    // ∀ x, Enemy(x, America) ⇒ Hostile(x)
     ForAll(X, If(IsEnemyOf(X, America), IsHostile(X))),
 
     // "West, who is American..":

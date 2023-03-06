@@ -28,7 +28,22 @@
     <None Include="..\SCFirstOrderLogic-128.png" Pack="true" PackagePath="\" Link="_PackageFiles\SCFirstOrderLogic-128.png" />
   </ItemGroup>
 
+    <ItemGroup>
+        <None Remove="SentenceCreation\FirstOrderLogic.g4" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Antlr4 Include="SentenceCreation\FirstOrderLogic.g4">
+            <Package>SCFirstOrderLogic.SentenceCreation.Antlr</Package>
+            <AntOutDir>SentenceCreation\Antlr</AntOutDir>
+            <Listener>false</Listener>
+            <DOptions>language=CSharp;accessLevel=internal</DOptions>
+        </Antlr4>
+    </ItemGroup>
+
   <ItemGroup>
+    <PackageReference Include="Antlr4BuildTasks" Version="12.2.0" PrivateAssets="all" />
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.12.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -37,6 +52,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SentenceCreation\Antlr\" />
   </ItemGroup>
 
 </Project>
