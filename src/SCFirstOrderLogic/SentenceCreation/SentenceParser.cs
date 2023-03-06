@@ -1,11 +1,8 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using SCFirstOrderLogic.SentenceCreation.Antlr;
-using SCFirstOrderLogic.SentenceManipulation;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
 
 namespace SCFirstOrderLogic.SentenceCreation
 {
@@ -13,9 +10,9 @@ namespace SCFirstOrderLogic.SentenceCreation
     /// Parser for first-order logic sentences.
     /// </summary>
     // TODO-FEATURE: All identifiers are just strings (i.e. the token text) for the mo.
-    // Might be useful to allow for callbacks (Func<string, object> getPredicateSymbol etc) in case the caller needs richer symbols.
-    // ..although, now that we have an actual parser, its becoming clearer that our Symbol props should really be called Identifier.
-    // Something for v5.
+    // Might be useful to allow for callbacks (Func<string, object> getPredicateSymbol etc) in case the caller needs richer identifiers.
+    // ..perhaps worth noting that now that we have an actual parser, its becoming clearer that our "Symbol" props should really be called "Identifier"..
+    // Will consider this for inclusion in v5 - obviously a breaking change.
     public static class SentenceParser
     {
         /// <summary>
