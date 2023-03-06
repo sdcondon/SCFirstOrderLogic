@@ -12,3 +12,10 @@ At some point in the not-too-distant future:
 
 * Improvements to inference algorithms. Handling of infinite loops when chaining, leveraging subsumption (e.g. a trie-like structure for fast lookup of subsuming clauses - SubsumptionTrie or somesuch, used by ResolutionQuery for its steps record instead of a dictionary) etc.
 As alluded to above and elsewhere, this package is more about the fundamentals than especially powerful inference logic - but we should probably cover such relatively fundamental problems and techniques.
+
+Breaking stuff on my mind for v5 (which likely won't be any time soon):
+
+* Another look at sentence formatting - this time to bring it in line with the standard .net formatting stuff - format providers, custom formatters et al.
+  I've always felt that .NET's formatting stuff was a little.. incoherent, but there's no doubt some value to be gleaned here from doing sentence formatting in a more "standard" way.
+* Now that we've got a sentence parser, I think it's a little clearer that the "Symbol" properties on predicates, functions, constants and variables should probably actually be called "Identifier".
+  Need to confirm for myself that this is better nomenclature, then do it if so.
