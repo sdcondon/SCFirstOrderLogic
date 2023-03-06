@@ -121,7 +121,7 @@ var grandparentDefn = SentenceParser.Parse("∀ g, c, IsGrandparentOf(g, c) ⇔ 
 ```
 
 Notes:
-* *for those that are okay with reading such things, the grammar definition is [here](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic/SentenceCreation/FirstOrderLogic.g4)*
+* *For those that are okay with reading such things, the grammar definition is [here](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic/SentenceCreation/FirstOrderLogic.g4)*
 * Writing strings that include the "proper" FoL symbols might be a bit of a pain, so the parser allows for some alternatives to be used (NB all **case sensitive**):
   * `FOR-ALL` in place of `∀`
   * `THERE-EXISTS` in place `∃`
