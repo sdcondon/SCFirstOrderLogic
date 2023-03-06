@@ -29,6 +29,10 @@ namespace SCFirstOrderLogic.SentenceCreation
                     ExpectedResult: new Disjunction(new Predicate("P", new Constant("x")), new Negation(new Predicate("Q", new Constant("y"))))),
 
                 new(
+                    Sentence: "P() ∨ ¬[Q() ∧ R()]",
+                    ExpectedResult: new Disjunction(new Predicate("P"), new Negation(new Conjunction(new Predicate("Q"), new Predicate("R"))))),
+
+                new(
                     Sentence: "P(x) ⇒ Q(y)",
                     ExpectedResult: new Implication(new Predicate("P", new Constant("x")), new Predicate("Q", new Constant("y")))),
 
