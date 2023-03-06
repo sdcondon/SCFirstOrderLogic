@@ -216,7 +216,7 @@ using SCFirstOrderLogic.Inference.BackwardChaining;
 // just stores things in memory.
 var kb = new BackwardChainingKnowledgeBase(new DictionaryClauseStore());
 kb.Tell(rules);
-var result = kb.Ask(IsCriminal(West)); // == true
+var result = kb.Ask(SentenceParser.Parse("IsCriminal(West)")); // == true
 // ..Or can get an explanation in the same way as above
 ```
 
@@ -235,7 +235,7 @@ var kb = new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
     DelegateResolutionStrategy.PriorityComparisons.UnitPreference));
 
 kb.Tell(rules);
-var result = kb.Ask(IsCriminal(West)); // == true
+var result = kb.Ask(SentenceParser.Parse("IsCriminal(West)")); // == true
 // ..Or can get an explanation in the same way as above
 ```
 
