@@ -110,9 +110,9 @@ Notice that:
 
 * This is obviously non-trivial - more information can be found on the [language integration](beyond-getting-started/language-integration.md) page.
 
-### (Not) Writing Sentences as Strings
+### Writing Sentences as Strings
 
-The `SentenceCreation` namespace contains a SentenceParser class, that facilitates the expression of sentences as strings, like this:
+The `SentenceCreation` namespace contains a `SentenceParser` class, that facilitates the expression of sentences as strings, like this:
 
 ```
 using SCFirstOrderLogic.SentenceCreation;
@@ -132,6 +132,7 @@ Notes:
   * `<->` or `<=>` in place of `⇔`
 * You can use `[ ... ]` or `( ... )` for bracketing sub-sentences.
 * Constant, variable, function and predicate identifiers must be alphanumeric (i.e. must match the regex `[A-Za-z0-9]+`).
+* To create a predicate that refers to the `EqualitySymbol` type (and thus capable of being leveraged by KBs that have particular handling for equality, etc), use `{term} = {term}`.
 * An identifier where a term is expected is interpreted as a variable reference if a matching declaration (from a quantification) is in scope - otherwise it is interpreted as a constant.
 * All identifiers are **case sensitive**. This is, for example, something to double-check if you're seeing something intepreted as a constant that you intend as a variable reference.
 
