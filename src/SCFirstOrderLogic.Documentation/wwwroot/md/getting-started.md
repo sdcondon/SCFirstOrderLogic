@@ -10,7 +10,7 @@ The first challenge is to write sentences. This can be done in several ways. Thi
 
 ..that is, the definition of a grandparent. We use this example because its very straightforward but includes a decent cross-section of FoL elements.
 
-### Writing Sentences Directly
+### Writing Sentences as Code - Directly
 
 The most basic way to express sentences is to directly compose instances of the types found in the top-level `SCFirstOrderLogic` namespace into a tree structure, like this:
 
@@ -34,7 +34,7 @@ Notice that:
 
 * This is very simple in that it involves nothing other than the sentence types themselves, but is obviously far too verbose to be workable. Hence the alternatives.
 
-### Writing Sentences with SentenceFactory
+### Writing Sentences as Code - with SentenceFactory
 
 The `SentenceCreation` namespace contains a static class called `SentenceFactory`. It is intended to be used via a `using static` directive,
 and includes a number of static methods and properties to assist with succinct sentence creation. Here's how the example looks with this one:
@@ -58,7 +58,7 @@ Notice that:
 * The factory provides methods for conjunctions (`And`), disjunctions (`Or`) and negations (`Not`). See the next two examples if you really want to use C# operators for these.
 * The factory provides `A` through `Z` as properties that return variable declarations with these letters as their symbol.
 
-### Writing Sentences with OperableSentenceFactory
+### Writing Sentences as Code - with OperableSentenceFactory
 
 The `SentenceCreation` namespace also contains a static class called `OperableSentenceFactory`. It works similarly to `SentenceFactory`, but lets you use operators:
 
@@ -80,7 +80,7 @@ Notice that:
 * Other aspects of this factory are the same as `SentenceFactory` - it also offers `ThereExists`, `ForAll`, `Iff`, `If` and single-letter variable declaration properties.
 * The only proviso is that the supporting methods for domain-specific elements now need to use `Operable..` as their return type - which is easy as these types are implicitly convertible from the normal equivalents.
 
-### Writing Sentences with LanguageIntegration
+### Writing Sentences as Code - with LanguageIntegration
 
 Finally, there are the types to be found in the `LanguageIntegration` namespace. The `SentenceFactory` in this namespace is based on the idea of
 modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as a boolean-valued LINQ expression. Like this:
