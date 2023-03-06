@@ -83,7 +83,7 @@ Notice that:
 
 ### Writing Sentences as Code with LanguageIntegration
 
-Finally, there are the types to be found in the `LanguageIntegration` namespace. The `SentenceFactory` in this namespace is based on the idea of
+The `LanguageIntegration` namespace contains classes for writing sentences in a language-integrated manner. The `SentenceFactory` in this namespace is based on the idea of
 modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as a boolean-valued LINQ expression. Like this:
 
 ```
@@ -112,9 +112,28 @@ Notice that:
 
 ### (Not) Writing Sentences as Strings
 
-Being able to point a parser at "∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]" would be great,
-but I've not gotten around to that just yet. At some point in the future I may take a look at this (shouldn't be too tough, especially if I make use of something like ANTLR).
-See the [roadmap](roadmap.md) for more on this.
+The `SentenceCreation` namespace contains a SentenceParser class, that facilitates the expression of sentences as strings, like this:
+
+```
+using SCFirstOrderLogic.SentenceCreation;
+
+var grandparentDefn = SentenceParser.Parse("∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]");
+```
+
+Notes:
+* *for those that are okay with reading such things, the grammar definition is [here](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic/SentenceCreation/FirstOrderLogic.g4)*
+* Writing strings that include the "proper" FoL symbols might be a bit of a pain, so the parser allows for some alternatives to be used (NB all **case sensitive**):
+  * `FOR-ALL` in place of `∀`
+  * `THERE-EXISTS` in place `∃`
+  * `AND` in place of `∧`
+  * `OR` in place of `∨`
+  * `NOT` in place of `¬`
+  * `->` or `=>` in place of `⇒`
+  * `<->` or `<=>` in place of `⇔`
+* You can use `[ ... ]` or `( ... )` for bracketing sub-sentences.
+* Constant, variable, function and predicate identifiers must be alphanumeric (i.e. must match the regex `[A-Za-z0-9]+`).
+* An identifier where a term is expected is interpreted as a variable reference if a matching declaration (from a quantification) is in scope - otherwise it is interpreted as a constant.
+* All identifiers are **case sensitive**. This is, for example, something to double-check if you're seeing something intepreted as a constant that you intend as a variable reference.
 
 ## Storing Knowledge and Making Inferences
 

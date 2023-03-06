@@ -6,7 +6,6 @@ I don't intend to add any particularly powerful or specialised inference logic t
 Priorities at the time of writing:
 
 * *As always, anything that's labelled as TODO in the code. Head over to [https://github.dev/sdcondon/SCFirstOrderLogic/](https://github.dev/sdcondon/SCFirstOrderLogic/) (GitHub's regular search functionality is still a bit naff) and do a case-sensitive search for TODO.*
-* Adding a FoL syntax parser to the SentenceCreation namespace. Using ANTLR, it is turning out to be rather straightforward.
 * Nothing much else for the mo - certainly nothing breaking. I've been major version rev-ing this a bit too much (ultimately as a result of publishing it a bit before it was ready..), so turning my attention to other things for a while to let things settle.
 
 At some point in the not-too-distant future:
