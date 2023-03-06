@@ -13,19 +13,20 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParse
     /// Example usage:
     /// </para>
     /// <code>
+    /// using SCFirstOrderLogic.SentenceCreation;
     /// using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CuriousityAndTheCatDomain;
     /// ..
     /// IKnowledgeBase kb = .. // a knowledge base implementation
     /// kb.Tell(Axioms);
-    /// var answer = kb.Ask(Kills(Curiousity, Tuna)); // should return true
+    /// var answer = kb.Ask(SentenceParser.Parse("Kills(Curiousity, Tuna)")); // should return true
     /// </code>
     /// </summary>
     public static class CuriousityAndTheCatDomain
     {
         /// <summary>
-        /// Gets the fundamental axioms of the domain.
+        /// Gets the raw, unparsed version of <see cref="Axioms"/>.
         /// </summary>
-        public static IReadOnlyCollection<Sentence> Axioms { get; } = new[]
+        public static IReadOnlyCollection<string> UnparsedAxioms { get; } = new[]
         {
             // Everyone who loves all animals is loved by someone.
             "∀x [∀y Animal(y) ⇒ Loves(x, y)] ⇒ [∃y Loves(y, x)]",
@@ -42,7 +43,12 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParse
 
             // Cats are animals.
             "∀x Cat(x) ⇒ Animal(x)",
+        };
 
-        }.Select(s => SentenceParser.Parse(s)).ToList().AsReadOnly();
+        /// <summary>
+        /// Gets the axioms of the domain.
+        /// (Okay, some of these can't really be described as axioms, but..).
+        /// </summary>
+        public static IReadOnlyCollection<Sentence> Axioms => UnparsedAxioms.Select(s => SentenceParser.Parse(s)).ToList().AsReadOnly();
     }
 }

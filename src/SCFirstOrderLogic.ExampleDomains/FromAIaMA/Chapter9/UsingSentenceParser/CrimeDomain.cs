@@ -12,19 +12,20 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParse
     /// Example usage:
     /// </para>
     /// <code>
+    /// using SCFirstOrderLogic.SentenceCreation;
     /// using static SCFirstOrderLogic.ExampleDomains.AiAModernApproach.Chapter9.CrimeDomain;
     /// ..
     /// IKnowledgeBase kb = .. // a knowledge base implementation
     /// kb.Tell(Axioms);
-    /// var answer = kb.Ask(IsCriminal(West)); // should return true
+    /// var answer = kb.Ask(SentenceParser.Parse("IsCriminal(West)")); // should return true
     /// </code>
     /// </summary>
     public static class CrimeDomain
     {
         /// <summary>
-        /// Gets the fundamental axioms of the crime domain.
+        /// Gets the raw, unparsed version of <see cref="Axioms"/>.
         /// </summary>
-        public static IReadOnlyCollection<Sentence> Axioms { get; } = new[]
+        public static IReadOnlyCollection<string> UnparsedAxioms { get; } = new[]
         {
             // "... it is a crime for an American to sell weapons to hostile nations":
             "∀ x, y, z, IsAmerican(x) ∧ IsWeapon(y) ∧ Sells(x, y, z) ∧ IsHostile(z) ⇒ IsCriminal(x)",
@@ -46,7 +47,12 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParse
 
             // "The country Nono, an enemy of America..":
             "IsEnemyOf(Nono, America)",
+        };
 
-        }.Select(s => SentenceParser.Parse(s)).ToList().AsReadOnly();
+        /// <summary>
+        /// Gets the axioms of the crime domain.
+        /// (okay, "IsAmerican(West)" isn't particularly fundamental, but..)
+        /// </summary>
+        public static IReadOnlyCollection<Sentence> Axioms => UnparsedAxioms.Select(s => SentenceParser.Parse(s)).ToList().AsReadOnly();
     }
 }
