@@ -37,7 +37,7 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParse
             "∀x Animal(x) ⇒ Loves(Jack, x)",
 
             // Either Jack or Curiosity killed the cat, who is named Tuna.
-            "Kills(Jack, Tuna) ∨ Kills(Curiosity, Tuna)",
+            "Kills(Jack, Tuna) ∨ Kills(Curiousity, Tuna)",
             "Cat(Tuna)",
 
             // Cats are animals.
