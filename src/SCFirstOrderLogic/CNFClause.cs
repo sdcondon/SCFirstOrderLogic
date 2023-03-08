@@ -150,7 +150,7 @@ namespace SCFirstOrderLogic
         /// </remarks>
         public bool Equals(CNFClause? other)
         {
-            if (other == null || Literals.Count != other.Literals.Count)
+            if (other == null || literals.Length != other.literals.Length)
             {
                 return false;
             }

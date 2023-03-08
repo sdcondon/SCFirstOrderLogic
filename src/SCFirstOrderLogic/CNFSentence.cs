@@ -69,7 +69,7 @@ namespace SCFirstOrderLogic
         /// </remarks>
         public bool Equals(CNFSentence? other)
         {
-            if (other == null || Clauses.Count != other.Clauses.Count)
+            if (other == null || clauses.Length != other.clauses.Length)
             {
                 return false;
             }
