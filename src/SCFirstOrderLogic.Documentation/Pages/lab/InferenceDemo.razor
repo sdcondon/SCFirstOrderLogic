@@ -69,7 +69,7 @@
         <div class="alert alert-primary mt-4" role="alert">
             <h3>Query In Progress</h3>
             <p>
-                If you see this for more than a second or two, the chances are you've fashioned a query that the current KB implementation can't deal with.
+                If you see this for more than a few seconds, the chances are you've fashioned a query that the current KB implementation can't deal with.
                 Click the "Cancel Query" button to abort.
             </p>
             <p>
@@ -116,12 +116,14 @@
 @code {
     private static Dictionary<string, Func<IKnowledgeBase>> KnowledgeBaseOptions = new()
     {
-        ["Backward Chaining"] = () => new BackwardChainingKnowledgeBase(new DictionaryClauseStore()),
+        ["Backward Chaining"] = () => new BackwardChainingKnowledgeBase(
+            new BlazorWasmBCClauseStore()),
 
-        ["Forward Chaining"] = () => new ForwardChainingKnowledgeBase(new Inference.ForwardChaining.HashSetClauseStore()),
+        ["Forward Chaining"] = () => new ForwardChainingKnowledgeBase(
+            new BlazorWasmFCClauseStore()),
 
         ["Resolution (Unit Preference)"] = () => new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
-            new Inference.Resolution.HashSetClauseStore(),
+            new BlazorWasmResClauseStore(),
             DelegateResolutionStrategy.Filters.None,
             DelegateResolutionStrategy.PriorityComparisons.UnitPreference)),
     };
@@ -161,7 +163,7 @@
             currentQueryCancellation = new CancellationTokenSource();
             currentQuery = await MakeQueryAsync(formData, currentQueryCancellation.Token);
             currentQueryExecution = currentQuery.ExecuteAsync(currentQueryCancellation.Token);
-            //currentQueryExecution = Task.WhenAll(currentQueryExecution, Task.Delay(TimeSpan.FromSeconds(3), currentQueryCancellation.Token)); // TEMP: fake delay to test cancellation
+            currentQueryExecution = Task.WhenAll(currentQueryExecution, Task.Delay(TimeSpan.FromSeconds(3), currentQueryCancellation.Token)); // TEMP: fake delay to test cancellation
             await InvokeAsync(StateHasChanged);
 
             // Await query completion, then re-render (to eg reenable the submit button).    
