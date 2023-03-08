@@ -41,7 +41,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
                 else
                 {
                     // I suppose we *could* fall back on the ToString of the underlying variable symbol here.
-                    // But obviously then we lose the unique representation guarentee, and it should be relatively
+                    // But obviously then we lose the unique representation guarantee, and it should be relatively
                     // easy to use essentially infinite label sets - so I'd rather just fail.
                     // Consumers can always create their own labellers with more sophisticated behaviour.
                     throw new InvalidOperationException("Label set is exhausted");

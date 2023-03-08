@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.SentenceFormatting
 {
     /// <summary>
     /// <para>
     /// An implementation of <see cref="ILabeller{T}"/> of <see cref="StandardisedVariableSymbol"/> that outputs the
-    /// (ToString of the) original ymbol of the standardised variable, along with a subscript numeric suffix, as required
+    /// (ToString of the) original symbol of the standardised variable, along with a subscript numeric suffix, as required
     /// for uniqueness.
     /// </para>
     /// <para>

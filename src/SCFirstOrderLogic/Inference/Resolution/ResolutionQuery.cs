@@ -36,6 +36,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <summary>
         /// Gets the (CNF representation of the) negation of the query sentence.
         /// </summary>
+        // Should this be NegatedQuerySentence? Breaking change..
         public CNFSentence NegatedQuery { get; }
         
         /// <inheritdoc/>
