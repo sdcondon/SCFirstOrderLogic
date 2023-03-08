@@ -25,7 +25,7 @@
         <li>
             Querying with this tool is very slow. It needs to use special clause stores with lots of delays coded in so as not to lock up the browser.
             This is ultimately because of a limitation of the app framework (Blazor WASM's single-threaded nature) that is apparently being resolved in .NET 8.
-            Without these special clause stores, the two examples given complete instantly, but if you pass it a difficult query your browser would have
+            Without these special clause stores, the two examples given would complete instantly, but if you passed it a difficult query, your browser would have
             become unresponsive and complained. I figured that erring on the side of a few seconds of delay was fine.
         </li>
         <li>Guidance for writing sentences as strings can be found on the <a href="getting-started">getting started</a> page.</li>
@@ -169,7 +169,7 @@
             currentQueryCancellation = new CancellationTokenSource();
             currentQuery = await MakeQueryAsync(formData, currentQueryCancellation.Token);
             currentQueryExecution = currentQuery.ExecuteAsync(currentQueryCancellation.Token);
-            currentQueryExecution = Task.WhenAll(currentQueryExecution, Task.Delay(TimeSpan.FromSeconds(3), currentQueryCancellation.Token)); // TEMP: fake delay to test cancellation
+            //currentQueryExecution = Task.WhenAll(currentQueryExecution, Task.Delay(TimeSpan.FromSeconds(3), currentQueryCancellation.Token)); // TEMP: fake delay to test cancellation
             await InvokeAsync(StateHasChanged);
 
             // Await query completion, then re-render (to eg reenable the submit button).    
