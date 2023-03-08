@@ -27,13 +27,14 @@ namespace SCFirstOrderLogic.SentenceCreation
             AntlrInputStream input = new(sentence);
 
             // NB: ANTLR apparently adds a listener by default that writes to the console.
-            // Which is crazy default behaviour if you ask me, but there it is.
-            // Remove it so that consumers of this lib don't get random messages turning up on their console..
-            // Replace it with our own that throws an Exception (otherwises errors would just be ignored and the method would just return null).
+            // Which is crazy default behaviour if you ask me, but never mind.
+            // Remove it so that consumers of this lib don't get random messages turning up on their console.
             FirstOrderLogicLexer lexer = new(input);
             lexer.RemoveErrorListeners();
             CommonTokenStream tokens = new(lexer);
 
+            // NB: In the parser, we add our own error listener that throws an exception.
+            // Otherwise errors would just be ignored and the method would just return null, which is obviously bad behaviour.
             FirstOrderLogicParser parser = new(tokens);
             parser.RemoveErrorListeners();
             parser.AddErrorListener(ThrowingErrorListener.Instance);
