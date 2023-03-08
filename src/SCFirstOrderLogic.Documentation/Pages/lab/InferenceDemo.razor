@@ -29,9 +29,9 @@
 
 <p>
     Use these buttons to populate the form with examples:
-    @foreach (var kvp in Examples)
+    @foreach (var kvp in ExampleBuilders)
     {
-        <button @onclick="@(() => formData = kvp.Value)">@kvp.Key</button>
+        <button @onclick="@(() => formData = kvp.Value.Invoke())">@kvp.Key</button>
         @(" ")
     }
 </p>
@@ -58,105 +58,129 @@
         <ValidationMessage For="() => formData.Query" />
     </div>
     <div class="form-group mt-2">
-        <button type="submit" class="btn btn-primary" disabled="@IsQueryInProgress">Submit</button>
-        <button class="btn btn-secondary" @onclick=@(() => currentQueryCancellation?.Cancel()) disabled="@(!IsQueryInProgress)">Cancel Query</button>
+        <button type="submit" class="btn btn-primary" disabled="@(currentQueryExecution != null && !currentQueryExecution.IsCompleted)">Submit</button>
     </div>
 </EditForm>
 
-@if (currentQuery != null)
+@if (currentQueryExecution != null)
 {
-    if (!currentQuery.IsComplete)
+    if (!currentQueryExecution.IsCompleted)
     {
         <div class="alert alert-primary mt-4" role="alert">
-            <h2>Query In Progress..</h2>
+            <h3>Query In Progress</h3>
+            <p>
+                If you see this for more than a second or two, the chances are you've fashioned a query that the current KB implementation can't deal with.
+                Click the "Cancel Query" button to abort.
+            </p>
+            <p>
+                <button type="button" class="btn btn-secondary" @onclick=@(() => currentQueryCancellation?.Cancel())>Cancel Query</button>
+            </p>
         </div>
     }
-    else
+    else if (currentQueryExecution.IsCanceled)
+    {
+        <div class="alert alert-warning mt-4" role="alert">
+            <h3>Query Cancelled</h3>
+        </div>
+    }
+    else if (currentQueryExecution.IsFaulted)
+    {
+        <div class="alert alert-danger mt-4" role="alert">
+            <h3>Query Failed</h3>
+            <p>Sorry, this demo isn't perfect. In particular, the input validation is a little lacklustre. It'll hopefully improve gradually over time.</p>
+            <p><pre>@(currentQueryExecution.Exception?.ToString())</pre></p>
+        </div>
+    }
+    else if (currentQueryExecution.IsCompletedSuccessfully)
     {
         <div class="alert alert-success mt-4" role="alert">
-            <h2>Query Result</h2>
-            <p><pre>@currentQuery.Result</pre></p>
+            <h3>Query Complete</h3>
+            <p><pre>@currentQuery!.Result</pre></p>
 
-            @if (currentQuery.Result)
+            @if (currentQuery!.Result)
             {
-                <p><pre>@currentQueryResultExplanation</pre></p>
+                var details = currentQuery! switch
+                {
+                    BackwardChainingQuery bcq => bcq.ResultExplanation,
+                    ForwardChainingQuery fcq => fcq.ResultExplanation,
+                    ResolutionQuery rq => rq.ResultExplanation,
+                    _ => "?"
+                };
+
+                <p><pre>@details</pre></p>
             }
         </div>
     }
 }
 
 @code {
-    private static Dictionary<string, KnowledgeBaseOption> KnowledgeBaseOptions = new()
+    private static Dictionary<string, Func<IKnowledgeBase>> KnowledgeBaseOptions = new()
     {
-        ["Backward Chaining"] = new(
-            () => new BackwardChainingKnowledgeBase(new DictionaryClauseStore()),
-            q => ((BackwardChainingQuery)q).ResultExplanation),
+        ["Backward Chaining"] = () => new BackwardChainingKnowledgeBase(new DictionaryClauseStore()),
 
-        ["Forward Chaining"] = new(
-            () => new ForwardChainingKnowledgeBase(new Inference.ForwardChaining.HashSetClauseStore()),
-            q => ((ForwardChainingQuery)q).ResultExplanation),
+        ["Forward Chaining"] = () => new ForwardChainingKnowledgeBase(new Inference.ForwardChaining.HashSetClauseStore()),
 
-        ["Resolution (Unit Preference)"] = new(
-            () => new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
-                new Inference.Resolution.HashSetClauseStore(),
-                DelegateResolutionStrategy.Filters.None,
-                DelegateResolutionStrategy.PriorityComparisons.UnitPreference)),
-            q => ((ResolutionQuery)q).ResultExplanation),
+        ["Resolution (Unit Preference)"] = () => new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
+            new Inference.Resolution.HashSetClauseStore(),
+            DelegateResolutionStrategy.Filters.None,
+            DelegateResolutionStrategy.PriorityComparisons.UnitPreference)),
     };
 
-    private static Dictionary<string, FormData> Examples = new()
+    private static Dictionary<string, Func<FormData>> ExampleBuilders = new()
     {
-        ["Crime"] = new(
+        ["Crime"] = () => new(
             knowledgeBaseDescription: "Backward Chaining",
             knowledge: string.Join(Environment.NewLine, CrimeDomain.UnparsedAxioms),
             query: CrimeDomain.UnparsedExampleQuery),
 
-        ["Curiousity and the Cat"] = new(
+        ["Curiousity and the Cat"] = () => new(
             knowledgeBaseDescription: "Resolution (Unit Preference)",
             knowledge: string.Join(Environment.NewLine, CuriousityAndTheCatDomain.UnparsedAxioms),
             query: CuriousityAndTheCatDomain.UnparsedExampleQuery),
     };
 
-    private FormData formData = Examples["Crime"];
+    private FormData formData = ExampleBuilders["Crime"].Invoke();
 
+    private CancellationTokenSource? currentQueryCancellation;
     private IQuery? currentQuery;
-    private string? currentQueryResultExplanation;
-    private CancellationTokenSource? currentQueryCancellation = null;
+    private Task? currentQueryExecution;
 
-    private bool IsQueryInProgress => currentQueryCancellation != null;
+    private bool IsQueryInProgress => currentQueryExecution != null && !currentQueryExecution.IsCompleted;
 
     private async Task HandleFormSubmission(EditContext editContext)
     {
-        if (editContext.Validate())
+        try
         {
-            // Instantiate the new query, then re-render (to enable the cancel button).
-            currentQueryResultExplanation = null;
+            // Clear out the last query and re-render
+            currentQueryCancellation = null;
+            currentQuery = null;
+            currentQueryExecution = null;
+            await InvokeAsync(StateHasChanged);
+
+            // Instantiate and start the new query, then re-render (to eg disable the submit button).
             currentQueryCancellation = new CancellationTokenSource();
             currentQuery = await MakeQueryAsync(formData, currentQueryCancellation.Token);
+            currentQueryExecution = currentQuery.ExecuteAsync(currentQueryCancellation.Token);
+            //currentQueryExecution = Task.WhenAll(currentQueryExecution, Task.Delay(TimeSpan.FromSeconds(3), currentQueryCancellation.Token)); // TEMP: fake delay to test cancellation
             await InvokeAsync(StateHasChanged);
 
-            // Execute the new query, then re-render (to disable the cancel button).
-            //await Task.Delay(TimeSpan.FromSeconds(3), currentQueryCancellation.Token); // TEMP: fake delay to test cancellation
-            await currentQuery.ExecuteAsync(currentQueryCancellation.Token);
-            currentQueryCancellation = null;
+            // Await query completion, then re-render (to eg reenable the submit button).    
+            await currentQueryExecution;
             await InvokeAsync(StateHasChanged);
-
-            // Grab the result details
-            if (currentQuery.Result)
+        }
+        catch (Exception e)
+        {
+            // yes, this is a little ugly..
+            if (e is not TaskCanceledException tce)
             {
-                // probable bug if user changes form data by time query is complete. refactor me.
-                currentQueryResultExplanation = KnowledgeBaseOptions[formData.KnowledgeBaseDescription].getResultExplanation(currentQuery);
-            }
-            else
-            {
-                currentQueryResultExplanation = string.Empty;
+                currentQueryExecution = Task.FromException(e);
             }
         }
     }
 
     private async Task<IQuery> MakeQueryAsync(FormData formData, CancellationToken cancellationToken)
     {
-        IKnowledgeBase knowledgeBase = KnowledgeBaseOptions[formData.KnowledgeBaseDescription].makeKnowledgeBase();
+        IKnowledgeBase knowledgeBase = KnowledgeBaseOptions[formData.KnowledgeBaseDescription].Invoke();
 
         var facts = formData.Knowledge
             .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -168,7 +192,7 @@
         return await knowledgeBase.CreateQueryAsync(querySentence, cancellationToken);
     }
 
-    private class FormData : IValidatableObject
+    private class FormData
     {
         public FormData(string knowledgeBaseDescription, string knowledge, string query)
         {
@@ -182,34 +206,5 @@
         public string Knowledge { get; set; }
 
         public string Query { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            var results = new List<ValidationResult>();
-
-            try
-            {
-                SentenceParser.Parse(Query);
-            }
-            catch (Exception e)
-            {
-                results.Add(new ValidationResult(e.Message, new[] { nameof(Query) }));
-            }
-
-            try
-            {
-                Knowledge
-                    .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                    .Select(l => SentenceParser.Parse(l));
-            }
-            catch (Exception e)
-            {
-                results.Add(new ValidationResult(e.Message, new[] { nameof(Knowledge) }));
-            }
-
-            return results;
-        }
     }
-
-    private record KnowledgeBaseOption(Func<IKnowledgeBase> makeKnowledgeBase, Func<IQuery, string> getResultExplanation);
 }
