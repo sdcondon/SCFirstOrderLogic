@@ -23,9 +23,10 @@
             The goal of this package is learning and experimentation more than anything else - so I maintain that there is value here as it stands - but improvements will be made (though not to any particular timeline).
         </li>
         <li>
-            Querying with this tool is very slow. Because of limitations of the app framework (Blazor WASM), it needs to use special clause stores with lots of millisecond delays in so as
-            not to lock up the browser. This is ultimately down to a limitation (Blazor WASM's single-threaded nature) that is apparently being resolved in .NET 8 (which is probably
-            turning up in November 2023).
+            Querying with this tool is very slow. It needs to use special clause stores with lots of delays coded in so as not to lock up the browser.
+            This is ultimately because of a limitation of the app framework (Blazor WASM's single-threaded nature) that is apparently being resolved in .NET 8.
+            Without these special clause stores, the two examples given complete instantly, but if you pass it a difficult query your browser would have
+            become unresponsive and complained. I figured that erring on the side of a few seconds of delay was fine.
         </li>
         <li>Guidance for writing sentences as strings can be found on the <a href="getting-started">getting started</a> page.</li>
         <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Pages/lab/InferenceDemo.razor">here</a>.</li>
