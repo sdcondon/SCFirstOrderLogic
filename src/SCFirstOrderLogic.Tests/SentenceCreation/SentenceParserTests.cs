@@ -41,13 +41,27 @@ namespace SCFirstOrderLogic.SentenceCreation
                     ExpectedResult: new Equivalence(new Predicate("P", new Constant("x")), new Predicate("Q", new Constant("y")))),
 
                 new(
-                    Sentence: "F1(x) = F2(y, z)",
-                    ExpectedResult: new Predicate(EqualitySymbol.Instance, new Function("F1", new Constant("x")), new Function("F2", new Constant("y"), new Constant("z")))),
+                    Sentence: "F1() = F2(x, y)",
+                    ExpectedResult: new Predicate(EqualitySymbol.Instance, new Function("F1"), new Function("F2", new Constant("x"), new Constant("y")))),
             })
             .When(tc => SentenceParser.Parse(tc.Sentence))
             .ThenReturns()
             .And((ParseTestCase tc, Sentence rv) => rv.Should().Be(tc.ExpectedResult));
 
+        public static Test ParseNegativeTestCases => TestThat
+            .GivenTestContext()
+            .AndEachOf(() => new[]
+            {
+                string.Empty,
+                "couldBeATermButNotASentence",
+                "P(x,y,)",
+                "P(,x,y)",
+                "∀ P(x)",
+                "∃ P(x)",
+            })
+            .When((ctx, tc) => SentenceParser.Parse(tc))
+            .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
+            
         private record ParseTestCase(string Sentence, Sentence ExpectedResult);
     }
 }

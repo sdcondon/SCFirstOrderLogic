@@ -15,7 +15,7 @@ sentence: '(' sentence ')'                                   # BracketedSentence
 
 identifierList: elements+=ID (','? elements+=ID)*;
 
-termList: (elements+=term)? (',' elements+=term)*;
+termList: (elements+=term (',' elements+=term)*)?;
 
 term: ID                   # VariableOrConstant
     | ID '(' termList ')'  # Function
