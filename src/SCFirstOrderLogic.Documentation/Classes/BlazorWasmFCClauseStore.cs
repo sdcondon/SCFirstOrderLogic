@@ -60,11 +60,12 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFDefiniteClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
+            await Task.Delay(1, cancellationToken);
+
             foreach (var clause in clauses.Keys)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 yield return clause;
-                await Task.Delay(1, cancellationToken);
             }
         }
 
@@ -92,11 +93,12 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             /// <inheritdoc />
             public async IAsyncEnumerator<CNFDefiniteClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
             {
+                await Task.Delay(1, cancellationToken);
+
                 foreach (var clause in clauses.Keys)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     yield return clause;
-                    await Task.Delay(1, cancellationToken);
                 }
             }
 

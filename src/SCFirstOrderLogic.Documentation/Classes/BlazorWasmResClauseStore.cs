@@ -48,21 +48,20 @@ namespace SCFirstOrderLogic.Inference.Resolution
         }
 
         /// <inheritdoc />
-        public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
+        public Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
         {
-            await Task.Yield();
-
-            return clauses.TryAdd(clause, 0);
+            return Task.FromResult(clauses.TryAdd(clause, 0));
         }
 
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
+            await Task.Delay(1, cancellationToken);
+
             foreach (var clause in clauses.Keys)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 yield return clause;
-                await Task.Delay(1, cancellationToken);
             }
         }
 
@@ -82,20 +81,20 @@ namespace SCFirstOrderLogic.Inference.Resolution
             public QueryStore(IEnumerable<KeyValuePair<CNFClause, byte>> clauses) => this.clauses = new(clauses);
 
             /// <inheritdoc />
-            public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
+            public Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
             {
-                await Task.Yield();
-                return clauses.TryAdd(clause, 0);
+                return Task.FromResult(clauses.TryAdd(clause, 0));
             }
 
             /// <inheritdoc />
             public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
             {
+                await Task.Delay(1, cancellationToken);
+
                 foreach (var clause in clauses.Keys)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     yield return clause;
-                    await Task.Delay(1, cancellationToken);
                 }
             }
 

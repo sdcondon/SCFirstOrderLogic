@@ -63,13 +63,14 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFDefiniteClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
+            await Task.Delay(1, cancellationToken);
+
             foreach (var clauseList in clausesByConsequentSymbol.Values)
             {
                 foreach (var clause in clauseList.Keys)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     yield return clause;
-                    await Task.Delay(1, cancellationToken);
                 }
             }
         }
@@ -80,6 +81,8 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             VariableSubstitution constraints,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
+            await Task.Delay(1, cancellationToken);
+
             if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
             {
                 foreach (var clause in clausesWithThisGoal.Keys)
@@ -94,7 +97,6 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                     if (LiteralUnifier.TryUpdate(restandardisedClause.Consequent, goal, substitution))
                     {
                         yield return (restandardisedClause, substitution);
-                        await Task.Delay(1, cancellationToken);
                     }
                 }
             }
