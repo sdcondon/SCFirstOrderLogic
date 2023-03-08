@@ -249,4 +249,4 @@ Notice that:
 
 ## Where Next?
 
-Take a look at [beyond getting started](beyond-getting-started).
+Take a look at [beyond getting started](beyond-getting-started), or go experiment in the [lab](lab).

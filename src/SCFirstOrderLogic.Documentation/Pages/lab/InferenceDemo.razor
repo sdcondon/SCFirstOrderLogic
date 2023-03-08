@@ -153,12 +153,6 @@
     {
         try
         {
-            // Clear out the last query and re-render
-            currentQueryCancellation = null;
-            currentQuery = null;
-            currentQueryExecution = null;
-            await InvokeAsync(StateHasChanged);
-
             // Instantiate and start the new query, then re-render (to eg disable the submit button).
             currentQueryCancellation = new CancellationTokenSource();
             currentQuery = await MakeQueryAsync(formData, currentQueryCancellation.Token);
