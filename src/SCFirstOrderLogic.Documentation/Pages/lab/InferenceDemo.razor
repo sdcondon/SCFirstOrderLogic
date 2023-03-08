@@ -1,0 +1,215 @@
+﻿@page "/lab"
+
+@using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParser;
+@using SCFirstOrderLogic.Inference.BackwardChaining;
+@using SCFirstOrderLogic.Inference;
+@using SCFirstOrderLogic;
+@using SCFirstOrderLogic.Inference.ForwardChaining;
+@using SCFirstOrderLogic.Inference.Resolution;
+@using SCFirstOrderLogic.SentenceCreation;
+@using System.ComponentModel.DataAnnotations;
+@using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+
+<h3>Lab - Inference Demo</h3>
+
+<div class="alert alert-primary" role="alert">
+    <p>
+        This page is an interactive demonstration of inference with SCFirstOrderLogic that runs in your browser. Note that:
+    </p>
+    <ul>
+        <li>
+            The knowledge base implementations in this package are very basic for now, to the extent that it is very easy to create queries that they will struggle with.
+            Resolution in particular will generally fail to terminate if the query is not provable (needs a linear strategy and some knowledge of subsumption).
+            The goal of this package is learning and experimentation more than anything else - so I maintain that there is value here as it stands - but improvements will be made (though not to any particular timeline).
+        </li>
+        <li>Guidance for writing sentences as strings can be found on the <a href="getting-started">getting started</a> page.</li>
+        <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCClassicalPlanning/blob/main/src/SCFirstOrderLogic.Documentation/Pages/lab/InferenceDemo.razor">here</a>.</li>
+    </ul>
+</div>
+
+<p>
+    Use these buttons to populate the form with examples:
+    @foreach (var kvp in Examples)
+    {
+        <button @onclick="@(() => formData = kvp.Value)">@kvp.Key</button>
+        @(" ")
+    }
+</p>
+
+<EditForm Model=@formData OnSubmit=@HandleFormSubmission style="font-family: monospace">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="kbTypeSelect">Knowledge Base Type</label>
+        <InputSelect class="form-control" id="kbTypeSelect" @bind-Value=formData.KnowledgeBaseDescription>
+            @foreach (var key in KnowledgeBaseOptions.Keys)
+            {
+                <option>@key</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="form-group">
+        <label for="factsTextArea">Knowledge (one sentence per line)</label>
+        <InputTextArea class="form-control" id="factsTextArea" @bind-Value=formData.Knowledge rows="8" />
+        <ValidationMessage For="@(() => formData.Knowledge)" />
+    </div>
+    <div class="form-group">
+        <label for="queryText">Query</label>
+        <InputText class="form-control" id="queryText" @bind-Value=formData.Query />
+        <ValidationMessage For="() => formData.Query" />
+    </div>
+    <div class="form-group mt-2">
+        <button type="submit" class="btn btn-primary" disabled="@IsQueryInProgress">Submit</button>
+        <button class="btn btn-secondary" @onclick=@(() => currentQueryCancellation?.Cancel()) disabled="@(!IsQueryInProgress)">Cancel Query</button>
+    </div>
+</EditForm>
+
+@if (currentQuery != null)
+{
+    if (!currentQuery.IsComplete)
+    {
+        <div class="alert alert-primary mt-4" role="alert">
+            <h2>Query In Progress..</h2>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success mt-4" role="alert">
+            <h2>Query Result</h2>
+            <p><pre>@currentQuery.Result</pre></p>
+
+            @if (currentQuery.Result)
+            {
+                <p><pre>@currentQueryResultExplanation</pre></p>
+            }
+        </div>
+    }
+}
+
+@code {
+    private static Dictionary<string, KnowledgeBaseOption> KnowledgeBaseOptions = new()
+    {
+        ["Backward Chaining"] = new(
+            () => new BackwardChainingKnowledgeBase(new DictionaryClauseStore()),
+            q => ((BackwardChainingQuery)q).ResultExplanation),
+
+        ["Forward Chaining"] = new(
+            () => new ForwardChainingKnowledgeBase(new Inference.ForwardChaining.HashSetClauseStore()),
+            q => ((ForwardChainingQuery)q).ResultExplanation),
+
+        ["Resolution (Unit Preference)"] = new(
+            () => new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
+                new Inference.Resolution.HashSetClauseStore(),
+                DelegateResolutionStrategy.Filters.None,
+                DelegateResolutionStrategy.PriorityComparisons.UnitPreference)),
+            q => ((ResolutionQuery)q).ResultExplanation),
+    };
+
+    private static Dictionary<string, FormData> Examples = new()
+    {
+        ["Crime"] = new(
+            knowledgeBaseDescription: "Backward Chaining",
+            knowledge: string.Join(Environment.NewLine, CrimeDomain.UnparsedAxioms),
+            query: CrimeDomain.UnparsedExampleQuery),
+
+        ["Curiousity and the Cat"] = new(
+            knowledgeBaseDescription: "Resolution (Unit Preference)",
+            knowledge: string.Join(Environment.NewLine, CuriousityAndTheCatDomain.UnparsedAxioms),
+            query: CuriousityAndTheCatDomain.UnparsedExampleQuery),
+    };
+
+    private FormData formData = Examples["Crime"];
+
+    private IQuery? currentQuery;
+    private string? currentQueryResultExplanation;
+    private CancellationTokenSource? currentQueryCancellation = null;
+
+    private bool IsQueryInProgress => currentQueryCancellation != null;
+
+    private async Task HandleFormSubmission(EditContext editContext)
+    {
+        if (editContext.Validate())
+        {
+            // Instantiate the new query, then re-render (to enable the cancel button).
+            currentQueryResultExplanation = null;
+            currentQueryCancellation = new CancellationTokenSource();
+            currentQuery = await MakeQueryAsync(formData, currentQueryCancellation.Token);
+            await InvokeAsync(StateHasChanged);
+
+            // Execute the new query, then re-render (to disable the cancel button).
+            //await Task.Delay(TimeSpan.FromSeconds(3), currentQueryCancellation.Token); // TEMP: fake delay to test cancellation
+            await currentQuery.ExecuteAsync(currentQueryCancellation.Token);
+            currentQueryCancellation = null;
+            await InvokeAsync(StateHasChanged);
+
+            // Grab the result details
+            if (currentQuery.Result)
+            {
+                // probable bug if user changes form data by time query is complete. refactor me.
+                currentQueryResultExplanation = KnowledgeBaseOptions[formData.KnowledgeBaseDescription].getResultExplanation(currentQuery);
+            }
+            else
+            {
+                currentQueryResultExplanation = string.Empty;
+            }
+        }
+    }
+
+    private async Task<IQuery> MakeQueryAsync(FormData formData, CancellationToken cancellationToken)
+    {
+        IKnowledgeBase knowledgeBase = KnowledgeBaseOptions[formData.KnowledgeBaseDescription].makeKnowledgeBase();
+
+        var facts = formData.Knowledge
+            .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(l => SentenceParser.Parse(l));
+        await knowledgeBase.TellAsync(facts, cancellationToken);
+
+        var querySentence = SentenceParser.Parse(formData.Query);
+
+        return await knowledgeBase.CreateQueryAsync(querySentence, cancellationToken);
+    }
+
+    private class FormData : IValidatableObject
+    {
+        public FormData(string knowledgeBaseDescription, string knowledge, string query)
+        {
+            this.KnowledgeBaseDescription = knowledgeBaseDescription;
+            this.Knowledge = knowledge;
+            this.Query = query;
+        }
+
+        public string KnowledgeBaseDescription { get; set; }
+
+        public string Knowledge { get; set; }
+
+        public string Query { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            try
+            {
+                SentenceParser.Parse(Query);
+            }
+            catch (Exception e)
+            {
+                results.Add(new ValidationResult(e.Message, new[] { nameof(Query) }));
+            }
+
+            try
+            {
+                Knowledge
+                    .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Select(l => SentenceParser.Parse(l));
+            }
+            catch (Exception e)
+            {
+                results.Add(new ValidationResult(e.Message, new[] { nameof(Knowledge) }));
+            }
+
+            return results;
+        }
+    }
+
+    private record KnowledgeBaseOption(Func<IKnowledgeBase> makeKnowledgeBase, Func<IQuery, string> getResultExplanation);
+}

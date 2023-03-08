@@ -13,4 +13,9 @@
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SCFirstOrderLogic.ExampleDomains\SCFirstOrderLogic.ExampleDomains.csproj" />
+    <ProjectReference Include="..\SCFirstOrderLogic\SCFirstOrderLogic.csproj" />
+  </ItemGroup>
+
 </Project>
