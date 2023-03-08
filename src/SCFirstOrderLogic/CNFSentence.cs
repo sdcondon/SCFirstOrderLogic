@@ -11,6 +11,8 @@ namespace SCFirstOrderLogic
     /// </summary>
     public class CNFSentence : IEquatable<CNFSentence>
     {
+        private readonly CNFClause[] clauses;
+
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFSentence"/> class from an enumerable of clauses.
         /// </summary>
@@ -25,7 +27,7 @@ namespace SCFirstOrderLogic
             // TODO-BUG-ROBUSTNESS: No handling of being handed an enumerable containing dups.
             // One would hope that ImmutableSortedSet would deal with both. This is quite low-level code,
             // though - need to assess the options for performance cost.
-            Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
+            this.clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace SCFirstOrderLogic
         /// </summary>
         // TODO-FEATURE: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
         // Investigate perf impact of ImmutableSortedSet (sorted to facilitate quick equality comparison, hopefully)?
-        public IReadOnlyCollection<CNFClause> Clauses { get; }
+        public IReadOnlyCollection<CNFClause> Clauses => clauses;
 
         /// <summary>
         /// <para>
@@ -72,9 +74,9 @@ namespace SCFirstOrderLogic
                 return false;
             }
 
-            foreach (var (xClause, yClause) in Clauses.Zip(other.Clauses, (x, y) => (x, y)))
+            for (int i = 0; i < clauses.Length; i++)
             {
-                if (!xClause.Equals(yClause))
+                if (!clauses[i].Equals(other.clauses[i]))
                 {
                     return false;
                 }

@@ -12,6 +12,8 @@ namespace SCFirstOrderLogic
     /// </summary>
     public class CNFClause : IEquatable<CNFClause>
     {
+        private readonly Literal[] literals;
+
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFClause"/> class from an enumerable of literals.
         /// </summary>
@@ -26,7 +28,7 @@ namespace SCFirstOrderLogic
             // TODO-BUG-ROBUSTNESS: No handling of being handed an enumerable containing dups.
             // One would hope that ImmutableSortedSet would deal with both. This is very low-level code,
             // though - need to assess the options for performance cost.
-            Literals = literals.OrderBy(l => l.GetHashCode()).ToArray();
+            this.literals = literals.OrderBy(l => l.GetHashCode()).ToArray();
         }
 
         /// <summary>
@@ -48,7 +50,7 @@ namespace SCFirstOrderLogic
         /// </summary>
         // TODO-FEATURE: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
         // Investigate perf impact of ImmutableSortedSet (sorted to facilitate fast equality, hopefully)?
-        public IReadOnlyCollection<Literal> Literals { get; }
+        public IReadOnlyCollection<Literal> Literals => literals;
 
         /// <summary>
         /// <para>
@@ -153,9 +155,9 @@ namespace SCFirstOrderLogic
                 return false;
             }
 
-            foreach (var (xLiteral, yLiteral) in Literals.Zip(other.Literals, (x, y) => (x, y)))
+            for (int i = 0; i < literals.Length; i++)
             {
-                if (!xLiteral.Equals(yLiteral))
+                if (!literals[i].Equals(other.literals[i]))
                 {
                     return false;
                 }
