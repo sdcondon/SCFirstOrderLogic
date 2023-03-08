@@ -37,9 +37,7 @@ namespace SCFirstOrderLogic.SentenceCreation
             FirstOrderLogicParser parser = new(tokens);
             parser.RemoveErrorListeners();
             parser.AddErrorListener(ThrowingErrorListener.Instance);
-            var p = new SentenceTransformation(Enumerable.Empty<VariableDeclaration>()).Visit(parser.sentence());
-
-            return p;
+            return new SentenceTransformation(Enumerable.Empty<VariableDeclaration>()).Visit(parser.sentence());
         }
 
         private class ThrowingErrorListener : BaseErrorListener
