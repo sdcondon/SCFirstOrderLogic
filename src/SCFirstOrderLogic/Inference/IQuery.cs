@@ -9,11 +9,11 @@ namespace SCFirstOrderLogic.Inference
     /// An interface for representations of an individual query. 
     /// </para>
     /// <para>
-    /// We define our own interface (instead of just using a <see cref="Task{Boolean}"/>) so that it is
+    /// We define our own interface (instead of just using a <see cref="Task{T}"/> of <see cref="bool"/>) so that it is
     /// easy for implementations to add additional behaviours - such as step-by-step execution 
     /// (see <see cref="SteppableQuery{TStepResult}"/>) and result explanations. However, note the existence
     /// of the <see cref="IQueryExtensions.GetAwaiter(IQuery)"/> extension method - so that query instances
-    /// can be awaited directly.
+    /// *can* be awaited directly.
     /// </para>
     /// </summary>
     public interface IQuery : IDisposable

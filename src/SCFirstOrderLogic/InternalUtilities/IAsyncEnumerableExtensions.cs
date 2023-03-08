@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.InternalUtilities
     /// </para>
     /// <para>
     /// NB: Yes, we could take a dependency on System.Linq.Async instead, but I quite
-    /// like the fact that this package has no third-party dependencies.
+    /// like the fact that this package has (almost..) no third-party dependencies.
     /// </para>
     /// </summary>
     internal static class IAsyncEnumerableExtensions

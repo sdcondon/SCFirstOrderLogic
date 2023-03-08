@@ -60,7 +60,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         /// <summary>
         /// <para>
-        /// Useful resolution filter delegates. Might prove useful with, e.g. <see cref="DelegateResolutionStrategy"/>.
+        /// Useful resolution filter delegates for use with <see cref="DelegateResolutionStrategy"/>.
         /// </para>
         /// <para>
         /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
@@ -81,7 +81,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         /// <summary>
         /// <para>
-        /// Useful priority comparisons for use by <see cref="DelegateResolutionStrategy"/>.
+        /// Useful priority comparisons for use with <see cref="DelegateResolutionStrategy"/>.
         /// </para>
         /// <para>
         /// For context, see §9.5.6 ("Resolution Strategies") of 'Artifical Intelligence: A Modern Approach'.
