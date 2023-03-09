@@ -20,19 +20,19 @@
     <ul>
         <li>
             The knowledge base implementations in this package are very basic for now, to the extent that it is very easy to create queries that they will struggle with.
-            Resolution in particular will generally fail to terminate if the query is not provable (needs a linear strategy and some knowledge of subsumption).
+            Resolution in particular will generally fail to terminate if the query is not provable (needs a linear strategy and some knowledge of subsumption, I think).
             The goal of this package is learning and experimentation more than anything else - so I maintain that there is value here as it stands - but improvements will be made (though not to any particular timeline).
         </li>
         <li>Use the buttons at the top of the form to populate it with example queries.</li>
         <li>Guidance for writing sentences as strings can be found on the <a href="getting-started">getting started</a> page.</li>
-        <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Pages/lab/InferenceDemo.razor">here</a>.</li>
+        <li>The source code for this page (it's a page of a <a href="https://blazorise.com/blog/what-is-blazor-wasm">Blazor WASM</a> app) can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Pages/lab/InferenceDemo.razor">here</a>.</li>
     </ul>
 </div>
 
 <EditForm Model=@formData OnSubmit=@HandleFormSubmission style="font-family: monospace">
     <DataAnnotationsValidator />
     <div class="form-group">
-        <label>Example Loaders</label>
+        <label>Presets</label>
         <div>
             @foreach (var kvp in ExampleBuilders)
             {
@@ -138,6 +138,11 @@
 
     private static Dictionary<string, Func<FormData>> ExampleBuilders = new()
     {
+        ["[Empty]"] = () => new(
+            knowledgeBaseDescription: "Backward Chaining",
+            knowledge: string.Empty,
+            query: string.Empty),
+
         ["Crime"] = () => new(
             knowledgeBaseDescription: "Backward Chaining",
             knowledge: string.Join(Environment.NewLine, CrimeDomain.UnparsedAxioms),
