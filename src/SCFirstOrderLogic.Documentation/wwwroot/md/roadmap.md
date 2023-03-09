@@ -11,5 +11,5 @@ Priorities at the time of writing:
 At some point in the not-too-distant future:
 
 * Improvements to inference algorithms. 
-Handling of infinite loops when chaining, a linear resolution strategy, leveraging subsumption (e.g. a trie-like structure for fast lookup of subsuming clauses - SubsumptionTrie or somesuch, used by ResolutionQuery for its steps record instead of a dictionary), a linear resolution strategy etc.
+Handling of infinite loops when chaining, a linear resolution strategy, leveraging subsumption (e.g. a trie-like structure for fast lookup of subsuming clauses - SubsumptionTrie or somesuch, used by ResolutionQuery for its steps record instead of a dictionary), etc.
 As mentioned above and elsewhere, this package is more about the fundamentals than especially powerful inference logic - but we should probably cover such relatively fundamental problems and techniques - the inference demo is rather underwhelming at the moment..
