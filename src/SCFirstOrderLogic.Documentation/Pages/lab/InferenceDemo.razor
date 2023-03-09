@@ -9,6 +9,7 @@
 @using SCFirstOrderLogic.SentenceCreation;
 @using System.ComponentModel.DataAnnotations;
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+@inject IJSRuntime JS
 
 <h3>Lab - Inference Demo</h3>
 
@@ -22,22 +23,24 @@
             Resolution in particular will generally fail to terminate if the query is not provable (needs a linear strategy and some knowledge of subsumption).
             The goal of this package is learning and experimentation more than anything else - so I maintain that there is value here as it stands - but improvements will be made (though not to any particular timeline).
         </li>
+        <li>Use the buttons at the top of the form to populate it with example queries.</li>
         <li>Guidance for writing sentences as strings can be found on the <a href="getting-started">getting started</a> page.</li>
         <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Pages/lab/InferenceDemo.razor">here</a>.</li>
     </ul>
 </div>
 
-<p>
-    Use these buttons to populate the form with examples:
-    @foreach (var kvp in ExampleBuilders)
-    {
-        <button @onclick="@(() => formData = kvp.Value.Invoke())">@kvp.Key</button>
-        @(" ")
-    }
-</p>
-
 <EditForm Model=@formData OnSubmit=@HandleFormSubmission style="font-family: monospace">
     <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Example Loaders</label>
+        <div>
+            @foreach (var kvp in ExampleBuilders)
+            {
+                <button @onclick="@(() => formData = kvp.Value.Invoke())">@kvp.Key</button>
+                @(" ")
+            }
+        </div>
+    </div>
     <div class="form-group">
         <label for="kbTypeSelect">Knowledge Base Type</label>
         <InputSelect class="form-control" id="kbTypeSelect" @bind-Value=formData.KnowledgeBaseDescription>
@@ -64,38 +67,11 @@
 
 @if (currentQueryExecution != null)
 {
-    if (!currentQueryExecution.IsCompleted)
-    {
-        <div class="alert alert-primary mt-4" role="alert">
-            <h3>Query In Progress</h3>
-            <p>
-                If you see this for more than a few seconds, the chances are you've fashioned a query that the current KB implementation can't deal with.
-                Click the "Cancel Query" button to abort.
-            </p>
-            <p>
-                <button type="button" class="btn btn-secondary" @onclick=@(() => currentQueryCancellation?.Cancel())>Cancel Query</button>
-            </p>
-        </div>
-    }
-    else if (currentQueryExecution.IsCanceled)
-    {
-        <div class="alert alert-warning mt-4" role="alert">
-            <h3>Query Cancelled</h3>
-        </div>
-    }
-    else if (currentQueryExecution.IsFaulted)
-    {
-        <div class="alert alert-danger mt-4" role="alert">
-            <h3>Query Failed</h3>
-            <p>Sorry, this demo isn't perfect. In particular, the input validation is a little lacklustre. It'll hopefully improve gradually over time.</p>
-            <p><pre>@(currentQueryExecution.Exception?.ToString())</pre></p>
-        </div>
-    }
-    else if (currentQueryExecution.IsCompletedSuccessfully)
+    if (currentQueryExecution.IsCompletedSuccessfully)
     {
         <div class="alert alert-success mt-4" role="alert">
             <h3>Query Complete</h3>
-            <p><pre>@currentQuery!.Result</pre></p>
+            <p><pre>Query result: @currentQuery!.Result</pre></p>
 
             @if (currentQuery!.Result)
             {
@@ -109,6 +85,38 @@
 
                 <p><pre>@details</pre></p>
             }
+        </div>
+    }
+    else if (currentQueryExecution.IsCanceled)
+    {
+        <div class="alert alert-warning mt-4" role="alert">
+            <h3>Query Cancelled</h3>
+        </div>
+    }
+    else if (currentQueryExecution.IsFaulted)
+    {
+        <div class="alert alert-danger mt-4" role="alert">
+            <h3>Query Failed</h3>
+            <p>
+                Sorry, this demo isn't perfect.
+                In particular, the input validation is a little lacklustre.
+                It'll hopefully improve gradually over time.
+                In case it helps, here's the details of the exception that was thrown:
+            </p>
+            <p><pre>@(currentQueryExecution.Exception?.ToString())</pre></p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-primary mt-4" role="alert">
+            <h3>Query In Progress</h3>
+            <p>
+                If you see this for more than a few seconds, the chances are you've fashioned a query that the current KB implementation can't deal with.
+                Click the "Cancel Query" button to abort.
+            </p>
+            <p>
+                <button type="button" class="btn btn-secondary" @onclick=@(() => currentQueryCancellation?.Cancel())>Cancel Query</button>
+            </p>
         </div>
     }
 }
