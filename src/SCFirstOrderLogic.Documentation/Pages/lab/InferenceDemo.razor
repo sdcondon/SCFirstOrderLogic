@@ -34,7 +34,7 @@
     <div class="form-group">
         <label>Presets</label>
         <div>
-            @foreach (var kvp in ExampleBuilders)
+            @foreach (var kvp in Presets)
             {
                 <button @onclick="@(() => formData = kvp.Value.Invoke())">@kvp.Key</button>
                 @(" ")
@@ -103,7 +103,10 @@
                 It'll hopefully improve gradually over time.
                 In case it helps, here's the details of the exception that was thrown:
             </p>
-            <p><pre>@(currentQueryExecution.Exception?.ToString())</pre></p>
+            @foreach (var e in currentQueryExecution.Exception!.InnerExceptions)
+            {
+                <p><pre>@(e.ToString())</pre></p>
+            }
         </div>
     }
     else
@@ -136,7 +139,7 @@
             DelegateResolutionStrategy.PriorityComparisons.UnitPreference)),
     };
 
-    private static Dictionary<string, Func<FormData>> ExampleBuilders = new()
+    private static Dictionary<string, Func<FormData>> Presets = new()
     {
         ["[Empty]"] = () => new(
             knowledgeBaseDescription: "Backward Chaining",
@@ -154,7 +157,7 @@
             query: CuriousityAndTheCatDomain.UnparsedExampleQuery),
     };
 
-    private FormData formData = ExampleBuilders["Crime"].Invoke();
+    private FormData formData = Presets["Crime"].Invoke();
 
     private CancellationTokenSource? currentQueryCancellation;
     private IQuery? currentQuery;
@@ -164,14 +167,14 @@
     {
         try
         {
-            // Instantiate and start the new query, then re-render (to eg disable the submit button).
+            // Instantiate and start the new query, then re-render (to e.g. disable the submit button).
             currentQueryCancellation = new CancellationTokenSource();
             currentQuery = await MakeQueryAsync(formData, currentQueryCancellation.Token);
             currentQueryExecution = currentQuery.ExecuteAsync(currentQueryCancellation.Token);
             //currentQueryExecution = Task.WhenAll(currentQueryExecution, Task.Delay(TimeSpan.FromSeconds(3), currentQueryCancellation.Token)); // TEMP: fake delay to test cancellation
             await InvokeAsync(StateHasChanged);
 
-            // Await query completion, then re-render (to eg reenable the submit button).    
+            // Await query completion, then re-render (to e.g. re-enable the submit button).    
             await currentQueryExecution;
             await InvokeAsync(StateHasChanged);
         }
