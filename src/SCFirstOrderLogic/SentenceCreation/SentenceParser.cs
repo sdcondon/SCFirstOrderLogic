@@ -24,12 +24,30 @@ namespace SCFirstOrderLogic.SentenceCreation
         /// <returns>The parsed <see cref="Sentence"/>.</returns>
         public static Sentence Parse(string sentence)
         {
-            AntlrInputStream input = new(sentence);
+            return new SentenceTransformation().Visit(MakeParser(sentence).singleSentence().sentence());
+        }
+
+        /// <summary>
+        /// Parses a string containing zero or more sentences into a <see cref="Sentence"/> array.
+        /// Sentences can be separated by a semi-colon and/or whitespace, but it is not required.
+        /// </summary>
+        /// <param name="sentences">The string to parse.</param>
+        /// <returns>A new array of sentences.</returns>
+        public static Sentence[] ParseList(string sentences)
+        {
+            return MakeParser(sentences).sentenceList()._sentences
+                .Select(s => new SentenceTransformation(Enumerable.Empty<VariableDeclaration>()).Visit(s))
+                .ToArray();
+        }
+
+        private static FirstOrderLogicParser MakeParser(string input)
+        {
+            AntlrInputStream inputStream = new(input);
 
             // NB: ANTLR apparently adds a listener by default that writes to the console.
             // Which is crazy default behaviour if you ask me, but never mind.
             // Remove it so that consumers of this lib don't get random messages turning up on their console.
-            FirstOrderLogicLexer lexer = new(input);
+            FirstOrderLogicLexer lexer = new(inputStream);
             lexer.RemoveErrorListeners();
             CommonTokenStream tokens = new(lexer);
 
@@ -38,7 +56,8 @@ namespace SCFirstOrderLogic.SentenceCreation
             FirstOrderLogicParser parser = new(tokens);
             parser.RemoveErrorListeners();
             parser.AddErrorListener(ThrowingErrorListener.Instance);
-            return new SentenceTransformation(Enumerable.Empty<VariableDeclaration>()).Visit(parser.sentence());
+
+            return parser;
         }
 
         private class ThrowingErrorListener : BaseErrorListener
@@ -56,7 +75,12 @@ namespace SCFirstOrderLogic.SentenceCreation
         {
             private readonly IEnumerable<VariableDeclaration> variablesInScope;
             private readonly TermTransformation termTransformation;
-            
+
+            public SentenceTransformation()
+                : this(Enumerable.Empty<VariableDeclaration>())
+            {
+            }
+
             public SentenceTransformation(IEnumerable<VariableDeclaration> variablesInScope)
             {
                 this.variablesInScope = variablesInScope;

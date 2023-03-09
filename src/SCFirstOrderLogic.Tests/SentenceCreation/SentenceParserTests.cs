@@ -1,15 +1,20 @@
 ﻿using FluentAssertions;
 using FlUnit;
+using System;
 
 namespace SCFirstOrderLogic.SentenceCreation
 {
     public static class SentenceParserTests
     {
-        public static Test ParseBehaviour => TestThat
+        public static Test Parse_PositiveTestCases => TestThat
             .GivenEachOf(() => new ParseTestCase[]
             {
                 new(
                     Sentence: "P()",
+                    ExpectedResult: new Predicate("P")),
+
+                new(
+                    Sentence: " P () ",
                     ExpectedResult: new Predicate("P")),
 
                 new(
@@ -48,7 +53,7 @@ namespace SCFirstOrderLogic.SentenceCreation
             .ThenReturns()
             .And((ParseTestCase tc, Sentence rv) => rv.Should().Be(tc.ExpectedResult));
 
-        public static Test ParseNegativeTestCases => TestThat
+        public static Test Parse_NegativeTestCases => TestThat
             .GivenTestContext()
             .AndEachOf(() => new[]
             {
@@ -58,10 +63,63 @@ namespace SCFirstOrderLogic.SentenceCreation
                 "P(,x,y)",
                 "∀ P(x)",
                 "∃ P(x)",
+                "P()aaa",
             })
             .When((ctx, tc) => SentenceParser.Parse(tc))
             .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
-            
+
+        public static Test ParseList_PositiveTestCases => TestThat
+            .GivenEachOf(() => new ParseListTestCase[]
+            {
+                new(
+                    Sentences: string.Empty,
+                    Expectation: Array.Empty<Sentence>()),
+
+                new(
+                    Sentences: "   ",
+                    Expectation: Array.Empty<Sentence>()),
+
+                new(
+                    Sentences: "P()",
+                    Expectation: new[] { new Predicate("P") }),
+
+                new(
+                    Sentences: "P()Q()",
+                    Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
+
+                new(
+                    Sentences: "P() Q()",
+                    Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
+
+                new(
+                    Sentences: "P()\r\nQ()\n",
+                    Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
+
+                new(
+                    Sentences: "P(); Q()",
+                    Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
+
+                new(
+                    Sentences: " P() ; Q() ; ",
+                    Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
+            })
+            .When(tc => SentenceParser.ParseList(tc.Sentences))
+            .ThenReturns()
+            .And((tc, rv) => rv.Should().Equal(tc.Expectation));
+
+        public static Test ParseList_NegativeTestCases => TestThat
+            .GivenTestContext()
+            .AndEachOf(() => new[]
+            {
+                "P() Q()aaa",
+                "P() Q();aaa",
+                "P(); ; Q()",
+            })
+            .When((ctx, tc) => SentenceParser.ParseList(tc))
+            .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
+
         private record ParseTestCase(string Sentence, Sentence ExpectedResult);
+
+        private record ParseListTestCase(string Sentences, Sentence[] Expectation);
     }
 }

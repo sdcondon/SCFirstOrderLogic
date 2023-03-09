@@ -1,5 +1,9 @@
 ﻿grammar FirstOrderLogic;
 
+singleSentence: sentence EOF;
+
+sentenceList: (sentences+=sentence ';'?)* EOF;
+
 sentence: '(' sentence ')'                                   # BracketedSentence
         | '[' sentence ']'                                   # BracketedSentence
         | ID '(' termList ')'                                # Predicate

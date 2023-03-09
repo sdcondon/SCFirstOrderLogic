@@ -191,15 +191,9 @@
     private async Task<IQuery> MakeQueryAsync(FormData formData, CancellationToken cancellationToken)
     {
         IKnowledgeBase knowledgeBase = KnowledgeBaseOptions[formData.KnowledgeBaseDescription].Invoke();
+        await knowledgeBase.TellAsync(SentenceParser.ParseList(formData.Knowledge), cancellationToken);
 
-        var facts = formData.Knowledge
-            .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(l => SentenceParser.Parse(l));
-        await knowledgeBase.TellAsync(facts, cancellationToken);
-
-        var querySentence = SentenceParser.Parse(formData.Query);
-
-        return await knowledgeBase.CreateQueryAsync(querySentence, cancellationToken);
+        return await knowledgeBase.CreateQueryAsync(SentenceParser.Parse(formData.Query), cancellationToken);
     }
 
     private class FormData
