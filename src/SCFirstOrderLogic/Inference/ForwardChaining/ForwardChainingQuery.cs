@@ -76,7 +76,8 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             // First, quickly check if we've been asked something that is in the KB directly.
             // Otherwise, we only check against the goal when we discover something we didn't already know.
             // This means that if we didn't do a quick check here, asking the KB something that 
-            // is in the KB as-is wouldn't work..
+            // is in the KB as-is wouldn't work. I mention this because the lack of this check is a bug in
+            // AIaMA's pseudocode listing for this algorithm.
             if (await clauseStore.MatchWithKnownFacts(queryGoal, new VariableSubstitution(), cancellationToken).AnyAsync(cancellationToken))
             {
                 result = true;

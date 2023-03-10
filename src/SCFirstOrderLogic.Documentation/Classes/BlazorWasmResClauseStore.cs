@@ -1,8 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.Inference.Resolution
 {
@@ -21,13 +18,13 @@ namespace SCFirstOrderLogic.Inference.Resolution
         private readonly ConcurrentDictionary<CNFClause, byte> clauses = new();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HashSetClauseStore"/> class.
+        /// Initializes a new instance of the <see cref="BlazorWasmResClauseStore"/> class.
         /// </summary>
         public BlazorWasmResClauseStore() { }
 
         /// <summary>
         /// <para>
-        /// Initializes a new instance of the <see cref="HashSetClauseStore"/> class that is pre-populated with some knowledge.
+        /// Initializes a new instance of the <see cref="BlazorWasmResClauseStore"/> class that is pre-populated with some knowledge.
         /// </para>
         /// <para>
         /// NB: Of course, most implementations of <see cref="IClauseStore"/> won't have a constructor for pre-population, because most

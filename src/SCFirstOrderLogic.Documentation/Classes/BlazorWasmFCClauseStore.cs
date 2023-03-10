@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace SCFirstOrderLogic.Inference.ForwardChaining
 {
     /// <summary>
-    /// Implementation of <see cref="IClauseStore"/> geared towwards use in Blazor WASM, before multithreading support is added in v8.
+    /// Implementation of <see cref="IClauseStore"/> geared towards use in Blazor WASM, before multithreading support is added in v8.
     /// Hacky - adds in a bunch of Task.Delay(1)'s.
     /// https://stackoverflow.com/questions/71287775/how-to-correctly-create-an-async-method-in-blazor
     /// </summary>
@@ -20,13 +20,13 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         private readonly ConcurrentDictionary<CNFDefiniteClause, byte> clauses = new();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HashSetClauseStore"/> class.
+        /// Initializes a new instance of the <see cref="BlazorWasmFCClauseStore"/> class.
         /// </summary>
         public BlazorWasmFCClauseStore() { }
 
         /// <summary>
         /// <para>
-        /// Initializes a new instance of the <see cref="HashSetClauseStore"/> class that is pre-populated with some knowledge.
+        /// Initializes a new instance of the <see cref="BlazorWasmFCClauseStore"/> class that is pre-populated with some knowledge.
         /// </para>
         /// <para>
         /// NB: Of course, most implementations of <see cref="IClauseStore"/> won't have a constructor for pre-population, because most
