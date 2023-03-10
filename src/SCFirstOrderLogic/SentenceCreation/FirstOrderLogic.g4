@@ -6,23 +6,23 @@ sentenceList: (sentences+=sentence ';'?)* EOF;
 
 sentence: '(' sentence ')'                                   # BracketedSentence
         | '[' sentence ']'                                   # BracketedSentence
-        | ID '(' termList ')'                                # Predicate
+        | ID '(' argumentList ')'                            # Predicate
         | term '=' term                                      # PredicateEquality
         | ('¬'|'NOT') sentence                               # Negation
         | sentence ('∨'|'OR') sentence                      # Disjunction
         | sentence ('∧'|'AND') sentence                     # Conjunction
         | sentence ('⇒'|'->'|'=>') sentence                 # Implication
         | sentence ('⇔'|'<->'|'<=>') sentence               # Equivalence
-        | ('∀'|'FOR-ALL') identifierList ','? sentence      # UniversalQuantification
-        | ('∃'|'THERE-EXISTS') identifierList ','? sentence # ExistentialQuantification
+        | ('∀'|'FOR-ALL') declarationList sentence          # UniversalQuantification
+        | ('∃'|'THERE-EXISTS') declarationList sentence     # ExistentialQuantification
         ;
 
-identifierList: elements+=ID (','? elements+=ID)*;
+declarationList: (elements+=ID ','?)+;
 
-termList: (elements+=term (',' elements+=term)*)?;
+argumentList: (elements+=term (',' elements+=term)*)?;
 
-term: ID                   # VariableOrConstant
-    | ID '(' termList ')'  # Function
+term: ID                       # VariableOrConstant
+    | ID '(' argumentList ')'  # Function
     ;
 
 ID: [a-zA-Z0-9]+;

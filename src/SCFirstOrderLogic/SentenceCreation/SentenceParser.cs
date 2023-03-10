@@ -91,7 +91,7 @@ namespace SCFirstOrderLogic.SentenceCreation
             {
                 return new Predicate(
                     context.ID().Symbol.Text,
-                    context.termList()._elements.Select(e => termTransformation.Visit(e)));
+                    context.argumentList()._elements.Select(e => termTransformation.Visit(e)));
             }
 
             public override Sentence VisitNegation([NotNull] FirstOrderLogicParser.NegationContext context)
@@ -113,7 +113,7 @@ namespace SCFirstOrderLogic.SentenceCreation
 
             public override Sentence VisitExistentialQuantification([NotNull] FirstOrderLogicParser.ExistentialQuantificationContext context)
             {
-                var newVariables = context.identifierList()._elements.Select(e => new VariableDeclaration(e.Text));
+                var newVariables = context.declarationList()._elements.Select(e => new VariableDeclaration(e.Text));
 
                 Sentence MakeSentence(IEnumerable<VariableDeclaration> remainingVariables)
                 {
@@ -157,7 +157,7 @@ namespace SCFirstOrderLogic.SentenceCreation
 
             public override Sentence VisitUniversalQuantification([NotNull] FirstOrderLogicParser.UniversalQuantificationContext context)
             {
-                var newVariables = context.identifierList()._elements.Select(e => new VariableDeclaration(e.Text));
+                var newVariables = context.declarationList()._elements.Select(e => new VariableDeclaration(e.Text));
 
                 Sentence MakeSentence(IEnumerable<VariableDeclaration> remainingVariables)
                 {
@@ -191,12 +191,12 @@ namespace SCFirstOrderLogic.SentenceCreation
                 var matchingVariableDeclaration = variablesInScope.SingleOrDefault(v => v.Symbol.Equals(symbolText));
                 if (matchingVariableDeclaration != null)
                 {
-                    // symbol matches a variable that's in scope - assume its a reference to it
+                    // symbol matches a variable that's in scope - interpret as a reference to it
                     return new VariableReference(matchingVariableDeclaration);
                 }
                 else
                 {
-                    // symbol doesn't match any variable in scope - assume its a constant
+                    // symbol doesn't match any variable in scope - interpret as a constant
                     return new Constant(symbolText);
                 }
             }
@@ -205,7 +205,7 @@ namespace SCFirstOrderLogic.SentenceCreation
             {
                 return new Function(
                     context.ID().Symbol.Text,
-                    context.termList()._elements.Select(e => Visit(e)));
+                    context.argumentList()._elements.Select(e => Visit(e)));
             }
         }
     }
