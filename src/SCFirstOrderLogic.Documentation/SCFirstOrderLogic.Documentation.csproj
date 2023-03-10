@@ -18,4 +18,8 @@
     <ProjectReference Include="..\SCFirstOrderLogic\SCFirstOrderLogic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\google-code-prettify\" />
+  </ItemGroup>
+
 </Project>

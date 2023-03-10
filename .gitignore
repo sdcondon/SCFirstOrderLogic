@@ -31,6 +31,7 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
+!/src/SCFirstOrderLogic.Documentation/wwwroot/lib/google-code-prettify/bin
 [Oo]bj/
 [Oo]ut/
 [Ll]og/
