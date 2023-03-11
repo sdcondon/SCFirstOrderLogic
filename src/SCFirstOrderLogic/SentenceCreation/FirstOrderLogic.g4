@@ -4,17 +4,17 @@ singleSentence: sentence EOF;
 
 sentenceList: (sentences+=sentence ';'?)* EOF;
 
-sentence: '(' sentence ')'                                   # BracketedSentence
-        | '[' sentence ']'                                   # BracketedSentence
-        | ID '(' argumentList ')'                            # Predicate
-        | term '=' term                                      # PredicateEquality
-        | ('¬'|'NOT') sentence                               # Negation
-        | sentence ('∨'|'OR') sentence                      # Disjunction
-        | sentence ('∧'|'AND') sentence                     # Conjunction
-        | sentence ('⇒'|'->'|'=>') sentence                 # Implication
-        | sentence ('⇔'|'<->'|'<=>') sentence               # Equivalence
-        | ('∀'|'FOR-ALL') declarationList sentence          # UniversalQuantification
-        | ('∃'|'THERE-EXISTS') declarationList sentence     # ExistentialQuantification
+sentence: '(' sentence ')'                                                                 # BracketedSentence
+        | '[' sentence ']'                                                                 # BracketedSentence
+        | ID '(' argumentList ')'                                                          # Predicate
+        | term '=' term                                                                    # PredicateEquality
+        | ('¬'|'!'|'not'|'NOT') sentence                                                   # Negation
+        | sentence ('∨'|'|'|'or'|'OR') sentence                                           # Disjunction
+        | sentence ('∧'|'&'|'and'|'AND') sentence                                         # Conjunction
+        | sentence ('⇒'|'->'|'=>') sentence                                               # Implication
+        | sentence ('⇔'|'<->'|'<=>') sentence                                             # Equivalence
+        | ('∀'|'forall'|'FORALL'|'for-all'|'FOR-ALL') declarationList sentence            # UniversalQuantification
+        | ('∃'|'exists'|'EXISTS'|'there-exists'|'THERE-EXISTS') declarationList sentence  # ExistentialQuantification
         ;
 
 declarationList: (elements+=ID ','?)+;
