@@ -1,9 +1,9 @@
 ﻿@page "/lab"
 
-@using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParser;
-@using SCFirstOrderLogic.Inference.BackwardChaining;
-@using SCFirstOrderLogic.Inference;
 @using SCFirstOrderLogic;
+@using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParser;
+@using SCFirstOrderLogic.Inference;
+@using SCFirstOrderLogic.Inference.BackwardChaining;
 @using SCFirstOrderLogic.Inference.ForwardChaining;
 @using SCFirstOrderLogic.Inference.Resolution;
 @using SCFirstOrderLogic.SentenceCreation;
@@ -178,7 +178,6 @@
             currentQueryCancellation = new CancellationTokenSource();
             currentQuery = await MakeQueryAsync(formData, currentQueryCancellation.Token);
             currentQueryExecution = currentQuery.ExecuteAsync(currentQueryCancellation.Token);
-            //currentQueryExecution = Task.WhenAll(currentQueryExecution, Task.Delay(TimeSpan.FromSeconds(3), currentQueryCancellation.Token)); // TEMP: fake delay to test cancellation
             await InvokeAsync(StateHasChanged);
 
             // Await query completion, then re-render (to e.g. re-enable the submit button).    
