@@ -187,7 +187,7 @@
         catch (Exception e)
         {
             // yes, this is a little ugly..
-            if (e is not TaskCanceledException tce)
+            if (e is not TaskCanceledException)
             {
                 currentQueryExecution = Task.FromException(e);
             }
