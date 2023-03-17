@@ -16,9 +16,9 @@ For documentation of the package itself, see https://sdcondon.net/SCFirstOrderLo
 ## Source Documentation
 
 I have not written up any documentation of the source (e.g. repo summary, design discussion, build guidance) - and likely won't unless someone else expresses an interest in contributing.
-I use Visual Studio, and once cloned, it should "just work" as far as compilation is concerned.
-The only thing worthy of note is that it uses [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks) to invoke ANTLR for the FoL parsing functionality.
-ANTLR is ultimately a Java tool - something Antlr4BuildTasks handles by downloading the JRE to your system - see its docs for details.
+Once cloned, it should "just work" as far as compilation is concerned.
+The only thing perhaps worthy of note is that it uses [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks) to invoke ANTLR to generate the FoL-parsing code.
+ANTLR is a Java tool - something Antlr4BuildTasks handles by downloading the JRE to your system for you - see its docs for details.
 
 ## Issues and Contributions
 
