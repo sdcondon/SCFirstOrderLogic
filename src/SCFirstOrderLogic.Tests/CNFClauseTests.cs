@@ -11,6 +11,9 @@ namespace SCFirstOrderLogic
         private static OperablePredicate Q => new("Q");
         private static OperablePredicate R => new("R");
 
+        private static OperablePredicate HashCodeCollisionX => new(new MyHashCodeCollision("X"));
+        private static OperablePredicate HashCodeCollisionY => new(new MyHashCodeCollision("Y"));
+
         private record EqualityTestCase(CNFClause X, CNFClause Y, bool ExpectedEquality);
 
         public static Test EqualityBehaviour => TestThat
@@ -32,6 +35,11 @@ namespace SCFirstOrderLogic
                     ExpectedEquality: true),
 
                 new(
+                    X: new(HashCodeCollisionX | HashCodeCollisionY),
+                    Y: new(HashCodeCollisionY | HashCodeCollisionX),
+                    ExpectedEquality: true),
+
+                new(
                     X: new(P | Q),
                     Y: new(P | Q | R),
                     ExpectedEquality: false),
@@ -45,5 +53,16 @@ namespace SCFirstOrderLogic
             .ThenReturns()
             .And((tc, rv) => rv.Equality.Should().Be(tc.ExpectedEquality))
             .And((tc, rv) => rv.HashCodeEquality.Should().Be(tc.ExpectedEquality)); // <- yeah yeah, strictly speaking not the right thing to be asserting, but..
+
+        private class MyHashCodeCollision
+        {
+            private readonly string symbol;
+
+            public MyHashCodeCollision(string symbol) => this.symbol = symbol;
+
+            public override int GetHashCode() => 0;
+
+            public override bool Equals(object? obj) => obj is MyHashCodeCollision mhcc && symbol.Equals(mhcc.symbol);
+        }
     }
 }
