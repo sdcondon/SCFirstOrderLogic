@@ -1,4 +1,5 @@
 ﻿using SCFirstOrderLogic;
+using SCFirstOrderLogic.InternalUtilities;
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
@@ -12,7 +13,7 @@ namespace SCFirstOrderLogic
     /// </summary>
     public class CNFClause : IEquatable<CNFClause>
     {
-        private readonly Literal[] literals;
+        private readonly HashSet<Literal> literals;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFClause"/> class from an enumerable of literals.
@@ -20,15 +21,9 @@ namespace SCFirstOrderLogic
         /// <param name="literals">The set of literals to be included in the clause.</param>
         public CNFClause(IEnumerable<Literal> literals)
         {
-            // NB #1: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
-            // but its a super low-level class and I'd so far I've erred on the side of using the simplest/smallest
-            // implementation possible - that is, an array.
-            // NB #2: Note that we order literals - important to justifiably consider the clause "normalised".
-            // TODO-BUG-ROBUSTNESS: Potential equality bug on hash code collision.
-            // TODO-BUG-ROBUSTNESS: No handling of being handed an enumerable containing dups.
-            // One would hope that ImmutableSortedSet would deal with both. This is very low-level code,
-            // though - need to assess the options for performance cost.
-            this.literals = literals.OrderBy(l => l.GetHashCode()).ToArray();
+            // NB: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
+            // but its a super low-level class so I've opted to be lean and mean.
+            this.literals = new HashSet<Literal>(literals);
         }
 
         /// <summary>
@@ -46,7 +41,7 @@ namespace SCFirstOrderLogic
         public static CNFClause Empty { get; } = new CNFClause(Array.Empty<Literal>());
 
         /// <summary>
-        /// Gets the collection of literals that comprise this clause (ordered by hash code).
+        /// Gets the collection of literals that comprise this clause.
         /// </summary>
         // TODO-FEATURE: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
         // Investigate perf impact of ImmutableSortedSet (sorted to facilitate fast equality, hopefully)?
@@ -150,20 +145,7 @@ namespace SCFirstOrderLogic
         /// </remarks>
         public bool Equals(CNFClause? other)
         {
-            if (other == null || literals.Length != other.literals.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < literals.Length; i++)
-            {
-                if (!literals[i].Equals(other.literals[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return other != null && this.literals.SetEquals<Literal>(other.literals);
         }
 
         /// <inheritdoc />
@@ -172,8 +154,9 @@ namespace SCFirstOrderLogic
         /// </remarks>
         public override int GetHashCode()
         {
+            // Yup, slow..
             var hash = new HashCode();
-            foreach (var literal in Literals)
+            foreach (var literal in Literals.OrderBy(l => l.GetHashCode()))
             {
                 hash.Add(literal);
             }

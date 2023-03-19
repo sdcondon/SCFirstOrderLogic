@@ -1,4 +1,5 @@
-﻿using SCFirstOrderLogic.SentenceFormatting;
+﻿using SCFirstOrderLogic.InternalUtilities;
+using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace SCFirstOrderLogic
     /// </summary>
     public class CNFSentence : IEquatable<CNFSentence>
     {
-        private readonly CNFClause[] clauses;
+        private readonly HashSet<CNFClause> clauses;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="CNFSentence"/> class from an enumerable of clauses.
@@ -19,15 +20,9 @@ namespace SCFirstOrderLogic
         /// <param name="clauses">The set of clauses to be included in the sentence.</param>
         public CNFSentence(IEnumerable<CNFClause> clauses)
         {
-            // NB #1: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
-            // but its a super low-level class and I'd so far I've erred on the side of using the simplest/smallest
-            // implementation possible - that is, an array.
-            // NB #2: Note that we order clauses - important to justifiably consider the sentence "normalised".
-            // TODO-BUG-ROBUSTNESS: Potential equality incorrectness on hash code collision.
-            // TODO-BUG-ROBUSTNESS: No handling of being handed an enumerable containing dups.
-            // One would hope that ImmutableSortedSet would deal with both. This is quite low-level code,
-            // though - need to assess the options for performance cost.
-            this.clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
+            // NB: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
+            // but its a super low-level class so I've opted to be lean and mean.
+            this.clauses = new HashSet<CNFClause>(clauses);
         }
 
         /// <summary>
@@ -43,7 +38,6 @@ namespace SCFirstOrderLogic
         /// Gets the collection of clauses that comprise this CNF sentence.
         /// </summary>
         // TODO-FEATURE: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
-        // Investigate perf impact of ImmutableSortedSet (sorted to facilitate quick equality comparison, hopefully)?
         public IReadOnlyCollection<CNFClause> Clauses => clauses;
 
         /// <summary>
@@ -69,20 +63,7 @@ namespace SCFirstOrderLogic
         /// </remarks>
         public bool Equals(CNFSentence? other)
         {
-            if (other == null || clauses.Length != other.clauses.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < clauses.Length; i++)
-            {
-                if (!clauses[i].Equals(other.clauses[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return other != null && clauses.SetEquals<CNFClause>(other.clauses);
         }
 
         /// <inheritdoc />
@@ -91,8 +72,9 @@ namespace SCFirstOrderLogic
         /// </remarks>
         public override int GetHashCode()
         {
+            // Yup, slow..
             var hash = new HashCode();
-            foreach (var clause in Clauses)
+            foreach (var clause in Clauses.OrderBy(c => c.GetHashCode()))
             {
                 hash.Add(clause);
             }
