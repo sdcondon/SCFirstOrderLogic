@@ -44,7 +44,6 @@ namespace SCFirstOrderLogic
         /// Gets the collection of literals that comprise this clause.
         /// </summary>
         // TODO-FEATURE: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
-        // Investigate perf impact of ImmutableSortedSet (sorted to facilitate fast equality, hopefully)?
         public IReadOnlyCollection<Literal> Literals => literals;
 
         /// <summary>
