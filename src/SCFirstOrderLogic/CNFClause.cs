@@ -1,5 +1,4 @@
 ﻿using SCFirstOrderLogic;
-using SCFirstOrderLogic.InternalUtilities;
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
@@ -22,10 +21,8 @@ namespace SCFirstOrderLogic
         /// </summary>
         /// <param name="literals">The set of literals to be included in the clause.</param>
         public CNFClause(IEnumerable<Literal> literals)
+            : this(new HashSet<Literal>(literals))
         {
-            // NB: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
-            // but its a super low-level class so I've opted to be lean and mean.
-            this.literals = new HashSet<Literal>(literals);
         }
 
         /// <summary>
@@ -36,6 +33,10 @@ namespace SCFirstOrderLogic
             : this(ConstructionVisitor.GetLiterals(sentence))
         {
         }
+
+        // NB: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
+        // but this is a very low-level class, so I've opted to be lean and mean.
+        internal CNFClause(HashSet<Literal> literals) => this.literals = literals;
 
         /// <summary>
         /// Gets an instance of the empty clause.

@@ -1,9 +1,7 @@
-﻿using SCFirstOrderLogic.InternalUtilities;
-using SCFirstOrderLogic.SentenceFormatting;
+﻿using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SCFirstOrderLogic
 {
@@ -21,10 +19,8 @@ namespace SCFirstOrderLogic
         /// </summary>
         /// <param name="clauses">The set of clauses to be included in the sentence.</param>
         public CNFSentence(IEnumerable<CNFClause> clauses)
+            : this(new HashSet<CNFClause>(clauses))
         {
-            // NB: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
-            // but its a super low-level class so I've opted to be lean and mean.
-            this.clauses = new HashSet<CNFClause>(clauses);
         }
 
         /// <summary>
@@ -35,6 +31,10 @@ namespace SCFirstOrderLogic
             : this(ConstructionVisitor.GetClauses(sentence))
         {
         }
+
+        // NB: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
+        // but this is a very low-level class, so I've opted to be lean and mean.
+        internal CNFSentence(HashSet<CNFClause> clauses) => this.clauses = clauses;
 
         /// <summary>
         /// Gets the collection of clauses that comprise this CNF sentence.
@@ -82,9 +82,9 @@ namespace SCFirstOrderLogic
         /// </summary>
         private class ConstructionVisitor : RecursiveSentenceVisitor
         {
-            private readonly ICollection<CNFClause> clauses = new List<CNFClause>();
+            private readonly HashSet<CNFClause> clauses = new();
 
-            public static IEnumerable<CNFClause> GetClauses(Sentence sentence)
+            public static HashSet<CNFClause> GetClauses(Sentence sentence)
             {
                 var visitor = new ConstructionVisitor();
                 visitor.Visit(CNFConversion.ApplyTo(sentence));
