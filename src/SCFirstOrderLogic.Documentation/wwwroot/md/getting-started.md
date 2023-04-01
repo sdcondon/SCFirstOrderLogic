@@ -123,11 +123,11 @@ var grandparentDefn = SentenceParser.Parse("∀ g, c, IsGrandparentOf(g, c) ⇔ 
 Notes:
 * *The grammar definition is [here](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic/SentenceCreation/FirstOrderLogic.g4)*.
 * Writing strings that include the proper FoL symbols might be awkward, so the parser allows for some alternatives to be used. The following are recognised (NB all **case sensitive**):
-  * `∀` ([U+2200](https://www.google.com/search?q=unicode+code+point+U%2B2200)) or `FOR-ALL` for universal quantifications
-  * `∃` ([U+2203](https://www.google.com/search?q=unicode+code+point+U%2B2203)) or `THERE-EXISTS` for existential quantifications
-  * `∧` ([U+2227](https://www.google.com/search?q=unicode+code+point+U%2B2227)) or `AND` for conjunctions
-  * `∨` ([U+2228](https://www.google.com/search?q=unicode+code+point+U%2B2228)) or `OR` for disjunctions
-  * `¬` ([U+00AC](https://www.google.com/search?q=unicode+code+point+U%2B00AC)) or `NOT` for negations
+  * `∀` ([U+2200](https://www.google.com/search?q=unicode+code+point+U%2B2200)), `forall`, `FORALL`, `for-all` or `FOR-ALL` for universal quantifications
+  * `∃` ([U+2203](https://www.google.com/search?q=unicode+code+point+U%2B2203)), `exists`, `EXISTS`, `there-exists` or `THERE-EXISTS` for existential quantifications
+  * `∧` ([U+2227](https://www.google.com/search?q=unicode+code+point+U%2B2227)), `&`, `and` or `AND` for conjunctions
+  * `∨` ([U+2228](https://www.google.com/search?q=unicode+code+point+U%2B2228)), `|`, `or` or `OR` for disjunctions
+  * `¬` ([U+00AC](https://www.google.com/search?q=unicode+code+point+U%2B00AC)), `!`, `not` or `NOT` for negations
   * `⇒` ([U+21D2](https://www.google.com/search?q=unicode+code+point+U%2B21D2)), `->` or `=>` for implications
   * `⇔` ([U+21D4](https://www.google.com/search?q=unicode+code+point+U%2B21D4)), `<->` or `<=>` for equivalences
 * You can use `[ ... ]` or `( ... )` for bracketing sub-sentences.
