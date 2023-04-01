@@ -12,6 +12,8 @@ namespace SCFirstOrderLogic
     /// </summary>
     public class CNFSentence : IEquatable<CNFSentence>
     {
+        private static readonly IEqualityComparer<HashSet<CNFClause>> ClausesEqualityComparer = HashSet<CNFClause>.CreateSetComparer();
+
         private readonly HashSet<CNFClause> clauses;
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Gets the collection of clauses that comprise this CNF sentence.
         /// </summary>
-        // TODO-FEATURE: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
+        // TODO-FEATURE: logically, this should be a set.
         public IReadOnlyCollection<CNFClause> Clauses => clauses;
 
         /// <summary>
@@ -63,7 +65,7 @@ namespace SCFirstOrderLogic
         /// </remarks>
         public bool Equals(CNFSentence? other)
         {
-            return other != null && clauses.SetEquals<CNFClause>(other.clauses);
+            return other != null && ClausesEqualityComparer.Equals(clauses, other.clauses);
         }
 
         /// <inheritdoc />
@@ -72,14 +74,7 @@ namespace SCFirstOrderLogic
         /// </remarks>
         public override int GetHashCode()
         {
-            // Yup, slow..
-            var hash = new HashCode();
-            foreach (var clause in Clauses.OrderBy(c => c.GetHashCode()))
-            {
-                hash.Add(clause);
-            }
-
-            return hash.ToHashCode();
+            return ClausesEqualityComparer.GetHashCode(clauses);
         }
 
         /// <summary>

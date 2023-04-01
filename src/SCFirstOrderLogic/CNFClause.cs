@@ -13,6 +13,8 @@ namespace SCFirstOrderLogic
     /// </summary>
     public class CNFClause : IEquatable<CNFClause>
     {
+        private static readonly IEqualityComparer<HashSet<Literal>> LiteralsEqualityComparer = HashSet<Literal>.CreateSetComparer();
+
         private readonly HashSet<Literal> literals;
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Gets the collection of literals that comprise this clause.
         /// </summary>
-        // TODO-FEATURE: logically, this should be a set - IReadOnlySet<> or IImmutableSet<> would both be non-breaking.
+        // TODO-FEATURE: logically, this should be a set.
         public IReadOnlyCollection<Literal> Literals => literals;
 
         /// <summary>
@@ -144,7 +146,7 @@ namespace SCFirstOrderLogic
         /// </remarks>
         public bool Equals(CNFClause? other)
         {
-            return other != null && this.literals.SetEquals<Literal>(other.literals);
+            return other != null && LiteralsEqualityComparer.Equals(literals, other.literals);
         }
 
         /// <inheritdoc />
@@ -153,14 +155,7 @@ namespace SCFirstOrderLogic
         /// </remarks>
         public override int GetHashCode()
         {
-            // Yup, slow..
-            var hash = new HashCode();
-            foreach (var literal in Literals.OrderBy(l => l.GetHashCode()))
-            {
-                hash.Add(literal);
-            }
-
-            return hash.ToHashCode();
+            return LiteralsEqualityComparer.GetHashCode(literals);
         }
 
         private class ConstructionVisitor : RecursiveSentenceVisitor
