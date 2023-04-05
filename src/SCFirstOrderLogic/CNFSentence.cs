@@ -11,7 +11,6 @@ namespace SCFirstOrderLogic
     public class CNFSentence : IEquatable<CNFSentence>
     {
         private static readonly IEqualityComparer<HashSet<CNFClause>> ClausesEqualityComparer = HashSet<CNFClause>.CreateSetComparer();
-
         private readonly HashSet<CNFClause> clauses;
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Gets the collection of clauses that comprise this CNF sentence.
         /// </summary>
-        // TODO-FEATURE: logically, this should be a set.
+        // TODO-V5-FEATURE: logically, this should be a (read-only) set.
         public IReadOnlyCollection<CNFClause> Clauses => clauses;
 
         /// <summary>

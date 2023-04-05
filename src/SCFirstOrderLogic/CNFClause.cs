@@ -13,7 +13,6 @@ namespace SCFirstOrderLogic
     public class CNFClause : IEquatable<CNFClause>
     {
         private static readonly IEqualityComparer<HashSet<Literal>> LiteralsEqualityComparer = HashSet<Literal>.CreateSetComparer();
-
         private readonly HashSet<Literal> literals;
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Gets the collection of literals that comprise this clause.
         /// </summary>
-        // TODO-FEATURE: logically, this should be a set.
+        // TODO-V5-FEATURE: logically, this should be a (read-only) set.
         public IReadOnlyCollection<Literal> Literals => literals;
 
         /// <summary>

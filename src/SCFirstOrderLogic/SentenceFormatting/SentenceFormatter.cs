@@ -9,8 +9,9 @@ namespace SCFirstOrderLogic.SentenceFormatting
     /// Using a single <see cref="SentenceFormatter"/> instance allows for unique (and customisable) labelling of standardised variables and Skolem functions for all sentences formatted with the instance.
     /// </para>
     /// <para>
-    /// NB: fairly likely to change in future. This implementation will suffice while I figure out what I want (IFormatProvider and ICustomFormatter/s, probably).
-    /// Will ultimately want something that is more intelligent with brackets (i.e. drops them where not needed), too.
+    /// TODO-V5: This implementation will suffice while I figure out what I want (IFormatProvider and ICustomFormatter/s, probably).
+    /// Will probably add a static, settable, SentenceFormatter-valued "Default" property instead of the default labellers - if only to reduce GC load when ToString-ing sentence types.
+    /// Will also ultimately want something that is more intelligent with brackets (i.e. drops them where not needed), too. 
     /// </para>
     /// </summary>
     public class SentenceFormatter

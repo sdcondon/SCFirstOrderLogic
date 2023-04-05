@@ -51,7 +51,7 @@ namespace SCFirstOrderLogic
         /// as identifiers without needing to wrap them.
         /// </para>
         /// </summary>
-        // TODO-BREAKING: SCClassicalPlanning uses 'Identifier'.. get into the nitty-gritty of the difference between a
+        // TODO-V5-BREAKING: SCClassicalPlanning uses 'Identifier'.. get into the nitty-gritty of the difference between a
         // symbol and an identifier, and rename this if necessary. 
         public object Symbol { get; }
 
