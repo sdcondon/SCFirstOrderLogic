@@ -3,7 +3,7 @@
 namespace SCFirstOrderLogic.TestUtilities
 {
     /// <summary>
-    /// Extremely simple domain for basic test cases. Just because its used for a couple of examples in the source material.
+    /// Extremely simple domain for basic test cases. Just because it is used for a couple of examples in the source material.
     /// </summary>
     internal static class GreedyKingsDomain
     {
