@@ -1,45 +1,62 @@
-name: Build docs site to gh-pages branch
+name: Deploy Documentation Site to GitHub pages
 
+# Runs on pushes targeting the docs site source folder on the default branch, and can also be invoked manually
 on:
   push:
     branches: [ main ]
     paths:
       - 'src/SCFirstOrderLogic.Documentation/**'
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  deploy-to-github-pages:
+  # Yes, some of this should probably be separated out into a build job..
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
 
-    # uses GitHub's checkout action to checkout code form the master branch
-    - uses: actions/checkout@v2
+      - name: Publish Documentation project to 'release' folder
+        run: dotnet publish src/SCFirstOrderLogic.Documentation/SCFirstOrderLogic.Documentation.csproj -c Release -o release --nologo
     
-    # Set up .NET
-    - uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '6.0.x'
+      - name: Change base href in index.html from / to SCFirstOrderLogic
+        run: sed -i 's/<base href="\/" \/>/<base href="\/SCFirstOrderLogic\/" \/>/g' release/wwwroot/index.html
+    
+      # copy index.html to 404.html to serve the same file when a file is not found
+      - name: copy index.html to 404.html
+        run: cp release/wwwroot/index.html release/wwwroot/404.html
 
-    # publishes Blazor project to the release folder
-    - name: Publish .NET Core Project
-      run: dotnet publish src/SCFirstOrderLogic.Documentation/SCFirstOrderLogic.Documentation.csproj -c Release -o release --nologo
-    
-    # changes the base-tag in index.html from '/' to 'BlazorGitHubPagesDemo' to match GitHub Pages repository subdirectory
-    - name: Change base-tag in index.html from / to BlazorGitHubPagesDemo
-      run: sed -i 's/<base href="\/" \/>/<base href="\/SCFirstOrderLogic\/" \/>/g' release/wwwroot/index.html
-    
-    # copy index.html to 404.html to serve the same file when a file is not found
-    - name: copy index.html to 404.html
-      run: cp release/wwwroot/index.html release/wwwroot/404.html
-
-    # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore)
-    - name: Add .nojekyll file
-      run: touch release/wwwroot/.nojekyll
-     
-    # copy to github pages source
-    - name: Commit wwwroot to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@3.7.1
-      with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: release/wwwroot
+      # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore).
+      - name: Add .nojekyll file
+        run: touch release/wwwroot/.nojekyll
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: release/wwwroot
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
