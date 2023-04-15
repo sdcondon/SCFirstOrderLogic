@@ -105,10 +105,7 @@
         <div class="alert alert-danger mt-4" role="alert">
             <h3>Query Failed</h3>
             <p>
-                Sorry, this demo isn't perfect.
-                In particular, the input validation is a little lacklustre.
-                It'll hopefully improve gradually over time.
-                In case it helps, here's the details of the exception that was thrown:
+                In case it helps, here are the details of the exception that was thrown:
             </p>
             @foreach (var e in currentQueryExecution.Exception!.InnerExceptions)
             {
@@ -172,24 +169,27 @@
 
     private async Task HandleFormSubmission(EditContext editContext)
     {
-        try
+        if (editContext.Validate())
         {
-            // Instantiate and start the new query, then re-render (to e.g. disable the submit button).
-            currentQueryCancellation = new CancellationTokenSource();
-            currentQuery = await MakeQueryAsync(formData, currentQueryCancellation.Token);
-            currentQueryExecution = currentQuery.ExecuteAsync(currentQueryCancellation.Token);
-            await InvokeAsync(StateHasChanged);
-
-            // Await query completion, then re-render (to e.g. re-enable the submit button).    
-            await currentQueryExecution;
-            await InvokeAsync(StateHasChanged);
-        }
-        catch (Exception e)
-        {
-            // yes, this is a little ugly..
-            if (e is not TaskCanceledException)
+            try
             {
-                currentQueryExecution = Task.FromException(e);
+                // Instantiate and start the new query, then re-render (to e.g. disable the submit button).
+                currentQueryCancellation = new CancellationTokenSource();
+                currentQuery = await MakeQueryAsync(formData, currentQueryCancellation.Token);
+                currentQueryExecution = currentQuery.ExecuteAsync(currentQueryCancellation.Token);
+                await InvokeAsync(StateHasChanged);
+
+                // Await query completion, then re-render (to e.g. re-enable the submit button).    
+                await currentQueryExecution;
+                await InvokeAsync(StateHasChanged);
+            }
+            catch (Exception e)
+            {
+                // yes, this is a little ugly..
+                if (e is not TaskCanceledException)
+                {
+                    currentQueryExecution = Task.FromException(e);
+                }
             }
         }
     }
@@ -202,7 +202,7 @@
         return await knowledgeBase.CreateQueryAsync(SentenceParser.Parse(formData.Query), cancellationToken);
     }
 
-    private class FormData
+    private class FormData : IValidatableObject
     {
         public FormData(string knowledgeBaseDescription, string knowledge, string query)
         {
@@ -216,5 +216,35 @@
         public string Knowledge { get; set; }
 
         public string Query { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            // Yes, could cache the parse results to avoid parsing multiple times, but not worth it for now at least.
+            // TODO: Some "TryParse.." methods might be useful - they'd certainly make this method a bit cleaner.
+            // TODO: If we had a ParseError exception type, we could perhaps highlight the offending text.
+            Sentence[] knowledge;
+            Sentence query;
+
+            List<ValidationResult> errors = new();
+            try
+            {
+                knowledge = SentenceParser.ParseList(Knowledge);
+            }
+            catch (Exception e)
+            {
+                errors.Add(new ValidationResult(e.Message, new[] { nameof(Knowledge) }));
+            }
+
+            try
+            {
+                query = SentenceParser.Parse(Query);
+            }
+            catch (Exception e)
+            {
+                errors.Add(new ValidationResult(e.Message, new[] { nameof(Query) }));
+            }
+
+            return errors;
+        }
     }
 }
