@@ -1,4 +1,4 @@
-name: Deploy Documentation Site to GitHub pages
+name: Deploy Docs to GitHub pages
 
 # Runs on pushes targeting the docs site source folder on the default branch, and can also be invoked manually
 on:
