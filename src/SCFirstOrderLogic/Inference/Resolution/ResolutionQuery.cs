@@ -170,10 +170,10 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
             var resolution = strategy!.DequeueResolution();
 
-            // While we generally expect the strategy not to repeat resolvents,
-            // checking if we've seen this resolvent before is cheap, and eliminates any
-            // performance hit or proof tree confusion if so. NB: we look only for the resolvent
-            // itself - not any clause that subsumes it.
+            // While we generally expect the strategies to be well-behaved enough to not
+            // to repeat resolvents, checking if we've seen this (exact - leveraging subsumption
+            // is the strategy's job) resolvent before is cheap and eliminates any performance
+            // hit or proof tree confusion if the strategy behaves badly.
             if (steps.TryAdd(resolution.Resolvent, resolution))
             {
                 if (resolution.Resolvent.Equals(CNFClause.Empty))

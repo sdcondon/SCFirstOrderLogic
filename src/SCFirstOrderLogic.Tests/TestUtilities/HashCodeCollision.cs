@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// A badly behaved class of which all instances share a hash code of zero.
-    /// Intended for tests that cover hash code collision scenarios.
+    /// Intended for tests that cover hash code collision (of an constant, function or predicate identifier) scenarios.
     /// </summary>
     public class HashCodeCollision
     {

@@ -46,7 +46,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
 
         public class Query
         {
-            private readonly HashSet<CNFClause> clauses; // To be replaced with unifier store (scope thereof).
+            private readonly HashSet<CNFClause> clauses; // ..instead of a (query) clause store.
             private readonly Func<(CNFClause, CNFClause), bool> clausePairFilter;
             private readonly MaxPriorityQueue<(CNFClause, CNFClause)> queue;
             private readonly Dictionary<CNFClause, (CNFClause, CNFClause, VariableSubstitution)> steps = new();

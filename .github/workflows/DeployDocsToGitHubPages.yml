@@ -1,6 +1,5 @@
 name: Deploy Docs to GitHub pages
 
-# Runs on pushes targeting the docs site source folder on the default branch, and can also be invoked manually
 on:
   push:
     branches: [ main ]
@@ -21,8 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Yes, some of this should probably be separated out into a build job..
-  deploy:
+  build-and-deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -41,11 +39,11 @@ jobs:
       - name: Change base href in index.html from / to SCFirstOrderLogic
         run: sed -i 's/<base href="\/" \/>/<base href="\/SCFirstOrderLogic\/" \/>/g' release/wwwroot/index.html
     
-      # copy index.html to 404.html to serve the same file when a file is not found
+      # Copy index.html to 404.html to serve the same file when a file is not found
       - name: copy index.html to 404.html
         run: cp release/wwwroot/index.html release/wwwroot/404.html
 
-      # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore).
+      # Add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project (allows files and folders starting with an underscore).
       - name: Add .nojekyll file
         run: touch release/wwwroot/.nojekyll
       
