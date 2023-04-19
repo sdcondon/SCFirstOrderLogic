@@ -115,7 +115,7 @@ namespace SCFirstOrderLogic.Inference
                     }
 
                     // TODO-PERFORMANCE: potentially long-running. Perhaps add some async visitor types?
-                    innerKnowledgeBase.TellAsync(sentence).Wait();
+                    innerKnowledgeBase.TellAsync(sentence).GetAwaiter().GetResult();
                 }
 
                 base.Visit(predicate);
@@ -151,7 +151,7 @@ namespace SCFirstOrderLogic.Inference
                     }
 
                     // TODO-PERFORMANCE: potentially long-running. Perhaps add some async visitor types?
-                    innerKnowledgeBase.TellAsync(sentence).Wait(); 
+                    innerKnowledgeBase.TellAsync(sentence).GetAwaiter().GetResult();
                 }
 
                 base.Visit(function);

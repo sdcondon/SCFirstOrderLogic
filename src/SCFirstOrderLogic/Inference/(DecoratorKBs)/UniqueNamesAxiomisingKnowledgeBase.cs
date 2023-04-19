@@ -74,7 +74,7 @@ namespace SCFirstOrderLogic.Inference
                     foreach (var knownConstant in knownConstants)
                     {
                         // TODO-PERFORMANCE: potentially long-running. Perhaps add some async visitor types?
-                        innerKnowledgeBase.TellAsync(Not(AreEqual(constant, knownConstant))).Wait();
+                        innerKnowledgeBase.TellAsync(Not(AreEqual(constant, knownConstant))).GetAwaiter().GetResult();
                     }
 
                     knownConstants.Add(constant);
