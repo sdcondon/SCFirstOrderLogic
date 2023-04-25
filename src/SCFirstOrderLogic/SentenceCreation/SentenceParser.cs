@@ -46,7 +46,7 @@ namespace SCFirstOrderLogic.SentenceCreation
 
             // NB: ANTLR apparently adds a listener by default that writes to the console.
             // Which is crazy default behaviour if you ask me, but never mind.
-            // Remove it so that consumers of this lib don't get random messages turning up on their console.
+            // We remove it so that consumers of this lib don't get random messages turning up on their console.
             FirstOrderLogicLexer lexer = new(inputStream);
             lexer.RemoveErrorListeners();
             CommonTokenStream tokens = new(lexer);

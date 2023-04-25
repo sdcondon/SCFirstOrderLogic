@@ -10,7 +10,6 @@ namespace SCFirstOrderLogic.SentenceFormatting
     /// </para>
     /// <para>
     /// TODO-V5: This implementation will suffice while I figure out what I want (IFormatProvider and ICustomFormatter/s, probably).
-    /// Will probably add a static, settable, SentenceFormatter-valued "Default" property instead of the default labellers - if only to reduce GC load when ToString-ing sentence types.
     /// Will also ultimately want something that is more intelligent with brackets (i.e. drops them where not needed), too. 
     /// </para>
     /// </summary>

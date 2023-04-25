@@ -46,8 +46,6 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// Gets a human-readable (English) explanation of the proof.
         /// </summary>
         /// <param name="formatter">The sentence formatter to use.</param>
-        // NB: we don't bother caching the resulting string.
-        // This won't be anywhere near a critical path - not worth the complexity hit.
         public string GetExplanation(SentenceFormatter formatter)
         {
             var explanationBuilder = new StringBuilder();
@@ -101,6 +99,8 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 }
             }
 
+            // NB: we don't bother caching the resulting string.
+            // This won't be anywhere near a critical path - not worth the complexity hit.
             return explanationBuilder.ToString();
         }
 
