@@ -51,8 +51,9 @@ namespace SCFirstOrderLogic
         /// as identifiers without needing to wrap them.
         /// </para>
         /// </summary>
-        // TODO-V5-BREAKING: SCClassicalPlanning uses 'Identifier'.. get into the nitty-gritty of the difference between a
-        // symbol and an identifier, and rename this if necessary. 
+        // TODO-V5-BREAKING: Now that this library has actual FoL parsing logic in it, its more noticeable that this
+        // is misnamed - should be "Identifier". This in turn will make it easier to talk about advanced parsing config
+        // in which users can provide a delegate to map from symbols (that is, string-valued) to identifiers.
         public object Symbol { get; }
 
         /// <inheritdoc />

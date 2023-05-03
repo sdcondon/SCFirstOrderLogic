@@ -88,7 +88,7 @@ namespace SCFirstOrderLogic
 
         /// <summary>
         /// Constructs and returns a clause that is the same as this one, except for the
-        /// fact that all referenced variables are replaced with new ones.
+        /// fact that all referenced (standardised) variable declarations are replaced with new ones.
         /// </summary>
         /// <returns>
         /// A clause that is the same as this one, except for the fact that all referenced
