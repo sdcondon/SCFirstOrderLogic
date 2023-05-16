@@ -7,13 +7,14 @@ namespace SCFirstOrderLogic
     /// </summary>
     /// <remarks>
     /// <para>
-    /// NB: Doesn't override equality or hash code, so uses reference equality;
+    /// NB #1: Doesn't override equality or hash code, so uses reference equality;
     /// and the normalisation process creates exactly one instance per variable scope - thus achieving standardisation
     /// without having to muck about with anything like trying to ensure names that are unique strings
     /// (which only sentence formatting logic, not the symbol itself, should care about).
     /// </para>
     /// <para>
-    /// As with standardised variables, value semantics for equality might be useful.
+    /// NB #2: As with standardised variables, OPTIONAL value semantics for equality might be useful.
+    /// An equality comparer for this may appear in a future version.
     /// </para>
     /// </remarks>
     public class SkolemFunctionSymbol
