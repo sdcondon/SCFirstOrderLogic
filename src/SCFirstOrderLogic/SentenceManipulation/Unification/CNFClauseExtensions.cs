@@ -62,7 +62,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
                     if (LiteralUnifier.TryUpdateUnsafe(thisLiterals.First(), otherLiteral, firstLiteralUnifier))
                     {
-                        // Ugh: Skip is bad enough - Except is going to get slow, esp when nested. Important thing for now is that it works as a baseline..
+                        // TODO-PERFORMANCE: Ugh, skip is bad enough - Except is going to get slow, esp when nested. Important thing for now is that it works as a baseline..
                         foreach (var restOfLiteralsUnifier in TryUnifyWith(thisLiterals.Skip(1), otherLiterals.Except(new[] { otherLiteral }), firstLiteralUnifier))
                         {
                             yield return restOfLiteralsUnifier;

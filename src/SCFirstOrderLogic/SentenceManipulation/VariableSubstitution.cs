@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
-    /// Sentence transformation class that makes some substitutions for variable terms.
+    /// Sentence transformation class that makes some substitutions for <see cref="VariableReference"/> instances.
     /// In addition to the <see cref="RecursiveSentenceTransformation.ApplyTo(Sentence)"/> method
     /// offered by the base class, this also offers an <see cref="ApplyTo(Literal)"/> method.
     /// </summary>
@@ -56,10 +56,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
-        /// Applies the unifier to a literal.
+        /// Applies the substitution to a literal.
         /// </summary>
-        /// <param name="literal">The literal to apply the unifier to.</param>
-        /// <returns>The unified version of the literal.</returns>
+        /// <param name="literal">The literal to apply the substitution to.</param>
+        /// <returns>The transformed version of the literal.</returns>
         public Literal ApplyTo(Literal literal)
         {
             return new Literal((Predicate)base.ApplyTo(literal.Predicate), literal.IsNegated);

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+// TODO-V5-BREAKING: oops - fix this namespace..
 namespace SCFirstOrderLogic.SentenceFormatting
 {
     /// <summary>

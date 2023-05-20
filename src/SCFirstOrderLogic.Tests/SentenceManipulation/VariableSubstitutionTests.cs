@@ -55,8 +55,8 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 new(
                     X: new(new Dictionary<VariableReference, Term>()
                     {
-                        [new VariableReference("V1")] = new Constant("C1"),
-                        [new VariableReference("V2")] = new Constant("C2")
+                        [new VariableReference("V2")] = new Constant("C2"),
+                        [new VariableReference("V1")] = new Constant("C1"),   
                     }),
                     Y: new(new Dictionary<VariableReference, Term>()
                     {

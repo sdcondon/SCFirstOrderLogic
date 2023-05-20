@@ -14,6 +14,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
     /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
     /// </para>
     /// </summary>
+    // TODO-V5-BREAKING: rename me, now that methods for unification of Terms etc are now public. Perhaps just Unifier?
     public static class LiteralUnifier
     {
         /// <summary>
@@ -40,8 +41,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// <summary>
         /// Attempts to update a unifier so that it (also) unifies two given literals.
         /// </summary>
-        /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
-        /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
+        /// <param name="x">One of the two literals to attempt to unify.</param>
+        /// <param name="y">One of the two literals to attempt to unify.</param>
         /// <param name="unifier">The unifier to update. Will be updated to refer to a new unifier on success, or be unchanged on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
         public static bool TryUpdate(Literal x, Literal y, ref VariableSubstitution unifier)
@@ -60,8 +61,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// <summary>
         /// Attempts to update a unifier so that it (also) unifies two given literals.
         /// </summary>
-        /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
-        /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
+        /// <param name="x">One of the two literals to attempt to unify.</param>
+        /// <param name="y">One of the two literals to attempt to unify.</param>
         /// <param name="unifier">The unifier to update. Will be unchanged on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
         public static bool TryUpdate(Literal x, Literal y, VariableSubstitution unifier)
@@ -89,8 +90,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// Attempts to update a unifier (in place) so that it (also) unifies two given literals. Faster than <see cref="TryUpdate(Literal, Literal, VariableSubstitution)"/>,
         /// but can partially update the substitution on failure. Use only when you don't care about the substitution being modified if it fails.
         /// </summary>
-        /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
-        /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
+        /// <param name="x">One of the two literals to attempt to unify.</param>
+        /// <param name="y">One of the two literals to attempt to unify.</param>
         /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
         public static bool TryUpdateUnsafe(Literal x, Literal y, VariableSubstitution unifier)
@@ -104,7 +105,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
             foreach (var args in x.Predicate.Arguments.Zip(y.Predicate.Arguments, (x, y) => (x, y)))
             {
-                if (!TryUpdate(args.x, args.y, unifier))
+                if (!TryUpdateUnsafe(args.x, args.y, unifier))
                 {
                     return false;
                 }
@@ -113,13 +114,21 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             return true;
         }
 
-        private static bool TryUpdate(Term x, Term y, VariableSubstitution unifier)
+        /// <summary>
+        /// Attempts to update a unifier (in place) so that it (also) unifies two given terms. Can partially update the substitution on failure.
+        /// Use only when you don't care about the substitution being modified if it fails.
+        /// </summary>
+        /// <param name="x">One of the two terms to attempt to unify.</param>
+        /// <param name="y">One of the two terms to attempt to unify.</param>
+        /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
+        /// <returns>True if the two terms can be unified, otherwise false.</returns>
+        public static bool TryUpdateUnsafe(Term x, Term y, VariableSubstitution unifier)
         {
             return (x, y) switch
             {
-                (VariableReference variable, _) => TryUpdate(variable, y, unifier),
-                (_, VariableReference variable) => TryUpdate(variable, x, unifier),
-                (Function functionX, Function functionY) => TryUpdate(functionX, functionY, unifier),
+                (VariableReference variable, _) => TryUpdateUnsafe(variable, y, unifier),
+                (_, VariableReference variable) => TryUpdateUnsafe(variable, x, unifier),
+                (Function functionX, Function functionY) => TryUpdateUnsafe(functionX, functionY, unifier),
                 // Below, the only potential for equality is if they're both constants. Perhaps worth testing this
                 // versus that explicitly and a default that just returns false. Similar from a performance
                 // perspective.
@@ -127,7 +136,15 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             };
         }
 
-        private static bool TryUpdate(VariableReference variable, Term other, VariableSubstitution unifier)
+        /// <summary>
+        /// Attempts to update a unifier (in place) so that it (also) binds a particular variable to a particular term. Can partially update the substitution on failure.
+        /// Use only when you don't care about the substitution being modified if it fails.
+        /// </summary>
+        /// <param name="variable">The variable reference to bind.</param>
+        /// <param name="other">The term to bind the variable reference to.</param>
+        /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
+        /// <returns>True if the variable can be consistently bound to the term, otherwise false.</returns>
+        public static bool TryUpdateUnsafe(VariableReference variable, Term other, VariableSubstitution unifier)
         {
             if (variable.Equals(other))
             {
@@ -137,13 +154,13 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             {
                 // The variable is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.
-                return TryUpdate(variableValue, other, unifier);
+                return TryUpdateUnsafe(variableValue, other, unifier);
             }
             else if (other is VariableReference otherVariable && unifier.Bindings.TryGetValue(otherVariable, out var otherVariableValue))
             {
                 // The other value is also a variable that is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.
-                return TryUpdate(variable, otherVariableValue, unifier);
+                return TryUpdateUnsafe(variable, otherVariableValue, unifier);
             }
             else if (Occurs(variable, unifier.ApplyTo(other)))
             {
@@ -157,7 +174,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             }
         }
 
-        private static bool TryUpdate(Function x, Function y, VariableSubstitution unifier)
+        private static bool TryUpdateUnsafe(Function x, Function y, VariableSubstitution unifier)
         {
             if (!x.Symbol.Equals(y.Symbol) || x.Arguments.Count != y.Arguments.Count)
             {
@@ -166,7 +183,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
             foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
             {
-                if (!TryUpdate(args.x, args.y, unifier))
+                if (!TryUpdateUnsafe(args.x, args.y, unifier))
                 {
                     return false;
                 }
