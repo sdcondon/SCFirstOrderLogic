@@ -16,7 +16,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                 DelegateResolutionStrategy.Filters.None,
                 DelegateResolutionStrategy.PriorityComparisons.UnitPreference));
 
-            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
+            return kb.AskAsync(IsCriminal(ColonelWest)).GetAwaiter().GetResult();
         }
 
         [Benchmark]
@@ -30,7 +30,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             {
                 kb.Tell(axiom);
             }
-            return kb.Ask(IsCriminal(West));
+            return kb.Ask(IsCriminal(ColonelWest));
         }
     }
 }

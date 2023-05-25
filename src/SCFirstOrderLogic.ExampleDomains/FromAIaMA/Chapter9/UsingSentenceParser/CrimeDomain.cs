@@ -31,10 +31,10 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParse
             "∀ x, y, z, IsAmerican(x) ∧ IsWeapon(y) ∧ Sells(x, y, z) ∧ IsHostile(z) ⇒ IsCriminal(x)",
 
             // "Nono... has some missiles."
-            "∃ x, IsMissile(x) ∧ Owns(Nono, x)",
+            "∃ x, IsMissile(x) ∧ Owns(NoNo, x)",
 
             // "All of its missiles were sold to it by Colonel West":
-            "∀ x, IsMissile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)",
+            "∀ x, IsMissile(x) ∧ Owns(NoNo, x) ⇒ Sells(ColonelWest, x, Nono)",
 
             // We will also need to know that missiles are weapons: 
             "∀ x, IsMissile(x) ⇒ IsWeapon(x)",
@@ -43,10 +43,10 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParse
             "∀ x, IsEnemyOf(x, America) ⇒ IsHostile(x)",
 
             // "West, who is American..":
-            "IsAmerican(West)",
+            "IsAmerican(ColonelWest)",
 
             // "The country Nono, an enemy of America..":
-            "IsEnemyOf(Nono, America)",
+            "IsEnemyOf(NoNo, America)",
         };
 
         /// <summary>

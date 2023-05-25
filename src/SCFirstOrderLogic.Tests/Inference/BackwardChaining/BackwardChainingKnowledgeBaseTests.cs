@@ -77,7 +77,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 
                 new(
                     Label: "Crime example domain",
-                    Query: IsCriminal(West),
+                    Query: IsCriminal(ColonelWest),
                     Knowledge: CrimeDomain.Axioms),
             })
             .When((_, tc) =>

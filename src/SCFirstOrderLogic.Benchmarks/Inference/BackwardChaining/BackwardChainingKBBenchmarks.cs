@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             var kb = new BackwardChainingKnowledgeBase(new DictionaryClauseStore());
             kb.TellAsync(Axioms).Wait();
-            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
+            return kb.AskAsync(IsCriminal(ColonelWest)).GetAwaiter().GetResult();
         }
 
         [Benchmark]
@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             var kb = new BackwardChainingKB_WithoutClauseStore();
             kb.TellAsync(Axioms).Wait();
-            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
+            return kb.AskAsync(IsCriminal(ColonelWest)).GetAwaiter().GetResult();
         }
 
         [Benchmark]
@@ -30,7 +30,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             var kb = new BackwardChainingKB_FromAIaMA();
             kb.TellAsync(Axioms).Wait();
-            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
+            return kb.AskAsync(IsCriminal(ColonelWest)).GetAwaiter().GetResult();
         }
     }
 }

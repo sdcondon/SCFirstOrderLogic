@@ -30,11 +30,11 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFacto
 
                 // "Nono... has some missiles."
                 // ∃x IsMissile(x) ∧ Owns(Nono, x)
-                ThereExists(X, And(IsMissile(X), Owns(Nono, X))),
+                ThereExists(X, And(IsMissile(X), Owns(NoNo, X))),
 
                 // "All of its missiles were sold to it by Colonel West":
                 // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
-                ForAll(X, If(And(IsMissile(X), Owns(Nono, X)), Sells(West, X, Nono))),
+                ForAll(X, If(And(IsMissile(X), Owns(NoNo, X)), Sells(ColonelWest, X, NoNo))),
 
                 // We will also need to know that missiles are weapons: 
                 ForAll(X, If(IsMissile(X), IsWeapon(X))),
@@ -44,10 +44,10 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFacto
                 ForAll(X, If(IsEnemyOf(X, America), IsHostile(X))),
 
                 // "West, who is American..": American(West)
-                IsAmerican(West),
+                IsAmerican(ColonelWest),
 
                 // "The country Nono, an enemy of America..": Enemy(Nono, America).
-                IsEnemyOf(Nono, America),
+                IsEnemyOf(NoNo, America),
 
             }.AsReadOnly();
         }
@@ -58,8 +58,8 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFacto
         public static IReadOnlyCollection<Sentence> Axioms { get; }
 
         public static Constant America { get; } = new Constant(nameof(America));
-        public static Constant Nono { get; } = new Constant(nameof(Nono));
-        public static Constant West { get; } = new Constant(nameof(West));
+        public static Constant NoNo { get; } = new Constant(nameof(NoNo));
+        public static Constant ColonelWest { get; } = new Constant(nameof(ColonelWest));
 
         public static Predicate IsAmerican(Term t) => new Predicate(nameof(IsAmerican), t);
         public static Predicate IsHostile(Term t) => new Predicate(nameof(IsHostile), t);

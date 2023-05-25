@@ -79,7 +79,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
 
                 // More complex - Crime example domain
                 MakeQuery(
-                    query: IsCriminal(West),
+                    query: IsCriminal(ColonelWest),
                     kb: Axioms),
             })
             .When((cxt, query) => query.Execute())

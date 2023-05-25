@@ -29,11 +29,11 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingLanguageInteg
 
             // "Nono... has some missiles."
             // ∃x IsMissile(x) ∧ Owns(Nono, x)
-            d => d.Any(m => m.IsMissile && d.Nono.Owns(m)),
+            d => d.Any(m => m.IsMissile && d.NoNo.Owns(m)),
 
             // "All of its missiles were sold to it by Colonel West":
             // ∀x IsMissile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
-            d => d.All(x => If(x.IsMissile && d.Nono.Owns(x), d.West.Sells(x, d.Nono))),
+            d => d.All(x => If(x.IsMissile && d.NoNo.Owns(x), d.ColonelWest.Sells(x, d.NoNo))),
 
             // We will also need to know that missiles are weapons: 
             // ∀x IsMissile(x) ⇒ IsWeapon(x)
@@ -45,19 +45,19 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingLanguageInteg
 
             // "West, who is American.."
             // IsAmerican(West)
-            d => d.West.IsAmerican,
+            d => d.ColonelWest.IsAmerican,
 
             // "The country Nono, an enemy of America.."
             // IsEnemyOf(Nono, America).
-            d => d.Nono.IsEnemyOf(d.America)
+            d => d.NoNo.IsEnemyOf(d.America)
 
         }.AsReadOnly();
 
         public interface IDomain : IEnumerable<IElement>
         {
             IElement America { get; }
-            IElement Nono { get; }
-            IElement West { get; }
+            IElement NoNo { get; }
+            IElement ColonelWest { get; }
         }
 
         public interface IElement

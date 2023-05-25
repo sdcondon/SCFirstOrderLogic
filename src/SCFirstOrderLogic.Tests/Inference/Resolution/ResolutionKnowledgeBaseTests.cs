@@ -79,7 +79,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     }),
 
                 new( // More complex - Crime example domain
-                    query: IsCriminal(West),
+                    query: IsCriminal(ColonelWest),
                     knowledge: CrimeDomain.Axioms),
 
                 new( // More complex with some non-definite clauses - curiousity and the cat example domain

@@ -30,11 +30,11 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSente
 
                 // "Nono... has some missiles."
                 // ∃x IsMissile(x) ∧ Owns(Nono, x)
-                ThereExists(X, IsMissile(X) & Owns(Nono, X)),
+                ThereExists(X, IsMissile(X) & Owns(NoNo, X)),
 
                 // "All of its missiles were sold to it by Colonel West":
                 // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
-                ForAll(X, If(IsMissile(X) & Owns(Nono, X), Sells(West, X, Nono))),
+                ForAll(X, If(IsMissile(X) & Owns(NoNo, X), Sells(ColonelWest, X, NoNo))),
 
                 // We will also need to know that missiles are weapons: 
                 ForAll(X, If(IsMissile(X), IsWeapon(X))),
@@ -44,10 +44,10 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSente
                 ForAll(X, If(IsEnemyOf(X, America), IsHostile(X))),
 
                 // "West, who is American..": American(West)
-                IsAmerican(West),
+                IsAmerican(ColonelWest),
 
                 // "The country Nono, an enemy of America..": Enemy(Nono, America).
-                IsEnemyOf(Nono, America),
+                IsEnemyOf(NoNo, America),
 
             }.AsReadOnly();
         }
@@ -58,8 +58,8 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSente
         public static IReadOnlyCollection<Sentence> Axioms { get; }
 
         public static OperableConstant America { get; } = new Constant(nameof(America));
-        public static OperableConstant Nono { get; } = new Constant(nameof(Nono));
-        public static OperableConstant West { get; } = new Constant(nameof(West));
+        public static OperableConstant NoNo { get; } = new Constant(nameof(NoNo));
+        public static OperableConstant ColonelWest { get; } = new Constant(nameof(ColonelWest));
 
         public static OperablePredicate IsAmerican(OperableTerm t) => new Predicate(nameof(IsAmerican), t);
         public static OperablePredicate IsHostile(OperableTerm t) => new Predicate(nameof(IsHostile), t);

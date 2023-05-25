@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         {
             var kb = new ForwardChainingKnowledgeBase(new HashSetClauseStore());
             kb.TellAsync(CrimeDomain.Axioms).Wait();
-            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
+            return kb.AskAsync(IsCriminal(ColonelWest)).GetAwaiter().GetResult();
         }
 
         [Benchmark]
@@ -21,7 +21,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         {
             var kb = new ForwardChainingKB_FromAIaMA();
             kb.TellAsync(CrimeDomain.Axioms).Wait();
-            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
+            return kb.AskAsync(IsCriminal(ColonelWest)).GetAwaiter().GetResult();
         }
 
         [Benchmark]
@@ -29,7 +29,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
         {
             var kb = new ForwardChainingKB_WithoutClauseStore();
             kb.TellAsync(CrimeDomain.Axioms).Wait();
-            return kb.AskAsync(IsCriminal(West)).GetAwaiter().GetResult();
+            return kb.AskAsync(IsCriminal(ColonelWest)).GetAwaiter().GetResult();
         }
     }
 }
