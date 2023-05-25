@@ -55,7 +55,7 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParse
         /// </summary>
         public static IReadOnlyCollection<Sentence> Axioms => UnparsedAxioms.Select(s => SentenceParser.Parse(s)).ToList().AsReadOnly();
 
-        public static string UnparsedExampleQuery { get; } = "IsCriminal(West)";
+        public static string UnparsedExampleQuery { get; } = "IsCriminal(ColonelWest)";
 
         public static Sentence ExampleQuery => SentenceParser.Parse(UnparsedExampleQuery);
     }
