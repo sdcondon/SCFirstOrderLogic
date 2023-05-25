@@ -34,7 +34,7 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParse
             "∃ x, IsMissile(x) ∧ Owns(NoNo, x)",
 
             // "All of its missiles were sold to it by Colonel West":
-            "∀ x, IsMissile(x) ∧ Owns(NoNo, x) ⇒ Sells(ColonelWest, x, Nono)",
+            "∀ x, IsMissile(x) ∧ Owns(NoNo, x) ⇒ Sells(ColonelWest, x, NoNo)",
 
             // We will also need to know that missiles are weapons: 
             "∀ x, IsMissile(x) ⇒ IsWeapon(x)",
