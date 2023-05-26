@@ -1,11 +1,12 @@
 ﻿using BenchmarkDotNet.Attributes;
+using SCFirstOrderLogic.SentenceManipulation;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation
+namespace SCFirstOrderLogic
 {
     [MemoryDiagnoser]
     [InProcess]
-    public class CNFConstructionBenchmarks
+    public class CNFSentenceBenchmarks
     {
         private static Predicate IsAnimal(Term term) => new(nameof(IsAnimal), term);
         private static Predicate Loves(Term term1, Term term2) => new(nameof(Loves), term1, term2);
