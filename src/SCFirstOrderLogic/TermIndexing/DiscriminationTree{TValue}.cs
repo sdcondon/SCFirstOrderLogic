@@ -105,11 +105,11 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
             }
 
-            // NB: can safely cast here because the current node must ALWAYS be a LeafNode at this point.
+            // NB: can safely grab Value here because the current node must ALWAYS be a LeafNode at this point.
             // It is not possible for prefix element info enumerations to occur, because the the number of
             // elements in the path is always one more than the summation of the ArgumentCounts (NB: used in
             // equality check) of all encountered FunctionInfos.
-            value = ((LeafNode)currentNode).Value;
+            value = currentNode.Value;
             return true;
         }
 
@@ -128,39 +128,41 @@ namespace SCFirstOrderLogic.TermIndexing
 
             var queryElements = new ElementInfoTransformation().ApplyTo(term).ToList();
 
-            IEnumerable<TValue> GetInstances(INode parentNode, int queryElementIndex)
+            IEnumerable<TValue> ExpandChildNodes(INode parentNode, int queryElementIndex)
             {
                 if (queryElements[queryElementIndex] is VariableInfo)
                 {
-                    foreach (var value in MatchVariable(parentNode, queryElementIndex, 1))
+                    foreach (var value in ExpandVariableMatches(parentNode, queryElementIndex, 1))
                     {
                         yield return value;
                     }
                 }
                 else if (parentNode.Children.TryGetValue(queryElements[queryElementIndex], out var childNode))
                 {
-                    foreach (var value in GetInstancesForNode(childNode, queryElementIndex + 1))
+                    foreach (var value in ExpandNode(childNode, queryElementIndex + 1))
                     {
                         yield return value;
                     }
                 }
             }
 
-            IEnumerable<TValue> MatchVariable(INode parentNode, int queryElementIndex, int remainingSubtreeSize)
+            IEnumerable<TValue> ExpandVariableMatches(INode parentNode, int queryElementIndex, int remainingSubtreeSize)
             {
                 foreach (var (childElement, childNode) in parentNode.Children)
                 {
                     var newRemainingSubtreeSize = remainingSubtreeSize + childElement.ChildElementCount - 1;
                     if (newRemainingSubtreeSize > 0)
                     {
-                        foreach (var value in MatchVariable(childNode, queryElementIndex, newRemainingSubtreeSize))
+                        foreach (var value in ExpandVariableMatches(childNode, queryElementIndex, newRemainingSubtreeSize))
                         {
                             yield return value;
                         }
                     }
                     else
                     {
-                        foreach (var value in GetInstancesForNode(childNode, queryElementIndex + 1))
+                        // TODO: verify subtree's consistency with existing variable binding, update binding if needed, only recurse if its consistent
+
+                        foreach (var value in ExpandNode(childNode, queryElementIndex + 1))
                         {
                             yield return value;
                         }
@@ -168,24 +170,24 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
             }
 
-            IEnumerable<TValue> GetInstancesForNode(INode node, int queryElementIndex)
+            IEnumerable<TValue> ExpandNode(INode node, int queryElementIndex)
             {
                 if (queryElementIndex < queryElements.Count)
                 {
-                    foreach (var value in GetInstances(node, queryElementIndex))
+                    foreach (var value in ExpandChildNodes(node, queryElementIndex))
                     {
                         yield return value;
                     }
                 }
                 else
                 {
-                    // We can safely assert that childNode is a LeafNode here, ultimately because of how
+                    // We can safely grab Value here because childNode MUST be a LeafNode at this point - ultimately because of how
                     // ElementInfoTransformation works (which controls both the structure of the tree and queryElements here).
-                    yield return ((LeafNode)node).Value;
+                    yield return node.Value;
                 }
             }
 
-            return GetInstances(Root, 0);
+            return ExpandChildNodes(Root, 0);
         }
 
         /// <summary>
@@ -207,10 +209,10 @@ namespace SCFirstOrderLogic.TermIndexing
             {
                 foreach (var (childElement, childNode) in parentNode.Children)
                 {
-                    var isVariableMatch = childElement is VariableInfo;
+                    bool isVariableMatch = false;
                     var nextQueryElementOffset = 1;
 
-                    if (isVariableMatch)
+                    if (childElement is VariableInfo)
                     {
                         // Here we are setting nextQueryInfoOffset to the size of the whole subtree
                         // with queryInfos[queryInfoIndex] at its root (i.e. the subtree that we are
@@ -221,6 +223,9 @@ namespace SCFirstOrderLogic.TermIndexing
                             outstandingSkipCount += queryElements[queryElementIndex + nextQueryElementOffset].ChildElementCount - 1;
                             nextQueryElementOffset++;
                         }
+
+                        // TODO: verify subtree's consistency with existing variable binding, update binding if needed, set isVariableMatch appropriately
+                        isVariableMatch = true;
                     }
 
                     if (isVariableMatch || childElement.Equals(queryElements[queryElementIndex]))
@@ -236,9 +241,9 @@ namespace SCFirstOrderLogic.TermIndexing
                         }
                         else
                         {
-                            // We can safely assert that childNode is a LeafNode here, ultimately because of how
+                            // We can safely grab Value here because childNode MUST be a LeafNode at this point - ultimately because of how
                             // ElementInfoTransformation works (which controls both the structure of the tree and queryElements here).
-                            yield return ((LeafNode)childNode).Value;
+                            yield return childNode.Value;
                         }
                     }
                 }
@@ -271,7 +276,7 @@ namespace SCFirstOrderLogic.TermIndexing
             private readonly Dictionary<IElementInfo, INode> children = new();
 
             /// <inheritdoc/>
-            // NB: we don't bother wrapping this in a ReadOnlyDict to stop unscrupulous users from casting.
+            // NB: we don't bother wrapping children in a ReadOnlyDict to stop unscrupulous users from casting.
             // Would be more mem for a real edge case.. 
             public IReadOnlyDictionary<IElementInfo, INode> Children => children;
 
@@ -362,8 +367,10 @@ namespace SCFirstOrderLogic.TermIndexing
             public int ChildElementCount => 0;
         }
 
-        // Transformation logic that converts terms into the equivalent path of element info in a discrimination tree.
-        // That is, converts terms into an enumerable that represents a depth-first traversal of their constituent elements.
+        /// <summary>
+        /// Transformation logic that converts <see cref="Term"/>s into the equivalent path of <see cref="IElementInfo"/>s for storage in or querying of a discrimination tree.
+        /// That is, converts terms into an enumerable that represents a depth-first traversal of their constituent elements.
+        /// </summary>
         private class ElementInfoTransformation
         {
             // TODO-PERFORMANCE: a dict is almost certainly overkill given the low number of vars likely to appear in any given term.

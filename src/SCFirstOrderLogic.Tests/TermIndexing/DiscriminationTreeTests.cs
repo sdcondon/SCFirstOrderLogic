@@ -3,6 +3,10 @@ using FlUnit;
 using System;
 using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+using IElementInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTree<SCFirstOrderLogic.Term>.IElementInfo;
+using ConstantInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTree<SCFirstOrderLogic.Term>.ConstantInfo;
+using FunctionInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTree<SCFirstOrderLogic.Term>.FunctionInfo;
+using VariableInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTree<SCFirstOrderLogic.Term>.VariableInfo;
 
 namespace SCFirstOrderLogic.TermIndexing
 {
@@ -21,7 +25,7 @@ namespace SCFirstOrderLogic.TermIndexing
                     NewTerm: C1,
                     ExpectedRootChildren: new()
                     {
-                        [new DiscriminationTree<Term>.ConstantInfo("C1")] = new { Value = C1 },
+                        [new ConstantInfo("C1")] = new { Value = C1 },
                     }),
 
                 new(
@@ -29,12 +33,12 @@ namespace SCFirstOrderLogic.TermIndexing
                     NewTerm: F1(C1),
                     ExpectedRootChildren: new()
                     {
-                        [new DiscriminationTree<Term>.FunctionInfo("F1", 1)] = new
+                        [new FunctionInfo("F1", 1)] = new
                         {
-                            Children = new Dictionary<DiscriminationTree<Term>.IElementInfo, object>
+                            Children = new Dictionary<IElementInfo, object>
                             {
-                                [new DiscriminationTree<Term>.VariableInfo(0)] = new { Value = F1(X) },
-                                [new DiscriminationTree<Term>.ConstantInfo("C1")] = new { Value = F1(C1) },
+                                [new VariableInfo(0)] = new { Value = F1(X) },
+                                [new ConstantInfo("C1")] = new { Value = F1(C1) },
                             }
                         },
                     }),
@@ -44,16 +48,16 @@ namespace SCFirstOrderLogic.TermIndexing
                     NewTerm: F2(X, C1),
                     ExpectedRootChildren: new()
                     {
-                        [new DiscriminationTree<Term>.FunctionInfo("F2", 2)] = new
+                        [new FunctionInfo("F2", 2)] = new
                         {
-                            Children = new Dictionary<DiscriminationTree<Term>.IElementInfo, object>
+                            Children = new Dictionary<IElementInfo, object>
                             {
-                                [new DiscriminationTree<Term>.VariableInfo(0)] = new
+                                [new VariableInfo(0)] = new
                                 { 
-                                    Children = new Dictionary<DiscriminationTree<Term>.IElementInfo, object>
+                                    Children = new Dictionary<IElementInfo, object>
                                     {
-                                        [new DiscriminationTree<Term>.ConstantInfo("C1")] = new { Value = F2(X, C1) },
-                                        [new DiscriminationTree<Term>.ConstantInfo("C2")] = new { Value = F2(X, C2) },
+                                        [new ConstantInfo("C1")] = new { Value = F2(X, C1) },
+                                        [new ConstantInfo("C2")] = new { Value = F2(X, C2) },
                                     }
                                 },
                             }
@@ -65,23 +69,23 @@ namespace SCFirstOrderLogic.TermIndexing
                     NewTerm: F2(F1(C1), F1(C2)),
                     ExpectedRootChildren: new()
                     {
-                        [new DiscriminationTree<Term>.FunctionInfo("F2", 2)] = new
+                        [new FunctionInfo("F2", 2)] = new
                         {
-                            Children = new Dictionary<DiscriminationTree<Term>.IElementInfo, object>
+                            Children = new Dictionary<IElementInfo, object>
                             {
-                                [new DiscriminationTree<Term>.FunctionInfo("F1", 1)] = new
+                                [new FunctionInfo("F1", 1)] = new
                                 {
-                                    Children = new Dictionary<DiscriminationTree<Term>.IElementInfo, object>
+                                    Children = new Dictionary<IElementInfo, object>
                                     {
-                                        [new DiscriminationTree<Term>.ConstantInfo("C1")] = new
+                                        [new ConstantInfo("C1")] = new
                                         {
-                                            Children = new Dictionary<DiscriminationTree<Term>.IElementInfo, object>
+                                            Children = new Dictionary<IElementInfo, object>
                                             {
-                                                [new DiscriminationTree<Term>.FunctionInfo("F1", 1)] = new
+                                                [new FunctionInfo("F1", 1)] = new
                                                 {
-                                                    Children = new Dictionary<DiscriminationTree<Term>.IElementInfo, object>
+                                                    Children = new Dictionary<IElementInfo, object>
                                                     {
-                                                        [new DiscriminationTree<Term>.ConstantInfo("C2")] = new { Value = F2(F1(C1), F1(C2)) },
+                                                        [new ConstantInfo("C2")] = new { Value = F2(F1(C1), F1(C2)) },
                                                     }
                                                 },
                                             }
@@ -97,15 +101,15 @@ namespace SCFirstOrderLogic.TermIndexing
                     NewTerm: new Function("F", C1),
                     ExpectedRootChildren: new()
                     {
-                        [new DiscriminationTree<Term>.FunctionInfo("F", 0)] = new
+                        [new FunctionInfo("F", 0)] = new
                         {
                             Value = new Function("F")
                         },
-                        [new DiscriminationTree<Term>.FunctionInfo("F", 1)] = new
+                        [new FunctionInfo("F", 1)] = new
                         {
-                            Children = new Dictionary<DiscriminationTree<Term>.IElementInfo, object>
+                            Children = new Dictionary<IElementInfo, object>
                             {
-                                [new DiscriminationTree<Term>.ConstantInfo("C1")] = new { Value = new Function("F", C1) }
+                                [new ConstantInfo("C1")] = new { Value = new Function("F", C1) }
                             }
                         },
                     }),
@@ -200,9 +204,9 @@ namespace SCFirstOrderLogic.TermIndexing
                     ExpectedReturnValue: new Term[] { C1 }),
 
                 new( // Get everything
-                    StoredTerms: new Term[] { C1, C2, X },
+                    StoredTerms: new Term[] { C1, X, F1(X), F1(F2(X, C1)) },
                     QueryTerm: X,
-                    ExpectedReturnValue: new Term[] { C1, C2, X }),
+                    ExpectedReturnValue: new Term[] { C1, X, F1(X), F1(F2(X, C1)) }),
 
                 new( // Get all instances of top-level function
                     StoredTerms: new Term[] { F1(C1), F1(C2), F1(F1(C1)), F2(C1, C2), C1 },
@@ -278,7 +282,7 @@ namespace SCFirstOrderLogic.TermIndexing
             .ThenReturns()
             .And((tc, rv) => rv.Should().BeEquivalentTo(tc.ExpectedReturnValue));
 
-        private record PositiveAddTestCase(Term[] CurrentTerms, Term NewTerm, Dictionary<DiscriminationTree<Term>.IElementInfo, object> ExpectedRootChildren);
+        private record PositiveAddTestCase(Term[] CurrentTerms, Term NewTerm, Dictionary<IElementInfo, object> ExpectedRootChildren);
 
         private record NegativeAddTestCase(Term[] CurrentTerms, Term NewTerm);
 
