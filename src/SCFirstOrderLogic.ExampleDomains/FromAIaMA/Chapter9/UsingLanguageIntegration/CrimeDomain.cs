@@ -28,11 +28,11 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingLanguageInteg
             d => d.All((seller, item, buyer) => If(seller.IsAmerican && item.IsWeapon && seller.Sells(item, buyer) && buyer.IsHostile, seller.IsCriminal)),
 
             // "Nono... has some missiles."
-            // ∃x IsMissile(x) ∧ Owns(Nono, x)
+            // ∃x IsMissile(x) ∧ Owns(NoNo, x)
             d => d.Any(m => m.IsMissile && d.NoNo.Owns(m)),
 
             // "All of its missiles were sold to it by Colonel West":
-            // ∀x IsMissile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
+            // ∀x IsMissile(x) ∧ Owns(NoNo, x) ⇒ Sells(West, x, NoNo)
             d => d.All(x => If(x.IsMissile && d.NoNo.Owns(x), d.ColonelWest.Sells(x, d.NoNo))),
 
             // We will also need to know that missiles are weapons: 
@@ -47,8 +47,8 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingLanguageInteg
             // IsAmerican(West)
             d => d.ColonelWest.IsAmerican,
 
-            // "The country Nono, an enemy of America.."
-            // IsEnemyOf(Nono, America).
+            // "The country NoNo, an enemy of America.."
+            // IsEnemyOf(NoNo, America).
             d => d.NoNo.IsEnemyOf(d.America)
 
         }.AsReadOnly();

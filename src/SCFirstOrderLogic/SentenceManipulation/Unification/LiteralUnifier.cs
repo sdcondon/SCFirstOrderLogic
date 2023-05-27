@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
     /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
     /// </para>
     /// </summary>
-    // TODO-V5-BREAKING: rename me, now that methods for unification of Terms etc are now public. Perhaps just Unifier?
+    // TODO-V5-BREAKING: rename me, now that methods for unification of Terms etc are now public. Perhaps just Unifier? UnifierFactory?
     public static class LiteralUnifier
     {
         /// <summary>

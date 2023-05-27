@@ -132,7 +132,7 @@ namespace SCFirstOrderLogic.TermIndexing
             {
                 if (queryElements[queryElementIndex] is VariableInfo)
                 {
-                    foreach (var value in ExpandVariableMatches(parentNode, queryElementIndex, 1))
+                    foreach (var value in ExpandVariableMatch(parentNode, queryElementIndex, 1))
                     {
                         yield return value;
                     }
@@ -146,14 +146,14 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
             }
 
-            IEnumerable<TValue> ExpandVariableMatches(INode parentNode, int queryElementIndex, int remainingSubtreeSize)
+            IEnumerable<TValue> ExpandVariableMatch(INode parentNode, int queryElementIndex, int remainingSubtreeSize)
             {
                 foreach (var (childElement, childNode) in parentNode.Children)
                 {
                     var newRemainingSubtreeSize = remainingSubtreeSize + childElement.ChildElementCount - 1;
                     if (newRemainingSubtreeSize > 0)
                     {
-                        foreach (var value in ExpandVariableMatches(childNode, queryElementIndex, newRemainingSubtreeSize))
+                        foreach (var value in ExpandVariableMatch(childNode, queryElementIndex, newRemainingSubtreeSize))
                         {
                             yield return value;
                         }

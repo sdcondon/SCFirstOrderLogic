@@ -12,8 +12,9 @@ namespace SCFirstOrderLogic.TermIndexing
 {
     public static class DiscriminationTreeTests
     {
-        private static Constant C1 => new("C1");
-        private static Constant C2 => new("C2");
+        private static readonly Constant C1 = new("C1");
+        private static readonly Constant C2 = new("C2");
+
         private static Function F1(Term x) => new(nameof(F1), x);
         private static Function F2(Term x, Term y) => new(nameof(F2), x, y);
 
@@ -219,9 +220,9 @@ namespace SCFirstOrderLogic.TermIndexing
                     ExpectedReturnValue: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2) }),
 
                 new( // Get all instances of top-level function with repeated arg
-                    StoredTerms: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2) },
+                    StoredTerms: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2), F2(F1(X), F1(Y)) },
                     QueryTerm: F2(X, X),
-                    ExpectedReturnValue: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2) }), // TODO*: F2(C1, C2) should NOT be expected, here
+                    ExpectedReturnValue: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2), F2(F1(X), F1(Y)) }), // TODO*: F2(C1, C2) & F2(F1(X), F1(Y)) should NOT be expected, here
 
                 new(
                     StoredTerms: new Term[] { F2(X, C2) },

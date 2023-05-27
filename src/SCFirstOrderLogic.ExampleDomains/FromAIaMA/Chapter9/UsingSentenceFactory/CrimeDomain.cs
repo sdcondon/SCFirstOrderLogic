@@ -29,11 +29,11 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFacto
                 ForAll(X, Y, Z, If(And(IsAmerican(X), IsWeapon(Y), Sells(X, Y, Z), IsHostile(Z)), IsCriminal(X))),
 
                 // "Nono... has some missiles."
-                // ∃x IsMissile(x) ∧ Owns(Nono, x)
+                // ∃x IsMissile(x) ∧ Owns(NoNo, x)
                 ThereExists(X, And(IsMissile(X), Owns(NoNo, X))),
 
                 // "All of its missiles were sold to it by Colonel West":
-                // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
+                // Missile(x) ∧ Owns(NoNo, x) ⇒ Sells(West, x, NoNo)
                 ForAll(X, If(And(IsMissile(X), Owns(NoNo, X)), Sells(ColonelWest, X, NoNo))),
 
                 // We will also need to know that missiles are weapons: 
@@ -46,7 +46,7 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFacto
                 // "West, who is American..": American(West)
                 IsAmerican(ColonelWest),
 
-                // "The country Nono, an enemy of America..": Enemy(Nono, America).
+                // "The country Nono, an enemy of America..": Enemy(NoNo, America).
                 IsEnemyOf(NoNo, America),
 
             }.AsReadOnly();

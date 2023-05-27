@@ -28,12 +28,12 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSente
                 // American(x) ∧ Weapon(y) ∧ Sells(x, y, z) ∧ Hostile(z) ⇒ Criminal(x).
                 ForAll(X, Y, Z, If(IsAmerican(X) & IsWeapon(Y) & Sells(X, Y, Z) & IsHostile(Z), IsCriminal(X))),
 
-                // "Nono... has some missiles."
-                // ∃x IsMissile(x) ∧ Owns(Nono, x)
+                // "NoNo... has some missiles."
+                // ∃x IsMissile(x) ∧ Owns(NoNo, x)
                 ThereExists(X, IsMissile(X) & Owns(NoNo, X)),
 
                 // "All of its missiles were sold to it by Colonel West":
-                // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, Nono)
+                // Missile(x) ∧ Owns(Nono, x) ⇒ Sells(West, x, NoNo)
                 ForAll(X, If(IsMissile(X) & Owns(NoNo, X), Sells(ColonelWest, X, NoNo))),
 
                 // We will also need to know that missiles are weapons: 
@@ -46,7 +46,7 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingOperableSente
                 // "West, who is American..": American(West)
                 IsAmerican(ColonelWest),
 
-                // "The country Nono, an enemy of America..": Enemy(Nono, America).
+                // "The country Nono, an enemy of America..": Enemy(NoNo, America).
                 IsEnemyOf(NoNo, America),
 
             }.AsReadOnly();
