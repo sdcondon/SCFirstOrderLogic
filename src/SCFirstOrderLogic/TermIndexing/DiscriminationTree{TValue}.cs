@@ -296,12 +296,10 @@ namespace SCFirstOrderLogic.TermIndexing
 
             internal void AddLeafChild(IElementInfo elementInfo, TValue value)
             {
-                if (Children.ContainsKey(elementInfo))
+                if (!children.TryAdd(elementInfo, new LeafNode(value)))
                 {
                     throw new ArgumentException("Key already present", nameof(elementInfo));
                 }
-
-                children.Add(elementInfo, new LeafNode(value));
             }
         }
 
