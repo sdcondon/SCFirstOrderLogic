@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+// TODO-V5-BREAKING: Oops - fix this namespace.
 namespace SCFirstOrderLogic
 {
     /// <summary>
