@@ -220,10 +220,10 @@ namespace SCFirstOrderLogic.TermIndexing
                         // Here we are setting nextQueryInfoOffset to the size of the whole subtree
                         // with queryInfos[queryInfoIndex] at its root (i.e. the subtree that we are
                         // matching to the variable).
-                        var outstandingSkipCount = queryElements[queryElementIndex].ChildElementCount;
-                        while (outstandingSkipCount > 0)
+                        var unexploredBranchCount = queryElements[queryElementIndex].ChildElementCount;
+                        while (unexploredBranchCount > 0)
                         {
-                            outstandingSkipCount += queryElements[queryElementIndex + nextQueryElementOffset].ChildElementCount - 1;
+                            unexploredBranchCount += queryElements[queryElementIndex + nextQueryElementOffset].ChildElementCount - 1;
                             nextQueryElementOffset++;
                         }
 

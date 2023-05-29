@@ -156,17 +156,22 @@ namespace SCFirstOrderLogic.TermIndexing
                 INode parentNode,
                 int queryElementIndex,
                 IEnumerable<IElementInfo> variableMatch,
-                int remainingSubtreeSize,
+                int unexploredBranchCount,
                 VariableBindings variableBindings)
             {
                 foreach (var (childElement, childNode) in parentNode.Children)
                 {
-                    var childVariableMatch = variableMatch.Append(childElement); // ugh, nested enums..
-                    var newRemainingSubtreeSize = remainingSubtreeSize + childElement.ChildElementCount - 1;
+                    var childVariableMatch = variableMatch.Append(childElement); // ugh, nested enums
+                    var childUnexploredBranchCount = unexploredBranchCount + childElement.ChildElementCount - 1;
 
-                    if (newRemainingSubtreeSize > 0)
+                    if (childUnexploredBranchCount > 0)
                     {
-                        foreach (var value in ExpandVariableMatches(childNode, queryElementIndex, childVariableMatch, newRemainingSubtreeSize, variableBindings))
+                        foreach (var value in ExpandVariableMatches(
+                            childNode,
+                            queryElementIndex,
+                            childVariableMatch,
+                            childUnexploredBranchCount,
+                            variableBindings))
                         {
                             yield return value;
                         }
@@ -174,6 +179,7 @@ namespace SCFirstOrderLogic.TermIndexing
                     else
                     {
                         var childVariableBindings = variableBindings;
+
                         var isVariableMatch = VariableBindings.TryAddOrMatchBinding(
                             ((VariableInfo)queryElements[queryElementIndex]).Ordinal,
                             childVariableMatch.ToArray(),
@@ -241,16 +247,15 @@ namespace SCFirstOrderLogic.TermIndexing
                         // Here we are setting nextQueryInfoOffset to the size of the whole subtree
                         // with queryInfos[queryInfoIndex] at its root (i.e. the subtree that we are
                         // matching to the variable).
-                        var outstandingSkipCount = queryElements[queryElementIndex].ChildElementCount;
-                        while (outstandingSkipCount > 0)
+                        var unexploredBranchCount = queryElements[queryElementIndex].ChildElementCount;
+                        while (unexploredBranchCount > 0)
                         {
-                            outstandingSkipCount += queryElements[queryElementIndex + nextQueryElementOffset].ChildElementCount - 1;
+                            unexploredBranchCount += queryElements[queryElementIndex + nextQueryElementOffset].ChildElementCount - 1;
                             nextQueryElementOffset++;
                         }
 
-                        // Now we need verify subtree's consistency with any existing variable binding, add a binding if needed,
-                        // and set isVariableMatch appropriately. NB the "one-way" nature of this binding means this logic can be
-                        // simpler than that of unification (see LiteralUnifier) - here, we just need to check for equality.
+                        // Now we need to verify subtree's consistency with any existing variable binding, add a binding if needed,
+                        // and set isVariableMatch appropriately.
                         isVariableMatch = VariableBindings.TryAddOrMatchBinding(
                             variableInfo.Ordinal,
                             queryElements[queryElementIndex..(queryElementIndex + nextQueryElementOffset)],
@@ -339,12 +344,12 @@ namespace SCFirstOrderLogic.TermIndexing
         /// </summary>
         public sealed class LeafNode : INode
         {
-            private static readonly ReadOnlyDictionary<IElementInfo, INode> children = new(new Dictionary<IElementInfo, INode>());
+            private static readonly ReadOnlyDictionary<IElementInfo, INode> emptyChildren = new(new Dictionary<IElementInfo, INode>());
 
             internal LeafNode(TValue value) => Value = value;
 
             /// <inheritdoc/>
-            public IReadOnlyDictionary<IElementInfo, INode> Children => children;
+            public IReadOnlyDictionary<IElementInfo, INode> Children => emptyChildren;
 
             /// <inheritdoc/>
             public TValue Value { get; }
@@ -452,6 +457,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
         private class VariableBindings
         {
+            // TODO-ZZ: does this need to be a dictionary - should always encounter variables in ordinal order, i think?
             private readonly Dictionary<int, IElementInfo[]> map;
 
             public VariableBindings() => map = new();
@@ -462,6 +468,9 @@ namespace SCFirstOrderLogic.TermIndexing
             // (perhaps after looking at substitution trees in general). Might not be worth the complexity though.
             public static bool TryAddOrMatchBinding(int ordinal, IElementInfo[] value, ref VariableBindings bindings)
             {
+                // NB the "one-way" nature of this binding means this logic can be
+                // simpler than that of unification (see LiteralUnifier) - here, we just need to check for equality.
+                // This behaviour will need to CHANGE if we add unifier discovery logic to the tree.
                 if (!bindings.map.TryGetValue(ordinal, out var existingBinding))
                 {
                     bindings = new VariableBindings(bindings.map.Append(KeyValuePair.Create(ordinal, value)));
