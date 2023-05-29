@@ -1,5 +1,4 @@
-﻿  using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace SCFirstOrderLogic.TermIndexing
@@ -16,8 +15,8 @@ namespace SCFirstOrderLogic.TermIndexing
         /// Initializes a new instance of the <see cref="DiscriminationTree"/> class that is empty to begin with.
         /// </summary>
         public DiscriminationTree()
-            : this(Array.Empty<Term>())
         {
+            actualTree = new();
         }
 
         /// <summary>

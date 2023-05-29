@@ -1,31 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 
 namespace SCFirstOrderLogic.TermIndexing
 {
     /// <summary>
+    /// <para>
     /// An implementation of an in-memory discrimination tree for <see cref="Term"/>s.
+    /// </para>
+    /// <para>
+    /// ALTERNATIVE: Lacks the variable binding of the production version - so will erroneously suggest that e.g. F(C1, C2) is an instance of F(X, X).
+    /// But of course this comes with a performance saving.
+    /// </para>
     /// </summary>
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
     /// <seealso href="https://www.google.com/search?q=discrimination+tree"/>
-    // NB: not a TODO just yet, but - while it's not terrible - there are a few aspects of this
-    // class that aren't great from a performance perspective. The priority thus far has just
-    // been to get it working.
-    public class DiscriminationTree<TValue>
+    public class DiscriminationTree_WOVarBinding<TValue>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class that is empty to begin with.
         /// </summary>
-        public DiscriminationTree()
+        public DiscriminationTree_WOVarBinding()
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with some initial content.
         /// </summary>
-        public DiscriminationTree(IEnumerable<KeyValuePair<Term, TValue>> content)
+        public DiscriminationTree_WOVarBinding(IEnumerable<KeyValuePair<Term, TValue>> content)
         {
             foreach (var kvp in content)
             {
@@ -131,73 +131,53 @@ namespace SCFirstOrderLogic.TermIndexing
 
             var queryElements = new ElementInfoTransformation().ApplyTo(term).ToList();
 
-            IEnumerable<TValue> ExpandChildNodes(
-                INode parentNode,
-                int queryElementIndex,
-                VariableBindings variableBindings)
+            IEnumerable<TValue> ExpandChildNodes(INode parentNode, int queryElementIndex)
             {
                 if (queryElements[queryElementIndex] is VariableInfo)
                 {
-                    foreach (var value in ExpandVariableMatches(parentNode, queryElementIndex, Enumerable.Empty<IElementInfo>(), 1, variableBindings))
+                    foreach (var value in ExpandVariableMatches(parentNode, queryElementIndex, 1))
                     {
                         yield return value;
                     }
                 }
                 else if (parentNode.Children.TryGetValue(queryElements[queryElementIndex], out var childNode))
                 {
-                    foreach (var value in ExpandNode(childNode, queryElementIndex + 1, variableBindings))
+                    foreach (var value in ExpandNode(childNode, queryElementIndex + 1))
                     {
                         yield return value;
                     }
                 }
             }
 
-            IEnumerable<TValue> ExpandVariableMatches(
-                INode parentNode,
-                int queryElementIndex,
-                IEnumerable<IElementInfo> variableMatch,
-                int remainingSubtreeSize,
-                VariableBindings variableBindings)
+            IEnumerable<TValue> ExpandVariableMatches(INode parentNode, int queryElementIndex, int remainingSubtreeSize)
             {
                 foreach (var (childElement, childNode) in parentNode.Children)
                 {
-                    var childVariableMatch = variableMatch.Append(childElement); // ugh, nested enums..
                     var newRemainingSubtreeSize = remainingSubtreeSize + childElement.ChildElementCount - 1;
-
                     if (newRemainingSubtreeSize > 0)
                     {
-                        foreach (var value in ExpandVariableMatches(childNode, queryElementIndex, childVariableMatch, newRemainingSubtreeSize, variableBindings))
+                        foreach (var value in ExpandVariableMatches(childNode, queryElementIndex, newRemainingSubtreeSize))
                         {
                             yield return value;
                         }
                     }
                     else
                     {
-                        var childVariableBindings = variableBindings;
-                        var isVariableMatch = VariableBindings.TryAddOrMatchBinding(
-                            ((VariableInfo)queryElements[queryElementIndex]).Ordinal,
-                            childVariableMatch.ToArray(),
-                            ref childVariableBindings);
+                        // TODO: verify subtree's consistency with existing variable binding, update binding if needed, only recurse if its consistent
 
-                        if (isVariableMatch)
+                        foreach (var value in ExpandNode(childNode, queryElementIndex + 1))
                         {
-                            foreach (var value in ExpandNode(childNode, queryElementIndex + 1, childVariableBindings))
-                            {
-                                yield return value;
-                            }
+                            yield return value;
                         }
                     }
                 }
             }
 
-            IEnumerable<TValue> ExpandNode(
-                INode node,
-                int queryElementIndex,
-                VariableBindings variableBindings)
+            IEnumerable<TValue> ExpandNode(INode node, int queryElementIndex)
             {
                 if (queryElementIndex < queryElements.Count)
                 {
-                    foreach (var value in ExpandChildNodes(node, queryElementIndex, variableBindings))
+                    foreach (var value in ExpandChildNodes(node, queryElementIndex))
                     {
                         yield return value;
                     }
@@ -210,7 +190,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
             }
 
-            return ExpandChildNodes(Root, 0, new VariableBindings());
+            return ExpandChildNodes(Root, 0);
         }
 
         /// <summary>
@@ -226,17 +206,16 @@ namespace SCFirstOrderLogic.TermIndexing
                 throw new ArgumentNullException(nameof(term));
             }
 
-            var queryElements = new ElementInfoTransformation().ApplyTo(term).ToArray();
+            var queryElements = new ElementInfoTransformation().ApplyTo(term).ToList();
 
-            IEnumerable<TValue> GetGeneralisations(INode parentNode, int queryElementIndex, VariableBindings variableBindings)
+            IEnumerable<TValue> GetGeneralisations(INode parentNode, int queryElementIndex)
             {
                 foreach (var (childElement, childNode) in parentNode.Children)
                 {
                     bool isVariableMatch = false;
                     var nextQueryElementOffset = 1;
-                    var childVariableBindings = variableBindings;
 
-                    if (childElement is VariableInfo variableInfo)
+                    if (childElement is VariableInfo)
                     {
                         // Here we are setting nextQueryInfoOffset to the size of the whole subtree
                         // with queryInfos[queryInfoIndex] at its root (i.e. the subtree that we are
@@ -248,22 +227,17 @@ namespace SCFirstOrderLogic.TermIndexing
                             nextQueryElementOffset++;
                         }
 
-                        // Now we need verify subtree's consistency with any existing variable binding, add a binding if needed,
-                        // and set isVariableMatch appropriately. NB the "one-way" nature of this binding means this logic can be
-                        // simpler than that of unification (see LiteralUnifier) - here, we just need to check for equality.
-                        isVariableMatch = VariableBindings.TryAddOrMatchBinding(
-                            variableInfo.Ordinal,
-                            queryElements[queryElementIndex..(queryElementIndex + nextQueryElementOffset)],
-                            ref childVariableBindings);
+                        // TODO: verify subtree's consistency with existing variable binding, update binding if needed, set isVariableMatch appropriately
+                        isVariableMatch = true;
                     }
 
                     if (isVariableMatch || childElement.Equals(queryElements[queryElementIndex]))
                     {
                         var nextQueryElementIndex = queryElementIndex + nextQueryElementOffset;
 
-                        if (nextQueryElementIndex < queryElements.Length)
+                        if (nextQueryElementIndex < queryElements.Count)
                         {
-                            foreach (var value in GetGeneralisations(childNode, nextQueryElementIndex, childVariableBindings))
+                            foreach (var value in GetGeneralisations(childNode, nextQueryElementIndex))
                             {
                                 yield return value;
                             }
@@ -278,10 +252,8 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
             }
 
-            return GetGeneralisations(Root, 0, new VariableBindings());
+            return GetGeneralisations(Root, 0);
         }
-
-        // public IEnumerable<TValue> GetUnifications(Term term) -- not yet..
 
         /// <summary>
         /// Interface shared by all nodes of a <see cref="DiscriminationTree{TValue}"/>.
@@ -447,41 +419,6 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
 
                 yield return new VariableInfo(ordinal);
-            }
-        }
-
-        private class VariableBindings
-        {
-            private readonly Dictionary<int, IElementInfo[]> map;
-
-            public VariableBindings() => map = new();
-
-            private VariableBindings(IEnumerable<KeyValuePair<int, IElementInfo[]>> content) => map = new(content);
-
-            // overall performance would perhaps be better with a tree instead of copying a dictionary.. worth a test at some point perhaps.
-            // (perhaps after looking at substitution trees in general). Might not be worth the complexity though.
-            public static bool TryAddOrMatchBinding(int ordinal, IElementInfo[] value, ref VariableBindings bindings)
-            {
-                if (!bindings.map.TryGetValue(ordinal, out var existingBinding))
-                {
-                    bindings = new VariableBindings(bindings.map.Append(KeyValuePair.Create(ordinal, value)));
-                    return true;
-                }
-
-                if (existingBinding.Length != value.Length)
-                {
-                    return false;
-                }
-
-                for (int i = 0; i < existingBinding.Length; i++)
-                {
-                    if (!existingBinding[i].Equals(value[i]))
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
             }
         }
     }

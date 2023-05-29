@@ -220,9 +220,9 @@ namespace SCFirstOrderLogic.TermIndexing
                     ExpectedReturnValue: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2) }),
 
                 new( // Get all instances of top-level function with repeated arg
-                    StoredTerms: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2), F2(F1(X), F1(Y)) },
+                    StoredTerms: new Term[] { F2(C1, C1), F2(C1, C2), F2(F1(X), F1(X)), F2(F1(X), F1(Y)) },
                     QueryTerm: F2(X, X),
-                    ExpectedReturnValue: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2), F2(F1(X), F1(Y)) }), // TODO*: F2(C1, C2) & F2(F1(X), F1(Y)) should NOT be expected, here
+                    ExpectedReturnValue: new Term[] { F2(C1, C1), F2(F1(X), F1(X)) }),
 
                 new(
                     StoredTerms: new Term[] { F2(X, C2) },
@@ -263,7 +263,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 new(
                     StoredTerms: new Term[] { F2(X, X), F2(X, Y) },
                     QueryTerm: F2(C1, C2),
-                    ExpectedReturnValue: new Term[] { F2(X, Y), F2(X, X) }),  // TODO*: F2(X, X) should NOT be expected, here
+                    ExpectedReturnValue: new Term[] { F2(X, Y) }),
 
                 new(
                     StoredTerms: new Term[] { F2(X, X), F2(X, Y) },
