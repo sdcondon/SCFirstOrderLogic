@@ -110,8 +110,8 @@ namespace SCFirstOrderLogic.TermIndexing
 
             // NB: can safely grab Value here because the current node must ALWAYS be a LeafNode at this point.
             // It is not possible for prefix element info enumerations to occur, because the the number of
-            // elements in the path is always one more than the summation of the ArgumentCounts (NB: used in
-            // equality check) of all encountered FunctionInfos.
+            // elements in the path is always one more than the summation of the ChildElementCounts (NB: used in
+            // equality check) of all encountered elements.
             value = currentNode.Value;
             return true;
         }
