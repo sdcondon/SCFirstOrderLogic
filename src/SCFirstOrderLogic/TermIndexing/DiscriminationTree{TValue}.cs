@@ -131,8 +131,8 @@ namespace SCFirstOrderLogic.TermIndexing
 
             var queryElements = new ElementInfoTransformation().ApplyTo(term).ToList();
 
-            IEnumerable<TValue> ExpandChildNodes(
-                INode parentNode,
+            IEnumerable<TValue> ExpandNodes(
+                IReadOnlyDictionary<IElementInfo, INode> nodes,
                 int queryElementIndex,
                 VariableBindings variableBindings)
             {
@@ -140,12 +140,12 @@ namespace SCFirstOrderLogic.TermIndexing
 
                 if (queryElement is VariableInfo)
                 {
-                    foreach (var value in ExpandVariableMatches(parentNode, queryElementIndex, Enumerable.Empty<IElementInfo>(), 1, variableBindings))
+                    foreach (var value in ExpandVariableMatches(nodes, queryElementIndex, Enumerable.Empty<IElementInfo>(), 1, variableBindings))
                     {
                         yield return value;
                     }
                 }
-                else if (parentNode.Children.TryGetValue(queryElement, out var childNode))
+                else if (nodes.TryGetValue(queryElement, out var childNode))
                 {
                     foreach (var value in ExpandNode(childNode, queryElementIndex + 1, variableBindings))
                     {
@@ -155,44 +155,44 @@ namespace SCFirstOrderLogic.TermIndexing
             }
 
             IEnumerable<TValue> ExpandVariableMatches(
-                INode parentNode,
+                IReadOnlyDictionary<IElementInfo, INode> nodes,
                 int queryElementIndex,
-                IEnumerable<IElementInfo> variableMatch,
-                int unexploredBranchCount,
-                VariableBindings variableBindings)
+                IEnumerable<IElementInfo> parentVariableMatch,
+                int parentUnexploredBranchCount,
+                VariableBindings priorVariableBindings)
             {
-                foreach (var (childElement, childNode) in parentNode.Children)
+                foreach (var (elementInfo, node) in nodes)
                 {
                     // NB: there's an obvious possible performance improvement here - cache
                     // the descendent node we need to jump to rather than figuring it out afresh
                     // each time. i.e. A "jump list". Might implement this at a later date - not a TODO for now.
-                    var childVariableMatch = variableMatch.Append(childElement); // ugh, nested enums
-                    var childUnexploredBranchCount = unexploredBranchCount + childElement.ChildElementCount - 1;
+                    var variableMatch = parentVariableMatch.Append(elementInfo); // ugh, nested enums
+                    var unexploredBranchCount = parentUnexploredBranchCount + elementInfo.ChildElementCount - 1;
 
-                    if (childUnexploredBranchCount > 0)
+                    if (unexploredBranchCount > 0)
                     {
                         foreach (var value in ExpandVariableMatches(
-                            childNode,
+                            node.Children,
                             queryElementIndex,
-                            childVariableMatch,
-                            childUnexploredBranchCount,
-                            variableBindings))
+                            variableMatch,
+                            unexploredBranchCount,
+                            priorVariableBindings))
                         {
                             yield return value;
                         }
                     }
                     else
                     {
-                        var childVariableBindings = variableBindings;
+                        var variableBindings = priorVariableBindings;
 
                         var isVariableMatch = VariableBindings.TryAddOrMatchBinding(
                             ((VariableInfo)queryElements[queryElementIndex]).Ordinal,
-                            childVariableMatch.ToArray(),
-                            ref childVariableBindings);
+                            variableMatch.ToArray(),
+                            ref variableBindings);
 
                         if (isVariableMatch)
                         {
-                            foreach (var value in ExpandNode(childNode, queryElementIndex + 1, childVariableBindings))
+                            foreach (var value in ExpandNode(node, queryElementIndex + 1, variableBindings))
                             {
                                 yield return value;
                             }
@@ -208,7 +208,7 @@ namespace SCFirstOrderLogic.TermIndexing
             {
                 if (queryElementIndex < queryElements.Count)
                 {
-                    foreach (var value in ExpandChildNodes(node, queryElementIndex, variableBindings))
+                    foreach (var value in ExpandNodes(node.Children, queryElementIndex, variableBindings))
                     {
                         yield return value;
                     }
@@ -221,7 +221,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
             }
 
-            return ExpandChildNodes(Root, 0, new VariableBindings());
+            return ExpandNodes(Root.Children, 0, new VariableBindings());
         }
 
         /// <summary>
