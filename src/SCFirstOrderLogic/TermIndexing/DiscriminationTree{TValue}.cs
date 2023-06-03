@@ -166,7 +166,7 @@ namespace SCFirstOrderLogic.TermIndexing
                     // NB: there's an obvious possible performance improvement here - cache
                     // the descendent node we need to jump to rather than figuring it out afresh
                     // each time. i.e. A "jump list". Might implement this at a later date - not a TODO for now.
-                    var variableMatch = parentVariableMatch.Append(elementInfo); // ugh, nested enums
+                    var variableMatch = parentVariableMatch.Append(elementInfo);
                     var unexploredBranchCount = parentUnexploredBranchCount + elementInfo.ChildElementCount - 1;
 
                     if (unexploredBranchCount > 0)
@@ -215,7 +215,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
                 else
                 {
-                    // We can safely grab Value here because childNode MUST be a LeafNode at this point - ultimately because of how
+                    // We can safely grab Value here because node MUST be a LeafNode at this point - ultimately because of how
                     // ElementInfoTransformation works (which controls both the structure of the tree and queryElements here).
                     yield return node.Value;
                 }
@@ -317,8 +317,8 @@ namespace SCFirstOrderLogic.TermIndexing
             private readonly Dictionary<IElementInfo, INode> children = new();
 
             /// <inheritdoc/>
-            // NB: we don't bother wrapping children in a ReadOnlyDict to stop unscrupulous users from casting.
-            // Would be more mem for a real edge case.. 
+            // NB: we don't bother wrapping children in a ReadOnlyDict to stop unscrupulous
+            // users from casting. Would be more mem for a real edge case.. 
             public IReadOnlyDictionary<IElementInfo, INode> Children => children;
 
             /// <inheritdoc/>
@@ -362,7 +362,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
         /// <summary>
         /// Interface for the types that describe elements of a term.
-        /// Instances of this interface are associated with each (non-root) element of a discrimination tree.
+        /// Instances of this interface are associated with each non-root element of a discrimination tree.
         /// </summary>
         public interface IElementInfo
         {
@@ -462,7 +462,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
         private class VariableBindings
         {
-            // TODO-ZZ: does this need to be a dictionary - should always encounter variables in ordinal order, i think?
+            // TODO-ZZ: does this need to be a dictionary - we should always encounter variables in ordinal order, i think?
             private readonly Dictionary<int, IElementInfo[]> map;
 
             public VariableBindings() => map = new();

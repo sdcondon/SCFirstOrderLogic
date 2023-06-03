@@ -36,7 +36,8 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <summary>
         /// Gets the (CNF representation of the) negation of the query sentence.
         /// </summary>
-        // Should this be NegatedQuerySentence? Breaking change..
+        // TODO-V5-BREAKING: Should this be NegatedQuerySentence? Because we're in a class called "Query".
+        // Uninformed people might think this is something like a negation of this query instance. Breaking change..
         public CNFSentence NegatedQuery { get; }
         
         /// <inheritdoc/>
