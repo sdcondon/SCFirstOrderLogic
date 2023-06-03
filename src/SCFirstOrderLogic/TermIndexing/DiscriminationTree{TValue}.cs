@@ -136,14 +136,16 @@ namespace SCFirstOrderLogic.TermIndexing
                 int queryElementIndex,
                 VariableBindings variableBindings)
             {
-                if (queryElements[queryElementIndex] is VariableInfo)
+                var queryElement = queryElements[queryElementIndex];
+
+                if (queryElement is VariableInfo)
                 {
                     foreach (var value in ExpandVariableMatches(parentNode, queryElementIndex, Enumerable.Empty<IElementInfo>(), 1, variableBindings))
                     {
                         yield return value;
                     }
                 }
-                else if (parentNode.Children.TryGetValue(queryElements[queryElementIndex], out var childNode))
+                else if (parentNode.Children.TryGetValue(queryElement, out var childNode))
                 {
                     foreach (var value in ExpandNode(childNode, queryElementIndex + 1, variableBindings))
                     {
@@ -161,6 +163,9 @@ namespace SCFirstOrderLogic.TermIndexing
             {
                 foreach (var (childElement, childNode) in parentNode.Children)
                 {
+                    // NB: there's an obvious possible performance improvement here - cache
+                    // the descendent node we need to jump to rather than figuring it out afresh
+                    // each time. i.e. A "jump list". Might implement this at a later date - not a TODO for now.
                     var childVariableMatch = variableMatch.Append(childElement); // ugh, nested enums
                     var childUnexploredBranchCount = unexploredBranchCount + childElement.ChildElementCount - 1;
 
