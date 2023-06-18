@@ -185,7 +185,9 @@
             }
             catch (Exception e)
             {
-                // yes, this is a little ugly..
+                // yes, this is a little ugly. hoping to be able to refactor this into
+                // a single task with some continuewiths (though the inline if-else on
+                // task state will likely need to change a little, too).
                 if (e is not TaskCanceledException)
                 {
                     currentQueryExecution = Task.FromException(e);
