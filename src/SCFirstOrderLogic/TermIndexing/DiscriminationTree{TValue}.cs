@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.TermIndexing
     // NB: not a TODO just yet, but - while it's not terrible - there are a few aspects of this
     // class that aren't great from a performance perspective. The priority thus far has just
     // been to get it working.
-    // TODO-EXTENSIBILITY: At some point should allow for secondary storage extensibility.
+    // TODO-V5-BREAKING: At some point should allow for secondary storage extensibility.
     // I *think* (adding async support - breaking change - and) allowing for different node
     // implementations should do the trick - i.e. make the current concrete node classes
     // abstract in some way, and add a ctor that allows passing in the root node. Everyting

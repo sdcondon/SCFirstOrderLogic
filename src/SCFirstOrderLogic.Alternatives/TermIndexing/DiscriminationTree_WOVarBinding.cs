@@ -163,7 +163,8 @@ namespace SCFirstOrderLogic.TermIndexing
                     }
                     else
                     {
-                        // TODO: verify subtree's consistency with existing variable binding, update binding if needed, only recurse if its consistent
+                        // prod version verifies subtree's consistency with existing variable binding,
+                        // update binding if needed, only recurses if its consistent
 
                         foreach (var value in ExpandNode(childNode, queryElementIndex + 1))
                         {
@@ -227,7 +228,8 @@ namespace SCFirstOrderLogic.TermIndexing
                             nextQueryElementOffset++;
                         }
 
-                        // TODO: verify subtree's consistency with existing variable binding, update binding if needed, set isVariableMatch appropriately
+                        // Here, prod version verifies subtree's consistency with existing variable binding,
+                        // update binding if needed, sets isVariableMatch appropriately.
                         isVariableMatch = true;
                     }
 
