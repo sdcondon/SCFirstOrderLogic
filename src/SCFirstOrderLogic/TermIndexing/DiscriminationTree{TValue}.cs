@@ -244,9 +244,9 @@ namespace SCFirstOrderLogic.TermIndexing
 
             var queryElements = new ElementInfoTransformation().ApplyTo(term).ToArray();
 
-            IEnumerable<TValue> GetGeneralisations(INode parentNode, int queryElementIndex, VariableBindings variableBindings)
+            IEnumerable<TValue> ExpandNode(INode node, int queryElementIndex, VariableBindings variableBindings)
             {
-                foreach (var (childElement, childNode) in parentNode.Children)
+                foreach (var (childElement, childNode) in node.Children)
                 {
                     bool isVariableMatch = false;
                     var nextQueryElementOffset = 1;
@@ -278,7 +278,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
                         if (nextQueryElementIndex < queryElements.Length)
                         {
-                            foreach (var value in GetGeneralisations(childNode, nextQueryElementIndex, childVariableBindings))
+                            foreach (var value in ExpandNode(childNode, nextQueryElementIndex, childVariableBindings))
                             {
                                 yield return value;
                             }
@@ -293,7 +293,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
             }
 
-            return GetGeneralisations(Root, 0, new VariableBindings());
+            return ExpandNode(Root, 0, new VariableBindings());
         }
 
         // public IEnumerable<TValue> GetUnifications(Term term) -- not yet..
