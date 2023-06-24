@@ -16,7 +16,7 @@ namespace SCFirstOrderLogic.TermIndexing
     // TODO-V5-BREAKING: At some point should allow for secondary storage extensibility.
     // I *think* (adding async support - breaking change - and) allowing for different node
     // implementations should do the trick - i.e. make the current concrete node classes
-    // abstract in some way, and add a ctor that allows passing in the root node. Everyting
+    // abstract in some way, and add a ctor that allows passing in the root node. Everything
     // else can stay common, probably.
     public class DiscriminationTree<TValue>
     {
