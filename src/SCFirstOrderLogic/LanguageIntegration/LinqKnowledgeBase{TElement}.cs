@@ -1,4 +1,6 @@
-﻿using SCFirstOrderLogic.Inference;
+﻿// Copyright (c) 2021-2023 Simon Condon.
+// You may use this file in accordance with the terms of the MIT license.
+using SCFirstOrderLogic.Inference;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;

@@ -1,4 +1,6 @@
-﻿using Antlr4.Runtime;
+﻿// Copyright (c) 2021-2023 Simon Condon.
+// You may use this file in accordance with the terms of the MIT license.
+using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using SCFirstOrderLogic.SentenceCreation.Antlr;
 using System;

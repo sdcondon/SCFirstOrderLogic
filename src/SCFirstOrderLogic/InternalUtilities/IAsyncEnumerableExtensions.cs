@@ -1,3 +1,5 @@
+// Copyright (c) 2021-2023 Simon Condon.
+// You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
