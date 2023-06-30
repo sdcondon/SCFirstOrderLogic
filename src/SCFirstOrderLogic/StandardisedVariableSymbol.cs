@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic
     /// <para>
     /// This is however slightly awkward to to test, and has shortcomings when serialization is involved.
     /// Also can cause inconsistent behaviour across runs when anything relies on hash code (like ClausePairPriorityComparers.UnitPreference).
-    /// As such, it *might* be nice to implement value semantics for equality. Same variable in same (normalised) sentence is the same.
+    /// As such, it *might* be nice to *also* implement value semantics for equality. Same variable in same (normalised) sentence is the same.
     /// Equality would need to avoid infinite loop though, and couldn't work on output of CNFConversion as-is since this
     /// class doesn't completely normalise. Also note potential problems when we need to restandardise variables (happens in backward chaining).
     /// </para>

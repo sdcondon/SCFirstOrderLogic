@@ -146,7 +146,7 @@ namespace SCFirstOrderLogic.TermIndexing
             .ThenThrows();
 
         public static Test ContainsBehaviour => TestThat
-            .GivenEachOf<ContainsTestCase>(() => new ContainsTestCase[]
+            .GivenEachOf(() => new ContainsTestCase[]
             {
                 new(
                     StoredTerms: new Term[] { C1, C2, X },
@@ -214,7 +214,7 @@ namespace SCFirstOrderLogic.TermIndexing
                     QueryTerm: F1(X),
                     ExpectedReturnValue: new Term[] { F1(C1), F1(C2), F1(F1(C1)) }),
 
-                new( // Get all instances of top-level function with (possibly) different args
+                new( // Get all instances of top-level function with any args
                     StoredTerms: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2) },
                     QueryTerm: F2(X, Y),
                     ExpectedReturnValue: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2) }),
