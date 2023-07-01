@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         // NB: the inner dictionary here is intended more as a hash set - but system.collections.concurrent doesn't
         // offer a concurrent hash set (and I want strong concurrency support). Not worth adding a third-party package for
         // this though. Consumers to whom this matters will likely be considering creating their own clause store anyway.
-        private readonly ConcurrentDictionary<object, ConcurrentDictionary<CNFDefiniteClause, byte>> clausesByConsequentSymbol = new();
+        private readonly ConcurrentDictionary<object, ConcurrentDictionary<CNFDefiniteClause, byte>> clausesByConsequentPredicateId = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BlazorWasmBCClauseStore"/> class.
@@ -52,12 +52,12 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// <inheritdoc/>
         public Task<bool> AddAsync(CNFDefiniteClause clause, CancellationToken cancellationToken = default)
         {
-            if (!clausesByConsequentSymbol.TryGetValue(clause.Consequent.Symbol, out var clausesWithThisConsequentSymbol))
+            if (!clausesByConsequentPredicateId.TryGetValue(clause.Consequent.Identifier, out var clausesWithThisConsequentPredicateId))
             {
-                clausesWithThisConsequentSymbol = clausesByConsequentSymbol[clause.Consequent.Symbol] = new ConcurrentDictionary<CNFDefiniteClause, byte>();
+                clausesWithThisConsequentPredicateId = clausesByConsequentPredicateId[clause.Consequent.Identifier] = new ConcurrentDictionary<CNFDefiniteClause, byte>();
             }
 
-            return Task.FromResult(clausesWithThisConsequentSymbol.TryAdd(clause, 0));
+            return Task.FromResult(clausesWithThisConsequentPredicateId.TryAdd(clause, 0));
         }
 
         /// <inheritdoc />
@@ -65,7 +65,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             await Task.Delay(1, cancellationToken);
 
-            foreach (var clauseList in clausesByConsequentSymbol.Values)
+            foreach (var clauseList in clausesByConsequentPredicateId.Values)
             {
                 foreach (var clause in clauseList.Keys)
                 {
@@ -83,7 +83,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         {
             await Task.Delay(1, cancellationToken);
 
-            if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
+            if (clausesByConsequentPredicateId.TryGetValue(goal.Identifier, out var clausesWithThisGoal))
             {
                 foreach (var clause in clausesWithThisGoal.Keys)
                 {

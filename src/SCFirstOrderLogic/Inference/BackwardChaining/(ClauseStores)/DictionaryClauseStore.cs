@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference.BackwardChaining
 {
     /// <summary>
-    /// Implementation of <see cref="IClauseStore"/> that just uses an in-memory dictionary (keyed by consequent symbol) to store known clauses.
+    /// Implementation of <see cref="IClauseStore"/> that just uses an in-memory dictionary (keyed by consequent identifier) to store known clauses.
     /// </summary>
     public class DictionaryClauseStore : IClauseStore
     {
         // NB: the inner dictionary here is intended more as a hash set - but system.collections.concurrent doesn't
         // offer a concurrent hash set (and I want strong concurrency support). Not worth adding a third-party package for
         // this though. Consumers to whom this matters will likely be considering creating their own clause store anyway.
-        private readonly ConcurrentDictionary<object, ConcurrentDictionary<CNFDefiniteClause, byte>> clausesByConsequentSymbol = new();
+        private readonly ConcurrentDictionary<object, ConcurrentDictionary<CNFDefiniteClause, byte>> clausesByConsequentPredicateId = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryClauseStore"/> class.
@@ -56,19 +56,19 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         /// <inheritdoc/>
         public Task<bool> AddAsync(CNFDefiniteClause clause, CancellationToken cancellationToken = default)
         {
-            if (!clausesByConsequentSymbol.TryGetValue(clause.Consequent.Symbol, out var clausesWithThisConsequentSymbol))
+            if (!clausesByConsequentPredicateId.TryGetValue(clause.Consequent.Identifier, out var clausesWithThisConsequentPredicateId))
             {
-                clausesWithThisConsequentSymbol = clausesByConsequentSymbol[clause.Consequent.Symbol] = new ConcurrentDictionary<CNFDefiniteClause, byte>();
+                clausesWithThisConsequentPredicateId = clausesByConsequentPredicateId[clause.Consequent.Identifier] = new ConcurrentDictionary<CNFDefiniteClause, byte>();
             }
 
-            return Task.FromResult(clausesWithThisConsequentSymbol.TryAdd(clause, 0));
+            return Task.FromResult(clausesWithThisConsequentPredicateId.TryAdd(clause, 0));
         }
 
 #pragma warning disable CS1998 // async lacks await.. Could add await Task.Yield() to silence this, but it is not worth the overhead.
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFDefiniteClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
-            foreach (var clauseList in clausesByConsequentSymbol.Values)
+            foreach (var clauseList in clausesByConsequentPredicateId.Values)
             {
                 foreach (var clause in clauseList.Keys)
                 {
@@ -84,7 +84,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             VariableSubstitution constraints,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
+            if (clausesByConsequentPredicateId.TryGetValue(goal.Identifier, out var clausesWithThisGoal))
             {
                 foreach (var clause in clausesWithThisGoal.Keys)
                 {

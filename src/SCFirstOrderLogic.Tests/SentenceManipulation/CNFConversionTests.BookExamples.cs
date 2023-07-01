@@ -35,7 +35,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         private static EquivalencyAssertionOptions<Sentence> CNFEquivalencyOpts(EquivalencyAssertionOptions<Sentence> opts)
         {
-            // We don't particularly care about the details (i.e. symbols) of the
+            // We don't particularly care about the details (i.e. identifiers) of the
             // actual skolem functions and standardised variables, but they should
             // be the "same" everywhere we expect them to be
             // (and distinct from everything else - but we don't test that, yet anyway).
@@ -60,9 +60,9 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 .ComparingByMembers<Sentence>()
                 .Using<Function>(ctx =>
                 {
-                    if (ctx.Expectation.Symbol.Equals("Skm:F"))
+                    if (ctx.Expectation.Identifier.Equals("Skm:F"))
                         ShouldBeConsistentWith(ctx, ref fActual);
-                    else if (ctx.Expectation.Symbol.Equals("Skm:G"))
+                    else if (ctx.Expectation.Identifier.Equals("Skm:G"))
                         ShouldBeConsistentWith(ctx, ref gActual);
                     else
                         ctx.Subject.Should().BeEquivalentTo(ctx.Expectation);
@@ -70,7 +70,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 .WhenTypeIs<Function>()
                 .Using<VariableReference>(ctx =>
                 {
-                    if (ctx.Expectation.Declaration.Symbol.Equals("Std:X"))
+                    if (ctx.Expectation.Declaration.Identifier.Equals("Std:X"))
                         ShouldBeConsistentWith(ctx, ref stdXActual);
                     else
                         ctx.Subject.Should().BeEquivalentTo(ctx.Expectation);

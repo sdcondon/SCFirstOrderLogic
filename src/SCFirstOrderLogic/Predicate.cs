@@ -10,66 +10,60 @@ namespace SCFirstOrderLogic
 {
     /// <summary>
     /// Representation of an predicate sentence of first order logic, In typical FOL syntax, this is written as:
-    /// <code>{predicate symbol}({term}, ..)</code>
+    /// <code>{predicate identifier}({term}, ..)</code>
     /// </summary>
     public sealed class Predicate : Sentence
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
-        /// <param name="symbol">
+        /// <param name="identifier">
         /// <para>
-        /// An object representing the symbol of the predicate.
+        /// An object that serves as the unique identifier of the predicate.
         /// </para>
         /// <para>
-        /// Symbol equality should indicate that it is the same predicate in the domain.
-        /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// Identifier equality should indicate that it is the same predicate in the domain.
+        /// ToString of the identifier should be appropriate for rendering in FoL syntax.
         /// </para>
         /// <para>
-        /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
-        /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
-        /// </para>
-        /// <para>
-        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, we err on the side of simplicity and say that symbols can be any object. This of 
+        /// object base class, we err on the side of simplicity and say that identifiers can be any object. This of 
         /// course has the added benefit of allowing certain likely types (i.e. strings) to be used as identifiers
         /// without needing to wrap them.
         /// </para>
         /// </param>
         /// <param name="arguments">The arguments of this predicate.</param>
-        public Predicate(object symbol, params Term[] arguments)
-            : this(symbol, (IList<Term>)arguments)
+        public Predicate(object identifier, params Term[] arguments)
+            : this(identifier, (IList<Term>)arguments)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Predicate"/> class.
         /// </summary>
-        /// <param name="symbol">
+        /// <param name="identifier">
         /// <para>
-        /// An object representing the symbol of the predicate.
+        /// An object that serves as the unique identifier of the predicate.
         /// </para>
         /// <para>
-        /// Symbol equality should indicate that it is the same predicate in the domain.
-        /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// Identifier equality should indicate that it is the same predicate in the domain.
+        /// ToString of the identifier should be appropriate for rendering in FoL syntax.
         /// </para>
         /// <para>
-        /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
-        /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
-        /// </para>
-        /// <para>
-        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
+        /// object base class, we err on the side of simplicity and say that identifiers can be any object. This of 
+        /// course has the added benefit of allowing certain likely types (i.e. strings) to be used as identifiers
+        /// without needing to wrap them.
         /// </para>
         /// </param>
         /// <param name="arguments">The arguments of this predicate.</param>
-        public Predicate(object symbol, IEnumerable<Term> arguments)
+        public Predicate(object identifier, IEnumerable<Term> arguments)
         {
-            Symbol = symbol;
+            Identifier = identifier;
             Arguments = new ReadOnlyCollection<Term>(arguments.ToArray());
         }
 
@@ -80,27 +74,22 @@ namespace SCFirstOrderLogic
 
         /// <summary>
         /// <para>
-        /// Gets an object representing the symbol of the predicate.
+        /// Gets an object that serves as the unique identifier of the predicate.
         /// </para>
         /// <para>
-        /// Symbol equality should indicate that it is the same predicate in the domain.
-        /// ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// Identifier equality should indicate that it is the same predicate in the domain.
+        /// ToString of the identifier should be appropriate for rendering in FoL syntax.
         /// </para>
         /// <para>
-        /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
-        /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
-        /// </para>
-        /// <para>
-        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
-        /// </para>
-        /// <para>
-        /// Perhaps should be called 'Identifier'..
+        /// object base class, we err on the side of simplicity and say that identifiers can be any object. This of 
+        /// course has the added benefit of allowing certain likely types (i.e. strings) to be used as identifiers
+        /// without needing to wrap them.
         /// </para>
         /// </summary>
-        public object Symbol { get; }
+        public object Identifier { get; }
 
         /// <inheritdoc />
         public override void Accept(ISentenceVisitor visitor) => visitor.Visit(this);
@@ -118,7 +107,7 @@ namespace SCFirstOrderLogic
         public override bool Equals(object? obj)
         {
             if (obj is not Predicate otherPredicate
-                || !otherPredicate.Symbol.Equals(Symbol)
+                || !otherPredicate.Identifier.Equals(Identifier)
                 || otherPredicate.Arguments.Count != Arguments.Count)
             {
                 return false;
@@ -140,7 +129,7 @@ namespace SCFirstOrderLogic
         {
             var hashCode = new HashCode();
 
-            hashCode.Add(Symbol);
+            hashCode.Add(Identifier);
             foreach (var argument in Arguments)
             {
                 hashCode.Add(argument);

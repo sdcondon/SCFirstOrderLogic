@@ -97,7 +97,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         public static bool TryUpdateUnsafe(Literal x, Literal y, VariableSubstitution unifier)
         {
             if (x.IsNegated != y.IsNegated 
-                || !x.Predicate.Symbol.Equals(y.Predicate.Symbol)
+                || !x.Predicate.Identifier.Equals(y.Predicate.Identifier)
                 || x.Predicate.Arguments.Count != y.Predicate.Arguments.Count)
             {
                 return false;
@@ -176,7 +176,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
         private static bool TryUpdateUnsafe(Function x, Function y, VariableSubstitution unifier)
         {
-            if (!x.Symbol.Equals(y.Symbol) || x.Arguments.Count != y.Arguments.Count)
+            if (!x.Identifier.Equals(y.Identifier) || x.Arguments.Count != y.Arguments.Count)
             {
                 return false;
             }

@@ -4,7 +4,7 @@ namespace SCFirstOrderLogic
 {
     /// <summary>
     /// <para>
-    /// Singleton representation of the symbol of a predicate of first order logic that represents equality. In typical FOL syntax, this is written as:
+    /// Singleton representation of the identifier of the equality predicate. In typical FOL syntax, this is written as:
     /// <code>{term} = {term}</code>
     /// </para>
     /// <para>
@@ -15,19 +15,19 @@ namespace SCFirstOrderLogic
     /// </para>
     /// <para>
     /// This does of course mean that the way we render these in FoL syntax ("Equals(x, y)") doesn't match the usual FoL syntax for equality
-    /// ("x = y"). Easy enough to resolve, either specifically (by accounting specifically for this symbol in formatting logic) or in general (an IPredicateSymbol 
+    /// ("x = y"). Easy enough to resolve, either specifically (by accounting specifically for this identifier in formatting logic) or in general (an IPredicateIdentifier 
     /// interface with an IsRenderedInfix property?). Haven't done that yet because its not a big deal, is not worth the complexity, and I'm not yet sure
     /// how I want to deal with rendering in FoL syntax going forwards.
     /// </para>
     /// </summary>
-    public sealed class EqualitySymbol
+    public sealed class EqualityIdentifier
     {
-        private EqualitySymbol() {}
+        private EqualityIdentifier() {}
 
         /// <summary>
-        /// Gets the singleton instance of <see cref="EqualitySymbol"/>.
+        /// Gets the singleton instance of <see cref="EqualityIdentifier"/>.
         /// </summary>
-        public static EqualitySymbol Instance { get; } = new EqualitySymbol();
+        public static EqualityIdentifier Instance { get; } = new EqualityIdentifier();
 
         /// <inheritdoc />
         public override string ToString() => "Equals";

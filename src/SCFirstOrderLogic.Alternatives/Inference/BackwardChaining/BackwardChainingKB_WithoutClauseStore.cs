@@ -20,7 +20,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     public class BackwardChainingKB_WithoutClauseStore : IKnowledgeBase
     {
         // NB: Hard-coding of clause storage in a Dictionary instead of an anstracted clause store:
-        private readonly Dictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol = new();
+        private readonly Dictionary<object, List<CNFDefiniteClause>> clausesByConsequentPredicateId = new();
 
         /// <inheritdoc />
         public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
@@ -34,17 +34,17 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));
             }
 
-            // Store clauses just in memory, but indexed by their consequent symbol:
+            // Store clauses just in memory, but indexed by the consequent predicate identifier:
             foreach (var clause in cnfSentence.Clauses)
             {
                 var definiteClause = new CNFDefiniteClause(clause);
 
-                if (!clausesByConsequentSymbol.TryGetValue(definiteClause.Consequent.Symbol, out var clausesWithThisConsequentSymbol))
+                if (!clausesByConsequentPredicateId.TryGetValue(definiteClause.Consequent.Identifier, out var clausesWithThisConsequentPredicateId))
                 {
-                    clausesWithThisConsequentSymbol = clausesByConsequentSymbol[definiteClause.Consequent.Symbol] = new List<CNFDefiniteClause>();
+                    clausesWithThisConsequentPredicateId = clausesByConsequentPredicateId[definiteClause.Consequent.Identifier] = new List<CNFDefiniteClause>();
                 }
 
-                clausesWithThisConsequentSymbol.Add(definiteClause);
+                clausesWithThisConsequentPredicateId.Add(definiteClause);
             }
 
             return Task.CompletedTask;
@@ -70,12 +70,12 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             }
 
             // Doesn't hurt to not standardise variables here - wont clash because all of the KB rules *are* standardised
-            // (assuming the symbols in the query don't have weird equality rules)..
+            // (assuming the identifiers of the variables in the query don't have weird equality rules)..
             // ..and in any case our standardisation logic (is within CNFConversion for the moment and) assumes all variables to be quantified..
             //var standardisation = new VariableStandardisation(query);
             //p = (Predicate)standardisation.ApplyTo(p);
 
-            return Task.FromResult(new Query(p, clausesByConsequentSymbol));
+            return Task.FromResult(new Query(p, clausesByConsequentPredicateId));
         }
 
         /// <summary>
@@ -94,14 +94,14 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         public class Query : IQuery
         {
             private readonly Predicate query;
-            private readonly IReadOnlyDictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol;
+            private readonly IReadOnlyDictionary<object, List<CNFDefiniteClause>> clausesByConsequentPredicateId;
 
             private IEnumerable<Proof>? proofs;
 
-            internal Query(Predicate query, IReadOnlyDictionary<object, List<CNFDefiniteClause>> clausesByConsequentSymbol)
+            internal Query(Predicate query, IReadOnlyDictionary<object, List<CNFDefiniteClause>> clausesByConsequentPredicateId)
             {
                 this.query = query;
-                this.clausesByConsequentSymbol = clausesByConsequentSymbol;
+                this.clausesByConsequentPredicateId = clausesByConsequentPredicateId;
             }
 
             /// <inheritdoc />
@@ -172,7 +172,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                             normalisationTermsToExplain.Add(term);
                         }
 
-                        foreach (var term in proof.Unifier.Bindings.SelectMany(kvp => new[] { kvp.Key, kvp.Value }).Where(t => t is VariableReference vr && vr.Symbol is StandardisedVariableSymbol))
+                        foreach (var term in proof.Unifier.Bindings.SelectMany(kvp => new[] { kvp.Key, kvp.Value }).Where(t => t is VariableReference vr && vr.Identifier is StandardisedVariableIdentifier))
                         {
                             normalisationTermsToExplain.Add(term);
                         }
@@ -209,7 +209,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 
             private IEnumerable<Proof> ProvePredicate(Predicate goal, Proof parentProof)
             {
-                if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
+                if (clausesByConsequentPredicateId.TryGetValue(goal.Identifier, out var clausesWithThisGoal))
                 {
                     foreach (var clause in clausesWithThisGoal)
                     {

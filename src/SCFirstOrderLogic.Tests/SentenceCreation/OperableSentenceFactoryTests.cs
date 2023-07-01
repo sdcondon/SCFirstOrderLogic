@@ -34,7 +34,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                 new TestCase(
                     SentenceSurrogate: Constant1 == Constant2,
                     ExpectedSentence: new Predicate(
-                        EqualitySymbol.Instance,
+                        EqualityIdentifier.Instance,
                         new Constant(nameof(Constant1)),
                         new Constant(nameof(Constant2)))),
 
@@ -49,7 +49,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                     ExpectedSentence: new ExistentialQuantification(
                         new VariableDeclaration("X"),
                         new Predicate(
-                            EqualitySymbol.Instance,
+                            EqualityIdentifier.Instance,
                             new Function(nameof(UnaryFunction), new[] { new VariableReference(new VariableDeclaration("X")) }),
                             new Constant(nameof(Constant1))))),
 
@@ -69,7 +69,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                     ExpectedSentence: new UniversalQuantification(
                         new VariableDeclaration("X"),
                         new Predicate(
-                            EqualitySymbol.Instance,
+                            EqualityIdentifier.Instance,
                             new Function(nameof(UnaryFunction), new[] { new VariableReference(new VariableDeclaration("X")) }),
                             new Constant(nameof(Constant1))))),
             })

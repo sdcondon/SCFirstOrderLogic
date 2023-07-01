@@ -86,7 +86,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
         private static bool TryUnify(Predicate x, Predicate y, IDictionary<VariableReference, Term> unifier)
         {
-            if (!x.Symbol.Equals(y.Symbol))
+            if (!x.Identifier.Equals(y.Identifier))
             {
                 return false;
             }
@@ -150,7 +150,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
         private static bool TryUnify(Function x, Function y, IDictionary<VariableReference, Term> unifier)
         {
-            if (!x.Symbol.Equals(y.Symbol))
+            if (!x.Identifier.Equals(y.Identifier))
             {
                 return false;
             }

@@ -17,8 +17,8 @@ namespace SCFirstOrderLogic.SentenceFormatting
     /// </summary>
     public class SentenceFormatter
     {
-        private readonly ILabellingScope<StandardisedVariableSymbol> standardisedVariableLabellingScope;
-        private readonly ILabellingScope<SkolemFunctionSymbol> skolemFunctionLabellingScope;
+        private readonly ILabellingScope<StandardisedVariableIdentifier> standardisedVariableLabellingScope;
+        private readonly ILabellingScope<SkolemFunctionIdentifier> skolemFunctionLabellingScope;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SentenceFormatter"/> class that uses the <see cref="DefaultStandardisedVariableLabeller"/>
@@ -34,7 +34,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="standardisedVariableLabeller">The labeller to use for standardised variables.</param>
         /// <param name="skolemFunctionLabeller">The labeller to use for Skolem functions.</param>
-        public SentenceFormatter(ILabeller<StandardisedVariableSymbol> standardisedVariableLabeller, ILabeller<SkolemFunctionSymbol> skolemFunctionLabeller)
+        public SentenceFormatter(ILabeller<StandardisedVariableIdentifier> standardisedVariableLabeller, ILabeller<SkolemFunctionIdentifier> skolemFunctionLabeller)
         {
             this.standardisedVariableLabellingScope = standardisedVariableLabeller.MakeLabellingScope();
             this.skolemFunctionLabellingScope = skolemFunctionLabeller.MakeLabellingScope();
@@ -45,7 +45,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <see cref="SentenceFormatter"/> instances constructed with the parameterless constructor.
         /// Defaults to a <see cref="SubscriptSuffixLabeller"/>.
         /// </summary>
-        public static ILabeller<StandardisedVariableSymbol> DefaultStandardisedVariableLabeller { get; set; } =
+        public static ILabeller<StandardisedVariableIdentifier> DefaultStandardisedVariableLabeller { get; set; } =
             new SubscriptSuffixLabeller();
 
         /// <summary>
@@ -53,8 +53,8 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <see cref="SentenceFormatter"/> instances constructed with the parameterless constructor.
         /// Defaults to a <see cref="LabelSetLabeller{T}"/> using the (upper-case) modern Latin alphabet;
         /// </summary>
-        public static ILabeller<SkolemFunctionSymbol> DefaultSkolemFunctionLabeller { get; set; } =
-            new LabelSetLabeller<SkolemFunctionSymbol>(LabelSets.UpperModernLatinAlphabet);
+        public static ILabeller<SkolemFunctionIdentifier> DefaultSkolemFunctionLabeller { get; set; } =
+            new LabelSetLabeller<SkolemFunctionIdentifier>(LabelSets.UpperModernLatinAlphabet);
 
         /// <summary>
         /// Returns a string representation of a given <see cref="CNFClause"/> instance.
@@ -166,7 +166,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <param name="predicate">The predicate to be formatted.</param>
         /// <returns>A string representation of the given predicate.</returns>
         public string Format(Predicate predicate) =>
-            $"{predicate.Symbol}({string.Join(", ", predicate.Arguments.Select(a => Format(a)))})";
+            $"{predicate.Identifier}({string.Join(", ", predicate.Arguments.Select(a => Format(a)))})";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="UniversalQuantification"/> instance.
@@ -195,7 +195,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <param name="constant">The constant to be formatted.</param>
         /// <returns>A string representation of the given constant.</returns>
         public string Format(Constant constant) =>
-            constant.Symbol.ToString() ?? throw new ArgumentException("Cannot format constant because ToString of its symbol returned null", nameof(constant));
+            constant.Identifier.ToString() ?? throw new ArgumentException("Cannot format constant because ToString of its identifier returned null", nameof(constant));
 
         /// <summary>
         /// Returns a string representation of a given <see cref="VariableReference"/> instance.
@@ -212,16 +212,16 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <returns>A string representation of the given function.</returns>
         public string Format(Function function)
         {
-            var label = function.Symbol is SkolemFunctionSymbol skm ? Format(skm) : function.Symbol.ToString();
+            var label = function.Identifier is SkolemFunctionIdentifier skm ? Format(skm) : function.Identifier.ToString();
             return $"{label}({string.Join(", ", function.Arguments.Select(a => Format(a)))})";
         }
 
         /// <summary>
-        /// Returns a string representation of a given <see cref="SkolemFunctionSymbol"/> instance.
+        /// Returns a string representation of a given <see cref="SkolemFunctionIdentifier"/> instance.
         /// </summary>
-        /// <param name="symbol">The symbol to be formatted.</param>
-        /// <returns>A string representation of the given symbol.</returns>
-        public string Format(SkolemFunctionSymbol symbol) => skolemFunctionLabellingScope.GetLabel(symbol);
+        /// <param name="identifier">The identifier to be formatted.</param>
+        /// <returns>A string representation of the given identifier.</returns>
+        public string Format(SkolemFunctionIdentifier identifier) => skolemFunctionLabellingScope.GetLabel(identifier);
 
         /// <summary>
         /// Returns a string representation of a given <see cref="VariableDeclaration"/> instance.
@@ -230,18 +230,18 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <returns>A string representation of the given variable declaration.</returns>
         public string Format(VariableDeclaration variableDeclaration)
         {
-            return variableDeclaration.Symbol switch
+            return variableDeclaration.Identifier switch
             {
-                StandardisedVariableSymbol std => Format(std),
-                _ => variableDeclaration.Symbol.ToString() ?? throw new ArgumentException("Cannot format variable declaration because ToString of its symbol returned null", nameof(variableDeclaration))
+                StandardisedVariableIdentifier std => Format(std),
+                _ => variableDeclaration.Identifier.ToString() ?? throw new ArgumentException("Cannot format variable declaration because ToString of its identifier returned null", nameof(variableDeclaration))
             };
         }
 
         /// <summary>
-        /// Returns a string representation of a given <see cref="StandardisedVariableSymbol"/> instance.
+        /// Returns a string representation of a given <see cref="StandardisedVariableIdentifier"/> instance.
         /// </summary>
-        /// <param name="symbol">The symbol to be formatted.</param>
-        /// <returns>A string representation of the given standardised variable symbol.</returns>
-        public string Format(StandardisedVariableSymbol symbol) => standardisedVariableLabellingScope.GetLabel(symbol);
+        /// <param name="identifier">The identifier to be formatted.</param>
+        /// <returns>A string representation of the given standardised variable identifier.</returns>
+        public string Format(StandardisedVariableIdentifier identifier) => standardisedVariableLabellingScope.GetLabel(identifier);
     }
 }

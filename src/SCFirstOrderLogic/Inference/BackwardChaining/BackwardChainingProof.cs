@@ -85,7 +85,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 normalisationTermsToExplain.Add(term);
             }
 
-            foreach (var term in Unifier.Bindings.SelectMany(kvp => new[] { kvp.Key, kvp.Value }).Where(t => t is VariableReference vr && vr.Symbol is StandardisedVariableSymbol))
+            foreach (var term in Unifier.Bindings.SelectMany(kvp => new[] { kvp.Key, kvp.Value }).Where(t => t is VariableReference vr && vr.Identifier is StandardisedVariableIdentifier))
             {
                 normalisationTermsToExplain.Add(term);
             }

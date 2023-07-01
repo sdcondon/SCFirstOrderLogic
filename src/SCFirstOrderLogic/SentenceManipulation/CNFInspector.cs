@@ -42,7 +42,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
                         switch (term)
                         {
                             case Function function:
-                                if (function.Symbol is SkolemFunctionSymbol && !returnedAlready.Contains(function))
+                                if (function.Identifier is SkolemFunctionIdentifier && !returnedAlready.Contains(function))
                                 {
                                     returnedAlready.Add(function);
                                     yield return function;
@@ -55,7 +55,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
                                 break;
                             case VariableReference variable:
-                                if (variable.Symbol is StandardisedVariableSymbol && !returnedAlready.Contains(variable))
+                                if (variable.Identifier is StandardisedVariableIdentifier && !returnedAlready.Contains(variable))
                                 {
                                     returnedAlready.Add(variable);
                                     yield return variable;

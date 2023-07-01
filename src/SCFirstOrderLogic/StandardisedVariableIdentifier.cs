@@ -6,13 +6,13 @@ namespace SCFirstOrderLogic
 {
     /// <summary>
     /// <para>
-    /// Class for symbols of variables that have been standardised as part of the normalisation process.
+    /// Class for identifiers of variables that have been standardised as part of the normalisation process.
     /// </para>
     /// <para>
     /// NB: Doesn't override equality or hash code, so uses reference equality;
     /// and the normalisation process creates exactly one instance per variable scope - thus achieving standardisation
     /// without having to muck about with anything like trying to ensure names that are unique strings
-    /// (which only sentence formatting logic, not the symbol itself, should care about).
+    /// (which only sentence formatting logic, not the identifier itself, should care about).
     /// </para>
     /// <para>
     /// This is however slightly awkward to to test, and has shortcomings when serialization is involved.
@@ -22,7 +22,7 @@ namespace SCFirstOrderLogic
     /// class doesn't completely normalise. Also note potential problems when we need to restandardise variables (happens in backward chaining).
     /// </para>
     /// </summary>
-    public class StandardisedVariableSymbol
+    public class StandardisedVariableIdentifier
     {
         /// <remarks>
         /// <para>
@@ -33,7 +33,7 @@ namespace SCFirstOrderLogic
         /// more than once in a sentence. This is completely valid, as long as their scopes don't overlap.
         /// </para>
         /// <para>
-        /// Originally, we stored the full context in this symbol - a collection starting from the quantification and ending with the top-level sentence.
+        /// Originally, we stored the full context in this identifier - a collection starting from the quantification and ending with the top-level sentence.
         /// This would protect against pretty much everything a user could throw at us. It'd not be able to differentiate between cases where the exact
         /// same quantification (reference) occurs twice as a child of a single sentence object, but there's no sentence type where distinguishing the two
         /// copies is important (and honestly when would that ever happen).
@@ -46,7 +46,7 @@ namespace SCFirstOrderLogic
         /// is unique), rather than necessarily have to go back to the full context approach.
         /// </para>
         /// </remarks>
-        internal StandardisedVariableSymbol(Quantification originalVariableScope, Sentence originalSentence)
+        internal StandardisedVariableIdentifier(Quantification originalVariableScope, Sentence originalSentence)
         {
             OriginalVariableScope = originalVariableScope;
             OriginalSentence = originalSentence;
@@ -64,14 +64,14 @@ namespace SCFirstOrderLogic
         public Sentence OriginalSentence { get; }
 
         /// <summary>
-        /// Gets the original variable symbol that this symbol is the standardisation of.
+        /// Gets the original variable identifier that this identifier is the standardisation of.
         /// Intended for use within explanations of query results.
         /// </summary>
 
-        public object OriginalSymbol => OriginalVariableScope.Variable.Symbol;
+        public object OriginalIdentifier => OriginalVariableScope.Variable.Identifier;
 
         /////// <summary>
-        /////// Gets the context of the original variable symbol that this symbol is the standardisation of.
+        /////// Gets the context of the original variable identifier that this identifier is the standardisation of.
         /////// An enumeration starting from the quantification that declares the variable, moving back up through
         /////// the sentence tree to the top-level sentence.
         /////// </summary>

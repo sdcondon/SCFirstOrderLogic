@@ -61,7 +61,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             }
 
             //// Doesn't hurt to not standardise variables here - wont clash because all of the KB rules *are* standardised
-            //// (assuming the symbols in the query don't have weird equality rules)..
+            //// (assuming the identifiers of the variables in the query don't have weird equality rules)..
             //// ..and in any case our standardisation logic (is within CNFConversion for the moment and) assumes all variables to be quantified.
 
             return Task.FromResult(new BackwardChainingQuery(p, clauseStore));

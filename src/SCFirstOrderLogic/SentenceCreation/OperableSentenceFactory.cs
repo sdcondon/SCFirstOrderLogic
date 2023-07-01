@@ -108,152 +108,152 @@ namespace SCFirstOrderLogic.SentenceCreation
             new OperableEquivalence(left, right);
 
         /// <summary>
-        /// Shorthand factory method for a new <see cref="OperablePredicate"/> instance with the <see cref="EqualitySymbol.Instance"/> symbol.
+        /// Shorthand factory method for a new <see cref="OperablePredicate"/> instance with the <see cref="EqualityIdentifier.Instance"/> identifier.
         /// </summary>
         /// <param name="left">The left-hand operand of the equality.</param>
         /// <param name="right">The right-hand operand of the equality.</param>
         /// <returns>A new <see cref="OperablePredicate"/> instance.</returns>
         public static OperableSentence AreEqual(OperableTerm left, OperableTerm right) =>
-            new OperablePredicate(EqualitySymbol.Instance, left, right);
+            new OperablePredicate(EqualityIdentifier.Instance, left, right);
 
         /// <summary>
         /// Shorthand factory method for a new <see cref="OperableVariableDeclaration"/> instance.
         /// </summary>
-        /// <param name="symbol">The symbol of the variable.</param>>
+        /// <param name="identifier">The identifier of the variable.</param>>
         /// <returns>A new <see cref="OperableVariableDeclaration"/> instance.</returns>
-        public static OperableVariableDeclaration Var(object symbol) =>
-            new OperableVariableDeclaration(symbol);
+        public static OperableVariableDeclaration Var(object identifier) =>
+            new OperableVariableDeclaration(identifier);
 
         #region VariableDeclarations
         //// I'm still unconvinced that these properties are a good idea. They're handy in the example domains though, so I'm giving them the benefit of the doubt for now..
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "A".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "A".
         /// </summary>
         public static OperableVariableDeclaration A => new(nameof(A));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "B".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "B".
         /// </summary>
         public static OperableVariableDeclaration B => new(nameof(B));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "C".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "C".
         /// </summary>
         public static OperableVariableDeclaration C => new(nameof(C));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "D".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "D".
         /// </summary>
         public static OperableVariableDeclaration D => new(nameof(D));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "E".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "E".
         /// </summary>
         public static OperableVariableDeclaration E => new(nameof(E));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "F".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "F".
         /// </summary>
         public static OperableVariableDeclaration F => new(nameof(F));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "G".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "G".
         /// </summary>
         public static OperableVariableDeclaration G => new(nameof(G));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "H".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "H".
         /// </summary>
         public static OperableVariableDeclaration H => new(nameof(H));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "I".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "I".
         /// </summary>
         public static OperableVariableDeclaration I => new(nameof(I));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "J".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "J".
         /// </summary>
         public static OperableVariableDeclaration J => new(nameof(J));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "K".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "K".
         /// </summary>
         public static OperableVariableDeclaration K => new(nameof(K));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "L".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "L".
         /// </summary>
         public static OperableVariableDeclaration L => new(nameof(L));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "M".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "M".
         /// </summary>
         public static OperableVariableDeclaration M => new(nameof(M));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "N".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "N".
         /// </summary>
         public static OperableVariableDeclaration N => new(nameof(N));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "O".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "O".
         /// </summary>
         public static OperableVariableDeclaration O => new(nameof(O));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "P".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "P".
         /// </summary>
         public static OperableVariableDeclaration P => new(nameof(P));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "Q".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "Q".
         /// </summary>
         public static OperableVariableDeclaration Q => new(nameof(Q));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "R".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "R".
         /// </summary>
         public static OperableVariableDeclaration R => new(nameof(R));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "S".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "S".
         /// </summary>
         public static OperableVariableDeclaration S => new(nameof(S));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "T".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "T".
         /// </summary>
         public static OperableVariableDeclaration T => new(nameof(T));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "U".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "U".
         /// </summary>
         public static OperableVariableDeclaration U => new(nameof(U));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "V".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "V".
         /// </summary>
         public static OperableVariableDeclaration V => new(nameof(V));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "W".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "W".
         /// </summary>
         public static OperableVariableDeclaration W => new(nameof(W));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "X".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "X".
         /// </summary>
         public static OperableVariableDeclaration X => new(nameof(X));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "Y".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "Y".
         /// </summary>
         public static OperableVariableDeclaration Y => new(nameof(Y));
 
         /// <summary>
-        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the symbol "Z".
+        /// Gets a new <see cref="OperableVariableDeclaration"/> for a variable with the identifier "Z".
         /// </summary>
         public static OperableVariableDeclaration Z => new(nameof(Z));
 
@@ -300,7 +300,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                 OperableExistentialQuantification existentialQuantification => new ExistentialQuantification(existentialQuantification.Variable, existentialQuantification.Sentence),
                 OperableImplication implication => new Implication(implication.Antecedent, implication.Consequent),
                 OperableNegation negation => new Negation(negation.Sentence),
-                OperablePredicate predicate => new Predicate(predicate.Symbol, predicate.Arguments.Select(a => (Term)a).ToArray()),
+                OperablePredicate predicate => new Predicate(predicate.Identifier, predicate.Arguments.Select(a => (Term)a).ToArray()),
                 OperableUniversalQuantification universalQuantification => new UniversalQuantification(universalQuantification.Variable, universalQuantification.Sentence),
                 _ => throw new ArgumentException($"Unsupported OperableSentence type '{sentence.GetType()}'", nameof(sentence))
             };
@@ -328,21 +328,21 @@ namespace SCFirstOrderLogic.SentenceCreation
         /// </summary>
         public sealed class OperableConstant : OperableTerm
         {
-            internal OperableConstant(object symbol) => Symbol = symbol;
+            internal OperableConstant(object identifier) => Identifier = identifier;
 
-            internal object Symbol { get; }
+            internal object Identifier { get; }
 
             /// <summary>
             /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableConstant"/>.
             /// </summary>
             /// <param name="constant">The constant to convert.</param>
-            public static implicit operator OperableConstant(Constant constant) => new(constant.Symbol);
+            public static implicit operator OperableConstant(Constant constant) => new(constant.Identifier);
 
             /// <summary>
             /// Implicitly converts an <see cref="OperableConstant"/> instance to an equivalent <see cref="OperableConstant"/>.
             /// </summary>
             /// <param name="constant">The constant to convert.</param>
-            public static implicit operator Constant(OperableConstant constant) => new(constant.Symbol);
+            public static implicit operator Constant(OperableConstant constant) => new(constant.Identifier);
         }
 
         /// <summary>
@@ -395,32 +395,32 @@ namespace SCFirstOrderLogic.SentenceCreation
         /// </summary>
         public class OperableFunction : OperableTerm
         {
-            internal OperableFunction(object symbol, params OperableTerm[] arguments)
-                : this(symbol, (IList<OperableTerm>)arguments)
+            internal OperableFunction(object identifier, params OperableTerm[] arguments)
+                : this(identifier, (IList<OperableTerm>)arguments)
             {
             }
 
-            internal OperableFunction(object symbol, IList<OperableTerm> arguments)
+            internal OperableFunction(object identifier, IList<OperableTerm> arguments)
             {
-                Symbol = symbol;
+                Identifier = identifier;
                 Arguments = new ReadOnlyCollection<OperableTerm>(arguments);
             }
 
             internal ReadOnlyCollection<OperableTerm> Arguments { get; }
 
-            internal object Symbol { get; }
+            internal object Identifier { get; }
 
             /// <summary>
             /// Implicitly converts a <see cref="Function"/> instance to an equivalent <see cref="OperableFunction"/>.
             /// </summary>
             /// <param name="function">The function to convert.</param>
-            public static implicit operator OperableFunction(Function function) => new(function.Symbol, function.Arguments.Select(a => (OperableTerm)a).ToArray());
+            public static implicit operator OperableFunction(Function function) => new(function.Identifier, function.Arguments.Select(a => (OperableTerm)a).ToArray());
 
             /// <summary>
             /// Implicitly converts an <see cref="OperableFunction"/> instance to an equivalent <see cref="Function"/>.
             /// </summary>
             /// <param name="function">The function to convert.</param>
-            public static implicit operator Function(OperableFunction function) => new(function.Symbol, function.Arguments.Select(a => (Term)a).ToArray());
+            public static implicit operator Function(OperableFunction function) => new(function.Identifier, function.Arguments.Select(a => (Term)a).ToArray());
         }
 
         /// <summary>
@@ -457,38 +457,38 @@ namespace SCFirstOrderLogic.SentenceCreation
         /// </summary>
         public class OperablePredicate : OperableSentence
         {
-            internal OperablePredicate(object symbol, params OperableTerm[] arguments)
-                : this(symbol, (IList<OperableTerm>)arguments)
+            internal OperablePredicate(object identifier, params OperableTerm[] arguments)
+                : this(identifier, (IList<OperableTerm>)arguments)
             {
             }
 
-            internal OperablePredicate(object symbol, IList<OperableTerm> arguments)
+            internal OperablePredicate(object identifier, IList<OperableTerm> arguments)
             {
-                Symbol = symbol;
+                Identifier = identifier;
                 Arguments = new ReadOnlyCollection<OperableTerm>(arguments);
             }
 
             internal ReadOnlyCollection<OperableTerm> Arguments { get; }
 
-            internal object Symbol { get; }
+            internal object Identifier { get; }
 
             /// <summary>
             /// Implicitly converts a <see cref="Predicate"/> instance to an equivalent <see cref="OperablePredicate"/>.
             /// </summary>
             /// <param name="predicate">The predicate to convert.</param>
-            public static implicit operator OperablePredicate(Predicate predicate) => new(predicate.Symbol, predicate.Arguments.Select(a => (OperableTerm)a).ToArray());
+            public static implicit operator OperablePredicate(Predicate predicate) => new(predicate.Identifier, predicate.Arguments.Select(a => (OperableTerm)a).ToArray());
 
             /// <summary>
             /// Implicitly converts an <see cref="OperablePredicate"/> instance to an equivalent <see cref="Predicate"/>.
             /// </summary>
             /// <param name="predicate">The operable predicate to convert.</param>
-            public static implicit operator Predicate(OperablePredicate predicate) => new(predicate.Symbol, predicate.Arguments.Select(a => (Term)a).ToArray());
+            public static implicit operator Predicate(OperablePredicate predicate) => new(predicate.Identifier, predicate.Arguments.Select(a => (Term)a).ToArray());
 
             /// <summary>
             /// Implicitly converts an <see cref="OperablePredicate"/> instance to an equivalent <see cref="Sentence"/>.
             /// </summary>
             /// <param name="predicate">The operable predicate to convert.</param>
-            public static implicit operator Sentence(OperablePredicate predicate) => new Predicate(predicate.Symbol, predicate.Arguments.Select(a => (Term)a).ToArray());
+            public static implicit operator Sentence(OperablePredicate predicate) => new Predicate(predicate.Identifier, predicate.Arguments.Select(a => (Term)a).ToArray());
         }
 
         /// <summary>
@@ -501,20 +501,20 @@ namespace SCFirstOrderLogic.SentenceCreation
         public abstract class OperableTerm
         {
             /// <summary>
-            /// Composes two <see cref="OperableTerm"/> instances together by creating an equality predicate. That is, an <see cref="OperablePredicate"/> with the <see cref="EqualitySymbol.Instance"/> symbol.
+            /// Composes two <see cref="OperableTerm"/> instances together by creating an equality predicate. That is, an <see cref="OperablePredicate"/> with the <see cref="EqualityIdentifier.Instance"/> identifier.
             /// </summary>
             /// <param name="left">The left-hand side of the equality.</param>
             /// <param name="right">The right-hand side of the equality.</param>
             /// <returns>A new <see cref="OperablePredicate"/> instance.</returns>
-            public static OperableSentence operator ==(OperableTerm left, OperableTerm right) => new OperablePredicate(EqualitySymbol.Instance, left, right);
+            public static OperableSentence operator ==(OperableTerm left, OperableTerm right) => new OperablePredicate(EqualityIdentifier.Instance, left, right);
 
             /// <summary>
-            /// Composes two <see cref="OperableTerm"/> instances together by creating a negation of the equality predicate. That is, an <see cref="OperableNegation"/> acting on an <see cref="OperablePredicate"/> with the <see cref="EqualitySymbol.Instance"/> symbol.
+            /// Composes two <see cref="OperableTerm"/> instances together by creating a negation of the equality predicate. That is, an <see cref="OperableNegation"/> acting on an <see cref="OperablePredicate"/> with the <see cref="EqualityIdentifier.Instance"/> identifier.
             /// </summary>
             /// <param name="left">The left-hand side of the inequality.</param>
             /// <param name="right">The right-hand side of the inequality.</param>
             /// <returns>A new <see cref="OperableNegation"/> instance.</returns>
-            public static OperableSentence operator !=(OperableTerm left, OperableTerm right) => new OperableNegation(new OperablePredicate(EqualitySymbol.Instance, left, right));
+            public static OperableSentence operator !=(OperableTerm left, OperableTerm right) => new OperableNegation(new OperablePredicate(EqualityIdentifier.Instance, left, right));
 
             /// <summary>
             /// Implicitly converts a <see cref="OperableTerm"/> instance to an equivalent <see cref="Term"/>.
@@ -522,9 +522,9 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// <param name="term">The term to convert.</param>
             public static implicit operator Term(OperableTerm term) => term switch
             {
-                OperableConstant constant => new Constant(constant.Symbol),
-                OperableFunction function => new Function(function.Symbol, function.Arguments.Select(a => (Term)a).ToArray()),
-                OperableVariableReference variableReference => new VariableReference(variableReference.Declaration.Symbol),
+                OperableConstant constant => new Constant(constant.Identifier),
+                OperableFunction function => new Function(function.Identifier, function.Arguments.Select(a => (Term)a).ToArray()),
+                OperableVariableReference variableReference => new VariableReference(variableReference.Declaration.Identifier),
                 _ => throw new ArgumentException("Unsupported OperableTerm subtype"),
             };
 
@@ -534,9 +534,9 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// <param name="term">The term to convert.</param>
             public static implicit operator OperableTerm(Term term) => term switch
             {
-                Constant constant => new OperableConstant(constant.Symbol),
-                Function function => new OperableFunction(function.Symbol, function.Arguments.Select(a => (OperableTerm)a).ToArray()),
-                VariableReference variableReference => new OperableVariableReference(variableReference.Declaration.Symbol),
+                Constant constant => new OperableConstant(constant.Identifier),
+                Function function => new OperableFunction(function.Identifier, function.Arguments.Select(a => (OperableTerm)a).ToArray()),
+                VariableReference variableReference => new OperableVariableReference(variableReference.Declaration.Identifier),
                 _ => throw new ArgumentException("Unsupported Term subtype"),
             };
 
@@ -544,19 +544,19 @@ namespace SCFirstOrderLogic.SentenceCreation
             /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableTerm"/>.
             /// </summary>
             /// <param name="constant">The cpnstant to convert.</param>
-            public static implicit operator OperableTerm(Constant constant) => new OperableConstant(constant.Symbol);
+            public static implicit operator OperableTerm(Constant constant) => new OperableConstant(constant.Identifier);
 
             /// <summary>
             /// Implicitly converts a <see cref="Function"/> instance to an equivalent <see cref="OperableTerm"/>.
             /// </summary>
             /// <param name="function">The function to convert.</param>
-            public static implicit operator OperableTerm(Function function) => new OperableFunction(function.Symbol, function.Arguments.Select(a => (OperableTerm)a).ToArray());
+            public static implicit operator OperableTerm(Function function) => new OperableFunction(function.Identifier, function.Arguments.Select(a => (OperableTerm)a).ToArray());
 
             /// <summary>
             /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableTerm"/>.
             /// </summary>
             /// <param name="variableReference">The variable reference to convert.</param>
-            public static implicit operator OperableTerm(VariableReference variableReference) => new OperableVariableReference(variableReference.Declaration.Symbol);
+            public static implicit operator OperableTerm(VariableReference variableReference) => new OperableVariableReference(variableReference.Declaration.Identifier);
         }
 #pragma warning restore CS0660, CS0661
 
@@ -579,21 +579,21 @@ namespace SCFirstOrderLogic.SentenceCreation
         /// </summary>
         public sealed class OperableVariableDeclaration
         {
-            internal OperableVariableDeclaration(object symbol) => Symbol = symbol;
+            internal OperableVariableDeclaration(object identifier) => Identifier = identifier;
 
-            internal object Symbol { get; }
+            internal object Identifier { get; }
 
             /// <summary>
             /// Implicitly converts an <see cref="OperableVariableDeclaration"/> instance to an equivalent <see cref="VariableDeclaration"/>.
             /// </summary>
             /// <param name="declaration">The declaration to convert.</param>
-            public static implicit operator VariableDeclaration(OperableVariableDeclaration declaration) => new(declaration.Symbol);
+            public static implicit operator VariableDeclaration(OperableVariableDeclaration declaration) => new(declaration.Identifier);
 
             /// <summary>
             /// Implicitly converts a <see cref="VariableDeclaration"/> instance to an equivalent <see cref="OperableVariableDeclaration"/>.
             /// </summary>
             /// <param name="declaration">The declaration to convert.</param>
-            public static implicit operator OperableVariableDeclaration(VariableDeclaration declaration) => new(declaration.Symbol);
+            public static implicit operator OperableVariableDeclaration(VariableDeclaration declaration) => new(declaration.Identifier);
 
             /// <summary>
             /// Implicitly converts an <see cref="OperableVariableDeclaration"/> instance to an <see cref="OperableVariableReference"/> referring to that variable.
@@ -622,11 +622,11 @@ namespace SCFirstOrderLogic.SentenceCreation
         {
             internal OperableVariableReference(OperableVariableDeclaration declaration) => Declaration = declaration;
 
-            internal OperableVariableReference(object symbol) => Declaration = new OperableVariableDeclaration(symbol);
+            internal OperableVariableReference(object identifier) => Declaration = new OperableVariableDeclaration(identifier);
 
             internal OperableVariableDeclaration Declaration { get; }
 
-            internal object Symbol => Declaration.Symbol;
+            internal object Identifier => Declaration.Identifier;
 
             /// <summary>
             /// Implicitly converts an <see cref="OperableVariableReference"/> instance to an equivalent <see cref="VariableReference"/>.

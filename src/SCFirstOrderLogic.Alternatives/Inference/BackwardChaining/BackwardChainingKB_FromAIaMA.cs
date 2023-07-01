@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
     /// </summary>
     public class BackwardChainingKB_FromAIaMA : IKnowledgeBase
     {
-        private readonly Dictionary<object, List<CNFClause>> clausesByConsequentSymbol = new();
+        private readonly Dictionary<object, List<CNFClause>> clausesByConsequentPredicateId = new();
 
         /// <inheritdoc />
         public Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default)
@@ -32,17 +32,17 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                 throw new ArgumentException("This knowledge base supports only knowledge in the form of definite clauses", nameof(sentence));
             }
 
-            // Store clauses just in memory, indexed by their consequent symbol:
+            // Store clauses just in memory, indexed by the identifier of their consequent predicate:
             foreach (var clause in cnfSentence.Clauses)
             {
-                var consequentSymbol = clause.Literals.Single(l => l.IsPositive).Predicate.Symbol;
+                var consequentPredicateId = clause.Literals.Single(l => l.IsPositive).Predicate.Identifier;
 
-                if (!clausesByConsequentSymbol.TryGetValue(consequentSymbol, out var clausesWithThisConsequentSymbol))
+                if (!clausesByConsequentPredicateId.TryGetValue(consequentPredicateId, out var clausesWithThisConsequentPredicateId))
                 {
-                    clausesWithThisConsequentSymbol = clausesByConsequentSymbol[consequentSymbol] = new List<CNFClause>();
+                    clausesWithThisConsequentPredicateId = clausesByConsequentPredicateId[consequentPredicateId] = new List<CNFClause>();
                 }
 
-                clausesWithThisConsequentSymbol.Add(clause);
+                clausesWithThisConsequentPredicateId.Add(clause);
             }
 
             return Task.CompletedTask;
@@ -63,12 +63,12 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
             }
 
             // Doesn't hurt to not standardise here - wont clash because all of the KB rules *are* standardised
-            // (assuming the symbols in the query don't have weird equality rules)..
+            // (assuming the identifiers of the variables in the query don't have weird equality rules)..
             // ..and in any case our standardisation logic assumes all variables to be quantified, otherwise it crashes..
             //var standardisation = new VariableStandardisation(query);
             //p = (Predicate)standardisation.ApplyTo(p);
 
-            return Task.FromResult(new Query(p, clausesByConsequentSymbol));
+            return Task.FromResult(new Query(p, clausesByConsequentPredicateId));
         }
 
         /// <summary>
@@ -77,14 +77,14 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         public class Query : IQuery
         {
             private readonly Predicate query;
-            private readonly IReadOnlyDictionary<object, List<CNFClause>> clausesByConsequentSymbol;
+            private readonly IReadOnlyDictionary<object, List<CNFClause>> clausesByConsequentPredicateId;
 
             private IEnumerable<VariableSubstitution>? substitutions;
 
-            internal Query(Predicate query, IReadOnlyDictionary<object, List<CNFClause>> clausesByConsequentSymbol)
+            internal Query(Predicate query, IReadOnlyDictionary<object, List<CNFClause>> clausesByConsequentPredicateId)
             {
                 this.query = query;
-                this.clausesByConsequentSymbol = clausesByConsequentSymbol;
+                this.clausesByConsequentPredicateId = clausesByConsequentPredicateId;
             }
 
             /// <inheritdoc />
@@ -133,7 +133,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 
             private IEnumerable<VariableSubstitution> FOL_BC_OR(Predicate goal, VariableSubstitution θ)
             {
-                if (clausesByConsequentSymbol.TryGetValue(goal.Symbol, out var clausesWithThisGoal))
+                if (clausesByConsequentPredicateId.TryGetValue(goal.Identifier, out var clausesWithThisGoal))
                 {
                     foreach (var clause in clausesWithThisGoal)
                     {

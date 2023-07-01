@@ -78,15 +78,15 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         {
             return (x, y) switch
             {
-                (Constant cx, Constant cy) => cx.Symbol.Equals(cy.Symbol),
-                (VariableReference vx, VariableReference vy) => vx.Declaration.Symbol.Equals(vy.Declaration.Symbol),
-                (Operator ox, Operator oy) => ox.Symbol.Equals(oy.Symbol),
+                (Constant cx, Constant cy) => cx.Identifier.Equals(cy.Identifier),
+                (VariableReference vx, VariableReference vy) => vx.Declaration.Identifier.Equals(vy.Declaration.Identifier),
+                (Operator ox, Operator oy) => ox.Identifier.Equals(oy.Identifier),
                 (List<object> lx, List<object> ly) => lx.Count == 0 && ly.Count == 0, // NB: Important aspect of this implementation is that empty lists are considered equal
 
                 // Otherwise its e.g. Conjunction, Disjunction, Equality, Equivalence, ExistentialQuantification, Function, Implication, Negation, Predicate, UniversalQuantification..
                 // We could of course have identical conjunctions etc, but we'll discover that in due course if so. The difficulty (in terms of understanding) here is the vague notion of
                 // equality, not clarified by the source material. What this is really doing is checking if the things under consideration are "atomic" (w.r.t. this algorithm) and
-                // equal. The things that are "atomic" for this algorithm are constants, variable references, "operators" (i.e. function, predicate or operator symbols), and EMPTY argument
+                // equal. The things that are "atomic" for this algorithm are constants, variable references, "operators" (i.e. functions, predicates or operators), and EMPTY argument
                 // lists. Everything else needs to be recursed into to determine unifiability.
                 _ => false 
             };
@@ -113,17 +113,17 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
         private static object OperatorOf(object x)
         {
-            // not perfect, of course - e.g. there's nothing stopping a function from having the symbol "∧"
+            // not perfect, of course - e.g. there's nothing stopping a function from having the identifier "∧"
             return new Operator(x switch
             {
                 Conjunction => "∧",
                 Disjunction => "∨",
                 Equivalence => "⇔",
                 ExistentialQuantification => "∃",
-                Function f => f.Symbol,
+                Function f => f.Identifier,
                 Implication => "⇒",
                 Negation => "¬",
-                Predicate p => p.Symbol,
+                Predicate p => p.Identifier,
                 UniversalQuantification => "∀",
                 _ => throw new ArgumentException("Arg is not a compound", nameof(x)) // e.g. Constant, VariableReference or List<object>..
             });
@@ -203,13 +203,13 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
         private class Operator
         {
-            public Operator(object symbol) => Symbol = symbol;
+            public Operator(object identifier) => Identifier = identifier;
 
-            public object Symbol { get; }
+            public object Identifier { get; }
 
-            public override bool Equals(object? obj) => obj is Operator other && Symbol.Equals(other.Symbol);
+            public override bool Equals(object? obj) => obj is Operator other && Identifier.Equals(other.Identifier);
 
-            public override int GetHashCode() => HashCode.Combine(Symbol);
+            public override int GetHashCode() => HashCode.Combine(Identifier);
         }
     }
 }

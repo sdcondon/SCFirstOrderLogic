@@ -395,12 +395,12 @@ namespace SCFirstOrderLogic.TermIndexing
 
             public IEnumerable<IElementInfo> ApplyTo(Constant constant)
             {
-                yield return new ConstantInfo(constant.Symbol);
+                yield return new ConstantInfo(constant.Identifier);
             }
 
             public IEnumerable<IElementInfo> ApplyTo(Function function)
             {
-                yield return new FunctionInfo(function.Symbol, function.Arguments.Count);
+                yield return new FunctionInfo(function.Identifier, function.Arguments.Count);
 
                 foreach (var argument in function.Arguments)
                 {
@@ -417,9 +417,9 @@ namespace SCFirstOrderLogic.TermIndexing
                 // That is, converted into the ordinal of where they first appear in a depth-first traversal of the term.
                 // This is useful because it means e.g. F(X, X) is transformed to a path that is identical to the transformation of F(Y, Y),
                 // but different to the transformation of F(X, Y).
-                if (!variableIdMap.TryGetValue(variable.Symbol, out var ordinal))
+                if (!variableIdMap.TryGetValue(variable.Identifier, out var ordinal))
                 {
-                    ordinal = variableIdMap[variable.Symbol] = variableIdMap.Count;
+                    ordinal = variableIdMap[variable.Identifier] = variableIdMap.Count;
                 }
 
                 yield return new VariableInfo(ordinal);

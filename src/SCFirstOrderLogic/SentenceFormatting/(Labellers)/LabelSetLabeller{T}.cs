@@ -25,24 +25,24 @@ namespace SCFirstOrderLogic.SentenceFormatting
         private class LabelSetLabellingScope : ILabellingScope<T>
         {
             private readonly IEnumerator<string> labelEnumerator;
-            private readonly Dictionary<T, string> labelsBySymbol = new();
+            private readonly Dictionary<T, string> labelsByIdentifier = new();
 
             public LabelSetLabellingScope(IEnumerator<string> labelEnumerator) => this.labelEnumerator = labelEnumerator;
 
             /// <inheritdoc />
-            public string GetLabel(T symbol)
+            public string GetLabel(T identifier)
             {
-                if (labelsBySymbol.TryGetValue(symbol, out var label))
+                if (labelsByIdentifier.TryGetValue(identifier, out var label))
                 {
                     return label;
                 }
                 else if (labelEnumerator.MoveNext())
                 {
-                    return labelsBySymbol[symbol] = labelEnumerator.Current;
+                    return labelsByIdentifier[identifier] = labelEnumerator.Current;
                 }
                 else
                 {
-                    // I suppose we *could* fall back on the ToString of the underlying variable symbol here.
+                    // I suppose we *could* fall back on the ToString of the underlying variable identifier here.
                     // But obviously then we lose the unique representation guarantee, and it should be relatively
                     // easy to use essentially infinite label sets - so I'd rather just fail.
                     // Consumers can always create their own labellers with more sophisticated behaviour.

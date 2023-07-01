@@ -38,12 +38,12 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
         private static bool TryUnify(Literal x, Literal y, VariableSubstitution unifier)
         {
-            if (x.IsNegated != y.IsNegated || !x.Predicate.Symbol.Equals(y.Predicate.Symbol))
+            if (x.IsNegated != y.IsNegated || !x.Predicate.Identifier.Equals(y.Predicate.Identifier))
             {
                 return false;
             }
 
-            // WOULD-BE-A-BUG-IF-THIS-WERE-PROD-CODE?: Makes the assumption that same symbol means same number of arguments.
+            // WOULD-BE-A-BUG-IF-THIS-WERE-PROD-CODE?: Makes the assumption that same identifier means same number of arguments.
             // It is possible to confuse this algorithm by passing literals where that isn't true
             foreach (var args in x.Predicate.Arguments.Zip(y.Predicate.Arguments, (x, y) => (x, y)))
             {
@@ -99,7 +99,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
         private static bool TryUnify(Function x, Function y, VariableSubstitution unifier)
         {
-            if (!x.Symbol.Equals(y.Symbol))
+            if (!x.Identifier.Equals(y.Identifier))
             {
                 return false;
             }

@@ -101,27 +101,27 @@ namespace SCFirstOrderLogic
         // things down, I wonder?)
         public CNFClause Restandardise()
         {
-            var mapping = new Dictionary<StandardisedVariableSymbol, StandardisedVariableSymbol>();
+            var mapping = new Dictionary<StandardisedVariableIdentifier, StandardisedVariableIdentifier>();
 
-            StandardisedVariableSymbol GetOrAddNewSymbol(StandardisedVariableSymbol oldSymbol)
+            StandardisedVariableIdentifier GetOrAddNewIdentifier(StandardisedVariableIdentifier oldIdentifier)
             {
-                if (!mapping!.TryGetValue(oldSymbol, out var newSymbol))
+                if (!mapping!.TryGetValue(oldIdentifier, out var newIdentifier))
                 {
-                    newSymbol = mapping[oldSymbol] = new StandardisedVariableSymbol(oldSymbol.OriginalVariableScope, oldSymbol.OriginalSentence);
+                    newIdentifier = mapping[oldIdentifier] = new StandardisedVariableIdentifier(oldIdentifier.OriginalVariableScope, oldIdentifier.OriginalSentence);
                 }
 
-                return newSymbol;
+                return newIdentifier;
             }
 
             Term RestandardiseTerm(Term term) => term switch
             {
                 Constant c => c,
-                VariableReference v => new VariableReference(GetOrAddNewSymbol((StandardisedVariableSymbol)v.Symbol)),
-                Function f => new Function(f.Symbol, f.Arguments.Select(RestandardiseTerm).ToArray()),
+                VariableReference v => new VariableReference(GetOrAddNewIdentifier((StandardisedVariableIdentifier)v.Identifier)),
+                Function f => new Function(f.Identifier, f.Arguments.Select(RestandardiseTerm).ToArray()),
                 _ => throw new ArgumentException($"Unexpected term type '{term.GetType()}' encountered", nameof(term)),
             };
 
-            Predicate RestandardisePredicate(Predicate predicate) => new(predicate.Symbol, predicate.Arguments.Select(RestandardiseTerm).ToArray());
+            Predicate RestandardisePredicate(Predicate predicate) => new(predicate.Identifier, predicate.Arguments.Select(RestandardiseTerm).ToArray());
 
             Literal RestandardiseLiteral(Literal literal) => new(RestandardisePredicate(literal.Predicate), literal.IsNegated);
 

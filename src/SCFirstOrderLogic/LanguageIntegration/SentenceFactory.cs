@@ -188,7 +188,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     && typeof(TDomain).IsAssignableFrom(memberExpr.Expression?.Type)) // BUG-MINOR: Should check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                 {
                     // TElement-valued property access of the domain is interpreted as a constant.
-                    term = new Constant(new MemberConstantSymbol(memberExpr.Member));
+                    term = new Constant(new MemberConstantIdentifier(memberExpr.Member));
                     return true;
                 }
                 else if (expression is MethodCallExpression methodCallExpr
@@ -196,7 +196,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     && methodCallExpr.Arguments.Count == 0)
                 {
                     // TElement-valued parameterless method call of the domain is interpreted as a constant.
-                    term = new Constant(new MemberConstantSymbol(methodCallExpr.Method));
+                    term = new Constant(new MemberConstantIdentifier(methodCallExpr.Method));
                     return true;
                 }
             }
@@ -230,7 +230,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         }
 
         /// <summary>
-        /// Tries to create a <see cref="Predicate"/> with the <see cref="EqualitySymbol"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+        /// Tries to create a <see cref="Predicate"/> with the <see cref="EqualityIdentifier"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>{expression} == {expression}</code>
         /// </summary>
         private static bool TryCreateEquality<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
@@ -241,7 +241,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 && TryCreateTerm<TDomain, TElement>(binaryExpr.Left, out var left)
                 && TryCreateTerm<TDomain, TElement>(binaryExpr.Right, out var right))
             {
-                sentence = new Predicate(EqualitySymbol.Instance, left, right);
+                sentence = new Predicate(EqualityIdentifier.Instance, left, right);
                 return true;
             }
 
@@ -329,7 +329,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     && TryCreateTerm<TDomain, TElement>(memberExpr.Expression, out var argument))
                 {
                     // TElement-valued property access is interpreted as a unary function.
-                    term = new Function(new MemberFunctionSymbol(memberExpr.Member), new[] { argument });
+                    term = new Function(new MemberFunctionIdentifier(memberExpr.Member), new[] { argument });
                     return true;
                 }
                 else if (expression is MethodCallExpression methodCallExpr
@@ -360,7 +360,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                         arguments.Add(arg);
                     }
 
-                    term = new Function(new MemberFunctionSymbol(methodCallExpr.Method), arguments);
+                    term = new Function(new MemberFunctionIdentifier(methodCallExpr.Method), arguments);
                     return true;
                 }
             }
@@ -372,7 +372,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         /// <summary>
         /// Tries to create a <see cref="Implication"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
         /// <code>Operators.If({expression}, {expression})</code>
-        /// (Consumers are encouraged to include <c>using static SCFirstOrderLogic.Symbols;</c> to make this a little shorter)
+        /// (Consumers are encouraged to include <c>using static SCFirstOrderLogic.LanguageIntegration.Operators;</c> to make this a little shorter)
         /// </summary>
         private static bool TryCreateImplication<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
             where TDomain : IEnumerable<TElement>
@@ -407,7 +407,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 && TryCreateTerm<TDomain, TElement>(binaryExpr.Left, out var left)
                 && TryCreateTerm<TDomain, TElement>(binaryExpr.Right, out var right))
             {
-                sentence = new Negation(new Predicate(EqualitySymbol.Instance, left, right));
+                sentence = new Negation(new Predicate(EqualityIdentifier.Instance, left, right));
                 return true;
             }
 
@@ -416,7 +416,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
         }
 
         /// <summary>
-        /// Tries to create a <see cref="MemberPredicateSymbol"/> from an expression acting on the domain (and any relevant variables and constants) that
+        /// Tries to create a <see cref="MemberPredicateIdentifier"/> from an expression acting on the domain (and any relevant variables and constants) that
         /// is a boolean-valued property or method call on an element object, or a boolean-valued property or method call on a domain object.
         /// </summary>
         private static bool TryCreatePredicate<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
@@ -433,13 +433,13 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 if (memberExpr.Expression.Type == typeof(TDomain)) // BUG-MINOR: no guarantee that this is the domain param of the original lambda... requires passing domain param down through the whole process..
                 {
                     // Boolean-valued property access on the domain parameter is interpreted as a ground predicate
-                    sentence = new Predicate(new MemberPredicateSymbol(memberExpr.Member), Array.Empty<Term>());
+                    sentence = new Predicate(new MemberPredicateIdentifier(memberExpr.Member), Array.Empty<Term>());
                     return true;
                 }
                 else if (TryCreateTerm<TDomain, TElement>(memberExpr.Expression, out var argument))
                 {
                     // Boolean-valued property access on a term is interpreted as a unary predicate.
-                    sentence = new Predicate(new MemberPredicateSymbol(memberExpr.Member), new[] { argument });
+                    sentence = new Predicate(new MemberPredicateIdentifier(memberExpr.Member), new[] { argument });
                     return true;
                 }
             }
@@ -471,7 +471,7 @@ namespace SCFirstOrderLogic.LanguageIntegration
                     arguments.Add(arg);
                 }
 
-                sentence = new Predicate(new MemberPredicateSymbol(methodCallExpr.Method), arguments);
+                sentence = new Predicate(new MemberPredicateIdentifier(methodCallExpr.Method), arguments);
                 return true;
             }
             //// ... also to consider - certain things will fail the above but could be very sensibly interpreted

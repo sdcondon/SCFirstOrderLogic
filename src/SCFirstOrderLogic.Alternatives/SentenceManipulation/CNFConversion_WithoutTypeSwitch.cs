@@ -16,12 +16,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public static Sentence ApplyTo(Sentence sentence)
         {
             // We do variable standardisation first, before altering the sentence in any
-            // other way, so that we can easily store the context of the original variable in the new symbol. This
+            // other way, so that we can easily store the context of the original variable in the new identifier. This
             // facilitates explanations of the origins of a particular variable (or Skolem function) in query result explanations.
             // NOT-TODO-ROBUSTNESS: If users include undeclared variables on the assumption they'll be treated as 
             // universally quantified and sentence-wide in scope, the behaviour is going to be, well, wrong.
             // Should we validate here..? Or handle on the assumption that they are universally quantified?
-            // Also should probably complain when nested definitions uses the same symbol (i.e. symbols that are equal).
+            // Also should probably complain when nested definitions uses the same identifier (i.e. identifiers that are equal).
             sentence = new VariableStandardisation(sentence).ApplyTo(sentence);
 
             // It might be possible to do some of these conversions at the same time, but for now
@@ -38,7 +38,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         /// <summary>
         /// <para>
-        /// Transformation that "standardises apart" variables - essentially ensuring that variable symbols are unique.
+        /// Transformation that "standardises apart" variables - essentially ensuring that variable identifiers are unique.
         /// </para>
         /// <para>
         /// Public to allow callers to mess about with the normalisation process.
@@ -60,7 +60,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             {
                 /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
                 /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-                mapping[existentialQuantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(existentialQuantification, rootSentence));
+                mapping[existentialQuantification.Variable] = new VariableDeclaration(new StandardisedVariableIdentifier(existentialQuantification, rootSentence));
                 return base.ApplyTo(existentialQuantification);
             }
 
@@ -68,7 +68,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             {
                 /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
                 /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
-                mapping[universalQuantification.Variable] = new VariableDeclaration(new StandardisedVariableSymbol(universalQuantification, rootSentence));
+                mapping[universalQuantification.Variable] = new VariableDeclaration(new StandardisedVariableIdentifier(universalQuantification, rootSentence));
                 return base.ApplyTo(universalQuantification);
             }
 
@@ -182,7 +182,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             /// <summary>
             /// Initializes a new instance of the <see cref="ScopedSkolemisation"/> class.
             /// </summary>
-            /// <param name="rootSentence">The root sentence being transformed. Stored against the resulting Skolem function symbols - for later explanations and the like.</param>
+            /// <param name="rootSentence">The root sentence being transformed. Stored against the resulting Skolem function identifiers - for later explanations and the like.</param>
             public Skolemisation(Sentence rootSentence)
                 : this(rootSentence, Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>())
             {
@@ -210,7 +210,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
             public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
             {
                 existentialVariableMap[existentialQuantification.Variable] = new Function(
-                    new SkolemFunctionSymbol((StandardisedVariableSymbol)existentialQuantification.Variable.Symbol, rootSentence),
+                    new SkolemFunctionIdentifier((StandardisedVariableIdentifier)existentialQuantification.Variable.Identifier, rootSentence),
                     universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
 
                 return existentialQuantification.Sentence.Accept(this);

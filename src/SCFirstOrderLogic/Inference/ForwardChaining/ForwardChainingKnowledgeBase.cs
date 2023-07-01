@@ -64,7 +64,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
             }
 
             // Doesn't hurt to not standardise here - wont clash because all of the KB rules *are* standardised
-            // (assuming the symbols in the query don't have weird equality rules)..
+            // (assuming the identifiers of the variables in the query don't have weird equality rules)..
             // ..and in any case our standardisation logic assumes all variables to be quantified, otherwise it crashes..
 
             return new ForwardChainingQuery(p, await clauseStore.CreateQueryStoreAsync(cancellationToken));

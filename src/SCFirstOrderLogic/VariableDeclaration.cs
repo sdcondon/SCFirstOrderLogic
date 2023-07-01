@@ -25,53 +25,48 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableDeclaration"/> class.
         /// </summary>
-        /// <param name="symbol">
+        /// <param name="identifier">
         /// <para>
-        /// The symbol of the variable.
+        /// An object that serves as the unique identifier of the variable.
         /// </para>
         /// <para>
-        /// Equality of symbols should indicate that it is the same variable in the domain, and ToString of the symbol should be appropriate for rendering in FoL syntax.
+        /// Equality of identifiers should indicate that it is the same variable in the domain, 
+        /// and ToString of the identifier should be appropriate for rendering in FoL syntax.
         /// </para>
         /// <para>
-        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
+        /// object base class, for now at least we err on the side of simplicity and say that identifiers can be any object.
         /// </para>
         /// </param>
-        public VariableDeclaration(object symbol) => Symbol = symbol;
+        public VariableDeclaration(object identifier) => Identifier = identifier;
 
         /// <summary>
-        /// Gets an object representing the symbol of the variable.
-        /// </summary>
-        /// <remarks>
         /// <para>
-        /// Symbol equality should indicate that it is the same variable in the domain. ToString of the Symbol should be appropriate for rendering in FoL syntax.
+        /// Gets an object that serves as the unique identifier of the variable.
         /// </para>
         /// <para>
-        /// Symbol is not a string to avoid problems caused by clashing symbols. By allowing other types
-        /// we allow for equality logic that includes a type check, and thus the complete preclusion of clashes.
+        /// Equality of identifiers should indicate that it is the same variable in the domain, 
+        /// and ToString of the identifier should be appropriate for rendering in FoL syntax.
         /// </para>
         /// <para>
-        /// NB: Yes, we *could* declare an ISymbol interface that is IEquatable&lt;ISymbol&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of a symbol are
+        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
+        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
         /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, for now at least we err on the side of simplicity and say that symbols can be any object.
+        /// object base class, for now at least we err on the side of simplicity and say that identifiers can be any object.
         /// </para>
-        /// <para>
-        /// Perhaps should be called 'Identifier'..
-        /// </para>
-        /// </remarks>
-        public object Symbol { get; }
+        /// </summary>
+        public object Identifier { get; }
 
         /// <inheritdoc />
         public override bool Equals(object? obj) => obj is VariableDeclaration otherVariableDeclaration && Equals(otherVariableDeclaration);
 
         /// <inheritdoc />
-        public bool Equals(VariableDeclaration? other) => other != null && Symbol.Equals(other.Symbol);
+        public bool Equals(VariableDeclaration? other) => other != null && Identifier.Equals(other.Identifier);
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(Symbol);
+        public override int GetHashCode() => HashCode.Combine(Identifier);
 
         /// <summary>
         /// Defines the implicit conversion operator from a variable declaration to a reference.

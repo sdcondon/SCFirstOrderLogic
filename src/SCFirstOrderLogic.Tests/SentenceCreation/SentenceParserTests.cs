@@ -47,7 +47,7 @@ namespace SCFirstOrderLogic.SentenceCreation
 
                 new(
                     Sentence: "F1() = F2(x, y)",
-                    ExpectedResult: new Predicate(EqualitySymbol.Instance, new Function("F1"), new Function("F2", new Constant("x"), new Constant("y")))),
+                    ExpectedResult: new Predicate(EqualityIdentifier.Instance, new Function("F1"), new Function("F2", new Constant("x"), new Constant("y")))),
             })
             .When(tc => SentenceParser.Parse(tc.Sentence))
             .ThenReturns()

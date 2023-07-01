@@ -79,8 +79,8 @@ namespace SCFirstOrderLogic.Inference
         private class PredicateAndFunctionEqualityAxiomiser : RecursiveSentenceVisitor
         {
             private readonly IKnowledgeBase innerKnowledgeBase;
-            private readonly HashSet<object> knownPredicateSymbols = new() { EqualitySymbol.Instance };
-            private readonly HashSet<object> knownFunctionSymbols = new();
+            private readonly HashSet<object> knownPredicateIdentifiers = new() { EqualityIdentifier.Instance };
+            private readonly HashSet<object> knownFunctionIdentifiers = new();
 
             public PredicateAndFunctionEqualityAxiomiser(IKnowledgeBase innerKnowledgeBase)
             {
@@ -89,11 +89,11 @@ namespace SCFirstOrderLogic.Inference
 
             public override void Visit(Predicate predicate)
             {
-                // NB: we check only for the symbol, not for the symbol with the particular
+                // NB: we check only for the identifier, not for the identifier with the particular
                 // argument count. A fairly safe assumption that we could nevertheless eliminate at some point.
-                if (!knownPredicateSymbols.Contains(predicate.Symbol) && predicate.Arguments.Count > 0)
+                if (!knownPredicateIdentifiers.Contains(predicate.Identifier) && predicate.Arguments.Count > 0)
                 {
-                    knownPredicateSymbols.Add(predicate.Symbol);
+                    knownPredicateIdentifiers.Add(predicate.Identifier);
 
                     // For all predicates, we have something like this,
                     // depending on the argument count:
@@ -102,7 +102,7 @@ namespace SCFirstOrderLogic.Inference
                     // ... and so on
                     var leftArgs = predicate.Arguments.Select((_, i) => new VariableReference($"l{i}")).ToArray();
                     var rightArgs = predicate.Arguments.Select((_, i) => new VariableReference($"r{i}")).ToArray();
-                    var consequent = Iff(new Predicate(predicate.Symbol, leftArgs), new Predicate(predicate.Symbol, rightArgs));
+                    var consequent = Iff(new Predicate(predicate.Identifier, leftArgs), new Predicate(predicate.Identifier, rightArgs));
 
                     Sentence antecedent = AreEqual(leftArgs[0], rightArgs[0]);
                     for (int i = 1; i < predicate.Arguments.Count; i++)
@@ -125,11 +125,11 @@ namespace SCFirstOrderLogic.Inference
 
             public override void Visit(Function function)
             {
-                // NB: we check only for the symbol, not for the symbol with the particular
+                // NB: we check only for the identifier, not for the identifier with the particular
                 // argument count. A fairly safe assumption that we could nevertheless eliminate at some point.
-                if (!knownFunctionSymbols.Contains(function.Symbol) && function.Arguments.Count > 0)
+                if (!knownFunctionIdentifiers.Contains(function.Identifier) && function.Arguments.Count > 0)
                 {
-                    knownFunctionSymbols.Add(function.Symbol);
+                    knownFunctionIdentifiers.Add(function.Identifier);
 
                     // For all functions, we have something like this,
                     // depending on the argument count:
@@ -138,7 +138,7 @@ namespace SCFirstOrderLogic.Inference
                     // .. and so on
                     var leftArgs = function.Arguments.Select((_, i) => new VariableReference($"l{i}")).ToArray();
                     var rightArgs = function.Arguments.Select((_, i) => new VariableReference($"r{i}")).ToArray();
-                    var consequent = AreEqual(new Function(function.Symbol, leftArgs), new Function(function.Symbol, rightArgs));
+                    var consequent = AreEqual(new Function(function.Identifier, leftArgs), new Function(function.Identifier, rightArgs));
 
                     Sentence antecedent = AreEqual(leftArgs[0], rightArgs[0]);
                     for (int i = 1; i < function.Arguments.Count; i++)

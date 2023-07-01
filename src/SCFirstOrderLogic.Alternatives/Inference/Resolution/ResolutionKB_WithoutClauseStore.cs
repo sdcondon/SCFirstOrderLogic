@@ -198,7 +198,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             /// </para>
             /// <para>
             /// NB: falls back on hash code comparison when not ordering because of unit clause presence. Given that
-            /// some sentence things use reference equality (notably, symbols of standardised variables and Skolem functions),
+            /// some sentence things use reference equality (notably, identifiers of standardised variables and Skolem functions),
             /// means that things can be ordered differently from one execution to the next. Not ideal..
             /// </para>
             /// </summary>

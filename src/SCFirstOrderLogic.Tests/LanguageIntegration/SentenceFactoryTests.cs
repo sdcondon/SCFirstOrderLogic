@@ -37,56 +37,56 @@ namespace SCFirstOrderLogic.LanguageIntegration
                 new TestCase(
                     Expression: d => d.GroundPredicate1 && d.GroundPredicate2,
                     ExpectedSentence: new Conjunction(
-                        new Predicate(new MemberPredicateSymbol(groundPredicate1), emptyArgList),
-                        new Predicate(new MemberPredicateSymbol(groundPredicate2), emptyArgList))),
+                        new Predicate(new MemberPredicateIdentifier(groundPredicate1), emptyArgList),
+                        new Predicate(new MemberPredicateIdentifier(groundPredicate2), emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.GroundPredicate1 || d.GroundPredicate2,
                     ExpectedSentence: new Disjunction(
-                        new Predicate(new MemberPredicateSymbol(groundPredicate1), emptyArgList),
-                        new Predicate(new MemberPredicateSymbol(groundPredicate2), emptyArgList))),
+                        new Predicate(new MemberPredicateIdentifier(groundPredicate1), emptyArgList),
+                        new Predicate(new MemberPredicateIdentifier(groundPredicate2), emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.Constant1.Parent == d.Constant1,
                     ExpectedSentence: new Predicate(
-                        EqualitySymbol.Instance,
-                        new Function(new MemberFunctionSymbol(parent), new[] { new Constant(new MemberConstantSymbol(constant1)) }),
-                        new Constant(new MemberConstantSymbol(constant1)))),
+                        EqualityIdentifier.Instance,
+                        new Function(new MemberFunctionIdentifier(parent), new[] { new Constant(new MemberConstantIdentifier(constant1)) }),
+                        new Constant(new MemberConstantIdentifier(constant1)))),
 
                 new TestCase(
                     Expression: d => Iff(d.GroundPredicate1, d.GroundPredicate2),
                     ExpectedSentence: new Equivalence(
-                        new Predicate(new MemberPredicateSymbol(groundPredicate1), emptyArgList),
-                        new Predicate(new MemberPredicateSymbol(groundPredicate2), emptyArgList))),
+                        new Predicate(new MemberPredicateIdentifier(groundPredicate1), emptyArgList),
+                        new Predicate(new MemberPredicateIdentifier(groundPredicate2), emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.Any(x => x.Parent == d.Constant1),
                     ExpectedSentence: new ExistentialQuantification(
                         new VariableDeclaration("x"),
                         new Predicate(
-                            EqualitySymbol.Instance,
-                            new Function(new MemberFunctionSymbol(parent), new[] { new VariableReference(new VariableDeclaration("x")) }),
-                            new Constant(new MemberConstantSymbol(constant1))))),
+                            EqualityIdentifier.Instance,
+                            new Function(new MemberFunctionIdentifier(parent), new[] { new VariableReference(new VariableDeclaration("x")) }),
+                            new Constant(new MemberConstantIdentifier(constant1))))),
 
                 new TestCase(
                     Expression: d => If(d.GroundPredicate1, d.GroundPredicate2),
                     ExpectedSentence: new Implication(
-                        new Predicate(new MemberPredicateSymbol(groundPredicate1), emptyArgList),
-                        new Predicate(new MemberPredicateSymbol(groundPredicate2), emptyArgList))),
+                        new Predicate(new MemberPredicateIdentifier(groundPredicate1), emptyArgList),
+                        new Predicate(new MemberPredicateIdentifier(groundPredicate2), emptyArgList))),
 
                 new TestCase(
                     Expression: d => !d.GroundPredicate1,
                     ExpectedSentence: new Negation(
-                        new Predicate(new MemberPredicateSymbol(groundPredicate1), emptyArgList))),
+                        new Predicate(new MemberPredicateIdentifier(groundPredicate1), emptyArgList))),
 
                 new TestCase(
                     Expression: d => d.All(x => x.Parent == d.Constant1),
                     ExpectedSentence: new UniversalQuantification(
                         new VariableDeclaration("x"),
                         new Predicate(
-                            EqualitySymbol.Instance,
-                            new Function(new MemberFunctionSymbol(parent), new[] { new VariableReference(new VariableDeclaration("x")) }),
-                            new Constant(new MemberConstantSymbol(constant1))))),
+                            EqualityIdentifier.Instance,
+                            new Function(new MemberFunctionIdentifier(parent), new[] { new VariableReference(new VariableDeclaration("x")) }),
+                            new Constant(new MemberConstantIdentifier(constant1))))),
             })
             .When(tc => SentenceFactory.Create<IDomain, IElement>(tc.Expression))
             .ThenReturns((tc, sentence) =>

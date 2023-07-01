@@ -19,8 +19,11 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Initializes a new instance of the <see cref="VariableReference"/> class.
         /// </summary>
-        /// <param name="symbol">The symbol of the variable. Equality of symbols should indicate that it is the same variable in the domain, and ToString of the symbol should be appropriate for rendering in FoL syntax.</param>
-        public VariableReference(object symbol) => Declaration = new VariableDeclaration(symbol);
+        /// <param name="identifier">
+        /// The identifier of the variable. Equality of identifiers should indicate that it is the same variable in the domain,
+        /// and ToString of the identifier should be appropriate for rendering in FoL syntax.
+        /// </param>
+        public VariableReference(object identifier) => Declaration = new VariableDeclaration(identifier);
 
         /// <summary>
         /// Gets the declaration of the variable.
@@ -28,9 +31,9 @@ namespace SCFirstOrderLogic
         public VariableDeclaration Declaration { get; }
 
         /// <summary>
-        /// Gets the symbol of the variable.
+        /// Gets the identifier of the variable.
         /// </summary>
-        public object Symbol => Declaration.Symbol;
+        public object Identifier => Declaration.Identifier;
 
         /// <inheritdoc />
         public override bool IsGroundTerm => false;

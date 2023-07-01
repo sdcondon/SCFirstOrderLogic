@@ -130,7 +130,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="Predicate"/> instance. 
-        /// The default implementation returns a <see cref="Predicate"/> with the same Symbol and with an argument list that is the result of calling <see cref="ApplyTo(Term)"/> on all of the existing arguments.
+        /// The default implementation returns a <see cref="Predicate"/> with the same identifier and with an argument list that is the result of calling <see cref="ApplyTo(Term)"/> on all of the existing arguments.
         /// </summary>
         /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
         /// <returns>The transformed <see cref="Sentence"/>.</returns>
@@ -152,7 +152,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             if (isChanged)
             {
-                return new Predicate(predicate.Symbol, arguments);
+                return new Predicate(predicate.Identifier, arguments);
             }
 
             return predicate;
@@ -263,7 +263,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
         /// <summary>
         /// Applies this transformation to a <see cref="Function"/> instance.
-        /// The default implementation returns a <see cref="Function"/> with the same Symbol and with an argument list that is the result of calling <see cref="ApplyTo(Term)"/> on each of the existing arguments.
+        /// The default implementation returns a <see cref="Function"/> with the same identifier and with an argument list that is the result of calling <see cref="ApplyTo(Term)"/> on each of the existing arguments.
         /// </summary>
         /// <param name="function">The function to visit.</param>
         /// <returns>The transformed term.</returns>
@@ -285,7 +285,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             if (isChanged)
             {
-                return new Function(function.Symbol, arguments);
+                return new Function(function.Identifier, arguments);
             }
 
             return function;

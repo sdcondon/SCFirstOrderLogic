@@ -153,7 +153,7 @@ namespace SCFirstOrderLogic.SentenceCreation
             {
                 var arguments = context.term();
                 return new Predicate(
-                    EqualitySymbol.Instance,
+                    EqualityIdentifier.Instance,
                     new[] { termTransformation.Visit(arguments[0]), termTransformation.Visit(arguments[1]) });
             }
 
@@ -190,15 +190,15 @@ namespace SCFirstOrderLogic.SentenceCreation
             public override Term VisitVariableOrConstant([NotNull] FirstOrderLogicParser.VariableOrConstantContext context)
             {
                 var symbolText = context.ID().Symbol.Text;
-                var matchingVariableDeclaration = variablesInScope.SingleOrDefault(v => v.Symbol.Equals(symbolText));
+                var matchingVariableDeclaration = variablesInScope.SingleOrDefault(v => v.Identifier.Equals(symbolText));
                 if (matchingVariableDeclaration != null)
                 {
-                    // symbol matches a variable that's in scope - interpret as a reference to it
+                    // symbol text matches a variable that's in scope - interpret as a reference to it
                     return new VariableReference(matchingVariableDeclaration);
                 }
                 else
                 {
-                    // symbol doesn't match any variable in scope - interpret as a constant
+                    // symbol text doesn't match any variable in scope - interpret as a constant
                     return new Constant(symbolText);
                 }
             }

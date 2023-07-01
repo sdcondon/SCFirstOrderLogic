@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.Inference
     /// </para>
     /// <para>
     /// Keeps track of all constants that feature in sentences, and adds "not equal" sentences for all pairs
-    /// with non-equal symbols. NB: only adds one ordering of arguments, and adds no knowledge that constants
+    /// with non-equal identifiers. NB: only adds one ordering of arguments, and adds no knowledge that constants
     /// are equal to themselves - on the understanding that commutativity/reflexivity will be handled elsewhere
     /// (e.g. with <see cref="EqualityAxiomisingKnowledgeBase"/> or with an inner KB that utilises para/demodulation).
     /// </para>
@@ -60,8 +60,8 @@ namespace SCFirstOrderLogic.Inference
         {
             private readonly IKnowledgeBase innerKnowledgeBase;
 
-            // NB: We only need to consider the constant (i.e. not the symbol) here
-            // because the Constant class uses the Symbol for its equality implementation.
+            // NB: We only need to consider the constant (i.e. not the identifier) here
+            // because the Constant class uses the Identifier for its equality implementation.
             private readonly HashSet<Constant> knownConstants = new();
 
             public UniqueNamesAxiomiser(IKnowledgeBase innerKnowledgeBase)

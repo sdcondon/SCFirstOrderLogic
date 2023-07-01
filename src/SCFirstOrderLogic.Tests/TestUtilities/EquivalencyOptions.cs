@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic.TestUtilities
 {
     public static class EquivalencyOptions
     {
-        private static readonly Func<Function, bool> isSkolemFunction = f => f.Symbol is SkolemFunctionSymbol;
+        private static readonly Func<Function, bool> isSkolemFunction = f => f.Identifier is SkolemFunctionIdentifier;
 
         /// <summary>
         /// Applies equivalency rules that check only for consistency when examining variable references and declarations.
