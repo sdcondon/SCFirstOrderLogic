@@ -40,8 +40,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Gets the collection of clauses that comprise this CNF sentence.
         /// </summary>
-        // TODO-V5-FEATURE: logically, this should be a (read-only) set.
-        public IReadOnlyCollection<CNFClause> Clauses => clauses;
+        public IReadOnlySet<CNFClause> Clauses => clauses;
 
         /// <summary>
         /// <para>

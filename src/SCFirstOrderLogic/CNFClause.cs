@@ -47,8 +47,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Gets the collection of literals that comprise this clause.
         /// </summary>
-        // TODO-V5-FEATURE: logically, this should be a (read-only) set.
-        public IReadOnlyCollection<Literal> Literals => literals;
+        public IReadOnlySet<Literal> Literals => literals;
 
         /// <summary>
         /// <para>
