@@ -25,14 +25,6 @@ namespace SCFirstOrderLogic
         /// Identifier equality should indicate that it is the same predicate in the domain.
         /// ToString of the identifier should be appropriate for rendering in FoL syntax.
         /// </para>
-        /// <para>
-        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
-        /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, we err on the side of simplicity and say that identifiers can be any object. This of 
-        /// course has the added benefit of allowing certain likely types (i.e. strings) to be used as identifiers
-        /// without needing to wrap them.
-        /// </para>
         /// </param>
         /// <param name="arguments">The arguments of this predicate.</param>
         public Predicate(object identifier, params Term[] arguments)
@@ -50,14 +42,6 @@ namespace SCFirstOrderLogic
         /// <para>
         /// Identifier equality should indicate that it is the same predicate in the domain.
         /// ToString of the identifier should be appropriate for rendering in FoL syntax.
-        /// </para>
-        /// <para>
-        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
-        /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, we err on the side of simplicity and say that identifiers can be any object. This of 
-        /// course has the added benefit of allowing certain likely types (i.e. strings) to be used as identifiers
-        /// without needing to wrap them.
         /// </para>
         /// </param>
         /// <param name="arguments">The arguments of this predicate.</param>
@@ -79,14 +63,6 @@ namespace SCFirstOrderLogic
         /// <para>
         /// Identifier equality should indicate that it is the same predicate in the domain.
         /// ToString of the identifier should be appropriate for rendering in FoL syntax.
-        /// </para>
-        /// <para>
-        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
-        /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, we err on the side of simplicity and say that identifiers can be any object. This of 
-        /// course has the added benefit of allowing certain likely types (i.e. strings) to be used as identifiers
-        /// without needing to wrap them.
         /// </para>
         /// </summary>
         public object Identifier { get; }

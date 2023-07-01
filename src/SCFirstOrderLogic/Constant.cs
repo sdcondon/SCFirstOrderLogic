@@ -21,14 +21,6 @@ namespace SCFirstOrderLogic
         /// Identifier equality should indicate that it is the same constant in the domain.
         /// <see cref="object.ToString"/> of the identifier should be appropriate for rendering in FoL syntax.
         /// </para>
-        /// <para>
-        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
-        /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, for now at least we err on the side of simplicity and say that identifiers can be any object.
-        /// This simplicity of course has the added benefit of allowing certain likely types (strings, integers..) to be used
-        /// as identifiers without needing to wrap them.
-        /// </para>
         /// </param>
         public Constant(object identifier)
         {
@@ -45,14 +37,6 @@ namespace SCFirstOrderLogic
         /// <para>
         /// Identifier equality should indicate that it is the same constant in the domain.
         /// <see cref="object.ToString"/> of the identifier should be appropriate for rendering in FoL syntax.
-        /// </para>
-        /// <para>
-        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
-        /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, for now at least we err on the side of simplicity and say that identifiers can be any object.
-        /// This simplicity of course has the added benefit of allowing certain likely types (strings, integers..) to be used
-        /// as identifiers without needing to wrap them.
         /// </para>
         /// </summary>
         public object Identifier { get; }

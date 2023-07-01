@@ -33,12 +33,6 @@ namespace SCFirstOrderLogic
         /// Equality of identifiers should indicate that it is the same variable in the domain, 
         /// and ToString of the identifier should be appropriate for rendering in FoL syntax.
         /// </para>
-        /// <para>
-        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
-        /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, for now at least we err on the side of simplicity and say that identifiers can be any object.
-        /// </para>
         /// </param>
         public VariableDeclaration(object identifier) => Identifier = identifier;
 
@@ -49,12 +43,6 @@ namespace SCFirstOrderLogic
         /// <para>
         /// Equality of identifiers should indicate that it is the same variable in the domain, 
         /// and ToString of the identifier should be appropriate for rendering in FoL syntax.
-        /// </para>
-        /// <para>
-        /// NB: Yes, we *could* declare an IIdentifier interface that is IEquatable&lt;IIdentifier&gt; and defines a
-        /// string-returning 'Render' method. However, given that the only things we need of an identifier are
-        /// equatability and the ability to convert them to a string, and both of these things are possible with the
-        /// object base class, for now at least we err on the side of simplicity and say that identifiers can be any object.
         /// </para>
         /// </summary>
         public object Identifier { get; }
