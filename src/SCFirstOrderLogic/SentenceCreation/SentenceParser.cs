@@ -15,8 +15,6 @@ namespace SCFirstOrderLogic.SentenceCreation
     /// </summary>
     // TODO-FEATURE: All identifiers are just strings (i.e. the token text) for the mo.
     // Might be useful to allow for callbacks (Func<string, object> getPredicateIdentifier etc) in case the caller needs richer identifiers.
-    // ..perhaps worth noting that now that we have an actual parser, its becoming clearer that our "Symbol" props should really be called "Identifier"..
-    // Will consider this for inclusion in v5 - obviously a breaking change.
     public static class SentenceParser
     {
         /// <summary>
