@@ -4,8 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-// TODO-V5-BREAKING: Oops - fix this namespace.
-namespace SCFirstOrderLogic
+namespace SCFirstOrderLogic.LanguageIntegration
 {
     /// <summary>
     /// Extension methods for <see cref="IEnumerable{T}"/>, primarily to allow for succinctly declaring multi-variable quantifications with LINQ expressions.

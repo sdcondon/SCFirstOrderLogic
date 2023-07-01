@@ -3,8 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-// TODO-V5-BREAKING: oops - fix this namespace..
-namespace SCFirstOrderLogic.SentenceFormatting
+namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
     /// Utility logic for the interrogation of sentences - specifically, the normalisation terms (standardised variables and Skolem functions) within them.
