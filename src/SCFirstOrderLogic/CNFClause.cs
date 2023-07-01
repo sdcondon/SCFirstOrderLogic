@@ -96,6 +96,10 @@ namespace SCFirstOrderLogic
         /// A clause that is the same as this one, except for the fact that all referenced
         /// variables are replaced with new ones.
         /// </returns>
+        // TODO-V5?: I'm not entirely sure why this bugs me, but it does - thinking of moving this out to an
+        // extension method somewhere in SentenceManipulation (perhaps along with some of the inners separated
+        // out so that we can restandardise other things - how much would implementing as a transformation slow
+        // things down, I wonder?)
         public CNFClause Restandardise()
         {
             var mapping = new Dictionary<StandardisedVariableSymbol, StandardisedVariableSymbol>();
