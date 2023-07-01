@@ -186,7 +186,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             public async Task EnqueueInitialResolutionsAsync(CancellationToken cancellationToken)
             {
                 // Initialise the query clause store with the clauses from the negation of the query:
-                foreach (var clause in query.NegatedQuery.Clauses)
+                foreach (var clause in query.NegatedQuerySentence.Clauses)
                 {
                     await clauseStore.AddAsync(clause, cancellationToken);
                 }

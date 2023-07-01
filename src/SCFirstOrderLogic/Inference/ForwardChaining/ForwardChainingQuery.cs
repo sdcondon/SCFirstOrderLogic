@@ -114,7 +114,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                             proof[proofStep.InferredPredicate] = proofStep;
 
                             // .. check if it is the goal
-                            if (LiteralUnifier.TryCreate(inferredClause.Consequent, queryGoal, out var _))
+                            if (Unifier.TryCreate(inferredClause.Consequent, queryGoal, out var _))
                             {
                                 result = true;
                                 return true;

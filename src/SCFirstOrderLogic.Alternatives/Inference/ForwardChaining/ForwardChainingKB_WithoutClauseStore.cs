@@ -190,7 +190,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                     // First check if we've found our goal
                     foreach (var fact in kb.Where(f => f.IsUnitClause))
                     {
-                        if (LiteralUnifier.TryCreate(fact.Consequent, queryGoal, out var φ))
+                        if (Unifier.TryCreate(fact.Consequent, queryGoal, out var φ))
                         {
                             result = true;
                             return Task.FromResult(true);
@@ -265,7 +265,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                     {
                         var firstConjunctUnifier = new VariableSubstitution(proofStep.Unifier);
 
-                        if (LiteralUnifier.TryUpdateUnsafe(knownUnitClause.Consequent, conjuncts.First(), firstConjunctUnifier))
+                        if (Unifier.TryUpdateUnsafe(knownUnitClause.Consequent, conjuncts.First(), firstConjunctUnifier))
                         {
                             foreach (var restOfConjunctsProof in MatchWithKnownFacts(conjuncts.Skip(1), new ProofStep(proofStep, knownUnitClause.Consequent, firstConjunctUnifier)))
                             {

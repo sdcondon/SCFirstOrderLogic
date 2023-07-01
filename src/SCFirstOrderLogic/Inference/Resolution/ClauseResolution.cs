@@ -60,7 +60,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             {
                 foreach (var clause2Literal in clause2.Literals)
                 {
-                    if (LiteralUnifier.TryCreate(clause1Literal, clause2Literal.Negate(), out var resolvingUnifier))
+                    if (Unifier.TryCreate(clause1Literal, clause2Literal.Negate(), out var resolvingUnifier))
                     {
                         var clause1OtherLiterals = clause1.Literals.Where(l => l != clause1Literal);
                         var clause2OtherLiterals = clause2.Literals.Where(l => l != clause2Literal);
@@ -84,7 +84,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                                         break;
                                     }
 
-                                    if (LiteralUnifier.TryCreate(literal, otherLiteral, out var factoringUnifier))
+                                    if (Unifier.TryCreate(literal, otherLiteral, out var factoringUnifier))
                                     {
                                         unifiedLiterals = new HashSet<Literal>(unifiedLiterals.Select(l => factoringUnifier.ApplyTo(l)));
                                         factoringCarriedOut = true;

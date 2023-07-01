@@ -1,6 +1,5 @@
 ﻿// Copyright (c) 2021-2023 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -9,15 +8,14 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
     /// <summary>
     /// <para>
-    /// Utility class for creating unifiers for literals.
+    /// Utility class for creating unifiers.
     /// </para>
     /// <para>
     /// This implementation includes an occurs check.
     /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
     /// </para>
     /// </summary>
-    // TODO-V5-BREAKING: rename me, now that methods for unification of Terms etc are now public. Perhaps just Unifier? MostGeneralUnifier? UnifierFactory?
-    public static class LiteralUnifier
+    public static class Unifier
     {
         /// <summary>
         /// Attempts to create the most general unifier for two literals.

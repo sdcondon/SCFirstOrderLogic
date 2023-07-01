@@ -95,7 +95,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                     var restandardisedClause = clause.Restandardise(); 
                     var substitution = new VariableSubstitution(constraints);
 
-                    if (LiteralUnifier.TryUpdate(restandardisedClause.Consequent, goal, substitution))
+                    if (Unifier.TryUpdate(restandardisedClause.Consequent, goal, substitution))
                     {
                         yield return (restandardisedClause, substitution);
                     }

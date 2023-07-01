@@ -72,7 +72,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             .When(tc =>
             {
                 (bool returnValue, VariableSubstitution? unifier) result;
-                result.returnValue = LiteralUnifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
+                result.returnValue = Unifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
@@ -98,7 +98,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             .When(tc =>
             {
                 (bool returnValue, VariableSubstitution? unifier) result;
-                result.returnValue = LiteralUnifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
+                result.returnValue = Unifier.TryCreate(tc.Literal1, tc.Literal2, out result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())
@@ -154,7 +154,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             {
                 (bool returnValue, VariableSubstitution? unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
-                result.returnValue = LiteralUnifier.TryUpdate(tc.Literal1, tc.Literal2, result.unifier);
+                result.returnValue = Unifier.TryUpdate(tc.Literal1, tc.Literal2, result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
@@ -197,7 +197,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             {
                 (bool returnValue, VariableSubstitution? unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
-                result.returnValue = LiteralUnifier.TryUpdateUnsafe(tc.Literal1, tc.Literal2, result.unifier);
+                result.returnValue = Unifier.TryUpdateUnsafe(tc.Literal1, tc.Literal2, result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
@@ -228,7 +228,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             {
                 (bool returnValue, VariableSubstitution unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
-                result.returnValue = LiteralUnifier.TryUpdate(tc.Literal1, tc.Literal2, result.unifier);
+                result.returnValue = Unifier.TryUpdate(tc.Literal1, tc.Literal2, result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())
@@ -257,7 +257,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             {
                 (bool returnValue, VariableSubstitution? unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
-                result.returnValue = LiteralUnifier.TryUpdateUnsafe(tc.Literal1, tc.Literal2, result.unifier);
+                result.returnValue = Unifier.TryUpdateUnsafe(tc.Literal1, tc.Literal2, result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeFalse());

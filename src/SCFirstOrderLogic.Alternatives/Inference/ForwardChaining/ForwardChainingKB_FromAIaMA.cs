@@ -142,7 +142,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                                 // the KB will fail to confirm a sentence that is in the KB directly. Of course the fix (doing this out the
                                 // outset of the outer foreach) has a significant performance impact, so I can KIND OF see why they've written
                                 // this way in the book. Then again, they should have at least made a note about this.. Meh, never mind.
-                                if (LiteralUnifier.TryCreate(qDash, α, out var φ))
+                                if (Unifier.TryCreate(qDash, α, out var φ))
                                 {
                                     result = true;
                                     substitution = φ;
@@ -183,7 +183,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                     {
                         var updatedUnifier = new VariableSubstitution(unifier);
 
-                        if (LiteralUnifier.TryUpdateUnsafe(knownClause.Consequent, conjuncts.First(), updatedUnifier))
+                        if (Unifier.TryUpdateUnsafe(knownClause.Consequent, conjuncts.First(), updatedUnifier))
                         {
                             foreach(var substitution in MatchWithKnownFacts(conjuncts.Skip(1), updatedUnifier))
                             {

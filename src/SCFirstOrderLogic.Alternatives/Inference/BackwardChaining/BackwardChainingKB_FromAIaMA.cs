@@ -143,7 +143,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                         var rhs = restandardisedClause.Literals.Single(l => l.IsPositive);
                         var unifier = new VariableSubstitution(θ);
 
-                        if (LiteralUnifier.TryUpdateUnsafe(rhs, goal, unifier))
+                        if (Unifier.TryUpdateUnsafe(rhs, goal, unifier))
                         {
                             foreach (var θ2 in FOL_BC_AND(lhs, unifier))
                             {

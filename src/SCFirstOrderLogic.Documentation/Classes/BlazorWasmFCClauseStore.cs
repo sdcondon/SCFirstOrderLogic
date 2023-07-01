@@ -113,7 +113,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                     {
                         foreach (var fact in facts)
                         {
-                            if (LiteralUnifier.TryCreate(conjunct, fact, out _))
+                            if (Unifier.TryCreate(conjunct, fact, out _))
                             {
                                 return true;
                             }
@@ -146,7 +146,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                     {
                         var unifier = new VariableSubstitution(constraints);
 
-                        if (LiteralUnifier.TryUpdateUnsafe(knownClause.Consequent, fact, unifier))
+                        if (Unifier.TryUpdateUnsafe(knownClause.Consequent, fact, unifier))
                         {
                             yield return (knownClause.Consequent, unifier);
                         }

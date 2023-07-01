@@ -24,7 +24,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         private static readonly Literal YKnowsMotherOfY_Literal = new(Knows(y, Mother(y)));
 
         [Benchmark]
-        public static bool Unify1_Actual() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);
+        public static bool Unify1_Actual() => Unifier.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);
 
         [Benchmark]
         public static bool Unify1_OccursCheckTransform() => LiteralUnifier_WithOccursCheckAsTransformation.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);
@@ -36,7 +36,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         public static LiteralUnifier_FromAIaMA.Substitution Unify1_SentenceRaw() => LiteralUnifier_FromAIaMA.Unify(JohnKnowsX, JohnKnowsJane, null);
 
         [Benchmark]
-        public static bool Unify2_Actual() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
+        public static bool Unify2_Actual() => Unifier.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
 
         [Benchmark]
         public static bool Unify2_OccursCheckTransform() => LiteralUnifier_WithOccursCheckAsTransformation.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
@@ -48,7 +48,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         public static LiteralUnifier_FromAIaMA.Substitution Unify2_SentenceRaw() => LiteralUnifier_FromAIaMA.Unify(JohnKnowsX, YKnowsJane, null);
 
         [Benchmark]
-        public static bool Unify3_Actual() => LiteralUnifier.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);
+        public static bool Unify3_Actual() => Unifier.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);
 
         [Benchmark]
         public static bool Unify3_OccursCheckTransform() => LiteralUnifier_WithOccursCheckAsTransformation.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);

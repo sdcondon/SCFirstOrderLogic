@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2023 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceFormatting;
+using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,7 +30,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
             IResolutionStrategy strategy,
             CancellationToken cancellationToken)
         {
-            NegatedQuery = new Negation(querySentence).ToCNF();
+            NegatedQuerySentence = new Negation(querySentence).ToCNF();
             strategyCreation = strategy.MakeQueryStrategyAsync(this, cancellationToken).ContinueWith(t => this.strategy = t.Result);
             steps = new();
             discoveredClauses = new(MakeDiscoveredClauses);
@@ -38,9 +39,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
         /// <summary>
         /// Gets the (CNF representation of the) negation of the query sentence.
         /// </summary>
-        // TODO-V5-BREAKING: Should this be NegatedQuerySentence? Because we're in a class called "Query".
-        // Uninformed people might think this is something like a negation of this query instance. Breaking change..
-        public CNFSentence NegatedQuery { get; }
+        public CNFSentence NegatedQuerySentence { get; }
         
         /// <inheritdoc/>
         public override bool IsComplete => result.HasValue;
@@ -135,7 +134,7 @@ namespace SCFirstOrderLogic.Inference.Resolution
                     {
                         return $"#{DiscoveredClauses.IndexOf(clause):D2}";
                     }
-                    else if (NegatedQuery.Clauses.Contains(clause))
+                    else if (NegatedQuerySentence.Clauses.Contains(clause))
                     {
                         return " ¬Q";
                     }
