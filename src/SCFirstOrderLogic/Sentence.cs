@@ -26,13 +26,13 @@ namespace SCFirstOrderLogic
     public abstract class Sentence
     {
         /// <summary>
-        /// Accepts a <see cref="ISentenceVisitor"/> instance. Implementations should simply invoke the appropriate Visit method of the visitor.
+        /// Accepts a <see cref="ISentenceVisitor"/> instance.
         /// </summary>
         /// <param name="visitor">The visitor that is visiting the sentence.</param>
         public abstract void Accept(ISentenceVisitor visitor);
 
         /// <summary>
-        /// Accepts a <see cref="ISentenceVisitor{TState}"/> instance. Implementations should simply invoke the appropriate Visit method of the visitor.
+        /// Accepts a <see cref="ISentenceVisitor{TState}"/> instance.
         /// </summary>
         /// <param name="visitor">The visitor that is visiting the sentence.</param>
         /// <param name="state">A reference to the state that the visitor is working with.</param>
@@ -40,7 +40,7 @@ namespace SCFirstOrderLogic
         public abstract void Accept<TState>(ISentenceVisitor<TState> visitor, TState state);
 
         /// <summary>
-        /// Accepts a <see cref="ISentenceVisitorR{TState}"/> instance. Implementations should simply invoke the appropriate Visit method of the visitor.
+        /// Accepts a <see cref="ISentenceVisitorR{TState}"/> instance.
         /// </summary>
         /// <param name="visitor">The visitor that is visiting the sentence.</param>
         /// <param name="state">A reference to the state that the visitor is working with.</param>
@@ -48,7 +48,7 @@ namespace SCFirstOrderLogic
         public abstract void Accept<TState>(ISentenceVisitorR<TState> visitor, ref TState state);
 
         /// <summary>
-        /// Accepts a <see cref="ISentenceTransformation{TOut}"/> instance. Implementations should simply invoke the appropriate ApplyTo method of the transformation.
+        /// Accepts a <see cref="ISentenceTransformation{TOut}"/> instance.
         /// </summary>
         /// <typeparam name="TOut">the type that the transformation outputs.</typeparam>
         /// <param name="transformation">The transformation that is being applied to the sentence.</param>
