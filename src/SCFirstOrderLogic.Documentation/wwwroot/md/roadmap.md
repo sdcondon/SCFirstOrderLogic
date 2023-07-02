@@ -5,10 +5,10 @@ I don't intend to add any particularly powerful or specialised inference logic t
 
 Priorities at the time of writing:
 
-* *As always, anything that's labelled as TODO in the code. Head over to [https://github.dev/sdcondon/SCFirstOrderLogic/](https://github.dev/sdcondon/SCFirstOrderLogic/) (GitHub's regular search functionality is still a bit naff) and do a case-sensitive search for TODO.*
-* Nothing much else for the mo - certainly nothing breaking. I've been major version rev-ing this a bit too much (ultimately as a result of publishing it a bit before it was ready..), so turning my attention to other things for a while to let things settle.
+* To accompany the discrimination tree, I'm in the process of adding a path index implementation for terms.
+* ..then v5. See the `v5` branch and the `TODO-V5-..` comments in the code for details.
 
-At some point in the not-too-distant future:
+Further ahead:
 
 * Improvements to inference algorithms. 
 Handling of infinite loops when chaining, a linear resolution strategy, leveraging subsumption (e.g. a trie-like structure for fast lookup of subsuming clauses - SubsumptionTrie or somesuch - used by new clause store(s)), etc.
