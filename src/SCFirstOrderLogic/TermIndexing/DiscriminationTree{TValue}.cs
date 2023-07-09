@@ -13,10 +13,11 @@ namespace SCFirstOrderLogic.TermIndexing
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
     /// <seealso href="https://www.google.com/search?q=discrimination+tree"/>
     // NB: not a TODO just yet, but - while it's not terrible - there are a few aspects of this
-    // class that aren't great from a performance perspective. The priority thus far has just
-    // been to get it working.
-    // TODO-V5-BREAKING: At some point should allow for secondary storage extensibility.
-    // I *think* (adding async support - breaking change - and) allowing for different node
+    // class that aren't great from a performance perspective. Notably, while the recursive iterator
+    // approach used for the retrieval methods may be easy to understand, it will make a lot of heap
+    // allocations - increasing GC pressure. The priority thus far has just been to get it working.
+    // TODO-V5-BREAKING: Should really allow for secondary storage extensibility.
+    // Adding async support (breaking change) and allowing for different node
     // implementations should do the trick - i.e. make the current concrete node classes
     // abstract in some way, and add a ctor that allows passing in the root node. Everything
     // else can stay common, probably.
@@ -171,7 +172,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 foreach (var (elementInfo, node) in nodes)
                 {
                     // NB: there's an obvious possible performance improvement here - cache
-                    // the descendent node we need to jump to rather than figuring it out afresh
+                    // the descendent nodes we need to jump to rather than figuring it out afresh
                     // each time. i.e. A "jump list". Might implement this at a later date - not a TODO for now.
                     var variableMatch = parentVariableMatch.Append(elementInfo);
                     var unexploredBranchCount = parentUnexploredBranchCount + elementInfo.ChildElementCount - 1;
@@ -419,8 +420,8 @@ namespace SCFirstOrderLogic.TermIndexing
         /// </summary>
         private class ElementInfoTransformation
         {
-            // TODO-PERFORMANCE: a dict is almost certainly overkill given the low number of vars likely to appear in any given term.
-            // Plain old list likely to perform better. Test me.
+            // TODO-PERFORMANCE: a dictionary is almost certainly overkill given the low number of vars likely to
+            // appear in any given term. Plain old list likely to perform better. Test me.
             private readonly Dictionary<object, int> variableIdMap = new(); 
 
             public IEnumerable<IElementInfo> ApplyTo(Term term)
