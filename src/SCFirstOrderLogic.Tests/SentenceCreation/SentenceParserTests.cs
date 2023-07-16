@@ -22,6 +22,10 @@ namespace SCFirstOrderLogic.SentenceCreation
                     ExpectedResult: new UniversalQuantification(new("x"), new Predicate("P", new VariableReference("x")))),
 
                 new(
+                    Sentence: "∀x, P(F(x, C))",
+                    ExpectedResult: new UniversalQuantification(new("x"), new Predicate("P", new Function("F", new VariableReference("x"), new Constant("C"))))),
+
+                new(
                     Sentence: "∃x, y, P(x, y)",
                     ExpectedResult: new ExistentialQuantification(new("x"), new ExistentialQuantification(new("y"), new Predicate("P", new VariableReference("x"), new VariableReference("y"))))),
 
@@ -69,10 +73,10 @@ namespace SCFirstOrderLogic.SentenceCreation
             .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
         public static Test Parse_WithCustomIdentifiers => TestThat
-            .Given(() => new SentenceParser(s => $"P.{s}", s => $"F.{s}", s => $"VC.{s}"))
-            .When(p => p.Parse("forall X, P(F(x, C)"))
+            .Given(() => new SentenceParser(s => $"p.{s}", s => $"f.{s}", s => $"vc.{s}"))
+            .When(p => p.Parse("forall x, P(F(x, C))"))
             .ThenReturns()
-            .And((_, rv) => rv.Should().Be(new UniversalQuantification(new("VC.x"), new Predicate("P.P", new Function("F.F", new VariableReference("VC.x"), new Constant("VC.C"))))));
+            .And((_, rv) => rv.Should().Be(new UniversalQuantification(new("vc.x"), new Predicate("p.P", new Function("f.F", new VariableReference("vc.x"), new Constant("vc.C"))))));
 
         public static Test ParseList_PositiveTestCases => TestThat
             .GivenEachOf(() => new ParseListTestCase[]
