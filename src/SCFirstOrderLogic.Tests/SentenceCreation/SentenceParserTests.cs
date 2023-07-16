@@ -49,7 +49,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                     Sentence: "F1() = F2(x, y)",
                     ExpectedResult: new Predicate(EqualityIdentifier.Instance, new Function("F1"), new Function("F2", new Constant("x"), new Constant("y")))),
             })
-            .When(tc => SentenceParser.Parse(tc.Sentence))
+            .When(tc => SentenceParser.BasicParser.Parse(tc.Sentence))
             .ThenReturns()
             .And((ParseTestCase tc, Sentence rv) => rv.Should().Be(tc.ExpectedResult));
 
@@ -65,8 +65,14 @@ namespace SCFirstOrderLogic.SentenceCreation
                 "∃ P(x)",
                 "P()aaa",
             })
-            .When((ctx, tc) => SentenceParser.Parse(tc))
+            .When((ctx, tc) => SentenceParser.BasicParser.Parse(tc))
             .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
+
+        public static Test Parse_WithCustomIdentifiers => TestThat
+            .Given(() => new SentenceParser(s => $"P.{s}", s => $"F.{s}", s => $"VC.{s}"))
+            .When(p => p.Parse("forall X, P(F(x, C)"))
+            .ThenReturns()
+            .And((_, rv) => rv.Should().Be(new UniversalQuantification(new("VC.x"), new Predicate("P.P", new Function("F.F", new VariableReference("VC.x"), new Constant("VC.C"))))));
 
         public static Test ParseList_PositiveTestCases => TestThat
             .GivenEachOf(() => new ParseListTestCase[]
@@ -103,7 +109,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                     Sentences: " P() ; Q() ; ",
                     Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
             })
-            .When(tc => SentenceParser.ParseList(tc.Sentences))
+            .When(tc => SentenceParser.BasicParser.ParseList(tc.Sentences))
             .ThenReturns()
             .And((tc, rv) => rv.Should().Equal(tc.Expectation));
 
@@ -115,7 +121,7 @@ namespace SCFirstOrderLogic.SentenceCreation
                 "P() Q();aaa",
                 "P(); ; Q()",
             })
-            .When((ctx, tc) => SentenceParser.ParseList(tc))
+            .When((ctx, tc) => SentenceParser.BasicParser.ParseList(tc))
             .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
         private record ParseTestCase(string Sentence, Sentence ExpectedResult);
