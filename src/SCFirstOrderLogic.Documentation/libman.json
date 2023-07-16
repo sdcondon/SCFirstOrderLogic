@@ -15,12 +15,16 @@
     },
     {
       "provider": "unpkg",
-      "library": "google-code-prettify@1.0.5",
-      "destination": "wwwroot/lib/google-code-prettify/",
+      "library": "@highlightjs/cdn-assets@11.8.0",
+      "destination": "wwwroot/lib/highlightjs/",
       "files": [
-        "bin/prettify.min.css",
-        "bin/prettify.min.js",
-        "bin/run_prettify.min.js"
+        "highlight.js",
+        "highlight.min.js",
+        "LICENSE",
+        "package.json",
+        "README.md",
+        "languages/csharp.min.js",
+        "styles/default.min.css"
       ]
     }
   ]

@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\lib\google-code-prettify\**" />
+    <Content Remove="wwwroot\lib\google-code-prettify\**" />
+    <EmbeddedResource Remove="wwwroot\lib\google-code-prettify\**" />
+    <None Remove="wwwroot\lib\google-code-prettify\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Markdig" Version="0.30.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.10" PrivateAssets="all" />
@@ -19,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\lib\google-code-prettify\" />
+    <Folder Include="wwwroot\lib\" />
   </ItemGroup>
 
 </Project>
