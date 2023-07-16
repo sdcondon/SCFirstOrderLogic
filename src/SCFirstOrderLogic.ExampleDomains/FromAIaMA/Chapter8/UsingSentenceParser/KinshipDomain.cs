@@ -39,7 +39,7 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingSentenceParse
             // A sibling is another child of one's parents:
             "∀ x, y, IsSibling(x, y) ⇔ [¬(x = y) ∧ [∃ p, IsParent(p, x) ∧ IsParent(p, y)]]",
 
-        }.Select(s => SentenceParser.Parse(s)).ToList().AsReadOnly();
+        }.Select(s => SentenceParser.BasicParser.Parse(s)).ToList().AsReadOnly();
 
         /// <summary>
         /// Gets some useful theorems of the kinship domain.
@@ -50,6 +50,6 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingSentenceParse
             // Siblinghood is commutative:
             "∀ x, y, IsSibling(x, y) ⇔ IsSibling(y, x)",
 
-        }.Select(s => SentenceParser.Parse(s)).ToList().AsReadOnly();
+        }.Select(s => SentenceParser.BasicParser.Parse(s)).ToList().AsReadOnly();
     }
 }

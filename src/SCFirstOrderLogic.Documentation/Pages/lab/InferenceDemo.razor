@@ -199,9 +199,9 @@
     private async Task<IQuery> MakeQueryAsync(FormData formData, CancellationToken cancellationToken)
     {
         IKnowledgeBase knowledgeBase = KnowledgeBaseOptions[formData.KnowledgeBaseDescription].Invoke();
-        await knowledgeBase.TellAsync(SentenceParser.ParseList(formData.Knowledge), cancellationToken);
+        await knowledgeBase.TellAsync(SentenceParser.BasicParser.ParseList(formData.Knowledge), cancellationToken);
 
-        return await knowledgeBase.CreateQueryAsync(SentenceParser.Parse(formData.Query), cancellationToken);
+        return await knowledgeBase.CreateQueryAsync(SentenceParser.BasicParser.Parse(formData.Query), cancellationToken);
     }
 
     private class FormData : IValidatableObject
@@ -230,7 +230,7 @@
             List<ValidationResult> errors = new();
             try
             {
-                knowledge = SentenceParser.ParseList(Knowledge);
+                knowledge = SentenceParser.BasicParser.ParseList(Knowledge);
             }
             catch (Exception e)
             {
@@ -239,7 +239,7 @@
 
             try
             {
-                query = SentenceParser.Parse(Query);
+                query = SentenceParser.BasicParser.Parse(Query);
             }
             catch (Exception e)
             {

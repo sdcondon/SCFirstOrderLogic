@@ -22,11 +22,15 @@ namespace SCFirstOrderLogic.SentenceCreation
                     ExpectedResult: new UniversalQuantification(new("x"), new Predicate("P", new VariableReference("x")))),
 
                 new(
-                    Sentence: "∀x, P(F(x, C))",
-                    ExpectedResult: new UniversalQuantification(new("x"), new Predicate("P", new Function("F", new VariableReference("x"), new Constant("C"))))),
+                    Sentence: "∀x, P(F(x))",
+                    ExpectedResult: new UniversalQuantification(new("x"), new Predicate("P", new Function("F", new VariableReference("x"))))),
 
                 new(
                     Sentence: "∃x, y, P(x, y)",
+                    ExpectedResult: new ExistentialQuantification(new("x"), new ExistentialQuantification(new("y"), new Predicate("P", new VariableReference("x"), new VariableReference("y"))))),
+
+                new(
+                    Sentence: "∃x y, P(x, y)",
                     ExpectedResult: new ExistentialQuantification(new("x"), new ExistentialQuantification(new("y"), new Predicate("P", new VariableReference("x"), new VariableReference("y"))))),
 
                 new(

@@ -27,6 +27,6 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingSentenceParse
             "∀ x, Add(0, x) = x",
             "∀ x, y, Add(Successor(x), y) = Add(Successor(y), x)",
 
-        }.Select(s => SentenceParser.Parse(s)).ToList().AsReadOnly();
+        }.Select(s => SentenceParser.BasicParser.Parse(s)).ToList().AsReadOnly();
     }
 }
