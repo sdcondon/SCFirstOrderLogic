@@ -29,20 +29,20 @@ namespace SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParse
         public static IReadOnlyCollection<string> UnparsedAxioms { get; } = new[]
         {
             // Everyone who loves all animals is loved by someone.
-            "∀x [∀y Animal(y) ⇒ Loves(x, y)] ⇒ [∃y Loves(y, x)]",
+            "∀x, [∀y, Animal(y) ⇒ Loves(x, y)] ⇒ [∃y, Loves(y, x)]",
 
             // Anyone who kills an animal is loved by no one.
-            "∀x [∃z Animal(z) ∧ Kills(x, z)] ⇒ [∀y ¬Loves(y, x)]",
+            "∀x, [∃z, Animal(z) ∧ Kills(x, z)] ⇒ [∀y, ¬Loves(y, x)]",
 
             // Jack loves all animals.
-            "∀x Animal(x) ⇒ Loves(Jack, x)",
+            "∀x, Animal(x) ⇒ Loves(Jack, x)",
 
             // Either Jack or Curiosity killed the cat, who is named Tuna.
             "Kills(Jack, Tuna) ∨ Kills(Curiousity, Tuna)",
             "Cat(Tuna)",
 
             // Cats are animals.
-            "∀x Cat(x) ⇒ Animal(x)",
+            "∀x, Cat(x) ⇒ Animal(x)",
         };
 
         /// <summary>
