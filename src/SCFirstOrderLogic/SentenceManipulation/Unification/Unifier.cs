@@ -80,14 +80,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             return false;
         }
 
-        /// <summary>
-        /// Attempts to update a unifier (in place) so that it (also) unifies two given literals. Faster than <see cref="TryUpdate(Literal, Literal, VariableSubstitution)"/>,
-        /// but can partially update the substitution on failure. Use only when you don't care about the substitution being modified if it fails.
-        /// </summary>
-        /// <param name="x">One of the two literals to attempt to unify.</param>
-        /// <param name="y">One of the two literals to attempt to unify.</param>
-        /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
-        /// <returns>True if the two literals can be unified, otherwise false.</returns>
         private static bool TryUpdateInPlace(Literal x, Literal y, VariableSubstitution unifier)
         {
             if (x.IsNegated != y.IsNegated 
@@ -108,14 +100,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             return true;
         }
 
-        /// <summary>
-        /// Attempts to update a unifier (in place) so that it (also) unifies two given terms. Can partially update the substitution on failure.
-        /// Use only when you don't care about the substitution being modified if it fails.
-        /// </summary>
-        /// <param name="x">One of the two terms to attempt to unify.</param>
-        /// <param name="y">One of the two terms to attempt to unify.</param>
-        /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
-        /// <returns>True if the two terms can be unified, otherwise false.</returns>
         private static bool TryUpdateInPlace(Term x, Term y, VariableSubstitution unifier)
         {
             return (x, y) switch
@@ -130,14 +114,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             };
         }
 
-        /// <summary>
-        /// Attempts to update a unifier (in place) so that it (also) binds a particular variable to a particular term. Can partially update the substitution on failure.
-        /// Use only when you don't care about the substitution being modified if it fails.
-        /// </summary>
-        /// <param name="variable">The variable reference to bind.</param>
-        /// <param name="other">The term to bind the variable reference to.</param>
-        /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
-        /// <returns>True if the variable can be consistently bound to the term, otherwise false.</returns>
         private static bool TryUpdateInPlace(VariableReference variable, Term other, VariableSubstitution unifier)
         {
             if (variable.Equals(other))
@@ -175,9 +151,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                 return false;
             }
 
-            foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
+            for (int i = 0; i < x.Arguments.Count; i++)
             {
-                if (!TryUpdateInPlace(args.x, args.y, unifier))
+                if (!TryUpdateInPlace(x.Arguments[i], y.Arguments[i], unifier))
                 {
                     return false;
                 }
