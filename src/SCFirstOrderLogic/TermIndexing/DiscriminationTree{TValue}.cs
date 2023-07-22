@@ -16,11 +16,6 @@ namespace SCFirstOrderLogic.TermIndexing
     // class that aren't great from a performance perspective. Notably, while the recursive iterator
     // approach used for the retrieval methods may be easy to understand, it will make a lot of heap
     // allocations - increasing GC pressure. The priority thus far has just been to get it working.
-    // TODO-V5-BREAKING: Should really allow for secondary storage extensibility.
-    // Adding async support (breaking change) and allowing for different node
-    // implementations should do the trick - i.e. make the current concrete node classes
-    // abstract in some way, and add a ctor that allows passing in the root node. Everything
-    // else can stay common, probably.
     public class DiscriminationTree<TValue>
     {
         /// <summary>
