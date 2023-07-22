@@ -154,15 +154,16 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             {
                 (bool returnValue, VariableSubstitution? unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
-                result.returnValue = Unifier.TryUpdate(tc.Literal1, tc.Literal2, result.unifier);
+                result.returnValue = Unifier.TryUpdate(tc.Literal1, tc.Literal2, new(tc.InitialSubstitutions), out result.unifier);
                 return result;
             })
-            .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
+            .ThenReturns()
+            .And((tc, r) => r.returnValue.Should().BeTrue())
             .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal1).Should().Be(tc.ExpectedUnified))
             .And((tc, r) => r.unifier!.ApplyTo(tc.Literal2).Should().Be(tc.ExpectedUnified));
 
-        public static Test TryUpdateUnsafePositive => TestThat
+        public static Test TryUpdateRefPositive => TestThat
             .GivenEachOf(() => new TryUpdatePositiveTestCase[]
             {
                 new (
@@ -192,12 +193,27 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
                         [y] = jane,
                     },
                     ExpectedUnified: Knows(john, jane)),
+
+                new (
+                    Literal1: Knows(x, y),
+                    Literal2: Knows(a, b),
+                    InitialSubstitutions: new()
+                    {
+                        [x] = a,
+                        [y] = b,
+                    },
+                    ExpectedSubstitutions: new()
+                    {
+                        [x] = a,
+                        [y] = b,
+                    },
+                    ExpectedUnified: Knows(a, b)),
             })
             .When(tc =>
             {
                 (bool returnValue, VariableSubstitution? unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
-                result.returnValue = Unifier.TryUpdateUnsafe(tc.Literal1, tc.Literal2, result.unifier);
+                result.returnValue = Unifier.TryUpdate(tc.Literal1, tc.Literal2, ref result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
@@ -226,15 +242,16 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             })
             .When(tc =>
             {
-                (bool returnValue, VariableSubstitution unifier) result;
+                (bool returnValue, VariableSubstitution? unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
-                result.returnValue = Unifier.TryUpdate(tc.Literal1, tc.Literal2, result.unifier);
+                result.returnValue = Unifier.TryUpdate(tc.Literal1, tc.Literal2, new(tc.InitialSubstitutions), out result.unifier);
                 return result;
             })
-            .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())
-            .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialSubstitutions));
+            .ThenReturns()
+            .And((tc, r) => r.returnValue.Should().BeFalse())
+            .And((tc, r) => r.unifier.Should().BeNull());
 
-        public static Test TryUpdateUnsafeNegative => TestThat
+        public static Test TryUpdateRefNegative => TestThat
             .GivenEachOf(() => new TryUpdateNegativeTestCase[]
             {
                 new (
@@ -257,10 +274,12 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             {
                 (bool returnValue, VariableSubstitution? unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
-                result.returnValue = Unifier.TryUpdateUnsafe(tc.Literal1, tc.Literal2, result.unifier);
+                result.returnValue = Unifier.TryUpdate(tc.Literal1, tc.Literal2, ref result.unifier);
                 return result;
             })
-            .ThenReturns((tc, r) => r.returnValue.Should().BeFalse());
+            .ThenReturns()
+            .And((tc, r) => r.returnValue.Should().BeFalse())
+            .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialSubstitutions));
 
         private record TryUnifyPositiveTestCase(
             Literal Literal1,

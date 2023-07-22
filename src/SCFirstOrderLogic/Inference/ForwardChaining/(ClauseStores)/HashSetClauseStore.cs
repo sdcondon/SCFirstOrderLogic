@@ -149,9 +149,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                 {
                     if (knownClause.IsUnitClause)
                     {
-                        var unifier = new VariableSubstitution(constraints);
-
-                        if (Unifier.TryUpdateUnsafe(knownClause.Consequent, fact, unifier))
+                        if (Unifier.TryUpdate(knownClause.Consequent, fact, constraints, out var unifier))
                         {
                             yield return (knownClause.Consequent, unifier);
                         }

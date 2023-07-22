@@ -28,7 +28,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         {
             var unifierAttempt = new VariableSubstitution();
 
-            if (TryUpdateUnsafe(x, y, unifierAttempt))
+            if (TryUpdateInPlace(x, y, unifierAttempt))
             {
                 unifier = unifierAttempt;
                 return true;
@@ -43,18 +43,20 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// </summary>
         /// <param name="x">One of the two literals to attempt to unify.</param>
         /// <param name="y">One of the two literals to attempt to unify.</param>
-        /// <param name="unifier">The unifier to update. Will be updated to refer to a new unifier on success, or be unchanged on failure.</param>
+        /// <param name="unifier">The unifier to update.</param>
+        /// <param name="updatedUnifier">Will be populated with the updated unifier on success, or be null on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryUpdate(Literal x, Literal y, ref VariableSubstitution unifier)
+        public static bool TryUpdate(Literal x, Literal y, VariableSubstitution unifier, [MaybeNullWhen(false)] out VariableSubstitution updatedUnifier)
         {
-            var updatedUnifier = new VariableSubstitution(unifier);
+            var potentialUpdatedUnifier = unifier.Clone();
 
-            if (TryUpdateUnsafe(x, y, updatedUnifier))
+            if (TryUpdateInPlace(x, y, potentialUpdatedUnifier))
             {
-                unifier = updatedUnifier;
+                updatedUnifier = potentialUpdatedUnifier;
                 return true;
             }
 
+            updatedUnifier = null;
             return false;
         }
 
@@ -63,23 +65,15 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// </summary>
         /// <param name="x">One of the two literals to attempt to unify.</param>
         /// <param name="y">One of the two literals to attempt to unify.</param>
-        /// <param name="unifier">The unifier to update. Will be unchanged on failure.</param>
+        /// <param name="unifier">The unifier to update. Will be updated to refer to a new unifier on success, or be unchanged on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryUpdate(Literal x, Literal y, VariableSubstitution unifier)
+        public static bool TryUpdate(Literal x, Literal y, ref VariableSubstitution unifier)
         {
-            var updatedUnifier = new VariableSubstitution(unifier);
+            var updatedUnifier = unifier.Clone();
 
-            if (TryUpdateUnsafe(x, y, updatedUnifier))
+            if (TryUpdateInPlace(x, y, updatedUnifier))
             {
-                // TODO-PERFORMANCE: Ugh. slower than is needed. Refactor this whole class at some point - after adding some good benchmarks..
-                foreach (var binding in updatedUnifier.Bindings)
-                {
-                    if (!unifier.Bindings.ContainsKey(binding.Key))
-                    {
-                        unifier.AddBinding(binding.Key, binding.Value);
-                    }
-                }
-
+                unifier = updatedUnifier;
                 return true;
             }
 
@@ -94,7 +88,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// <param name="y">One of the two literals to attempt to unify.</param>
         /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
         /// <returns>True if the two literals can be unified, otherwise false.</returns>
-        public static bool TryUpdateUnsafe(Literal x, Literal y, VariableSubstitution unifier)
+        private static bool TryUpdateInPlace(Literal x, Literal y, VariableSubstitution unifier)
         {
             if (x.IsNegated != y.IsNegated 
                 || !x.Predicate.Identifier.Equals(y.Predicate.Identifier)
@@ -105,7 +99,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
             foreach (var args in x.Predicate.Arguments.Zip(y.Predicate.Arguments, (x, y) => (x, y)))
             {
-                if (!TryUpdateUnsafe(args.x, args.y, unifier))
+                if (!TryUpdateInPlace(args.x, args.y, unifier))
                 {
                     return false;
                 }
@@ -122,13 +116,13 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// <param name="y">One of the two terms to attempt to unify.</param>
         /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
         /// <returns>True if the two terms can be unified, otherwise false.</returns>
-        public static bool TryUpdateUnsafe(Term x, Term y, VariableSubstitution unifier)
+        private static bool TryUpdateInPlace(Term x, Term y, VariableSubstitution unifier)
         {
             return (x, y) switch
             {
-                (VariableReference variable, _) => TryUpdateUnsafe(variable, y, unifier),
-                (_, VariableReference variable) => TryUpdateUnsafe(variable, x, unifier),
-                (Function functionX, Function functionY) => TryUpdateUnsafe(functionX, functionY, unifier),
+                (VariableReference variable, _) => TryUpdateInPlace(variable, y, unifier),
+                (_, VariableReference variable) => TryUpdateInPlace(variable, x, unifier),
+                (Function functionX, Function functionY) => TryUpdateInPlace(functionX, functionY, unifier),
                 // Below, the only potential for equality is if they're both constants. Perhaps worth testing this
                 // versus that explicitly and a default that just returns false. Similar from a performance
                 // perspective.
@@ -144,7 +138,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
         /// <param name="other">The term to bind the variable reference to.</param>
         /// <param name="unifier">The unifier to update. NB: Can be partially updated on failure.</param>
         /// <returns>True if the variable can be consistently bound to the term, otherwise false.</returns>
-        public static bool TryUpdateUnsafe(VariableReference variable, Term other, VariableSubstitution unifier)
+        private static bool TryUpdateInPlace(VariableReference variable, Term other, VariableSubstitution unifier)
         {
             if (variable.Equals(other))
             {
@@ -154,13 +148,13 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             {
                 // The variable is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.
-                return TryUpdateUnsafe(variableValue, other, unifier);
+                return TryUpdateInPlace(variableValue, other, unifier);
             }
             else if (other is VariableReference otherVariable && unifier.Bindings.TryGetValue(otherVariable, out var otherVariableValue))
             {
                 // The other value is also a variable that is already mapped to something - we need to make sure that the
                 // mapping is consistent with the "other" value.
-                return TryUpdateUnsafe(variable, otherVariableValue, unifier);
+                return TryUpdateInPlace(variable, otherVariableValue, unifier);
             }
             else if (Occurs(variable, unifier.ApplyTo(other)))
             {
@@ -174,7 +168,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             }
         }
 
-        private static bool TryUpdateUnsafe(Function x, Function y, VariableSubstitution unifier)
+        private static bool TryUpdateInPlace(Function x, Function y, VariableSubstitution unifier)
         {
             if (!x.Identifier.Equals(y.Identifier) || x.Arguments.Count != y.Arguments.Count)
             {
@@ -183,7 +177,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
 
             foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
             {
-                if (!TryUpdateUnsafe(args.x, args.y, unifier))
+                if (!TryUpdateInPlace(args.x, args.y, unifier))
                 {
                     return false;
                 }

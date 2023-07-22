@@ -214,11 +214,10 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                     foreach (var clause in clausesWithThisGoal)
                     {
                         var restandardisedClause = clause.Restandardise();
-                        var clauseProofPrototype = new Proof(parentProof);
 
-                        if (Unifier.TryUpdate(restandardisedClause.Consequent, goal, clauseProofPrototype.Unifier))
+                        if (Unifier.TryUpdate(restandardisedClause.Consequent, goal, parentProof.Unifier, out var unifier))
                         {
-                            foreach (var clauseProof in ProvePredicates(restandardisedClause.Conjuncts, clauseProofPrototype))
+                            foreach (var clauseProof in ProvePredicates(restandardisedClause.Conjuncts, new Proof(parentProof.Steps, unifier)))
                             {
                                 clauseProof.AddStep(clauseProof.ApplyUnifierTo(goal), restandardisedClause);
                                 yield return clauseProof;
@@ -256,14 +255,14 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 
             internal Proof()
             {
-                Unifier = new VariableSubstitution();
                 steps = new();
+                Unifier = new VariableSubstitution();
             }
 
-            internal Proof(Proof parent)
+            internal Proof(IEnumerable<KeyValuePair<Predicate, CNFDefiniteClause>> steps, VariableSubstitution unifier)
             {
-                Unifier = new VariableSubstitution(parent.Unifier);
-                steps = parent.Steps.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                this.steps = new(steps);
+                Unifier = unifier;
             }
 
             /// <summary>

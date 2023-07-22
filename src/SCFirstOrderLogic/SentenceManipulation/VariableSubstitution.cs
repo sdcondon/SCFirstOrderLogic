@@ -25,19 +25,10 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VariableSubstitution"/> class that is a clone of another.
-        /// </summary>
-        /// <param name="substitution">The substitution to clone.</param>
-        public VariableSubstitution(VariableSubstitution substitution)
-            : this(substitution.bindings)
-        {
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="VariableSubstitution"/> class that uses a given set of bindings.
         /// </summary>
         /// <param name="bindings">The bindings to use.</param>
-        public VariableSubstitution(IReadOnlyDictionary<VariableReference, Term> bindings)
+        public VariableSubstitution(IEnumerable<KeyValuePair<VariableReference, Term>> bindings)
         {
             this.bindings = new(bindings);
         }
@@ -46,6 +37,12 @@ namespace SCFirstOrderLogic.SentenceManipulation
         /// Gets the substitutions applied by this transformation.
         /// </summary>
         public IReadOnlyDictionary<VariableReference, Term> Bindings => bindings;
+
+        /// <summary>
+        /// Creates a copy of this substitution.
+        /// </summary>
+        /// <returns>A new <see cref="VariableSubstitution"/> instance with the same bindings as this one.</returns>
+        public VariableSubstitution Clone() => new(bindings);
 
         /// <summary>
         /// Adds a binding.

@@ -141,9 +141,8 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 
                         var lhs = restandardisedClause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
                         var rhs = restandardisedClause.Literals.Single(l => l.IsPositive);
-                        var unifier = new VariableSubstitution(θ);
 
-                        if (Unifier.TryUpdateUnsafe(rhs, goal, unifier))
+                        if (Unifier.TryUpdate(rhs, goal, θ, out var unifier))
                         {
                             foreach (var θ2 in FOL_BC_AND(lhs, unifier))
                             {

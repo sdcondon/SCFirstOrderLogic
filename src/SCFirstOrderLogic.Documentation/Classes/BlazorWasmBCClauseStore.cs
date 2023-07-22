@@ -92,9 +92,8 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
                     // TODO*-BUG?: hmm, looks odd. we restandardise, THEN do a thing involving the constraint.. When could the constraint ever
                     // kick in? Verify test coverage here..
                     var restandardisedClause = clause.Restandardise();
-                    var substitution = new VariableSubstitution(constraints);
 
-                    if (Unifier.TryUpdate(restandardisedClause.Consequent, goal, substitution))
+                    if (Unifier.TryUpdate(restandardisedClause.Consequent, goal, constraints, out var substitution))
                     {
                         yield return (restandardisedClause, substitution);
                     }

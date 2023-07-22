@@ -263,9 +263,7 @@ namespace SCFirstOrderLogic.Inference.ForwardChaining
                     // We'd use an index here in anything approaching a production scenario:
                     foreach (var knownUnitClause in kb.Where(k => k.IsUnitClause))
                     {
-                        var firstConjunctUnifier = new VariableSubstitution(proofStep.Unifier);
-
-                        if (Unifier.TryUpdateUnsafe(knownUnitClause.Consequent, conjuncts.First(), firstConjunctUnifier))
+                        if (Unifier.TryUpdate(knownUnitClause.Consequent, conjuncts.First(), proofStep.Unifier, out var firstConjunctUnifier))
                         {
                             foreach (var restOfConjunctsProof in MatchWithKnownFacts(conjuncts.Skip(1), new ProofStep(proofStep, knownUnitClause.Consequent, firstConjunctUnifier)))
                             {
