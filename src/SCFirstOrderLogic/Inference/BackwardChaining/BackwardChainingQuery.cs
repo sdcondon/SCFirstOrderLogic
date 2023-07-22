@@ -75,7 +75,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
 
             for (int i = 0; i < Proofs.Count; i++)
             {
-                resultExplanation.AppendLine($"--- PROOF #{i + 1}");
+                resultExplanation.AppendLine($"PROOF #{i + 1}:");
                 resultExplanation.AppendLine();
                 resultExplanation.Append(Proofs[i].GetExplanation(sentenceFormatter));
                 resultExplanation.AppendLine();

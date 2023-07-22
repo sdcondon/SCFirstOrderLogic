@@ -9,19 +9,17 @@ namespace SCFirstOrderLogic
     /// Class for identifiers of variables that have been standardised as part of the normalisation process.
     /// </para>
     /// <para>
-    /// NB: Doesn't override equality or hash code, so uses reference equality;
-    /// and the normalisation process creates exactly one instance per variable scope - thus achieving standardisation
-    /// without having to muck about with anything like trying to ensure names that are unique strings
-    /// (which only sentence formatting logic, not the identifier itself, should care about).
-    /// </para>
-    /// <para>
-    /// This is however slightly awkward to to test, and has shortcomings when serialization is involved.
-    /// Also can cause inconsistent behaviour across runs when anything relies on hash code (like ClausePairPriorityComparers.UnitPreference).
-    /// As such, it *might* be nice to *also* implement value semantics for equality. Same variable in same (normalised) sentence is the same.
-    /// Equality would need to avoid infinite loop though, and couldn't work on output of CNFConversion as-is since this
-    /// class doesn't completely normalise. Also note potential problems when we need to restandardise variables (happens in backward chaining).
+    /// The important thing about this class is that it doesn't override equality or hash code, so uses reference equality.
+    /// The normalisation process creates exactly one instance per variable scope - thus achieving standardisation
+    /// without having to muck about with anything like trying to ensure names that are unique strings (which only sentence
+    /// formatting logic, not the identifier itself, should care about).
     /// </para>
     /// </summary>
+    // The equality behaviour here is however slightly awkward to to test, and has shortcomings when serialization is involved.
+    // Also can cause inconsistent behaviour across runs when anything relies on hash code (like ClausePairPriorityComparers.UnitPreference).
+    // As such, it *might* be nice to *also* implement value semantics for equality. Same variable in same (normalised) sentence is the same.
+    // Equality would need to avoid infinite loop though, and couldn't work on output of CNFConversion as-is since this
+    // class doesn't completely normalise. Also note potential problems when we need to restandardise variables (happens in backward chaining).
     public class StandardisedVariableIdentifier
     {
         /// <remarks>

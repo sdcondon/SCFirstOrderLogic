@@ -378,7 +378,7 @@ namespace SCFirstOrderLogic.TermIndexing
         /// </summary>
         private class ElementInfoTransformation
         {
-            // TODO-PERFORMANCE: a dict is almost certainly overkill given the low number of vars likely to appear in any given term.
+            // TODO-PERFORMANCE: a dictionary is almost certainly overkill given the low number of vars likely to appear in any given term.
             // Plain old list likely to perform better. Test me.
             private readonly Dictionary<object, int> variableIdMap = new(); 
 

@@ -23,13 +23,17 @@ namespace SCFirstOrderLogic.SentenceCreation
         /// <param name="getPredicateIdentifier">A delegate to retrieve the identifier for a predicate, given its symbol text.</param>
         /// <param name="getFunctionIdentifier">A delegate to retrieve the identifier for a function, given its symbol text.</param>
         /// <param name="getVariableOrConstantIdentifier">
+        /// <para>
         /// A delegate to retrieve the identifier for a variable reference or a constant, given its symbol text.
+        /// </para>
+        /// <para>
         /// These are combined because we check whether the returned value is among the  identifiers of variables
         /// that are in scope in order to determine whether something is a variable reference or a constant.
         /// If they were separate, you'd end up in the awkward situation where you'd have to bear in mind that
         /// "getVariableIdentifier" actually gets called for things that are constants, and for constants two "gets"
         /// would end up being performed. Or of course we could offer the ability to customise this determination
-        /// logic - which feels overcompilcated.
+        /// logic - which feels overcomplicated.
+        /// </para>
         /// </param>
         public SentenceParser(
             Func<string, object> getPredicateIdentifier,
@@ -43,7 +47,7 @@ namespace SCFirstOrderLogic.SentenceCreation
         }
 
         /// <summary>
-        /// Retrives an instance of a parser that just uses the symbol text as the identifier for returned predicates, functions, constants and variables.
+        /// Retrieves an instance of a parser that just uses the symbol text as the identifier for returned predicates, functions, constants and variables.
         /// </summary>
         public static SentenceParser BasicParser { get; } = new SentenceParser(s => s, s => s, s => s);
 
