@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         private readonly SentenceFormatter sentenceFormatter;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CNFInspector"/> class.
+        /// Initializes a new instance of the <see cref="CNFExplainer"/> class.
         /// </summary>
         /// <param name="sentenceFormatter">The formatter to use when formatting sentence elements as part of output.</param>
         public CNFExplainer(SentenceFormatter sentenceFormatter)
