@@ -45,16 +45,6 @@ namespace SCFirstOrderLogic.SentenceManipulation
         public VariableSubstitution Clone() => new(bindings);
 
         /// <summary>
-        /// Adds a binding.
-        /// </summary>
-        /// <param name="variable">A reference to the variable to be substituted out.</param>
-        /// <param name="term">The term to be substituted in.</param>
-        internal void AddBinding(VariableReference variable, Term term)
-        {
-            bindings.Add(variable, term);
-        }
-
-        /// <summary>
         /// Applies the substitution to a literal.
         /// </summary>
         /// <param name="literal">The literal to apply the substitution to.</param>
@@ -122,6 +112,16 @@ namespace SCFirstOrderLogic.SentenceManipulation
             }
 
             return hashCode.ToHashCode();
+        }
+
+        /// <summary>
+        /// Adds a binding.
+        /// </summary>
+        /// <param name="variable">A reference to the variable to be substituted out.</param>
+        /// <param name="term">The term to be substituted in.</param>
+        internal void AddBinding(VariableReference variable, Term term)
+        {
+            bindings.Add(variable, term);
         }
     }
 }
