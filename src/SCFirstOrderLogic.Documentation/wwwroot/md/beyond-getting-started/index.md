@@ -11,7 +11,7 @@ Having said all that, some hopefully useful notes do follow here.
 * **CNF:** While it wasn't explicity mentioned in "getting started", the knowledge bases referenced in that document do of course make use of conjunctive normal form where appropriate.
   Classes for representation of CNF can be found alongside the "raw" sentence types in the SCFirstOrderLogic namespace.
   Note that the Sentence base class defines a `ToCNF` method.
-* **Equality:** The SCFirstOrderLogic namespace includes EqualitySymbol, intended to be used as the symbol for the equality predicate.
+* **Equality:** The SCFirstOrderLogic namespace includes EqualityIdentifier, intended to be used as the identifier for the equality predicate.
   The various sentence creation methods make use of this in created sentences where appropriate.
 
 ### `SCFirstOrderLogic.Inference`
@@ -19,7 +19,7 @@ Having said all that, some hopefully useful notes do follow here.
 * **Decorator knowledge bases:** this namespace directly contains some [decorator](https://en.wikipedia.org/wiki/Decorator_pattern) knowledge base implementations.
   * **EqualityAxiomisingKnowledgeBase:** None of the knowledge bases included in the package use particular techniques (e.g. demodulation, paramodulation) to handle equality.
   However, the Inference namespace does include EqualityAxiomisingKnowledgeBase, which adds rules pertaining to equality as knowledge is added.
-  * **UniqueNamesAxiomisingKnowledgeBase:** Adds "axioms" for the unique names assumption as knowledge is added. That is, Adds "not equal" statements for all constant pairs whose symbols do not match.
+  * **UniqueNamesAxiomisingKnowledgeBase:** Adds "axioms" for the unique names assumption as knowledge is added. That is, Adds "not equal" statements for all constant pairs whose identifiers do not match.
 
 ### `SCFirstOrderLogic.LanguageIntegration`
 
@@ -27,7 +27,7 @@ As mentioned briefly in 'getting started', a language-integrated approach to sen
 
 ### `SCFirstOrderLogic.SentenceFormatting`
 
-There is some sentence formatting logic to be found in the SentenceFormatting namespace - which includes support for ensuring unique labelling of symbols for standardised variables and Skolem functions across a set of sentences.
+There is some sentence formatting logic to be found in the SentenceFormatting namespace - which includes support for ensuring unique labelling of identifiers for standardised variables and Skolem functions across a set of sentences.
 The sets of labels used can be specified by the caller (but defaults do exist).
 
 ## Learning Resources in the Repository

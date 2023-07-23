@@ -5,8 +5,8 @@ I don't intend to add any particularly powerful or specialised inference logic t
 
 Priorities at the time of writing:
 
-* To accompany the discrimination tree, I'm in the process of adding a path index implementation for terms.
-* ..then v5. See the `v5` branch and the `TODO-V5-..` comments in the code for details.
+* An async version of a discrimination tree, that allows for passing in the root node (thus allowing for implementations that e.g. use secondary storage)
+* To accompany the discrimination tree, a path index implementation for terms.
 
 Further ahead:
 

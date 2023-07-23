@@ -56,7 +56,7 @@ Notice that:
 * The factory provides `ForAll` and `ThereExists` methods for creating quantifications. There are overloads for declaring multiple variables at once.
 * The factory provides `If` and `Iff` methods for creating implications and equivalences, respectively.
 * The factory provides methods for conjunctions (`And`), disjunctions (`Or`) and negations (`Not`). See the next two examples if you really want to use C# operators for these.
-* The factory provides `A` through `Z` as properties that return variable declarations with these letters as their symbol. There is also a `Var` method that allows you to specify an identifier.
+* The factory provides `A` through `Z` as properties that return variable declarations with these letters as their identifier. There is also a `Var` method that allows you to specify an identifier.
 
 ### Writing Sentences as Code - with OperableSentenceFactory
 
@@ -117,7 +117,7 @@ The `SentenceCreation` namespace contains a `SentenceParser` class, that facilit
 ```
 using SCFirstOrderLogic.SentenceCreation;
 
-var grandparentDefn = SentenceParser.Parse("∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]");
+var grandparentDefn = SentenceParser.BasicParser.Parse("∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]");
 ```
 
 Notes:
@@ -132,7 +132,7 @@ Notes:
   * `⇔` ([U+21D4](https://www.google.com/search?q=unicode+code+point+U%2B21D4)), `<->` or `<=>` for equivalences
 * You can use `[ ... ]` or `( ... )` for bracketing sub-sentences.
 * Constant, variable, function and predicate identifiers must be alphanumeric (i.e. must match the regex `[A-Za-z0-9]+`).
-* To create a predicate that refers to the `EqualitySymbol` type (and thus capable of being leveraged by KBs that have particular handling for equality, etc), use `{term} = {term}`.
+* To create a predicate that refers to the `EqualityIdentifier` type (and thus capable of being leveraged by KBs that have particular handling for equality, etc), use `{term} = {term}`.
 * An identifier where a term is expected is interpreted as a variable reference if a matching declaration (from a quantification) is in scope - otherwise it is interpreted as a constant.
 * All identifiers are **case sensitive**. This is, for example, something to double-check if you're seeing something intepreted as a constant that you intend as a variable reference.
 
@@ -171,7 +171,7 @@ var rules = new[]
     // "The country Nono, an enemy of America..":
     "IsEnemyOf(Nono, America)",
 
-}.Select(s => SentenceParser.Parse(s));
+}.Select(s => SentenceParser.BasicParser.Parse(s));
 ```
 
 ### Using Forward Chaining
@@ -190,7 +190,7 @@ using SCFirstOrderLogic.Inference.ForwardChaining;
 // of IClauseStore to use secondary storage and/or customised indexing, for example.
 var kb = new ForwardChainingKnowledgeBase(new HashSetClauseStore());
 kb.Tell(rules);
-var querySentence = SentenceParser.Parse("IsCriminal(West)");
+var querySentence = SentenceParser.BasicParser.Parse("IsCriminal(West)");
 
 // Succinct way to get a true/false result:
 Console.WriteLine(kb.Ask(querySentence)); // "True"
@@ -216,7 +216,7 @@ using SCFirstOrderLogic.Inference.BackwardChaining;
 // just stores things in memory.
 var kb = new BackwardChainingKnowledgeBase(new DictionaryClauseStore());
 kb.Tell(rules);
-var result = kb.Ask(SentenceParser.Parse("IsCriminal(West)")); // == true
+var result = kb.Ask(SentenceParser.BasicParser.Parse("IsCriminal(West)")); // == true
 // ..Or can get an explanation in the same way as above
 ```
 
@@ -235,7 +235,7 @@ var kb = new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
     DelegateResolutionStrategy.PriorityComparisons.UnitPreference));
 
 kb.Tell(rules);
-var result = kb.Ask(SentenceParser.Parse("IsCriminal(West)")); // == true
+var result = kb.Ask(SentenceParser.BasicParser.Parse("IsCriminal(West)")); // == true
 // ..Or can get an explanation in the same way as above
 ```
 
