@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
     /// This class provides functionality for rendering <see cref="Sentence"/> instances (and <see cref="CNFSentence"/> instances) in the standard first-order logic syntax.
     /// Using a single <see cref="SentenceFormatter"/> instance allows for unique (and customisable) labelling of standardised variables and Skolem functions for all sentences formatted with the instance.
     /// </summary>
-    // TODO: Will ultimately want something that is more intelligent with brackets (i.e. drops them where not needed). 
+    // TODO-FEATURE: Will ultimately want something that is more intelligent with brackets (i.e. drops them where not needed). 
     public class SentenceFormatter
     {
         private readonly ILabellingScope<StandardisedVariableIdentifier> standardisedVariableLabellingScope;

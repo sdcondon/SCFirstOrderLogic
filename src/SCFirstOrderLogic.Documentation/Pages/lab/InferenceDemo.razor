@@ -222,8 +222,8 @@
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // Yes, could cache the parse results to avoid parsing multiple times, but not worth it for now at least.
-            // TODO: Some "TryParse.." methods might be useful - they'd certainly make this method a bit cleaner.
-            // TODO: If we had a ParseError exception type, we could perhaps highlight the offending text.
+            // TODO-FEATURE: Some "TryParse.." methods might be useful - they'd certainly make this method a bit cleaner.
+            // TODO-FEATURE: If we had a ParseError exception type, we could perhaps highlight the offending text.
             Sentence[] knowledge;
             Sentence query;
 
