@@ -376,7 +376,7 @@ namespace SCFirstOrderLogic.TermIndexing
         }
 
         /// <summary>
-        /// Information about a function, for storage against a node of a <see cref="DiscriminationTree{TValue}"/>.
+        /// Information about a function, for storage against a node of a discrimination tree.
         /// </summary>
         /// <param name="Identifier">The identifier of the represented function.</param>
         /// <param name="ArgumentCount">The number of arguments of the represented function.</param>
@@ -387,7 +387,7 @@ namespace SCFirstOrderLogic.TermIndexing
         }
 
         /// <summary>
-        /// Information about a constant, for storage against a node of a <see cref="DiscriminationTree{TValue}"/>.
+        /// Information about a constant, for storage against a node of a discrimination tree.
         /// </summary>
         /// <param name="Identifier">The identifier of the represented constant.</param>
         public sealed record ConstantInfo(object Identifier) : IElementInfo
@@ -397,7 +397,7 @@ namespace SCFirstOrderLogic.TermIndexing
         }
 
         /// <summary>
-        /// Information about a variable, for storage against a node of a <see cref="DiscriminationTree{TValue}"/>.
+        /// Information about a variable, for storage against a node of a discrimination tree.
         /// </summary>
         /// <param name="Ordinal">
         /// The ordinal of the represented variable - that is, the index of its position in a list of variables that
