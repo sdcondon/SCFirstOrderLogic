@@ -417,7 +417,7 @@ namespace SCFirstOrderLogic.TermIndexing
         {
             // TODO-PERFORMANCE: a dictionary is almost certainly overkill given the low number of vars likely to
             // appear in any given term. Plain old list likely to perform better. Test me.
-            private readonly Dictionary<object, int> variableIdMap = new(); 
+            private readonly Dictionary<object, int> variableIdMap = new();
 
             public IEnumerable<IElementInfo> ApplyTo(Term term)
             {
