@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.TermIndexing
 {
     /// <summary>
-    /// An implementation of an in-memory discrimination tree for <see cref="Term"/>s - specifically, one for which the attached values are the terms themselves.
+    /// An implementation of a discrimination tree for <see cref="Term"/>s - specifically, one for which the attached values are the terms themselves.
     /// </summary>
     /// <seealso href="https://www.google.com/search?q=discrimination+tree"/>
     public class AsyncDiscriminationTree

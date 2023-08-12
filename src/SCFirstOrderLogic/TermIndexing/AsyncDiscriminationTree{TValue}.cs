@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.TermIndexing
 {
     /// <summary>
-    /// An implementation of an in-memory discrimination tree for <see cref="Term"/>s.
+    /// An implementation of a discrimination tree for <see cref="Term"/>s.
     /// </summary>
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
     /// <seealso href="https://www.google.com/search?q=discrimination+tree"/>
