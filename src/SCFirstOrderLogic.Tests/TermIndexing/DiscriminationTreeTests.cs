@@ -3,10 +3,10 @@ using FlUnit;
 using System;
 using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
-using IElementInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTree<SCFirstOrderLogic.Term>.IElementInfo;
-using ConstantInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTree<SCFirstOrderLogic.Term>.ConstantInfo;
-using FunctionInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTree<SCFirstOrderLogic.Term>.FunctionInfo;
-using VariableInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTree<SCFirstOrderLogic.Term>.VariableInfo;
+using ConstantInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeConstantInfo;
+using FunctionInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeFunctionInfo;
+using IElementInfo = SCFirstOrderLogic.TermIndexing.IDiscriminationTreeElementInfo;
+using VariableInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeVariableInfo;
 
 namespace SCFirstOrderLogic.TermIndexing
 {
@@ -117,9 +117,10 @@ namespace SCFirstOrderLogic.TermIndexing
             })
             .When(tc =>
             {
-                var tree = new DiscriminationTree(tc.CurrentTerms);
+                var root = new DiscriminationTreeDictionaryNode<Term>();
+                var tree = new DiscriminationTree(root, tc.CurrentTerms);
                 tree.Add(tc.NewTerm);
-                return tree.Root.Children;
+                return root.Children;
             })
             .ThenReturns((tc, rv) => rv.Should().BeEquivalentTo(tc.ExpectedRootChildren));
 

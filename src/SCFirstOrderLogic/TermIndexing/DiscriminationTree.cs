@@ -6,7 +6,7 @@ using System.Linq;
 namespace SCFirstOrderLogic.TermIndexing
 {
     /// <summary>
-    /// An implementation of an in-memory discrimination tree for <see cref="Term"/>s - specifically, one for which the attached values are the terms themselves.
+    /// An implementation of a discrimination tree for <see cref="Term"/>s - specifically, one for which the attached values are the terms themselves.
     /// </summary>
     /// <seealso href="https://www.google.com/search?q=discrimination+tree"/>
     public class DiscriminationTree
@@ -14,33 +14,36 @@ namespace SCFirstOrderLogic.TermIndexing
         private readonly DiscriminationTree<Term> actualTree;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DiscriminationTree"/> class that is empty to begin with.
+        /// Initializes a new instance of the <see cref="DiscriminationTree"/> class.
         /// </summary>
         public DiscriminationTree()
+            : this(new DiscriminationTreeDictionaryNode<Term>(), Enumerable.Empty<Term>())
         {
-            actualTree = new();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with a specified root node.
+        /// </summary>
+        public DiscriminationTree(IDiscriminationTreeNode<Term> root)
+            : this(root, Enumerable.Empty<Term>())
+        {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with some initial content.
         /// </summary>
         public DiscriminationTree(IEnumerable<Term> content)
+            : this(new DiscriminationTreeDictionaryNode<Term>(), content)
         {
-            actualTree = new(content.Select(t => KeyValuePair.Create(t, t)));
         }
 
         /// <summary>
-        /// <para>
-        /// Gets the root node of the tree.
-        /// </para>
-        /// <para>
-        /// NB: In "normal" usage consumers shouldn't need to access this property.
-        /// However, discrimination trees are a specific, well-known data structure, and 
-        /// learning and experimentation is a key priority for this library. As such, 
-        /// interrogability of the internal structure is considered a useful feature.
-        /// </para>
+        /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with a specified root node and some initial content.
         /// </summary>
-        public DiscriminationTree<Term>.InternalNode Root => actualTree.Root;
+        public DiscriminationTree(IDiscriminationTreeNode<Term> root, IEnumerable<Term> content)
+        {
+            actualTree = new(root, content.Select(t => KeyValuePair.Create(t, t)));
+        }
 
         /// <summary>
         /// Adds a <see cref="Term"/> to the tree.
