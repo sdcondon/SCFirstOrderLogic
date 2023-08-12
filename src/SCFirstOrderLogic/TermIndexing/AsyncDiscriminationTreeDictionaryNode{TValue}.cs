@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.TermIndexing
     /// <para>
     /// NB: If you are using this type, you might as well be using <see cref="DiscriminationTree{TValue}"/> to avoid the overhead of asynchronicity.
     /// <see cref="AsyncDiscriminationTree{TValue}"/> is intended to facilitate indices that use secondary storage - this type is just an example
-    /// node implementation to base real (secondary storage utilising) node implmentations on.
+    /// node implementation to base real (secondary storage utilising) node implementations on.
     /// </para>
     /// </summary>
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
