@@ -65,7 +65,6 @@ namespace SCFirstOrderLogic
         /// Gets the original variable identifier that this identifier is the standardisation of.
         /// Intended for use within explanations of query results.
         /// </summary>
-
         public object OriginalIdentifier => OriginalVariableScope.Variable.Identifier;
 
         /////// <summary>

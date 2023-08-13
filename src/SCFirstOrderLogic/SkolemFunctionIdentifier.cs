@@ -31,9 +31,7 @@ namespace SCFirstOrderLogic
 
         /// <summary>
         /// Gets the original top-level sentence in which the variable was declared.
-        /// Contains all ancestors of the original variable declaration
-        /// in the sentence tree - starting with the quantification that declares the variable, and ending with the
-        /// root element of the sentence. Intended for use within explanations of query results.
+        /// Intended for use within explanations of query results.
         /// </summary>
         public Sentence OriginalSentence { get; }
 
