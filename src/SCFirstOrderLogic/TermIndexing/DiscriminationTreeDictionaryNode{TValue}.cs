@@ -7,14 +7,7 @@ using System.Collections.ObjectModel;
 namespace SCFirstOrderLogic.TermIndexing
 {
     /// <summary>
-    /// <para>
     /// An implementation of <see cref="IDiscriminationTreeNode{TValue}"/> that stores its content using a dictionary.
-    /// </para>
-    /// <para>
-    /// NB: If you are using this type, you might as well be using <see cref="DiscriminationTree{TValue}"/> to avoid the overhead of asynchronicity.
-    /// <see cref="AsyncDiscriminationTree{TValue}"/> is intended to facilitate indices that use secondary storage - this type is just an example
-    /// node implementation to base real (secondary storage utilising) node implmentations on.
-    /// </para>
     /// </summary>
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
     public class DiscriminationTreeDictionaryNode<TValue> : IDiscriminationTreeNode<TValue>
