@@ -7,7 +7,13 @@ using System.Linq;
 namespace SCFirstOrderLogic.TermIndexing
 {
     /// <summary>
+    /// <para>
     /// An implementation of a discrimination tree for <see cref="Term"/>s.
+    /// </para>
+    /// <para>
+    /// Each path in a discrimination tree consists of a depth-first traversal of the elements of the term that the leaf represents.
+    /// Discrimination trees are good for looking up generalisations of a query term.
+    /// </para>
     /// </summary>
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
     /// <seealso href="https://www.google.com/search?q=discrimination+tree"/>
@@ -118,7 +124,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
             }
 
-            // NB: can safely grab Value here because the current node must ALWAYS be a LeafNode at this point.
+            // NB: we can safely grab Value here because the current node must ALWAYS be a leaf node at this point.
             // It is not possible for prefix element info enumerations to occur, because the the number of
             // elements in the path is always one more than the summation of the ChildElementCounts (NB: used in
             // equality check) of all encountered elements.
@@ -225,7 +231,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
                 else
                 {
-                    // We can safely grab Value here because node MUST be a LeafNode at this point - ultimately because of how
+                    // We can safely grab Value here because node MUST be a leaf node at this point - ultimately because of how
                     // ElementInfoTransformation works (which controls both the structure of the tree and queryElements here).
                     yield return node.Value;
                 }

@@ -8,6 +8,7 @@ namespace SCFirstOrderLogic.TermIndexing
     /// nodes of a discrimination tree. Instances of this interface are associated with each 
     /// non-root element of a discrimination tree.
     /// </summary>
+    // TODO-BREAKING-V6: "NodeKey" is a better suffix than "ElementInfo" - because it is more specific (and shorter).
     public interface IDiscriminationTreeElementInfo
     {
         /// <summary>
