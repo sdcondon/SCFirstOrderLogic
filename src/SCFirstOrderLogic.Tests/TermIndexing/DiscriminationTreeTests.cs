@@ -225,7 +225,7 @@ namespace SCFirstOrderLogic.TermIndexing
                     QueryTerm: F2(X, X),
                     ExpectedReturnValue: new Term[] { F2(C1, C1), F2(F1(X), F1(X)) }),
 
-                new(
+                new( // Don't return term if it's only unifiable
                     StoredTerms: new Term[] { F2(X, C2) },
                     QueryTerm: F2(C1, Y),
                     ExpectedReturnValue: new Term[] { }),
@@ -271,7 +271,7 @@ namespace SCFirstOrderLogic.TermIndexing
                     QueryTerm: F2(C1, C1),
                     ExpectedReturnValue: new Term[] { F2(X, X), F2(X, Y) }),
 
-                new(
+                new( // Don't return term if it's "merely" unifiable
                     StoredTerms: new Term[] { F2(X, C2) },
                     QueryTerm: F2(C1, Y),
                     ExpectedReturnValue: new Term[] { }),

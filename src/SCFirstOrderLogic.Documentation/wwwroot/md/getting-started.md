@@ -8,7 +8,7 @@ The first challenge is to write sentences. This can be done in several ways. Thi
 
 `∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]`
 
-..that is, the definition of a grandparent. We use this example because its very straightforward but includes a decent cross-section of FoL elements.
+..that is, a definition of a grandparent. We use this example because its very straightforward but includes a decent cross-section of FoL elements.
 
 ### Writing Sentences as Code - Directly
 

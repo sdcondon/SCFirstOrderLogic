@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.TermIndexing
         IReadOnlyDictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> Children { get; }
 
         /// <summary>
-        /// Gets the value attached to a leaf node - throws an exception for internal nodes.
+        /// Gets the value attached to a leaf node. Will not be called for internal nodes - throwing an exception is acceptable behaviour for them.
         /// </summary>
         TValue Value { get; }
 
