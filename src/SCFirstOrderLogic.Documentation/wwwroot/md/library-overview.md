@@ -4,7 +4,7 @@ Here is a quick overview of the namespaces found within this library. Reading th
 
 * **`SCFirstOrderLogic`:** the root namespace contains classes representing individual elements of first order logic sentences (universal and existential quantifications, conjunctions, disjunctions, predicates, functions and so on).
   Instances of these classes are composed into tree structures that represent sentences of first order logic.
-  This namespace also contains classes that represent sentences in [conjunctive normal form](https://en.wikipedia.org/wiki/Conjunctive_normal_form), as well some classes that represent particular kinds of identifier - one for the equality predicate, one for standardised variables and one for Skolem functions.
+  This namespace also contains classes that represent sentences in [conjunctive normal form](https://en.wikipedia.org/wiki/Conjunctive_normal_form), as well as some that represent some well-known kinds of identifier - one for the equality predicate, one for standardised variables and one for Skolem functions.
   * **`Inference`:** intended as the top-level namespace for actual inference algorithms. Directly contains `IKnowledgeBase`, an interface for knowledge bases (stores of knowledge that callers can `Tell` and `Ask` things).
     * **`BackwardChaining`:** contains an `IKnowledgeBase` implementation that uses a simple form of [backward chaining](https://en.wikipedia.org/wiki/Backward_chaining) - as well as some supporting types.
     * **`ForwardChaining`:** contains an `IKnowledgeBase` implementation that uses a simple form of [forward chaining](https://en.wikipedia.org/wiki/Forward_chaining) - as well as some supporting types.
