@@ -1,6 +1,6 @@
-﻿#if FALSE
-// Copyright (c) 2021-2023 Simon Condon.
+﻿// Copyright (c) 2021-2023 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+#if FALSE
 using System;
 using System.Threading;
 using System.Threading.Tasks;

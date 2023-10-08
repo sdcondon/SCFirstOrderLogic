@@ -4,9 +4,8 @@
 namespace SCFirstOrderLogic.TermIndexing
 {
     /// <summary>
-    /// Interface for the types that describe elements of a term, for the purposes of keying the
-    /// nodes of a discrimination tree. Instances of this interface are associated with each 
-    /// non-root element of a discrimination tree.
+    /// Interface for types that describe elements of a term, for the purposes of storage in a discrimination tree.
+    /// Instances of this type are used as the key for each child of a <see cref="IDiscriminationTreeNode{TValue}"/>.
     /// </summary>
     // TODO-BREAKING-V6: "NodeKey" is a better suffix than "ElementInfo" - because it is more specific (and shorter).
     public interface IDiscriminationTreeElementInfo

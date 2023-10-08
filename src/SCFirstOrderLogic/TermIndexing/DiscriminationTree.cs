@@ -6,7 +6,13 @@ using System.Linq;
 namespace SCFirstOrderLogic.TermIndexing
 {
     /// <summary>
+    /// <para>
     /// An implementation of a discrimination tree for <see cref="Term"/>s - specifically, one for which the attached values are the terms themselves.
+    /// </para>
+    /// <para>
+    /// Each path from root to leaf in a discrimination tree consists of a depth-first traversal of the elements of the term that the leaf represents.
+    /// Discrimination trees are particularly well-suited to (i.e. performant at) looking up generalisations of a query term.
+    /// </para>
     /// </summary>
     /// <seealso href="https://www.google.com/search?q=discrimination+tree"/>
     public class DiscriminationTree

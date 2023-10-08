@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 namespace SCFirstOrderLogic.TermIndexing
 {
     /// <summary>
-    /// An implementation of <see cref="IDiscriminationTreeNode{TValue}"/> that stores its content using a dictionary.
+    /// An implementation of <see cref="IDiscriminationTreeNode{TValue}"/> that stores its child nodes using a <see cref="Dictionary{TKey, TValue}"/>.
     /// </summary>
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
     public class DiscriminationTreeDictionaryNode<TValue> : IDiscriminationTreeNode<TValue>
@@ -16,7 +16,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
         /// <inheritdoc/>
         // NB: we don't bother wrapping children in a ReadOnlyDict to stop unscrupulous
-        // users from casting. Would be more mem for a real edge case.. 
+        // users from casting. Would be more memory for a real edge case.
         public IReadOnlyDictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> Children => children;
 
         /// <inheritdoc/>

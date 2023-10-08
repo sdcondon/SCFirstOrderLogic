@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing
@@ -36,7 +37,8 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <param name="content">The initial content to add to the tree.</param>
         public AsyncDiscriminationTree(IAsyncDiscriminationTreeNode<TValue> root, IEnumerable<KeyValuePair<Term, TValue>> content)
         {
-            this.root = root;
+            this.root = root ?? throw new ArgumentNullException(nameof(root));
+            ArgumentNullException.ThrowIfNull(content);
 
             foreach (var kvp in content)
             {
@@ -51,10 +53,7 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <param name="value">The value to associate with the added term.</param>
         public async Task AddAsync(Term term, TValue value)
         {
-            if (term == null)
-            {
-                throw new ArgumentNullException(nameof(term));
-            }
+            ArgumentNullException.ThrowIfNull(term);
 
             var queryElements = new DiscriminationTreeElementInfoTransformation().ApplyTo(term).GetEnumerator();
             try
@@ -90,10 +89,7 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <returns>A value tuple indicated whether or not the query found a matching term, and if so, what the value associated with that term is.</returns>
         public async Task<(bool isSucceeded, TValue? value)> TryGetExactAsync(Term term)
         {
-            if (term == null)
-            {
-                throw new ArgumentNullException(nameof(term));
-            }
+            ArgumentNullException.ThrowIfNull(term);
 
             IAsyncDiscriminationTreeNode<TValue> currentNode = root;
             foreach (var queryElement in new DiscriminationTreeElementInfoTransformation().ApplyTo(term))
@@ -123,10 +119,7 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <returns>An enumerable of the value associated with each of the matching terms.</returns>
         public IAsyncEnumerable<TValue> GetInstances(Term term)
         {
-            if (term == null)
-            {
-                throw new ArgumentNullException(nameof(term));
-            }
+            ArgumentNullException.ThrowIfNull(term);
 
             List<IDiscriminationTreeElementInfo> queryElements = new DiscriminationTreeElementInfoTransformation().ApplyTo(term).ToList();
 
@@ -135,7 +128,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 int queryElementIndex,
                 IEnumerable<IDiscriminationTreeElementInfo> parentVariableMatch,
                 int parentUnexploredBranchCount,
-                VariableBindings priorVariableBindings)
+                DiscriminationTreeVariableBindings priorVariableBindings)
             {
                 await foreach (var (elementInfo, node) in nodes)
                 {
@@ -161,7 +154,7 @@ namespace SCFirstOrderLogic.TermIndexing
                     {
                         var variableBindings = priorVariableBindings;
 
-                        var isVariableMatch = VariableBindings.TryAddOrMatchBinding(
+                        var isVariableMatch = DiscriminationTreeVariableBindings.TryAddOrMatchBinding(
                             ((DiscriminationTreeVariableInfo)queryElements[queryElementIndex]).Ordinal,
                             variableMatch.ToArray(),
                             ref variableBindings);
@@ -180,7 +173,7 @@ namespace SCFirstOrderLogic.TermIndexing
             async IAsyncEnumerable<TValue> ExpandNode(
                 IAsyncDiscriminationTreeNode<TValue> node,
                 int queryElementIndex,
-                VariableBindings variableBindings)
+                DiscriminationTreeVariableBindings variableBindings)
             {
                 if (queryElementIndex < queryElements.Count)
                 {
@@ -214,7 +207,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
             }
 
-            return ExpandNode(root, 0, new VariableBindings());
+            return ExpandNode(root, 0, new DiscriminationTreeVariableBindings());
         }
 
         /// <summary>
@@ -225,14 +218,11 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <returns>An enumerable of the value associated with each of the matching terms.</returns>
         public IAsyncEnumerable<TValue> GetGeneralisations(Term term)
         {
-            if (term == null)
-            {
-                throw new ArgumentNullException(nameof(term));
-            }
+            ArgumentNullException.ThrowIfNull(term);
 
             var queryElements = new DiscriminationTreeElementInfoTransformation().ApplyTo(term).ToArray();
 
-            async IAsyncEnumerable<TValue> ExpandNode(IAsyncDiscriminationTreeNode<TValue> node, int queryElementIndex, VariableBindings variableBindings)
+            async IAsyncEnumerable<TValue> ExpandNode(IAsyncDiscriminationTreeNode<TValue> node, int queryElementIndex, DiscriminationTreeVariableBindings variableBindings)
             {
                 await foreach (var (childElement, childNode) in node.GetChildren())
                 {
@@ -254,7 +244,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
                         // Now we need to verify subtree's consistency with any existing variable binding, add a binding if needed,
                         // and set isVariableMatch appropriately.
-                        isVariableMatch = VariableBindings.TryAddOrMatchBinding(
+                        isVariableMatch = DiscriminationTreeVariableBindings.TryAddOrMatchBinding(
                             variableInfo.Ordinal,
                             queryElements[queryElementIndex..(queryElementIndex + nextQueryElementOffset)],
                             ref childVariableBindings);
@@ -281,7 +271,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
             }
 
-            return ExpandNode(root, 0, new VariableBindings());
+            return ExpandNode(root, 0, new DiscriminationTreeVariableBindings());
         }
 
         // public IEnumerable<TValue> GetUnifications(Term term) -- not yet..

@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing
 {
+    #pragma warning disable CS1998 // async lacks await. See 'NB' in class summary.
     /// <summary>
     /// <para>
     /// An implementation of <see cref="IAsyncDiscriminationTreeNode{TValue}"/> that just stores its content using an in-memory dictionary.
     /// </para>
     /// <para>
-    /// NB: If you are using this type, you might as well be using <see cref="DiscriminationTree{TValue}"/> to avoid the overhead of asynchronicity.
-    /// <see cref="AsyncDiscriminationTree{TValue}"/> is intended to facilitate indices that use secondary storage - this type is just an example
-    /// node implementation to base real (secondary storage utilising) node implementations on.
+    /// NB: If you are using this type, you should consider using <see cref="DiscriminationTree{TValue}"/> to avoid the overhead of asynchronicity.
+    /// <see cref="AsyncDiscriminationTree{TValue}"/> is intended to facilitate indices that use secondary storage - this type is primarily
+    /// intended as an example implementation to base real (secondary storage utilising)  implementations on.
     /// </para>
     /// </summary>
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
@@ -25,7 +26,7 @@ namespace SCFirstOrderLogic.TermIndexing
         public TValue Value => throw new NotSupportedException("Internal node - has no value");
 
         /// <inheritdoc/>
-#pragma warning disable CS1998 // async lacks await. See 'NB' in class summary.
+
         public async IAsyncEnumerable<KeyValuePair<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>>> GetChildren()
         {
             foreach (var child in children)
@@ -33,7 +34,6 @@ namespace SCFirstOrderLogic.TermIndexing
                 yield return child;
             }
         }
-#pragma warning restore CS1998
 
         /// <inheritdoc/>
         public Task<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeElementInfo elementInfo)
@@ -71,12 +71,10 @@ namespace SCFirstOrderLogic.TermIndexing
 
             public TValue Value { get; }
 
-#pragma warning disable CS1998 // async lacks await. See 'NB' in class summary.
             public async IAsyncEnumerable<KeyValuePair<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>>> GetChildren()
             {
                 yield break;
             }
-#pragma warning restore CS1998
 
             public Task<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeElementInfo elementInfo)
             {
@@ -94,4 +92,5 @@ namespace SCFirstOrderLogic.TermIndexing
             }
         }
     }
+    #pragma warning restore CS1998
 }
