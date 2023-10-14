@@ -116,7 +116,8 @@ namespace SCFirstOrderLogic
         public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
 
         /// <summary>
-        /// Defines the (implicit) conversion of a <see cref="SCFirstOrderLogic.Predicate"/> instance to a <see cref="Literal"/>. NB: This conversion is implicit because it is always valid and results in no loss of information.
+        /// Defines the (implicit) conversion of a <see cref="SCFirstOrderLogic.Predicate"/> instance to a <see cref="Literal"/>.
+        /// NB: This conversion is implicit because it is always valid and results in no loss of information.
         /// </summary>
         /// <param name="predicate">The predicate to convert.</param>
         public static implicit operator Literal(Predicate predicate) => new(predicate);
