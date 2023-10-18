@@ -262,8 +262,8 @@ namespace SCFirstOrderLogic.TermIndexing
                             nextQueryElementOffset++;
                         }
 
-                        // Now we need to verify subtree's consistency with any existing variable binding, add a binding if needed,
-                        // and set isVariableMatch appropriately.
+                        // Now we need to verify subtree's consistency with any existing variable binding,
+                        // add a binding if needed, and set isVariableMatch appropriately.
                         isVariableMatch = DiscriminationTreeVariableBindings.TryAddOrMatchBinding(
                             variableInfo.Ordinal,
                             queryElements[queryElementIndex..(queryElementIndex + nextQueryElementOffset)],
