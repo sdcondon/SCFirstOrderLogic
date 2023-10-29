@@ -72,7 +72,7 @@ namespace SCFirstOrderLogic.TermIndexing
         {
             ArgumentNullException.ThrowIfNull(term);
 
-            var queryElements = new DiscriminationTreeElementInfoTransformation().ApplyTo(term).GetEnumerator();
+            var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).GetEnumerator();
             try
             {
                 var currentNode = root;
@@ -110,7 +110,7 @@ namespace SCFirstOrderLogic.TermIndexing
             ArgumentNullException.ThrowIfNull(term);
 
             var currentNode = root;
-            foreach (var queryElement in new DiscriminationTreeElementInfoTransformation().ApplyTo(term))
+            foreach (var queryElement in new DiscriminationTreeNodeKeyTransformation().ApplyTo(term))
             {
                 if (!currentNode.Children.TryGetValue(queryElement, out currentNode!))
                 {
@@ -136,7 +136,7 @@ namespace SCFirstOrderLogic.TermIndexing
         public IEnumerable<TValue> GetInstances(Term term)
         {
             ArgumentNullException.ThrowIfNull(term);
-            var queryElements = new DiscriminationTreeElementInfoTransformation().ApplyTo(term).ToList();
+            var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).ToList();
 
             IEnumerable<TValue> ExpandNodes(
                 IReadOnlyDictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> nodes,
@@ -240,7 +240,7 @@ namespace SCFirstOrderLogic.TermIndexing
         public IEnumerable<TValue> GetGeneralisations(Term term)
         {
             ArgumentNullException.ThrowIfNull(term);
-            var queryElements = new DiscriminationTreeElementInfoTransformation().ApplyTo(term).ToArray();
+            var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).ToArray();
 
             IEnumerable<TValue> ExpandNode(IDiscriminationTreeNode<TValue> node, int queryElementIndex, DiscriminationTreeVariableBindings variableBindings)
             {

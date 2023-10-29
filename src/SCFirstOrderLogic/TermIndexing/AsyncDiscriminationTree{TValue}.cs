@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing
@@ -54,8 +53,8 @@ namespace SCFirstOrderLogic.TermIndexing
         public async Task AddAsync(Term term, TValue value)
         {
             ArgumentNullException.ThrowIfNull(term);
+            var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).GetEnumerator();
 
-            var queryElements = new DiscriminationTreeElementInfoTransformation().ApplyTo(term).GetEnumerator();
             try
             {
                 IAsyncDiscriminationTreeNode<TValue> currentNode = root;
@@ -92,7 +91,7 @@ namespace SCFirstOrderLogic.TermIndexing
             ArgumentNullException.ThrowIfNull(term);
 
             IAsyncDiscriminationTreeNode<TValue> currentNode = root;
-            foreach (var queryElement in new DiscriminationTreeElementInfoTransformation().ApplyTo(term))
+            foreach (var queryElement in new DiscriminationTreeNodeKeyTransformation().ApplyTo(term))
             {
                 var child = await currentNode.TryGetChildAsync(queryElement);
 
@@ -120,8 +119,7 @@ namespace SCFirstOrderLogic.TermIndexing
         public IAsyncEnumerable<TValue> GetInstances(Term term)
         {
             ArgumentNullException.ThrowIfNull(term);
-
-            List<IDiscriminationTreeElementInfo> queryElements = new DiscriminationTreeElementInfoTransformation().ApplyTo(term).ToList();
+            List<IDiscriminationTreeElementInfo> queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).ToList();
 
             async IAsyncEnumerable<TValue> ExpandVariableMatches(
                 IAsyncEnumerable<KeyValuePair<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>>> nodes,
@@ -219,8 +217,7 @@ namespace SCFirstOrderLogic.TermIndexing
         public IAsyncEnumerable<TValue> GetGeneralisations(Term term)
         {
             ArgumentNullException.ThrowIfNull(term);
-
-            var queryElements = new DiscriminationTreeElementInfoTransformation().ApplyTo(term).ToArray();
+            var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).ToArray();
 
             async IAsyncEnumerable<TValue> ExpandNode(IAsyncDiscriminationTreeNode<TValue> node, int queryElementIndex, DiscriminationTreeVariableBindings variableBindings)
             {

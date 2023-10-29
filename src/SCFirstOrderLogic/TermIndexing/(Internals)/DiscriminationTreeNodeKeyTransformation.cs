@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.TermIndexing
     /// for storage in or querying of a discrimination tree. That is, converts terms into an enumerable that represents a depth-first
     /// traversal of their constituent elements.
     /// </summary>
-    internal class DiscriminationTreeElementInfoTransformation
+    internal class DiscriminationTreeNodeKeyTransformation
     {
         // TODO-PERFORMANCE: a dictionary is almost certainly overkill given the low number of vars likely to
         // appear in any given term. Plain old list likely to perform better. Test me.
@@ -47,7 +47,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
         public IEnumerable<IDiscriminationTreeElementInfo> ApplyTo(VariableReference variable)
         {
-            // Variable declarations are "ordinalised" (probably not the "right" terminology - need to look this up).
+            // Variable identifiers are "ordinalised".
             // That is, converted into the ordinal of where they first appear in a depth-first traversal of the term.
             // This is useful because it means e.g. F(X, X) is transformed to a path that is identical to the transformation of F(Y, Y),
             // but different to the transformation of F(X, Y).

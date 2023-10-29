@@ -14,8 +14,9 @@ namespace SCFirstOrderLogic.TermIndexing
 
         private DiscriminationTreeVariableBindings(IEnumerable<KeyValuePair<int, IDiscriminationTreeElementInfo[]>> content) => map = new(content);
 
-        // overall performance would perhaps be better with a tree instead of copying a dictionary.. worth a test at some point perhaps.
-        // (perhaps after looking at substitution trees in general). Might not be worth the complexity though.
+        // Overall performance would perhaps be better with a tree instead of copying a dictionary
+        // Worth a test at some point perhaps (maybe after looking at substitution trees in general).
+        // Might not be worth the complexity though.
         public static bool TryAddOrMatchBinding(int ordinal, IDiscriminationTreeElementInfo[] value, ref DiscriminationTreeVariableBindings bindings)
         {
             // NB the "one-way" nature of this binding means this logic can be
