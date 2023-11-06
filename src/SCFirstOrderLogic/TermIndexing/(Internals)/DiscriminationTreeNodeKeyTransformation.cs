@@ -49,8 +49,9 @@ namespace SCFirstOrderLogic.TermIndexing
         {
             // Variable identifiers are "ordinalised".
             // That is, converted into the ordinal of where they first appear in a depth-first traversal of the term.
-            // This is useful because it means e.g. F(X, X) is transformed to a path that is identical to the transformation of F(Y, Y),
-            // but different to the transformation of F(X, Y).
+            // This is useful because it makes the original identifiers irrelevant but preserves distinctness, so that 
+            // e.g. F(X, X) is transformed to a term that is identical to the transformation of F(Y, Y), but different
+            // to the transformation of F(X, Y).
             if (!variableIdMap.TryGetValue(variable.Identifier, out var ordinal))
             {
                 ordinal = variableIdMap[variable.Identifier] = variableIdMap.Count;

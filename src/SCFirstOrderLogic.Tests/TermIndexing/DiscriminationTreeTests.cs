@@ -207,7 +207,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
                 new( // Get everything
                     StoredTerms: new Term[] { C1, X, F1(X), F1(F2(X, C1)) },
-                    QueryTerm: X,
+                    QueryTerm: Y,
                     ExpectedReturnValue: new Term[] { C1, X, F1(X), F1(F2(X, C1)) }),
 
                 new( // Get all instances of top-level function
