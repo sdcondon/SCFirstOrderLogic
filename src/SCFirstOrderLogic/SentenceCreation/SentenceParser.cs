@@ -27,7 +27,7 @@ namespace SCFirstOrderLogic.SentenceCreation
         /// A delegate to retrieve the identifier for a variable reference or a constant, given its symbol text.
         /// </para>
         /// <para>
-        /// These are combined because we check whether the returned value is among the  identifiers of variables
+        /// These are combined because we check whether the returned value is among the identifiers of variables
         /// that are in scope in order to determine whether something is a variable reference or a constant.
         /// If they were separate, you'd end up in the awkward situation where you'd have to bear in mind that
         /// "getVariableIdentifier" actually gets called for things that are constants, and for constants two "gets"

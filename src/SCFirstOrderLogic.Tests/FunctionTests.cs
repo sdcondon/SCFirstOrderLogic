@@ -7,15 +7,16 @@ namespace SCFirstOrderLogic
     {
         private static Constant C => new(nameof(C));
         private static VariableReference X => new(nameof(X));
-        private static Function F(Term t) => new(nameof(F), t);
+        private static Function F(params Term[] t) => new(nameof(F), t);
 
         public static Test IsGroundTermValue => TestThat
             .GivenEachOf(() => new[]
             {
-                new { Function = F(X), IsGroundTermExpectation = false },
-                new { Function = F(F(X)), IsGroundTermExpectation = false },
+                new { Function = F(), IsGroundTermExpectation = true },
                 new { Function = F(C), IsGroundTermExpectation = true },
                 new { Function = F(F(C)), IsGroundTermExpectation = true },
+                new { Function = F(X), IsGroundTermExpectation = false },
+                new { Function = F(F(X)), IsGroundTermExpectation = false },
             })
             .When(tc => tc.Function.IsGroundTerm)
             .ThenReturns((tc, isGroundTerm) => isGroundTerm.Should().Be(tc.IsGroundTermExpectation));

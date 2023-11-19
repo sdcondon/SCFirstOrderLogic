@@ -12,6 +12,9 @@ namespace SCFirstOrderLogic.SentenceFormatting
     // TODO-FEATURE: Will ultimately want something that is more intelligent with brackets (i.e. drops them where not needed). 
     public class SentenceFormatter
     {
+        private const char PrecedenceBracketL = '[';
+        private const char PrecedenceBracketR = ']';
+
         private readonly ILabellingScope<StandardisedVariableIdentifier> standardisedVariableLabellingScope;
         private readonly ILabellingScope<SkolemFunctionIdentifier> skolemFunctionLabellingScope;
 
@@ -80,7 +83,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// </summary>
         /// <param name="sentence">The sentence to be formatted.</param>
         /// <returns>A string representation of the given sentence.</returns>
-        public string Format(CNFSentence sentence) => string.Join(" ∧ ", sentence.Clauses.Select(c => $"[{Format(c)}]"));
+        public string Format(CNFSentence sentence) => string.Join(" ∧ ", sentence.Clauses.Select(c => $"{PrecedenceBracketL}{Format(c)}{PrecedenceBracketR}"));
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Literal"/> instance.
@@ -113,7 +116,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <param name="conjunction">The conjunction to be formatted.</param>
         /// <returns>A string representation of the given conjunction.</returns>
         public string Format(Conjunction conjunction) =>
-            $"[{Format(conjunction.Left)} ∧ {Format(conjunction.Right)}]";
+            $"{PrecedenceBracketL}{Format(conjunction.Left)} ∧ {Format(conjunction.Right)}{PrecedenceBracketR}";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Disjunction"/> instance.
@@ -121,7 +124,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <param name="disjunction">The disjunction to be formatted.</param>
         /// <returns>A string representation of the given disjunction.</returns>
         public string Format(Disjunction disjunction) =>
-            $"[{Format(disjunction.Left)} ∨ {Format(disjunction.Right)}]";
+            $"{PrecedenceBracketL}{Format(disjunction.Left)} ∨ {Format(disjunction.Right)}{PrecedenceBracketR}";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Equivalence"/> instance.
@@ -129,7 +132,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <param name="equivalence">The equivalence to be formatted.</param>
         /// <returns>A string representation of the given equivalence.</returns>
         public string Format(Equivalence equivalence) =>
-            $"[{Format(equivalence.Left)} ⇔ {Format(equivalence.Right)}]";
+            $"{PrecedenceBracketL}{Format(equivalence.Left)} ⇔ {Format(equivalence.Right)}{PrecedenceBracketR}";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="ExistentialQuantification"/> instance.
@@ -137,7 +140,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <param name="existentialQuantification">The existential quantification to be formatted.</param>
         /// <returns>A string representation of the given existential quantification.</returns>
         public string Format(ExistentialQuantification existentialQuantification) =>
-            $"[∃ {Format(existentialQuantification.Variable)}, {Format(existentialQuantification.Sentence)}]";
+            $"{PrecedenceBracketL}∃ {Format(existentialQuantification.Variable)}, {Format(existentialQuantification.Sentence)}{PrecedenceBracketR}";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Implication"/> instance.
@@ -145,7 +148,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <param name="implication">The implication to be formatted.</param>
         /// <returns>A string representation of the given implication.</returns>
         public string Format(Implication implication) =>
-            $"[{Format(implication.Antecedent)} ⇒ {Format(implication.Consequent)}]";
+            $"{PrecedenceBracketL}{Format(implication.Antecedent)} ⇒ {Format(implication.Consequent)}{PrecedenceBracketR}";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Negation"/> instance.
@@ -169,7 +172,7 @@ namespace SCFirstOrderLogic.SentenceFormatting
         /// <param name="universalQuantification">The universal quantification to be formatted.</param>
         /// <returns>A string representation of the given universal quantification.</returns>
         public string Format(UniversalQuantification universalQuantification) =>
-            $"[∀ {Format(universalQuantification.Variable)}, {Format(universalQuantification.Sentence)}]";
+            $"{PrecedenceBracketL}∀ {Format(universalQuantification.Variable)}, {Format(universalQuantification.Sentence)}{PrecedenceBracketR}";
 
         /// <summary>
         /// Returns a string representation of a given <see cref="Term"/> instance.

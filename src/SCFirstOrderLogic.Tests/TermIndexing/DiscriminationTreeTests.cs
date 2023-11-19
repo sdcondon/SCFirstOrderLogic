@@ -12,11 +12,10 @@ namespace SCFirstOrderLogic.TermIndexing
 {
     public static class DiscriminationTreeTests
     {
-        private static readonly Constant C1 = new("C1");
-        private static readonly Constant C2 = new("C2");
+        private static readonly Constant C1 = new(nameof(C1));
+        private static readonly Constant C2 = new(nameof(C2));
 
-        private static Function F1(Term x) => new(nameof(F1), x);
-        private static Function F2(Term x, Term y) => new(nameof(F2), x, y);
+        private static Function F(params Term[] a) => new(nameof(F), a);
 
         public static Test AddBehaviour_Positive => TestThat
             .GivenEachOf(() => new PositiveAddTestCase[]
@@ -30,26 +29,26 @@ namespace SCFirstOrderLogic.TermIndexing
                     }),
 
                 new(
-                    CurrentTerms: new[] { F1(X) },
-                    NewTerm: F1(C1),
+                    CurrentTerms: new[] { F(X) },
+                    NewTerm: F(C1),
                     ExpectedRootChildren: new()
                     {
-                        [new FunctionInfo("F1", 1)] = new
+                        [new FunctionInfo("F", 1)] = new
                         {
                             Children = new Dictionary<IElementInfo, object>
                             {
-                                [new VariableInfo(0)] = new { Value = F1(X) },
-                                [new ConstantInfo("C1")] = new { Value = F1(C1) },
+                                [new VariableInfo(0)] = new { Value = F(X) },
+                                [new ConstantInfo("C1")] = new { Value = F(C1) },
                             }
                         },
                     }),
 
                 new(
-                    CurrentTerms: new[] { F2(X, C2) },
-                    NewTerm: F2(X, C1),
+                    CurrentTerms: new[] { F(X, C2) },
+                    NewTerm: F(X, C1),
                     ExpectedRootChildren: new()
                     {
-                        [new FunctionInfo("F2", 2)] = new
+                        [new FunctionInfo("F", 2)] = new
                         {
                             Children = new Dictionary<IElementInfo, object>
                             {
@@ -57,8 +56,8 @@ namespace SCFirstOrderLogic.TermIndexing
                                 { 
                                     Children = new Dictionary<IElementInfo, object>
                                     {
-                                        [new ConstantInfo("C1")] = new { Value = F2(X, C1) },
-                                        [new ConstantInfo("C2")] = new { Value = F2(X, C2) },
+                                        [new ConstantInfo("C1")] = new { Value = F(X, C1) },
+                                        [new ConstantInfo("C2")] = new { Value = F(X, C2) },
                                     }
                                 },
                             }
@@ -67,14 +66,14 @@ namespace SCFirstOrderLogic.TermIndexing
 
                 new(
                     CurrentTerms: Array.Empty<Term>(),
-                    NewTerm: F2(F1(C1), F1(C2)),
+                    NewTerm: F(F(C1), F(C2)),
                     ExpectedRootChildren: new()
                     {
-                        [new FunctionInfo("F2", 2)] = new
+                        [new FunctionInfo("F", 2)] = new
                         {
                             Children = new Dictionary<IElementInfo, object>
                             {
-                                [new FunctionInfo("F1", 1)] = new
+                                [new FunctionInfo("F", 1)] = new
                                 {
                                     Children = new Dictionary<IElementInfo, object>
                                     {
@@ -82,11 +81,11 @@ namespace SCFirstOrderLogic.TermIndexing
                                         {
                                             Children = new Dictionary<IElementInfo, object>
                                             {
-                                                [new FunctionInfo("F1", 1)] = new
+                                                [new FunctionInfo("F", 1)] = new
                                                 {
                                                     Children = new Dictionary<IElementInfo, object>
                                                     {
-                                                        [new ConstantInfo("C2")] = new { Value = F2(F1(C1), F1(C2)) },
+                                                        [new ConstantInfo("C2")] = new { Value = F(F(C1), F(C2)) },
                                                     }
                                                 },
                                             }
@@ -97,9 +96,10 @@ namespace SCFirstOrderLogic.TermIndexing
                         }
                     }),
 
-                new(
-                    CurrentTerms: new[] { new Function("F") },
-                    NewTerm: new Function("F", C1),
+                // Same function identifier with different arg count shouldn't cause problems:
+                new( 
+                    CurrentTerms: new[] { F() },
+                    NewTerm: F(C1),
                     ExpectedRootChildren: new()
                     {
                         [new FunctionInfo("F", 0)] = new
@@ -132,12 +132,12 @@ namespace SCFirstOrderLogic.TermIndexing
                     NewTerm: C1),
 
                 new(
-                    CurrentTerms: new[] { F1(X) },
-                    NewTerm: F1(X)),
+                    CurrentTerms: new[] { F(X) },
+                    NewTerm: F(X)),
 
                 new(
-                    CurrentTerms: new[] { F1(C1) },
-                    NewTerm: F1(C1)),
+                    CurrentTerms: new[] { F(C1) },
+                    NewTerm: F(C1)),
             })
             .When(tc =>
             {
@@ -165,28 +165,28 @@ namespace SCFirstOrderLogic.TermIndexing
                     ExpectedReturnValue: true),
 
                 new( // variable identifier shouldn't matter #2
-                    StoredTerms: new Term[] { F2(X, Y) },
-                    QueryTerm: F2(Y, X),
+                    StoredTerms: new Term[] { F(X, Y) },
+                    QueryTerm: F(Y, X),
                     ExpectedReturnValue: true),
 
                 new( // variable ordinal should matter
-                    StoredTerms: new Term[] { F2(X, Y) },
-                    QueryTerm: F2(X, X),
+                    StoredTerms: new Term[] { F(X, Y) },
+                    QueryTerm: F(X, X),
                     ExpectedReturnValue: false),
 
                 new(
-                    StoredTerms: new Term[] { F1(X), F1(C2) },
-                    QueryTerm: F1(C1),
+                    StoredTerms: new Term[] { F(X), F(C2) },
+                    QueryTerm: F(C1),
                     ExpectedReturnValue: false),
 
                 new(
-                    StoredTerms: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2) },
-                    QueryTerm: F2(X, X),
+                    StoredTerms: new Term[] { F(C1, C1), F(C2, C2), F(C1, C2) },
+                    QueryTerm: F(X, X),
                     ExpectedReturnValue: false),
 
                 new(
-                    StoredTerms: new Term[] { F2(X, C2) },
-                    QueryTerm: F2(C1, Y),
+                    StoredTerms: new Term[] { F(X, C2) },
+                    QueryTerm: F(C1, Y),
                     ExpectedReturnValue: false),
             })
             .When(tc =>
@@ -206,28 +206,28 @@ namespace SCFirstOrderLogic.TermIndexing
                     ExpectedReturnValue: new Term[] { C1 }),
 
                 new( // Get everything
-                    StoredTerms: new Term[] { C1, X, F1(X), F1(F2(X, C1)) },
+                    StoredTerms: new Term[] { C1, X, F(X), F(F(X, C1)) },
                     QueryTerm: Y,
-                    ExpectedReturnValue: new Term[] { C1, X, F1(X), F1(F2(X, C1)) }),
+                    ExpectedReturnValue: new Term[] { C1, X, F(X), F(F(X, C1)) }),
 
                 new( // Get all instances of top-level function
-                    StoredTerms: new Term[] { F1(C1), F1(C2), F1(F1(C1)), F2(C1, C2), C1 },
-                    QueryTerm: F1(X),
-                    ExpectedReturnValue: new Term[] { F1(C1), F1(C2), F1(F1(C1)) }),
+                    StoredTerms: new Term[] { F(C1), F(C2), F(F(C1)), F(C1, C2), C1 },
+                    QueryTerm: F(X),
+                    ExpectedReturnValue: new Term[] { F(C1), F(C2), F(F(C1)) }),
 
                 new( // Get all instances of top-level function with any args
-                    StoredTerms: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2) },
-                    QueryTerm: F2(X, Y),
-                    ExpectedReturnValue: new Term[] { F2(C1, C1), F2(C2, C2), F2(C1, C2) }),
+                    StoredTerms: new Term[] { F(C1, C1), F(C2, C2), F(C1, C2) },
+                    QueryTerm: F(X, Y),
+                    ExpectedReturnValue: new Term[] { F(C1, C1), F(C2, C2), F(C1, C2) }),
 
                 new( // Get all instances of top-level function with repeated arg
-                    StoredTerms: new Term[] { F2(C1, C1), F2(C1, C2), F2(F1(X), F1(X)), F2(F1(X), F1(Y)) },
-                    QueryTerm: F2(X, X),
-                    ExpectedReturnValue: new Term[] { F2(C1, C1), F2(F1(X), F1(X)) }),
+                    StoredTerms: new Term[] { F(C1, C1), F(C1, C2), F(F(X), F(X)), F(F(X), F(Y)) },
+                    QueryTerm: F(X, X),
+                    ExpectedReturnValue: new Term[] { F(C1, C1), F(F(X), F(X)) }),
 
                 new( // Don't return term if it's only unifiable
-                    StoredTerms: new Term[] { F2(X, C2) },
-                    QueryTerm: F2(C1, Y),
+                    StoredTerms: new Term[] { F(X, C2) },
+                    QueryTerm: F(C1, Y),
                     ExpectedReturnValue: new Term[] { }),
             })
             .When(tc =>
@@ -247,33 +247,33 @@ namespace SCFirstOrderLogic.TermIndexing
                     ExpectedReturnValue: new Term[] { C1, X }),
 
                 new(
-                    StoredTerms: new Term[] { F1(X), F2(C1, C2) },
-                    QueryTerm: F1(C1),
-                    ExpectedReturnValue: new Term[] { F1(X) }),
+                    StoredTerms: new Term[] { F(X), F(C1, C2) },
+                    QueryTerm: F(C1),
+                    ExpectedReturnValue: new Term[] { F(X) }),
 
                 new(
-                    StoredTerms: new Term[] { F1(X), F2(C1, C2) },
-                    QueryTerm: F1(Y),
-                    ExpectedReturnValue: new Term[] { F1(X) }),
+                    StoredTerms: new Term[] { F(X), F(C1, C2) },
+                    QueryTerm: F(Y),
+                    ExpectedReturnValue: new Term[] { F(X) }),
 
                 new(
-                    StoredTerms: new Term[] { F1(X), F1(C1), F1(F1(X)), F2(C1, C2) },
-                    QueryTerm: F1(F1(C1)),
-                    ExpectedReturnValue: new Term[] { F1(X), F1(F1(X)) }),
+                    StoredTerms: new Term[] { F(X), F(C1), F(F(X)), F(C1, C2) },
+                    QueryTerm: F(F(C1)),
+                    ExpectedReturnValue: new Term[] { F(X), F(F(X)) }),
 
                 new(
-                    StoredTerms: new Term[] { F2(X, X), F2(X, Y) },
-                    QueryTerm: F2(C1, C2),
-                    ExpectedReturnValue: new Term[] { F2(X, Y) }),
+                    StoredTerms: new Term[] { F(X, X), F(X, Y) },
+                    QueryTerm: F(C1, C2),
+                    ExpectedReturnValue: new Term[] { F(X, Y) }),
 
                 new(
-                    StoredTerms: new Term[] { F2(X, X), F2(X, Y) },
-                    QueryTerm: F2(C1, C1),
-                    ExpectedReturnValue: new Term[] { F2(X, X), F2(X, Y) }),
+                    StoredTerms: new Term[] { F(X, X), F(X, Y) },
+                    QueryTerm: F(C1, C1),
+                    ExpectedReturnValue: new Term[] { F(X, X), F(X, Y) }),
 
                 new( // Don't return term if it's "merely" unifiable
-                    StoredTerms: new Term[] { F2(X, C2) },
-                    QueryTerm: F2(C1, Y),
+                    StoredTerms: new Term[] { F(X, C2) },
+                    QueryTerm: F(C1, Y),
                     ExpectedReturnValue: new Term[] { }),
             })
             .When(tc =>
