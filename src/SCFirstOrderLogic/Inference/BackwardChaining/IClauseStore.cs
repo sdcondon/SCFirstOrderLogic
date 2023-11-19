@@ -28,7 +28,7 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining
         Task<bool> AddAsync(CNFDefiniteClause clause, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Returns all possible applications of a clause in the knowledge base that result in a given consequent.
+        /// Returns all applications of a stored clause that result in a given consequent.
         /// </summary>
         /// <param name="goal">The goal - which the consequent term of the returned clauses should match (after transformation with the returned substitution).</param>
         /// <param name="constraints">The variable substitutions already made that must be respected.</param>
