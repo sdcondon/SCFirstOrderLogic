@@ -134,7 +134,7 @@ Notes:
 * Constant, variable, function and predicate identifiers must be alphanumeric (i.e. must match the regex `[A-Za-z0-9]+`).
 * To create a predicate that refers to the `EqualityIdentifier` type (and thus capable of being leveraged by KBs that have particular handling for equality, etc), use `{term} = {term}`.
 * An identifier where a term is expected is interpreted as a variable reference if a matching declaration (from a quantification) is in scope - otherwise it is interpreted as a constant.
-* All identifiers are **case sensitive**. This is, for example, something to double-check if you're seeing something intepreted as a constant that you intend as a variable reference.
+* All identifiers are **case sensitive**. This is, for example, something to double-check if you're seeing something interpreted as a constant that you intend as a variable reference.
 
 ## Storing Knowledge and Making Inferences
 
