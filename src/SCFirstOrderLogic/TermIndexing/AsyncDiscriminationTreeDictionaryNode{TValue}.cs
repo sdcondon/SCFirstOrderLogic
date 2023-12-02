@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.TermIndexing
     /// <para>
     /// NB: If you are using this type, you should consider using <see cref="DiscriminationTree{TValue}"/> to avoid the overhead of asynchronicity.
     /// <see cref="AsyncDiscriminationTree{TValue}"/> is intended to facilitate indices that use secondary storage - this type is primarily
-    /// intended as an example implementation to base real (secondary storage utilising)  implementations on.
+    /// intended as an example implementation to base real (secondary storage utilising) implementations on.
     /// </para>
     /// </summary>
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
@@ -26,7 +26,6 @@ namespace SCFirstOrderLogic.TermIndexing
         public TValue Value => throw new NotSupportedException("Internal node - has no value");
 
         /// <inheritdoc/>
-
         public async IAsyncEnumerable<KeyValuePair<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>>> GetChildren()
         {
             foreach (var child in children)

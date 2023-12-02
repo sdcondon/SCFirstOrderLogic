@@ -9,8 +9,9 @@ namespace SCFirstOrderLogic.TermIndexing
     /// An implementation of an in-memory discrimination tree for <see cref="Term"/>s.
     /// </para>
     /// <para>
-    /// ALTERNATIVE: Lacks the variable binding of the production version - so will erroneously suggest that e.g. F(C1, C2) is an instance of F(X, X).
-    /// But of course this comes with a performance saving.
+    /// ALTERNATIVE: Lacks the variable binding consistency checks of the production version,
+    /// so will erroneously suggest that e.g. F(C1, C2) is an instance of F(X, X). But of 
+    /// course this comes with a performance improvement.
     /// </para>
     /// </summary>
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
@@ -230,8 +231,8 @@ namespace SCFirstOrderLogic.TermIndexing
                             nextQueryElementOffset++;
                         }
 
-                        // Here, prod version verifies subtree's consistency with existing variable binding,
-                        // update binding if needed, sets isVariableMatch appropriately.
+                        // Here, the prod version verifies subtree's consistency with existing variable binding,
+                        // updates the binding if needed, and sets isVariableMatch appropriately.
                         isVariableMatch = true;
                     }
 

@@ -26,15 +26,15 @@ namespace SCFirstOrderLogic.TermIndexing
         private readonly IDiscriminationTreeNode<TValue> root;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class.
+        /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with a new <see cref="DiscriminationTreeDictionaryNode{TValue}"/> root node and no initial content.
         /// </summary>
         public DiscriminationTree()
-            :  this(new DiscriminationTreeDictionaryNode<TValue>(), Enumerable.Empty<KeyValuePair<Term, TValue>>())
+            : this(new DiscriminationTreeDictionaryNode<TValue>(), Enumerable.Empty<KeyValuePair<Term, TValue>>())
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with a specified root node.
+        /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with a specified root node and no (additional) initial content.
         /// </summary>
         public DiscriminationTree(IDiscriminationTreeNode<TValue> root)
             : this(root, Enumerable.Empty<KeyValuePair<Term, TValue>>())
@@ -50,7 +50,7 @@ namespace SCFirstOrderLogic.TermIndexing
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with a specified root node and some initial content.
+        /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with a specified root node and some (additional) initial content.
         /// </summary>
         public DiscriminationTree(IDiscriminationTreeNode<TValue> root, IEnumerable<KeyValuePair<Term, TValue>> content)
         {
@@ -136,7 +136,9 @@ namespace SCFirstOrderLogic.TermIndexing
         public IEnumerable<TValue> GetInstances(Term term)
         {
             ArgumentNullException.ThrowIfNull(term);
+
             var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).ToList();
+            return ExpandNodes(root.Children, 0, new DiscriminationTreeVariableBindings());
 
             IEnumerable<TValue> ExpandNodes(
                 IReadOnlyDictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> nodes,
@@ -227,8 +229,6 @@ namespace SCFirstOrderLogic.TermIndexing
                     yield return node.Value;
                 }
             }
-
-            return ExpandNodes(root.Children, 0, new DiscriminationTreeVariableBindings());
         }
 
         /// <summary>
@@ -240,13 +240,15 @@ namespace SCFirstOrderLogic.TermIndexing
         public IEnumerable<TValue> GetGeneralisations(Term term)
         {
             ArgumentNullException.ThrowIfNull(term);
+
             var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).ToArray();
+            return ExpandNode(root, 0, new DiscriminationTreeVariableBindings());
 
             IEnumerable<TValue> ExpandNode(IDiscriminationTreeNode<TValue> node, int queryElementIndex, DiscriminationTreeVariableBindings variableBindings)
             {
                 foreach (var (childElement, childNode) in node.Children)
                 {
-                    bool isVariableMatch = false;
+                    var isVariableMatch = false;
                     var nextQueryElementOffset = 1;
                     var childVariableBindings = variableBindings;
 
@@ -290,8 +292,6 @@ namespace SCFirstOrderLogic.TermIndexing
                     }
                 }
             }
-
-            return ExpandNode(root, 0, new DiscriminationTreeVariableBindings());
         }
 
         // public IEnumerable<TValue> GetUnifications(Term term) -- not yet..

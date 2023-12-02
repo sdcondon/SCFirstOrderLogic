@@ -6,9 +6,9 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.TermIndexing
 {
     /// <summary>
-    /// Transformation logic that converts <see cref="Term"/>s into the equivalent path of <see cref="IDiscriminationTreeElementInfo"/>s,
-    /// for storage in or querying of a discrimination tree. That is, converts terms into an enumerable that represents a depth-first
-    /// traversal of their constituent elements.
+    /// Transformation logic that converts <see cref="Term"/>s into the equivalent sequence of <see cref="IDiscriminationTreeElementInfo"/>s,
+    /// for storage in or querying of a discrimination tree. That is, converts terms into an enumerable of <see cref="IDiscriminationTreeElementInfo"/>s
+    /// that represents a depth-first traversal of their constituent elements.
     /// </summary>
     internal class DiscriminationTreeNodeKeyTransformation
     {

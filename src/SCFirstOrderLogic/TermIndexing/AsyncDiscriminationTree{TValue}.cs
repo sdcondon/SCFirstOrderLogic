@@ -119,7 +119,46 @@ namespace SCFirstOrderLogic.TermIndexing
         public IAsyncEnumerable<TValue> GetInstances(Term term)
         {
             ArgumentNullException.ThrowIfNull(term);
-            List<IDiscriminationTreeElementInfo> queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).ToList();
+
+            var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).ToList();
+            return ExpandNode(root, 0, new DiscriminationTreeVariableBindings());
+
+            async IAsyncEnumerable<TValue> ExpandNode(
+                IAsyncDiscriminationTreeNode<TValue> node,
+                int queryElementIndex,
+                DiscriminationTreeVariableBindings variableBindings)
+            {
+                if (queryElementIndex < queryElements.Count)
+                {
+                    var queryElement = queryElements[queryElementIndex];
+
+                    if (queryElement is DiscriminationTreeVariableInfo)
+                    {
+                        await foreach (var value in ExpandVariableMatches(node.GetChildren(), queryElementIndex, Enumerable.Empty<IDiscriminationTreeElementInfo>(), 1, variableBindings))
+                        {
+                            yield return value;
+                        }
+                    }
+                    else
+                    {
+                        var childNode = await node.TryGetChildAsync(queryElement);
+
+                        if (childNode != null)
+                        {
+                            await foreach (var value in ExpandNode(childNode!, queryElementIndex + 1, variableBindings))
+                            {
+                                yield return value;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // We can safely grab Value here because node MUST be a LeafNode at this point - ultimately because of how
+                    // ElementInfoTransformation works (which controls both the structure of the tree and queryElements here).
+                    yield return node.Value;
+                }
+            }
 
             async IAsyncEnumerable<TValue> ExpandVariableMatches(
                 IAsyncEnumerable<KeyValuePair<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>>> nodes,
@@ -167,45 +206,6 @@ namespace SCFirstOrderLogic.TermIndexing
                     }
                 }
             }
-
-            async IAsyncEnumerable<TValue> ExpandNode(
-                IAsyncDiscriminationTreeNode<TValue> node,
-                int queryElementIndex,
-                DiscriminationTreeVariableBindings variableBindings)
-            {
-                if (queryElementIndex < queryElements.Count)
-                {
-                    var queryElement = queryElements[queryElementIndex];
-
-                    if (queryElement is DiscriminationTreeVariableInfo)
-                    {
-                        await foreach (var value in ExpandVariableMatches(node.GetChildren(), queryElementIndex, Enumerable.Empty<IDiscriminationTreeElementInfo>(), 1, variableBindings))
-                        {
-                            yield return value;
-                        }
-                    }
-                    else
-                    {
-                        var childNode = await node.TryGetChildAsync(queryElement);
-
-                        if (childNode != null)
-                        {
-                            await foreach (var value in ExpandNode(childNode!, queryElementIndex + 1, variableBindings))
-                            {
-                                yield return value;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // We can safely grab Value here because node MUST be a LeafNode at this point - ultimately because of how
-                    // ElementInfoTransformation works (which controls both the structure of the tree and queryElements here).
-                    yield return node.Value;
-                }
-            }
-
-            return ExpandNode(root, 0, new DiscriminationTreeVariableBindings());
         }
 
         /// <summary>
@@ -217,7 +217,9 @@ namespace SCFirstOrderLogic.TermIndexing
         public IAsyncEnumerable<TValue> GetGeneralisations(Term term)
         {
             ArgumentNullException.ThrowIfNull(term);
+
             var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).ToArray();
+            return ExpandNode(root, 0, new DiscriminationTreeVariableBindings());
 
             async IAsyncEnumerable<TValue> ExpandNode(IAsyncDiscriminationTreeNode<TValue> node, int queryElementIndex, DiscriminationTreeVariableBindings variableBindings)
             {
@@ -267,8 +269,6 @@ namespace SCFirstOrderLogic.TermIndexing
                     }
                 }
             }
-
-            return ExpandNode(root, 0, new DiscriminationTreeVariableBindings());
         }
 
         // public IEnumerable<TValue> GetUnifications(Term term) -- not yet..
