@@ -19,8 +19,7 @@ namespace SCFirstOrderLogic.Inference
     /// offers no way to enumerate known facts - and adding this would be a bad idea. A decorator clause store for each of the inference
     /// algorithms (which absolutely can be enumerated) would be another way to go - but this has its own problems. Consumers to whom this
     /// matters are invited to examine the source code and implement whatever they need based on it.
-    /// TODO-EXTENSIBILITY: extract the core logic here into a utility class so that I can refer people to that rather than the source code (and/or
-    /// look again at doing this at the clause store level).
+    /// TODO-EXTENSIBILITY: look again at doing this at the clause store level.
     /// </para>
     /// <para>
     /// NB #2: See §9.5.5 ("Equality") of Artifical Intelligence: A Modern Approach for more on dealing with equality by axiomising it.

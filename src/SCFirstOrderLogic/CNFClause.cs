@@ -94,21 +94,14 @@ namespace SCFirstOrderLogic
         /// A clause that is the same as this one, except for the fact that all referenced
         /// variables are replaced with new ones.
         /// </returns>
-        // TODO: perhaps separate out some of the inners so that we can restandardise other things -
-        // how much would implementing as a transformation slow things down, I wonder?)
         public CNFClause Restandardise()
         {
-            var mapping = new Dictionary<StandardisedVariableIdentifier, StandardisedVariableIdentifier>();
+            var newIdentifiersByOld = new Dictionary<StandardisedVariableIdentifier, StandardisedVariableIdentifier>();
+            return new CNFClause(Literals.Select(RestandardiseLiteral));
 
-            StandardisedVariableIdentifier GetOrAddNewIdentifier(StandardisedVariableIdentifier oldIdentifier)
-            {
-                if (!mapping!.TryGetValue(oldIdentifier, out var newIdentifier))
-                {
-                    newIdentifier = mapping[oldIdentifier] = new StandardisedVariableIdentifier(oldIdentifier.OriginalVariableScope, oldIdentifier.OriginalSentence);
-                }
+            Literal RestandardiseLiteral(Literal literal) => new(RestandardisePredicate(literal.Predicate), literal.IsNegated);
 
-                return newIdentifier;
-            }
+            Predicate RestandardisePredicate(Predicate predicate) => new(predicate.Identifier, predicate.Arguments.Select(RestandardiseTerm).ToArray());
 
             Term RestandardiseTerm(Term term) => term switch
             {
@@ -118,11 +111,15 @@ namespace SCFirstOrderLogic
                 _ => throw new ArgumentException($"Unexpected term type '{term.GetType()}' encountered", nameof(term)),
             };
 
-            Predicate RestandardisePredicate(Predicate predicate) => new(predicate.Identifier, predicate.Arguments.Select(RestandardiseTerm).ToArray());
+            StandardisedVariableIdentifier GetOrAddNewIdentifier(StandardisedVariableIdentifier oldIdentifier)
+            {
+                if (!newIdentifiersByOld!.TryGetValue(oldIdentifier, out var newIdentifier))
+                {
+                    newIdentifier = newIdentifiersByOld[oldIdentifier] = new StandardisedVariableIdentifier(oldIdentifier.OriginalVariableScope, oldIdentifier.OriginalSentence);
+                }
 
-            Literal RestandardiseLiteral(Literal literal) => new(RestandardisePredicate(literal.Predicate), literal.IsNegated);
-
-            return new CNFClause(Literals.Select(RestandardiseLiteral));
+                return newIdentifier;
+            }
         }
 
         /// <summary>
