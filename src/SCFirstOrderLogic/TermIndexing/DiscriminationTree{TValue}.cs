@@ -36,14 +36,16 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with a specified root node and no (additional) initial content.
         /// </summary>
+        /// <param name="root">The root node of the tree.</param>
         public DiscriminationTree(IDiscriminationTreeNode<TValue> root)
             : this(root, Enumerable.Empty<KeyValuePair<Term, TValue>>())
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with some initial content.
+        /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with a new <see cref="DiscriminationTreeDictionaryNode{TValue}"/> root node and some initial content.
         /// </summary>
+        /// <param name="content">The initial content to be added to the tree.</param>
         public DiscriminationTree(IEnumerable<KeyValuePair<Term, TValue>> content)
             : this(new DiscriminationTreeDictionaryNode<TValue>(), content)
         {
@@ -52,6 +54,8 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with a specified root node and some (additional) initial content.
         /// </summary>
+        /// <param name="root">The root node of the tree.</param>
+        /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
         public DiscriminationTree(IDiscriminationTreeNode<TValue> root, IEnumerable<KeyValuePair<Term, TValue>> content)
         {
             this.root = root ?? throw new ArgumentNullException(nameof(root));

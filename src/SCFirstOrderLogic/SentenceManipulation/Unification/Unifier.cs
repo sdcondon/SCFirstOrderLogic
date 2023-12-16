@@ -80,6 +80,69 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             return false;
         }
 
+        /// <summary>
+        /// Attempts to create the most general unifier for two terms.
+        /// </summary>
+        /// <param name="x">One of the two terms to attempt to create a unifier for.</param>
+        /// <param name="y">One of the two terms to attempt to create a unifier for.</param>
+        /// <param name="unifier">If the terms can be unified, this out parameter will be the unifier - a transformation that will yield identical results when applied to both terms.</param>
+        /// <returns>True if the two terms can be unified, otherwise false.</returns>
+        public static bool TryCreate(Term x, Term y, [MaybeNullWhen(false)] out VariableSubstitution unifier)
+        {
+            var unifierAttempt = new VariableSubstitution();
+
+            if (TryUpdateInPlace(x, y, unifierAttempt))
+            {
+                unifier = unifierAttempt;
+                return true;
+            }
+
+            unifier = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to update a unifier so that it (also) unifies two given terms.
+        /// </summary>
+        /// <param name="x">One of the two terms to attempt to unify.</param>
+        /// <param name="y">One of the two terms to attempt to unify.</param>
+        /// <param name="unifier">The unifier to update.</param>
+        /// <param name="updatedUnifier">Will be populated with the updated unifier on success, or be null on failure.</param>
+        /// <returns>True if the two terms can be unified, otherwise false.</returns>
+        public static bool TryUpdate(Term x, Term y, VariableSubstitution unifier, [MaybeNullWhen(false)] out VariableSubstitution updatedUnifier)
+        {
+            var potentialUpdatedUnifier = unifier.Clone();
+
+            if (TryUpdateInPlace(x, y, potentialUpdatedUnifier))
+            {
+                updatedUnifier = potentialUpdatedUnifier;
+                return true;
+            }
+
+            updatedUnifier = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Attempts to update a unifier so that it (also) unifies two given terms.
+        /// </summary>
+        /// <param name="x">One of the two terms to attempt to unify.</param>
+        /// <param name="y">One of the two terms to attempt to unify.</param>
+        /// <param name="unifier">The unifier to update. Will be updated to refer to a new unifier on success, or be unchanged on failure.</param>
+        /// <returns>True if the two terms can be unified, otherwise false.</returns>
+        public static bool TryUpdate(Term x, Term y, ref VariableSubstitution unifier)
+        {
+            var updatedUnifier = unifier.Clone();
+
+            if (TryUpdateInPlace(x, y, updatedUnifier))
+            {
+                unifier = updatedUnifier;
+                return true;
+            }
+
+            return false;
+        }
+
         private static bool TryUpdateInPlace(Literal x, Literal y, VariableSubstitution unifier)
         {
             if (x.IsNegated != y.IsNegated 

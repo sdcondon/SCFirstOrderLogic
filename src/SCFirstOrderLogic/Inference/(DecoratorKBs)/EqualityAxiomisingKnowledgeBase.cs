@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic.Inference
     /// NB #1: works only as knowledge is *added* - knowledge already in the inner knowledge base at the time of instantiation
     /// will NOT be examined for functions and predicates to add equality rules for. This limitation is ultimately because IKnowledgeBase
     /// offers no way to enumerate known facts - and adding this would be a bad idea. A decorator clause store for each of the inference
-    /// algorithms (which absolutely can be enumerated) would be another way to go - but this has its own  problems. Consumers to whom this
+    /// algorithms (which absolutely can be enumerated) would be another way to go - but this has its own problems. Consumers to whom this
     /// matters are invited to examine the source code and implement whatever they need based on it.
     /// TODO-EXTENSIBILITY: extract the core logic here into a utility class so that I can refer people to that rather than the source code (and/or
     /// look again at doing this at the clause store level).
