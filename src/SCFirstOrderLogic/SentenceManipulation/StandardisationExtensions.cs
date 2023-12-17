@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
+// TODO-v6: awkwardness - don't like the need for that explanatory comment about the type
+// of the new identifiers. Perhaps look at adding this at the same time as moving/renaming
+// the normalisation identifiers, to make it clear that they are only one way of representing
+// thee concepts, and are specific to our conversion classes.
+#if false
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
@@ -94,7 +99,7 @@ namespace SCFirstOrderLogic.SentenceManipulation
 
             object GetOrAddNewIdentifier(object oldIdentifier)
             {
-                if (!idMap!.TryGetValue(oldIdentifier, out var newIdentifier))
+                if (!idMap.TryGetValue(oldIdentifier, out var newIdentifier))
                 {
                     newIdentifier = idMap[oldIdentifier] = new();
                 }
@@ -104,3 +109,4 @@ namespace SCFirstOrderLogic.SentenceManipulation
         }
     }
 }
+#endif
