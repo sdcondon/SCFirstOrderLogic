@@ -4,7 +4,7 @@ namespace SCFirstOrderLogic.ExampleDomains.FromMpg
 {
     /// <summary>
     /// Essentially a handy example for demonstrating and testing term indexing.
-    /// Note the <see cref="Terms"/> property, which cotains a good selection of terms to fill out an
+    /// Note the <see cref="Terms"/> property, which contains a good selection of terms to fill out an
     /// index with some content that goes at least a little beyond complete triviality.
     /// See https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script-6.2-7.4.pdf for the actual source.
     /// </summary>

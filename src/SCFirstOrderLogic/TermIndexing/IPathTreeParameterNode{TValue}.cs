@@ -9,15 +9,15 @@ namespace SCFirstOrderLogic.TermIndexing
     public interface IPathTreeParameterNode<TValue>
     {
         /// <summary>
-        /// 
+        /// Gets the children of this node, keyed by the appropriate <see cref="IPathTreeArgumentNodeKey"/> for the term element represented by each.
         /// </summary>
         IReadOnlyDictionary<IPathTreeArgumentNodeKey, IPathTreeArgumentNode<TValue>> Children { get; }
 
         /// <summary>
-        /// 
+        /// Gets or adds a child of this node - dependent on whether or not a child node with a given key is already present.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">The key for the retrieved or added node.</param>
+        /// <returns>The retrieved or added node.</returns>
         IPathTreeArgumentNode<TValue> GetOrAddChild(IPathTreeArgumentNodeKey key);
     }
 }

@@ -34,7 +34,7 @@ namespace SCFirstOrderLogic.TermIndexing
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PathTree"/> class with a specified root node and no (additional) initial content.
+        /// Initializes a new instance of the <see cref="PathTree{TValue}"/> class with a specified root node and no (additional) initial content.
         /// </summary>
         /// <param name="rootNode">The root node of the tree.</param>
         public PathTree(IPathTreeParameterNode<TValue> rootNode)
