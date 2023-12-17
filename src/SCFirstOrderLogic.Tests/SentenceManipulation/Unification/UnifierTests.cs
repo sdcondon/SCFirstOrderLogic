@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.SentenceManipulation.Unification
 {
-    public class LiteralUnifierTests
+    public class UnifierTests
     {
         private static Function Mother(Term child) => new(nameof(Mother), child);
         private static Function Father(Term child) => new(nameof(Father), child);
