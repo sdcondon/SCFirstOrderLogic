@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-// TODO-v6: awkwardness - don't like the need for that explanatory comment about the type
+// TODO-BREAKING-V6: awkwardness - don't like the need for that explanatory comment about the type
 // of the new identifiers. Perhaps look at adding this at the same time as moving/renaming
 // the normalisation identifiers, to make it clear that they are only one way of representing
 // thee concepts, and are specific to our conversion classes.

@@ -150,7 +150,6 @@ namespace SCFirstOrderLogic.TermIndexing
             {
                 if (term is VariableReference variable)
                 {
-                    // TODO: variable binding consistency - pass in variable ordinal as binding key
                     yield return ExpandVariableMatches(node.Children).Distinct();
                 }
                 else if (node.Children.TryGetValue(term.ToNodeKey(), out var child))

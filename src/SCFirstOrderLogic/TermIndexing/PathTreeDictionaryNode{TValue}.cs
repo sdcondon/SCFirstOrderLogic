@@ -36,12 +36,10 @@ namespace SCFirstOrderLogic.TermIndexing
         {
             private readonly List<PathTreeDictionaryNode<TValue>> children = new();
 
-            /// <inheritdoc/>
             // NB: we don't bother wrapping children in a read-only class to stop unscrupulous
             // users from casting. Would be more mem for a real edge case.. 
             public IReadOnlyList<IPathTreeParameterNode<TValue>> Children => children;
 
-            /// <inheritdoc/>
             public IEnumerable<KeyValuePair<Term, TValue>> Values => throw new NotSupportedException("Internal node - has no values");
 
             public IPathTreeParameterNode<TValue> GetOrAddChild(int index)
@@ -69,21 +67,17 @@ namespace SCFirstOrderLogic.TermIndexing
             private static readonly ReadOnlyCollection<PathTreeDictionaryNode<TValue>> emptyChildren = new(Array.Empty<PathTreeDictionaryNode<TValue>>());
             private readonly Dictionary<Term, TValue> values = new();
 
-            /// <inheritdoc/>
             public IReadOnlyList<IPathTreeParameterNode<TValue>> Children => emptyChildren;
 
-            /// <inheritdoc/>
             // NB: we don't bother wrapping values in a read-only class to stop unscrupulous
             // users from casting. Would be more mem for a real edge case.
             public IEnumerable<KeyValuePair<Term, TValue>> Values => values;
 
-            /// <inheritdoc/>
             public IPathTreeParameterNode<TValue> GetOrAddChild(int index)
             {
                 throw new NotSupportedException("Leaf node - cannot have children");
             }
 
-            /// <inheritdoc/>
             public void AddValue(Term term, TValue value)
             {
                 if (!values.TryAdd(term, value))

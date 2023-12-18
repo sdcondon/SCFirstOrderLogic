@@ -16,6 +16,10 @@ namespace SCFirstOrderLogic.TermIndexing
     // class that aren't great from a performance perspective. Notably, while the recursive iterator
     // approach used for the retrieval methods may be easy to understand, it will make a lot of heap
     // allocations - increasing GC pressure. The priority thus far has just been to get it working.
+    // TODO-BREAKING-V6-PERFORMANCE: the one thing it is probably worth doing sooner rather than later
+    // is turning alot of these Tasks (including those in the nodes) into ValueTasks - node implementations
+    // worth their salt will probably be caching so synchronous sometimes, and this code could easily
+    // sit on some hot paths..
     public class AsyncDiscriminationTree<TValue>
     {
         private readonly IAsyncDiscriminationTreeNode<TValue> root;
