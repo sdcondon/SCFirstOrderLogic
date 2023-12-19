@@ -23,24 +23,24 @@ namespace SCFirstOrderLogic.TermIndexing
         /// Initializes a new instance of the <see cref="DiscriminationTree"/> class.
         /// </summary>
         public DiscriminationTree()
-            : this(new DiscriminationTreeDictionaryNode<Term>(), Enumerable.Empty<Term>())
         {
+            actualTree = new();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with a specified root node.
         /// </summary>
         public DiscriminationTree(IDiscriminationTreeNode<Term> root)
-            : this(root, Enumerable.Empty<Term>())
         {
+            actualTree = new(root);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with some initial content.
         /// </summary>
         public DiscriminationTree(IEnumerable<Term> content)
-            : this(new DiscriminationTreeDictionaryNode<Term>(), content)
         {
+            actualTree = new(content.Select(t => KeyValuePair.Create(t, t)));
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace SCFirstOrderLogic.TermIndexing
         /// </summary>
         /// <param name="term">The term to query for.</param>
         /// <returns>True if and only if the term is contained within the tree.</returns>
-        public bool Contains(Term term) => actualTree.TryGetExact(term, out _);
+        public bool Contains(Term term) => actualTree.Contains(term);
 
         /// <summary>
         /// Retrieves all instances of a given term. That is, all terms that can be

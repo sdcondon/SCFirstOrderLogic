@@ -104,6 +104,16 @@ namespace SCFirstOrderLogic.TermIndexing
         }
 
         /// <summary>
+        /// Determines whether an exact match to a given term is contained within the tree.
+        /// </summary>
+        /// <param name="term">The term to query for.</param>
+        /// <returns>True if and only if a value associated with the term is contained within the tree.</returns>
+        public bool Contains(Term term)
+        {
+            return TryGetExact(term, out _);
+        }
+
+        /// <summary>
         /// Attempts to retrieve the value associated with a specific term.
         /// </summary>
         /// <param name="term">The term to retrieve the associated value of.</param>

@@ -8,6 +8,7 @@ namespace SCFirstOrderLogic.TermIndexing
     /// <summary>
     /// Interface shared by all nodes of a <see cref="AsyncDiscriminationTree{TValue}"/>.
     /// </summary>
+    // TODO-BREAKING-V6-PERFORMANCE: Task -> ValueTask here
     public interface IAsyncDiscriminationTreeNode<TValue>
     {
         /// <summary>

@@ -16,10 +16,8 @@ namespace SCFirstOrderLogic.TermIndexing
     // class that aren't great from a performance perspective. Notably, while the recursive iterator
     // approach used for the retrieval methods may be easy to understand, it will make a lot of heap
     // allocations - increasing GC pressure. The priority thus far has just been to get it working.
-    // TODO-BREAKING-V6-PERFORMANCE: the one thing it is probably worth doing sooner rather than later
-    // is turning alot of these Tasks (including those in the nodes) into ValueTasks - node implementations
-    // worth their salt will probably be caching so synchronous sometimes, and this code could easily
-    // sit on some hot paths..
+    // For this async case, a key change to consider here is kicking off the exploration of multiple
+    // branches at the same time (within some specified parallelism limit).
     public class AsyncDiscriminationTree<TValue>
     {
         private readonly IAsyncDiscriminationTreeNode<TValue> root;
@@ -113,6 +111,13 @@ namespace SCFirstOrderLogic.TermIndexing
             // equality check) of all encountered elements.
             return (true, currentNode.Value);
         }
+
+        /// <summary>
+        /// Determines whether an exact match to a given term is contained within the tree.
+        /// </summary>
+        /// <param name="term">The term to query for.</param>
+        /// <returns>True if and only if the term is contained within the tree.</returns>
+        public async Task<bool> ContainsAsync(Term term) => (await TryGetExactAsync(term)).isSucceeded;
 
         /// <summary>
         /// Retrieves all values associated with instances of a given term. That is, all values associated with
