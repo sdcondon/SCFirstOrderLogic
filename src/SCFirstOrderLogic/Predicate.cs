@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic
 {
@@ -78,6 +79,9 @@ namespace SCFirstOrderLogic
 
         /// <inheritdoc />
         public override TOut Accept<TOut>(ISentenceTransformation<TOut> transformation) => transformation.ApplyTo(this);
+
+        /// <inheritdoc />
+        public override TOut Accept<TOut, TState>(ISentenceTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
 
         /// <inheritdoc />
         public override bool Equals(object? obj)

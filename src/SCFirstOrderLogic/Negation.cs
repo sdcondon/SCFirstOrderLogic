@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic
 {
@@ -33,6 +34,9 @@ namespace SCFirstOrderLogic
 
         /// <inheritdoc />
         public override TOut Accept<TOut>(ISentenceTransformation<TOut> transformation) => transformation.ApplyTo(this);
+
+        /// <inheritdoc />
+        public override TOut Accept<TOut, TState>(ISentenceTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
 
         /// <inheritdoc />
         public override bool Equals(object? obj) => obj is Negation negation && Sentence.Equals(negation.Sentence);

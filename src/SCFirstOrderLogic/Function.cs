@@ -83,6 +83,9 @@ namespace SCFirstOrderLogic
         public override TOut Accept<TOut>(ITermTransformation<TOut> transformation) => transformation.ApplyTo(this);
 
         /// <inheritdoc />
+        public override TOut Accept<TOut, TState>(ITermTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
+
+        /// <inheritdoc />
         public override bool Equals(object? obj)
         {
             if (obj is not Function otherFunction

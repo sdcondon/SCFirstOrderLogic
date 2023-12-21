@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic
 {
@@ -28,32 +29,41 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Accepts a <see cref="ISentenceVisitor"/> instance.
         /// </summary>
-        /// <param name="visitor">The visitor that is visiting the sentence.</param>
+        /// <param name="visitor">The visitor to be visited by.</param>
         public abstract void Accept(ISentenceVisitor visitor);
 
         /// <summary>
         /// Accepts a <see cref="ISentenceVisitor{TState}"/> instance.
         /// </summary>
-        /// <param name="visitor">The visitor that is visiting the sentence.</param>
-        /// <param name="state">A reference to the state that the visitor is working with.</param>
         /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
+        /// <param name="visitor">The visitor to be visited by.</param>
+        /// <param name="state">The state that the visitor is to work with.</param>
         public abstract void Accept<TState>(ISentenceVisitor<TState> visitor, TState state);
 
         /// <summary>
         /// Accepts a <see cref="ISentenceVisitorR{TState}"/> instance.
         /// </summary>
-        /// <param name="visitor">The visitor that is visiting the sentence.</param>
-        /// <param name="state">A reference to the state that the visitor is working with.</param>
         /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
+        /// <param name="visitor">The visitor to be visited by.</param>
+        /// <param name="state">A reference to the state that the visitor is to work with.</param>
         public abstract void Accept<TState>(ISentenceVisitorR<TState> visitor, ref TState state);
 
         /// <summary>
         /// Accepts a <see cref="ISentenceTransformation{TOut}"/> instance.
         /// </summary>
         /// <typeparam name="TOut">the type that the transformation outputs.</typeparam>
-        /// <param name="transformation">The transformation that is being applied to the sentence.</param>
+        /// <param name="transformation">The transformation to apply.</param>
         /// <returns>The result of the transformation.</returns>
         public abstract TOut Accept<TOut>(ISentenceTransformation<TOut> transformation);
+
+        /// <summary>
+        /// Accepts a <see cref="ISentenceTransformation{TOut,TState}"/> instance.
+        /// </summary>
+        /// <typeparam name="TOut">the type that the transformation outputs.</typeparam>
+        /// <typeparam name="TState">The type of state that the transformation works with.</typeparam>
+        /// <param name="transformation">The transformation to apply.</param>
+        /// <param name="state">The state that the transformation is to work with.</param>
+        public abstract TOut Accept<TOut, TState>(ISentenceTransformation<TOut, TState> transformation, TState state);
 
         /// <summary>
         /// <para>

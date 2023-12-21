@@ -13,13 +13,13 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Accepts a <see cref="ITermVisitor"/> instance.
         /// </summary>
-        /// <param name="visitor">The visitor that is visiting the term.</param>
+        /// <param name="visitor">The visitor to be visited by.</param>
         public abstract void Accept(ITermVisitor visitor);
 
         /// <summary>
         /// Accepts a <see cref="ITermVisitor{TState}"/> instance.
         /// </summary>
-        /// <param name="visitor">The visitor that is visiting the term.</param>
+        /// <param name="visitor">The visitor to be visited by.</param>
         /// <param name="state">A reference to the state that the visitor is working with.</param>
         /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
         public abstract void Accept<TState>(ITermVisitor<TState> visitor, TState state);
@@ -27,7 +27,7 @@ namespace SCFirstOrderLogic
         /// <summary>
         /// Accepts a <see cref="ITermVisitorR{TState}"/> instance.
         /// </summary>
-        /// <param name="visitor">The visitor that is visiting the term.</param>
+        /// <param name="visitor">The visitor to be visited by.</param>
         /// <param name="state">A reference to the state that the visitor is working with.</param>
         /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
         public abstract void Accept<TState>(ITermVisitorR<TState> visitor, ref TState state);
@@ -36,9 +36,18 @@ namespace SCFirstOrderLogic
         /// Accepts a <see cref="ITermTransformation{TOut}"/> instance.
         /// </summary>
         /// <typeparam name="TOut">the type that the transformation outputs.</typeparam>
-        /// <param name="transformation">The transformation that is being applied to the term.</param>
+        /// <param name="transformation">The transformation to apply.</param>
         /// <returns>The result of the transformation.</returns>
         public abstract TOut Accept<TOut>(ITermTransformation<TOut> transformation);
+
+        /// <summary>
+        /// Accepts a <see cref="ITermTransformation{TOut,TState}"/> instance.
+        /// </summary>
+        /// <typeparam name="TOut">the type that the transformation outputs.</typeparam>
+        /// <typeparam name="TState">The type of state that the transformation works with.</typeparam>
+        /// <param name="transformation">The transformation to apply.</param>
+        /// <param name="state">The state that the transformation is to work with.</param>
+        public abstract TOut Accept<TOut, TState>(ITermTransformation<TOut, TState> transformation, TState state);
 
         /// <summary>
         /// Gets a value indicating whether the term is a ground term - that is, that it contains no variables.
