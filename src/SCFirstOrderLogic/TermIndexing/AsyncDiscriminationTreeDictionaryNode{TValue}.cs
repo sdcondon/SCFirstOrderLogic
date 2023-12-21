@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2023 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,7 +21,7 @@ namespace SCFirstOrderLogic.TermIndexing
     /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
     public class AsyncDiscriminationTreeDictionaryNode<TValue> : IAsyncDiscriminationTreeNode<TValue>
     {
-        private readonly Dictionary<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>> children = new();
+        private readonly ConcurrentDictionary<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>> children = new();
 
         /// <inheritdoc/>
         public TValue Value => throw new NotSupportedException("Internal node - has no value");
@@ -44,10 +45,10 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <inheritdoc/>
         public Task<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeElementInfo elementInfo)
         {
-            if (!children.TryGetValue(elementInfo, out var node))
+            IAsyncDiscriminationTreeNode<TValue> node = new AsyncDiscriminationTreeDictionaryNode<TValue>();
+            if (!children.TryAdd(elementInfo, node))
             {
-                node = new AsyncDiscriminationTreeDictionaryNode<TValue>();
-                children.Add(elementInfo, node);
+                node = children[elementInfo];
             }
 
             return Task.FromResult(node);
