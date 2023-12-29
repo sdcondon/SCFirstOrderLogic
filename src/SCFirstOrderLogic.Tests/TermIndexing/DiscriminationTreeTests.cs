@@ -29,7 +29,7 @@ namespace SCFirstOrderLogic.TermIndexing
                     }),
 
                 new(
-                    CurrentTerms: new[] { F(X) },
+                    CurrentTerms: [F(X)],
                     NewTerm: F(C1),
                     ExpectedRootChildren: new()
                     {
@@ -44,7 +44,7 @@ namespace SCFirstOrderLogic.TermIndexing
                     }),
 
                 new(
-                    CurrentTerms: new[] { F(X, C2) },
+                    CurrentTerms: [F(X, C2)],
                     NewTerm: F(X, C1),
                     ExpectedRootChildren: new()
                     {
@@ -98,7 +98,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
                 // Same function identifier with different arg count shouldn't cause problems:
                 new( 
-                    CurrentTerms: new[] { F() },
+                    CurrentTerms: [F()],
                     NewTerm: F(C1),
                     ExpectedRootChildren: new()
                     {
@@ -128,15 +128,15 @@ namespace SCFirstOrderLogic.TermIndexing
             .GivenEachOf(() => new NegativeAddTestCase[]
             {
                 new(
-                    CurrentTerms: new[] { C1 },
+                    CurrentTerms: [C1],
                     NewTerm: C1),
 
                 new(
-                    CurrentTerms: new[] { F(X) },
+                    CurrentTerms: [F(X)],
                     NewTerm: F(X)),
 
                 new(
-                    CurrentTerms: new[] { F(C1) },
+                    CurrentTerms: [F(C1)],
                     NewTerm: F(C1)),
             })
             .When(tc =>

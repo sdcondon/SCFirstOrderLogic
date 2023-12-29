@@ -10,12 +10,12 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@4
 
     - name: Set up dotnet
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.x'
+        dotnet-version: '8.x'
 
     - name: Set up Nuget
       uses: nuget/setup-nuget@v1

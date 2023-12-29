@@ -27,11 +27,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '8.x'
 
       - name: Publish Documentation project to 'release' folder
         run: dotnet publish src/SCFirstOrderLogic.Documentation/SCFirstOrderLogic.Documentation.csproj -c Release -o release --nologo
