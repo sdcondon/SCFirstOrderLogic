@@ -6,6 +6,9 @@
 # ANTLR auto-generated files
 /src/SCFirstOrderLogic/SentenceCreation/Antlr/
 
+# Documentation libman libs
+/src/SCFirstOrderLogic.Documentation/wwwroot/lib/
+
 # User-specific files
 *.rsuser
 *.suo
