@@ -1,4 +1,5 @@
-﻿@import url('/lib/bootstrap-icons/font/bootstrap-icons.min.css');
+﻿@import url('css/bootstrap/bootstrap.min.css');
+@import url('lib/bootstrap-icons/font/bootstrap-icons.min.css');
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
