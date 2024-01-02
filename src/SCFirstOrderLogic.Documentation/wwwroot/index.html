@@ -15,7 +15,8 @@
     <div id="app">
         <div id="loading-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center">
             <img src="SCFirstOrderLogic-128.png" alt="SCFirstOrderLogic icon" />
-            <br /><br />Loading, please wait...
+            <div><span id="progressLabel" class="text-muted"></span></div>
+            <div><span id="progressDetail" class="text-muted"></span></div>
         </div>
     </div>
 
@@ -25,9 +26,53 @@
         <a class="dismiss">🗙</a>
     </div>
 
-    <script src="_framework/blazor.webassembly.js"></script>
+    <!-- To test loading feedback..
+    <script type="text/javascript">
+        caches.delete("blazor-resources-/").then(function (e) {
+            console.log("'blazor-resources-/' cache deleted");
+        });
+    </script>
+    -->
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+
     <link rel="stylesheet" href="lib/highlightjs/styles/default.min.css">
     <script src="lib/highlightjs/highlight.min.js"></script>
+
+    <script>
+        function StartBlazor() {
+            let loadedCount = 0;
+            const resourcesToLoad = [];
+            Blazor.start({
+                loadBootResource:
+                    function (type, filename, defaultUri, integrity) {
+                        if (type == "dotnetjs")
+                            return defaultUri;
+
+                        const fetchResources = fetch(defaultUri, {
+                            cache: 'no-cache',
+                            integrity: integrity
+                        });
+
+                        resourcesToLoad.push(fetchResources);
+
+                        fetchResources.then((r) => {
+                            loadedCount += 1;
+                            if (filename == "blazor.boot.json")
+                                return;
+                            const totalCount = resourcesToLoad.length;
+                            const progressLabel = document.getElementById('progressLabel');
+                            progressLabel.innerText = `Loading, please wait... (${loadedCount}/${totalCount})`;
+                            const progressDetail = document.getElementById('progressDetail');
+                            progressDetail.innerText = filename;
+                        });
+
+                        return fetchResources;
+                    }
+            });
+        }
+
+        StartBlazor();
+    </script>
 </body>
 
 </html>
