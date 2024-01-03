@@ -30,6 +30,13 @@ As mentioned briefly in 'getting started', a language-integrated approach to sen
 There is some sentence formatting logic to be found in the SentenceFormatting namespace - which includes support for ensuring unique labelling of identifiers for standardised variables and Skolem functions across a set of sentences.
 The sets of labels used can be specified by the caller (but defaults do exist).
 
+### `SCFirstOrderLogic.TermIndexing`
+
+While they are not yet used by any of the clause store types in the library, several types for fast term lookup are now present in the TermIndexing namespace.
+There are implementations of both discrimination trees and path indices.
+An abstraction for the nodes of these structures allows for customisation of the underlying storage.
+The only implementations provided in the library store things in memory, however.
+
 ## Learning Resources in the Repository
 
 The source repository contains a few resources aside from the source of the library itself that people might find interesting and/or useful:

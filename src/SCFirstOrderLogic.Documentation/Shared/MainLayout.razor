@@ -1,13 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject IJSRuntime JS
 
-@code{
-    protected override void OnAfterRender(bool firstRender)
-    {
-        JS.InvokeVoidAsync("hljs.highlightAll");
-    }
-}
-
 <div class="page">
     <div class="sidebar">
         <NavMenu />
