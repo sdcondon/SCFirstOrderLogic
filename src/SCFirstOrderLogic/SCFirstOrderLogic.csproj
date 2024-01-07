@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>SCFirstOrderLogic</AssemblyName>
     <RootNamespace>SCFirstOrderLogic</RootNamespace>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Basic but fully functional and documented first-order logic implementations. Includes multiple ways to write sentences, as well as simple but extensible chaining and resolution knowledge base implementations that allow for proof tree retrieval.</Description>
@@ -11,10 +13,8 @@
     <PackageTags>first order predicate logic inference engine knowledge base linq</PackageTags>
     <Product>SCFirstOrderLogic</Product>
     <PackageId>SCFirstOrderLogic</PackageId>
-    <Nullable>enable</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>SCFirstOrderLogic-128.png</PackageIcon>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
