@@ -2,7 +2,6 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
-using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic
 {
