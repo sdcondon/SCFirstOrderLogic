@@ -13,7 +13,7 @@
 
 <h3>Lab - Inference Demo</h3>
 
-<div class="alert alert-primary" role="alert">
+<div class="alert alert-primary alert-dismissible fade show" role="alert">
     <p>
         This page is an interactive demonstration of inference with SCFirstOrderLogic that runs in your browser. Note that:
     </p>
@@ -33,7 +33,11 @@
             The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Pages/lab/InferenceDemo.razor">here</a>.
         </li>
     </ul>
-    <!--<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="$('.alert').css('display', 'none')"></button>-->
+    <!-- 
+        No close button because it confuses Blazor, which assumes sole ownership of the DOM.
+        Will introduce Blazorise or somesuch soon.
+    -->
+    <!--<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
 </div>
 
 <EditForm Model=@formData OnSubmit=@HandleFormSubmission style="font-family: monospace">

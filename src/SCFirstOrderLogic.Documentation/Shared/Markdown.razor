@@ -47,7 +47,7 @@
 
     public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
     {
-      HtmlRenderer? htmlRenderer = renderer as HtmlRenderer;
+      var htmlRenderer = renderer as Markdig.Renderers.HtmlRenderer;
       ////if (htmlRenderer != null)
       ////{
       ////  htmlRenderer.BaseUrl = new Uri(baseUrl);
@@ -72,7 +72,7 @@
       this.innerRenderer = innerRenderer;
     }
 
-    protected override void Write(HtmlRenderer renderer, CodeBlock obj)
+    protected override void Write(Markdig.Renderers.HtmlRenderer renderer, CodeBlock obj)
     {
       if (obj is FencedCodeBlock fencedCodeBlock)
       {
