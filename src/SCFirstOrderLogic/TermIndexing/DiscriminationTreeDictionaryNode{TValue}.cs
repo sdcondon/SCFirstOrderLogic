@@ -25,7 +25,7 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <inheritdoc/>
         public IDiscriminationTreeNode<TValue> GetOrAddInternalChild(IDiscriminationTreeElementInfo elementInfo)
         {
-            if (!Children.TryGetValue(elementInfo, out var node))
+            if (!children.TryGetValue(elementInfo, out var node))
             {
                 node = new DiscriminationTreeDictionaryNode<TValue>();
                 children.Add(elementInfo, node);

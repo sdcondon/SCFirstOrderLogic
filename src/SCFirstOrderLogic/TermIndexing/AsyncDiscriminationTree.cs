@@ -41,7 +41,7 @@ namespace SCFirstOrderLogic.TermIndexing
         /// </summary>
         /// <param name="term">The term to query for.</param>
         /// <returns>True if and only if the term is contained within the tree.</returns>
-        public async Task<bool> ContainsAsync(Term term) => (await actualTree.TryGetExactAsync(term)).isSucceeded;
+        public Task<bool> ContainsAsync(Term term) => actualTree.ContainsAsync(term);
 
         /// <summary>
         /// Retrieves all instances of a given term. That is, all terms that can be

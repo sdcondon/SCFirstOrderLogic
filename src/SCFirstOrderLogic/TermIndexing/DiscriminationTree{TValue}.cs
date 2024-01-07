@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace SCFirstOrderLogic.TermIndexing
@@ -119,7 +120,7 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <param name="term">The term to retrieve the associated value of.</param>
         /// <param name="value">Will be populated with the retrieved value.</param>
         /// <returns>True if and only if a value was successfully retrieved.</returns>
-        public bool TryGetExact(Term term, out TValue? value)
+        public bool TryGetExact(Term term, [MaybeNullWhen(false)] out TValue value)
         {
             ArgumentNullException.ThrowIfNull(term);
 
