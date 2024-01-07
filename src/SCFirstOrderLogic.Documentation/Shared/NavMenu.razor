@@ -1,6 +1,15 @@
 ﻿<div class="top-row ps-1 navbar navbar-dark">
-    <div class="container-fluid px-2">
-        <a class="navbar-brand" href=""><img src="img/SCFirstOrderLogic-32.png" alt="SCFirstOrderLogic icon"/> SCFirstOrderLogic</a>
+    <div class="container-fluid px-2 dropdown">
+        <a class="navbar-brand dropdown-toggle" href="" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false"><img src="img/SCFirstOrderLogic-32.png" alt="SCFirstOrderLogic icon" /> SCFirstOrderLogic</a>
+        <ul class="dropdown-menu" aria-labelledby="dropdown01">
+            <li><a class="dropdown-item" href="https://sdcondon.net/FlUnit">FlUnit</a></li>
+            <li><a class="dropdown-item" href="https://sdcondon.net/SCClassicalPlanning">SCClassicalPlanning</a></li>
+            <li><a class="dropdown-item" href="https://sdcondon.net/SCFirstOrderLogic">SCFirstOrderLogic</a></li>
+            <li><a class="dropdown-item" href="https://sdcondon.net/SCGraphTheory">SCGraphTheory</a></li>
+            <li><a class="dropdown-item" href="https://sdcondon.net/SCSetTrie">SCSetTrie</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="https://sdcondon.net/">Personal Homepage</a></li>
+        </ul>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
