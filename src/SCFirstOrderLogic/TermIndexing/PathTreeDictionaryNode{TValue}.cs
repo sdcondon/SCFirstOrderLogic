@@ -19,7 +19,7 @@ namespace SCFirstOrderLogic.TermIndexing
         /// <inheritdoc/>
         public IPathTreeArgumentNode<TValue> GetOrAddChild(IPathTreeArgumentNodeKey key)
         {
-            if (!Children.TryGetValue(key, out var node))
+            if (!children.TryGetValue(key, out var node))
             {
                 node = key.ChildElementCount > 0 ? new InternalNode() : new LeafNode();
                 children.Add(key, node);
