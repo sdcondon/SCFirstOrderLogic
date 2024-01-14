@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using System;
 using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using ConstantInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeConstantInfo;
@@ -17,6 +16,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
         private static Function F(params Term[] a) => new(nameof(F), a);
 
+        // Discrimination trees are a well-known data structure - so I'm asserting that asserting on the internal structure is valid. Probably.
         public static Test AddBehaviour_Positive => TestThat
             .GivenEachOf(() => new PositiveAddTestCase[]
             {

@@ -18,6 +18,7 @@ namespace SCFirstOrderLogic.TermIndexing
 
         private static Function F(params Term[] a) => new(nameof(F), a);
 
+        // Discrimination trees are a well-known data structure - so I'm asserting that asserting on the internal structure is valid. Probably.
         public static Test AddBehaviour_Positive => TestThat
             .GivenEachOf(() => new PositiveAddTestCase[]
             {
@@ -118,6 +119,11 @@ namespace SCFirstOrderLogic.TermIndexing
             })
             .When(tc =>
             {
+                var root = new AsyncDiscriminationTreeDictionaryNode<Term>();
+                var tree = new AsyncDiscriminationTree(root, tc.CurrentTerms);
+                tree.AddAsync(tc.NewTerm).GetAwaiter().GetResult();
+                return GetChildren(root);
+
                 static Dictionary<IElementInfo, object> GetChildren(IAsyncDiscriminationTreeNode<Term> node)
                 {
                     return new(node.GetChildren().ToListAsync().GetAwaiter().GetResult().Select(kvp =>
@@ -127,11 +133,6 @@ namespace SCFirstOrderLogic.TermIndexing
                         return KeyValuePair.Create(kvp.Key, comparisonObject);
                     }));
                 }
-
-                var root = new AsyncDiscriminationTreeDictionaryNode<Term>();
-                var tree = new AsyncDiscriminationTree(root, tc.CurrentTerms);
-                tree.AddAsync(tc.NewTerm).GetAwaiter().GetResult();
-                return GetChildren(root);
             })
             .ThenReturns((tc, rv) => rv.Should().BeEquivalentTo(tc.ExpectedRootChildren));
 
