@@ -1,8 +1,10 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
+﻿using SCFirstOrderLogic.InternalUtilities;
+using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing
 {
@@ -50,26 +52,43 @@ namespace SCFirstOrderLogic.TermIndexing
         /// </summary>
         public static IEnumerable<T> IntersectAll<T>(this IEnumerable<IEnumerable<T>> values)
         {
-            HashSet<T> commonValues;
-            var valuesEnumerator = values.GetEnumerator();
-            try
+            using var valuesEnumerator = values.GetEnumerator();
+
+            if (!valuesEnumerator.MoveNext())
             {
-                if (!valuesEnumerator.MoveNext())
-                {
-                    return Enumerable.Empty<T>();
-                }
-
-                commonValues = new(valuesEnumerator.Current);
-                while (commonValues.Count > 0 && valuesEnumerator.MoveNext())
-                {
-                    commonValues.IntersectWith(valuesEnumerator.Current);
-                }
-
-                return commonValues;
+                return Enumerable.Empty<T>();
             }
-            finally
+
+            var commonValues = new HashSet<T>(valuesEnumerator.Current);
+            while (commonValues.Count > 0 && valuesEnumerator.MoveNext())
             {
-                valuesEnumerator.Dispose();
+                commonValues.IntersectWith(valuesEnumerator.Current);
+            }
+
+            return commonValues;
+        }
+
+        /// <summary>
+        /// Gets the set of values that appear in all of the inner async enumerables.
+        /// </summary>
+        public static async IAsyncEnumerable<T> IntersectAll<T>(this IAsyncEnumerable<IAsyncEnumerable<T>> values)
+        {
+            await using var valuesEnumerator = values.GetAsyncEnumerator();
+
+            if (!await valuesEnumerator.MoveNextAsync())
+            {
+                yield break;
+            }
+
+            var commonValues = new HashSet<T>(await valuesEnumerator.Current.ToListAsync());
+            while (commonValues.Count > 0 && await valuesEnumerator.MoveNextAsync())
+            {
+                commonValues.IntersectWith(await valuesEnumerator.Current.ToListAsync());
+            }
+
+            foreach (var value in commonValues)
+            {
+                yield return value;
             }
         }
 
@@ -99,7 +118,35 @@ namespace SCFirstOrderLogic.TermIndexing
             }
             finally
             {
-                enumerator?.Dispose();
+                enumerator.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Tries to find a singular common value in all of the inner async enumerables.
+        /// </summary>
+        public static async Task<(bool isSucceeded, T? value)> TryGetCommonValueAsync<T>(this IAsyncEnumerable<IAsyncEnumerable<T>> values)
+        {
+            var enumerator = IntersectAll(values).GetAsyncEnumerator();
+            try
+            {
+                if (!await enumerator.MoveNextAsync())
+                {
+                    return (false, default);
+                }
+
+                var value = enumerator.Current;
+
+                if (await enumerator.MoveNextAsync())
+                {
+                    return (false, default);
+                }
+
+                return (true, value);
+            }
+            finally
+            {
+                await enumerator.DisposeAsync();
             }
         }
 
@@ -194,6 +241,11 @@ namespace SCFirstOrderLogic.TermIndexing
 
                 return true;
             }
+        }
+
+        private static class AsyncEnumerable
+        {
+
         }
     }
 }

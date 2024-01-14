@@ -1,6 +1,8 @@
 // Copyright (c) 2021-2023 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -68,6 +70,32 @@ namespace SCFirstOrderLogic.InternalUtilities
             }
 
             return false;
+        }
+
+        public static async IAsyncEnumerable<T> Where<T>(
+            this IAsyncEnumerable<T> asyncEnumerable,
+            Func<T, bool> predicate,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await foreach (var element in asyncEnumerable.WithCancellation(cancellationToken))
+            {
+                if (predicate(element))
+                {
+                    yield return element;
+                }
+            }
+        }
+
+        public static async IAsyncEnumerable<TOut> Select<TIn, TOut>(
+            this IAsyncEnumerable<TIn> asyncEnumerable,
+            Func<TIn, int, TOut> map,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            await using var enumerator = asyncEnumerable.GetAsyncEnumerator(cancellationToken);
+            for (int i = 0; await enumerator.MoveNextAsync(); i++)
+            {
+                yield return map(enumerator.Current, i);
+            }
         }
     }
 }
