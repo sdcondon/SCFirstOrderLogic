@@ -26,23 +26,11 @@ namespace SCFirstOrderLogic.InternalUtilities
         /// <returns>A task representing the completion of the operation.</returns>
         public static async Task<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> asyncEnumerable, CancellationToken cancellationToken = default)
         {
-            List<T> list = new();
+            var list = new List<T>();
 
-            IAsyncEnumerator<T>? enumerator = null;
-            try
+            await foreach (var element in asyncEnumerable.WithCancellation(cancellationToken))
             {
-                enumerator = asyncEnumerable.GetAsyncEnumerator(cancellationToken);
-                while (await enumerator.MoveNextAsync())
-                {
-                    list.Add(enumerator.Current);
-                }
-            }
-            finally
-            {
-                if (enumerator != null)
-                {
-                    await enumerator.DisposeAsync();
-                }
+                list.Add(element);
             }
 
             return list;
@@ -57,19 +45,8 @@ namespace SCFirstOrderLogic.InternalUtilities
         /// <returns>A task that returns true if and only if the given enumerable contains any elements.</returns>
         public static async Task<bool> AnyAsync<T>(this IAsyncEnumerable<T> asyncEnumerable, CancellationToken cancellationToken = default)
         {
-            IAsyncEnumerator<T>? enumerator = null;
-            try
-            {
-                enumerator = asyncEnumerable.GetAsyncEnumerator(cancellationToken);
-                return await enumerator.MoveNextAsync();
-            }
-            finally
-            {
-                if (enumerator != null)
-                {
-                    await enumerator.DisposeAsync();
-                }
-            }
+            await using var enumerator = asyncEnumerable.GetAsyncEnumerator(cancellationToken);
+            return await enumerator.MoveNextAsync();
         }
 
         /// <summary>
@@ -82,23 +59,11 @@ namespace SCFirstOrderLogic.InternalUtilities
         /// <returns>A task that returns true if and only if the given enumerable contains the given element.</returns>
         public static async Task<bool> ContainsAsync<T>(this IAsyncEnumerable<T> asyncEnumerable, T target, CancellationToken cancellationToken = default)
         {
-            IAsyncEnumerator<T>? enumerator = null;
-            try
+            await foreach(var element in asyncEnumerable.WithCancellation(cancellationToken))
             {
-                enumerator = asyncEnumerable.GetAsyncEnumerator(cancellationToken);
-                while (await enumerator.MoveNextAsync())
+                if (Equals(target, element))
                 {
-                    if (object.Equals(target, enumerator.Current))
-                    {
-                        return true;
-                    }
-                }
-            }
-            finally
-            {
-                if (enumerator != null)
-                {
-                    await enumerator.DisposeAsync();
+                    return true;
                 }
             }
 
