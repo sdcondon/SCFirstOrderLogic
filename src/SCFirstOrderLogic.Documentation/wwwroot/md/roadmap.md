@@ -5,11 +5,14 @@ I don't intend to add any particularly powerful or specialised inference logic t
 
 Priorities at the time of writing:
 
-* An async version of a discrimination tree, that allows for passing in the root node (thus allowing for implementations that e.g. use secondary storage)
-* To accompany the discrimination tree, a path index implementation for terms.
+* An async version of a path tree, that allows for passing in the root node (thus allowing for implementations that e.g. use secondary storage)
+* *Perhaps* support for parallelism within path & discrimination tree queries.
 
 Further ahead:
 
-* Improvements to inference algorithms. 
-Handling of infinite loops when chaining, a linear resolution strategy, leveraging subsumption (e.g. a trie-like structure for fast lookup of subsuming clauses - SubsumptionTrie or somesuch - used by new clause store(s)), etc.
-As mentioned above and elsewhere, this package is more about the fundamentals than especially powerful inference logic - but we should probably cover such relatively fundamental problems and techniques - the inference demo is rather underwhelming at the moment..
+* Improvements to inference algorithms. As mentioned above and elsewhere, this package is more about the fundamentals than especially powerful inference logic - but we should probably cover at least some of the relatively fundamental problems and techniques - the inference demo is rather underwhelming at the moment.. For example, some or all of:
+  * Handling of infinite loops when chaining
+  * More flexibility when chaining - while I'm still relatively new to this and haven't come across any explicit mention of it in what I've read, it feels like what is considered a definite clause should depend somewhat on a fairly flexible perspective w.r.t. positive and negative literals.
+  * A linear resolution strategy
+  * Leveraging subsumption (e.g. a trie-like structure for fast lookup of subsuming clauses - SubsumptionTrie or somesuch - used by new clause store(s)), etc.
+
