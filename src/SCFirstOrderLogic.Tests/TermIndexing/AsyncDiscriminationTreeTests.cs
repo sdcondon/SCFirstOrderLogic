@@ -118,12 +118,12 @@ namespace SCFirstOrderLogic.TermIndexing
             })
             .When(tc =>
             {
-                Dictionary<IElementInfo, object> GetChildren(IAsyncDiscriminationTreeNode<Term> node)
+                static Dictionary<IElementInfo, object> GetChildren(IAsyncDiscriminationTreeNode<Term> node)
                 {
                     return new(node.GetChildren().ToListAsync().GetAwaiter().GetResult().Select(kvp =>
                     {
                         var children = GetChildren(kvp.Value);
-                        object comparisonObject = children.Count > 0 ? new { Children = children } : new { Value = kvp.Value.Value };
+                        object comparisonObject = children.Count > 0 ? new { Children = children } : new { kvp.Value.Value };
                         return KeyValuePair.Create(kvp.Key, comparisonObject);
                     }));
                 }
@@ -139,15 +139,15 @@ namespace SCFirstOrderLogic.TermIndexing
             .GivenEachOf(() => new NegativeAddTestCase[]
             {
                 new(
-                    CurrentTerms: new[] { C1 },
+                    CurrentTerms: [C1],
                     NewTerm: C1),
 
                 new(
-                    CurrentTerms: new[] { F(X) },
+                    CurrentTerms: [F(X)],
                     NewTerm: F(X)),
 
                 new(
-                    CurrentTerms: new[] { F(C1) },
+                    CurrentTerms: [F(C1)],
                     NewTerm: F(C1)),
             })
             .When(tc =>
@@ -161,42 +161,42 @@ namespace SCFirstOrderLogic.TermIndexing
             .GivenEachOf(() => new ContainsTestCase[]
             {
                 new(
-                    StoredTerms: new Term[] { C1, C2, X },
+                    StoredTerms: [C1, C2, X],
                     QueryTerm: C1,
                     ExpectedReturnValue: true),
 
                 new(
-                    StoredTerms: new Term[] { C1, C2, X },
+                    StoredTerms: [C1, C2, X],
                     QueryTerm: X,
                     ExpectedReturnValue: true),
 
                 new( // variable identifier shouldn't matter
-                    StoredTerms: new Term[] { C1, C2, X },
+                    StoredTerms: [C1, C2, X],
                     QueryTerm: Y,
                     ExpectedReturnValue: true),
 
                 new( // variable identifier shouldn't matter #2
-                    StoredTerms: new Term[] { F(X, Y) },
+                    StoredTerms: [F(X, Y)],
                     QueryTerm: F(Y, X),
                     ExpectedReturnValue: true),
 
                 new( // variable ordinal should matter
-                    StoredTerms: new Term[] { F(X, Y) },
+                    StoredTerms: [F(X, Y)],
                     QueryTerm: F(X, X),
                     ExpectedReturnValue: false),
 
                 new(
-                    StoredTerms: new Term[] { F(X), F(C2) },
+                    StoredTerms: [F(X), F(C2)],
                     QueryTerm: F(C1),
                     ExpectedReturnValue: false),
 
                 new(
-                    StoredTerms: new Term[] { F(C1, C1), F(C2, C2), F(C1, C2) },
+                    StoredTerms: [F(C1, C1), F(C2, C2), F(C1, C2)],
                     QueryTerm: F(X, X),
                     ExpectedReturnValue: false),
 
                 new(
-                    StoredTerms: new Term[] { F(X, C2) },
+                    StoredTerms: [F(X, C2)],
                     QueryTerm: F(C1, Y),
                     ExpectedReturnValue: false),
             })
@@ -212,88 +212,88 @@ namespace SCFirstOrderLogic.TermIndexing
             .GivenEachOf<GetTestCase>(() => new GetTestCase[]
             {
                 new( // Exact match
-                    StoredTerms: new Term[] { C1, C2, X },
+                    StoredTerms: [C1, C2, X],
                     QueryTerm: C1,
-                    ExpectedReturnValue: new Term[] { C1 }),
+                    ExpectedReturnValue: [C1]),
 
                 new( // Get everything
-                    StoredTerms: new Term[] { C1, X, F(X), F(F(X, C1)) },
+                    StoredTerms: [C1, X, F(X), F(F(X, C1))],
                     QueryTerm: X,
-                    ExpectedReturnValue: new Term[] { C1, X, F(X), F(F(X, C1)) }),
+                    ExpectedReturnValue: [C1, X, F(X), F(F(X, C1))]),
 
                 new( // Get all instances of top-level function
-                    StoredTerms: new Term[] { F(C1), F(C2), F(F(C1)), F(C1, C2), C1 },
+                    StoredTerms: [F(C1), F(C2), F(F(C1)), F(C1, C2), C1],
                     QueryTerm: F(X),
-                    ExpectedReturnValue: new Term[] { F(C1), F(C2), F(F(C1)) }),
+                    ExpectedReturnValue: [F(C1), F(C2), F(F(C1))]),
 
                 new( // Get all instances of top-level function with any args
-                    StoredTerms: new Term[] { F(C1, C1), F(C2, C2), F(C1, C2) },
+                    StoredTerms: [F(C1, C1), F(C2, C2), F(C1, C2)],
                     QueryTerm: F(X, Y),
-                    ExpectedReturnValue: new Term[] { F(C1, C1), F(C2, C2), F(C1, C2) }),
+                    ExpectedReturnValue: [F(C1, C1), F(C2, C2), F(C1, C2)]),
 
                 new( // Get all instances of top-level function with repeated arg
-                    StoredTerms: new Term[] { F(C1, C1), F(C1, C2), F(F(X), F(X)), F(F(X), F(Y)) },
+                    StoredTerms: [F(C1, C1), F(C1, C2), F(F(X), F(X)), F(F(X), F(Y))],
                     QueryTerm: F(X, X),
-                    ExpectedReturnValue: new Term[] { F(C1, C1), F(F(X), F(X)) }),
+                    ExpectedReturnValue: [F(C1, C1), F(F(X), F(X))]),
 
                 new(
-                    StoredTerms: new Term[] { F(X, C2) },
+                    StoredTerms: [F(X, C2)],
                     QueryTerm: F(C1, Y),
-                    ExpectedReturnValue: new Term[] { }),
+                    ExpectedReturnValue: []),
             })
-            .When(tc =>
+            .When(async tc =>
             {
                 var tree = new AsyncDiscriminationTree(new AsyncDiscriminationTreeDictionaryNode<Term>(), tc.StoredTerms);
-                return tree.GetInstances(tc.QueryTerm).ToListAsync().GetAwaiter().GetResult();
+                return await tree.GetInstances(tc.QueryTerm).ToListAsync();
             })
             .ThenReturns()
-            .And((tc, rv) => rv.Should().BeEquivalentTo(tc.ExpectedReturnValue));
+            .And((tc, rv) => rv.Result.Should().BeEquivalentTo(tc.ExpectedReturnValue));
 
         public static Test GetGeneralisationsBehaviour => TestThat
             .GivenEachOf<GetTestCase>(() => new GetTestCase[]
             {
                 new(
-                    StoredTerms: new Term[] { C1, C2, X },
+                    StoredTerms: [C1, C2, X],
                     QueryTerm: C1,
-                    ExpectedReturnValue: new Term[] { C1, X }),
+                    ExpectedReturnValue: [C1, X]),
 
                 new(
-                    StoredTerms: new Term[] { F(X), F(C1, C2) },
+                    StoredTerms: [F(X), F(C1, C2)],
                     QueryTerm: F(C1),
-                    ExpectedReturnValue: new Term[] { F(X) }),
+                    ExpectedReturnValue: [F(X)]),
 
                 new(
-                    StoredTerms: new Term[] { F(X), F(C1, C2) },
+                    StoredTerms: [F(X), F(C1, C2)],
                     QueryTerm: F(Y),
-                    ExpectedReturnValue: new Term[] { F(X) }),
+                    ExpectedReturnValue: [F(X)]),
 
                 new(
-                    StoredTerms: new Term[] { F(X), F(C1), F(F(X)), F(C1, C2) },
+                    StoredTerms: [F(X), F(C1), F(F(X)), F(C1, C2)],
                     QueryTerm: F(F(C1)),
-                    ExpectedReturnValue: new Term[] { F(X), F(F(X)) }),
+                    ExpectedReturnValue: [F(X), F(F(X))]),
 
                 new(
-                    StoredTerms: new Term[] { F(X, X), F(X, Y) },
+                    StoredTerms: [F(X, X), F(X, Y)],
                     QueryTerm: F(C1, C2),
-                    ExpectedReturnValue: new Term[] { F(X, Y) }),
+                    ExpectedReturnValue: [F(X, Y)]),
 
                 new(
-                    StoredTerms: new Term[] { F(X, X), F(X, Y) },
+                    StoredTerms: [F(X, X), F(X, Y)],
                     QueryTerm: F(C1, C1),
-                    ExpectedReturnValue: new Term[] { F(X, X), F(X, Y) }),
+                    ExpectedReturnValue: [F(X, X), F(X, Y)]),
 
                 new(
-                    StoredTerms: new Term[] { F(X, C2) },
+                    StoredTerms: [F(X, C2)],
                     QueryTerm: F(C1, Y),
-                    ExpectedReturnValue: new Term[] { }),
+                    ExpectedReturnValue: []),
             })
-            .When(tc =>
+            .When(async tc =>
             {
                 var tree = new AsyncDiscriminationTree(new AsyncDiscriminationTreeDictionaryNode<Term>(), tc.StoredTerms);
-                return tree.GetGeneralisations(tc.QueryTerm).ToListAsync().GetAwaiter().GetResult();
+                return await tree.GetGeneralisations(tc.QueryTerm).ToListAsync();
             })
             .ThenReturns()
-            .And((tc, rv) => rv.Should().BeEquivalentTo(tc.ExpectedReturnValue));
+            .And((tc, rv) => rv.Result.Should().BeEquivalentTo(tc.ExpectedReturnValue));
 
         private record PositiveAddTestCase(Term[] CurrentTerms, Term NewTerm, Dictionary<IElementInfo, object> ExpectedRootChildren);
 

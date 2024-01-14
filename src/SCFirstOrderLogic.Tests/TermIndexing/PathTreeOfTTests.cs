@@ -15,29 +15,29 @@ namespace SCFirstOrderLogic.TermIndexing
             .GivenEachOf(() => new TryGetExactTestCase<int>[]
             {
                 new(
-                    Contents: new[]
-                    {
+                    Contents:
+                    [
                         KeyValuePair.Create(F(C1, C1), 1),
                         KeyValuePair.Create(F(C2, C2), 1)
-                    },
+                    ],
                     QueryTerm: F(C1, C1),
                     ExpectedReturnValue: true),
 
                 new(
-                    Contents: new[]
-                    {
+                    Contents:
+                    [
                         KeyValuePair.Create(F(C1, C1), 1),
                         KeyValuePair.Create(F(C2, C2), 1)
-                    },
+                    ],
                     QueryTerm: F(C2, C2),
                     ExpectedReturnValue: true),
 
                 new(
-                    Contents: new[]
-                    {
+                    Contents:
+                    [
                         KeyValuePair.Create(F(C1, C1), 1),
                         KeyValuePair.Create(F(C2, C2), 1)
-                    },
+                    ],
                     QueryTerm: F(C1, C2),
                     ExpectedReturnValue: false),
             })
