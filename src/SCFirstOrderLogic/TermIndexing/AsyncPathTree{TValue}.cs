@@ -4,7 +4,6 @@ using SCFirstOrderLogic.InternalUtilities;
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -93,7 +92,7 @@ namespace SCFirstOrderLogic.TermIndexing
                 }
                 else
                 {
-                    yield return EmptyEnumerable();
+                    yield return EmptyAsyncEnumerable<KeyValuePair<Term, TValue>>.Instance;
                 }
             }
 
@@ -154,7 +153,7 @@ namespace SCFirstOrderLogic.TermIndexing
                     }
                     else
                     {
-                        yield return EmptyEnumerable();
+                        yield return EmptyAsyncEnumerable<KeyValuePair<Term, TValue>>.Instance;
                     }
                 }
             }
@@ -247,11 +246,6 @@ namespace SCFirstOrderLogic.TermIndexing
         // Not yet, but shouldn't be *too* tough - essentially just need to combine instances and generalisations logic.
         ////public IEnumerable<KeyValuePair<Term, TValue>> GetUnifications(Term term)
 
-        private async static IAsyncEnumerable<KeyValuePair<Term, TValue>> EmptyEnumerable()
-        {
-            yield break;
-        }
-
         /// <summary>
         /// Term visitor that adds the term as descendents of the path tree parameter node passed as visitation state.
         /// </summary>
@@ -274,7 +268,6 @@ namespace SCFirstOrderLogic.TermIndexing
                 var node = await state.GetOrAddChildAsync(new PathTreeFunctionNodeKey(function.Identifier, functionArgCount));
                 if (functionArgCount > 0)
                 {
-                    // Go one-by-one, at least for now. Worth considering kicking off children in parallel, maybe?
                     for (int i = 0; i < function.Arguments.Count; i++)
                     {
                         var parameterNode = await node.GetOrAddChildAsync(i);
