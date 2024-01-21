@@ -121,8 +121,7 @@ namespace SCFirstOrderLogic.SentenceCreation
         /// </summary>
         /// <param name="identifier">The identifier of the variable.</param>>
         /// <returns>A new <see cref="OperableVariableDeclaration"/> instance.</returns>
-        public static OperableVariableDeclaration Var(object identifier) =>
-            new OperableVariableDeclaration(identifier);
+        public static OperableVariableDeclaration Var(object identifier) => new(identifier);
 
         #region VariableDeclarations
 

@@ -49,14 +49,7 @@ namespace SCFirstOrderLogic
         public IReadOnlySet<Literal> Literals => literals;
 
         /// <summary>
-        /// <para>
         /// Gets a value indicating whether this is a Horn clause - that is, whether at most one of its literals is positive.
-        /// </para>
-        /// <para>
-        /// No caching here, but the class is immutable so recalculating every time is wasted effort, strictly speaking.
-        /// Various things we could do, but for the moment I'm erring on the side of doing nothing, on the grounds that these
-        /// properties are unlikely to be on the "hot" path of any given applicaiton.
-        /// </para>
         /// </summary>
         public bool IsHornClause => Literals.Count(l => l.IsPositive) <= 1;
 
@@ -65,7 +58,7 @@ namespace SCFirstOrderLogic
         /// Gets a value indicating whether this is a definite clause - that is, whether exactly one of its literals is positive.
         /// </para>
         /// <para>
-        /// NB: this means that the clause can be written in the form L₁ ∧ L₂ ∧ .. ∧ Lₙ ⇒ L, where none of the literals is negated
+        /// NB: this means that the clause can be written in the form L₁ ∧ L₂ ∧ .. ∧ Lₙ ⇒ L (where none of the literals is negated)
         /// - or is simply a single non-negated literal.
         /// </para>
         /// </summary>

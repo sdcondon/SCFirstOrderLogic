@@ -96,7 +96,7 @@ namespace SCFirstOrderLogic.SentenceCreation
 
         private class ThrowingErrorListener : BaseErrorListener
         {
-            public static ThrowingErrorListener Instance = new ThrowingErrorListener();
+            public static ThrowingErrorListener Instance = new();
 
             public override void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
             {

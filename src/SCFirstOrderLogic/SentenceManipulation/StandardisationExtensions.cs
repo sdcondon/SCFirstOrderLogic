@@ -5,7 +5,10 @@ using System.Linq;
 // TODO-BREAKING-V6: awkwardness - don't like the need for that explanatory comment about the type
 // of the new identifiers. Perhaps look at adding this at the same time as moving/renaming
 // the normalisation identifiers, to make it clear that they are only one way of representing
-// thee concepts, and are specific to our conversion classes.
+// the concepts, and are specific to our conversion classes.
+// And/or (don't like this, but..) could introduce StandardisedLiteral, StandardisedPredicate,
+// StandardisedTerm, StandardisedFunction, StandardisedVariable, etc - in which variable identifiers
+// are StandardisedVariableIdentifier, not object..
 #if false
 namespace SCFirstOrderLogic.SentenceManipulation
 {

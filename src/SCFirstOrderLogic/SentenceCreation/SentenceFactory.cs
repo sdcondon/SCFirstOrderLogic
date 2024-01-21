@@ -154,8 +154,7 @@ namespace SCFirstOrderLogic.SentenceCreation
         /// </summary>
         /// <param name="identifier">The identifier of the variable.</param>>
         /// <returns>A new <see cref="VariableDeclaration"/> instance.</returns>
-        public static VariableDeclaration Var(object identifier) =>
-            new VariableDeclaration(identifier);
+        public static VariableDeclaration Var(object identifier) => new(identifier);
 
         #region VariableDeclarations
 
