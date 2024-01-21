@@ -3,6 +3,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+// TODO-BREAKING-V6: Thinking more and more that a SentenceInspection namespace 
+// is probably worthwhile..?
 namespace SCFirstOrderLogic.SentenceManipulation
 {
     /// <summary>
@@ -67,5 +69,13 @@ namespace SCFirstOrderLogic.SentenceManipulation
                 }
             }
         }
+
+        // Subsumes
+        public static bool Subsumes(this CNFClause clause)
+        {
+
+        }
+
+        // IsSubsumedBy
     }
 }
