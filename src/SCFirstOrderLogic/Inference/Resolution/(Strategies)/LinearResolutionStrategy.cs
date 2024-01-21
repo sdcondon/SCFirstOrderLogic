@@ -1,5 +1,5 @@
 ﻿#if false
-// Copyright (c) 2021-2023 Simon Condon.
+// Copyright (c) 2021-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 // NB: Not quite ready yet. In truth, I'm not completely sure that it's even trying to do the right thing.
 // It was created to prove out the strategy abstraction more than anything else.
