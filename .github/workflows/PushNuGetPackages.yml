@@ -24,7 +24,7 @@ jobs:
 
     - name: Get package version
       id: getPackageVersion
-      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      run: echo VERSION=${GITHUB_REF/refs\/tags\//} >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Build
