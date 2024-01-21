@@ -211,15 +211,15 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             })
             .When(tc =>
             {
-                (bool returnValue, VariableSubstitution? unifier) result;
+                (bool returnValue, VariableSubstitution unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
                 result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, ref result.unifier);
                 return result;
             })
             .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-            .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
-            .And((tc, r) => r.unifier!.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
-            .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
+            .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+            .And((tc, r) => r.unifier.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
+            .And((tc, r) => r.unifier.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
         public static Test TryUpdateNegative => TestThat
             .GivenEachOf(() => new TryUpdateNegativeTestCase<Literal>[]
@@ -272,7 +272,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             })
             .When(tc =>
             {
-                (bool returnValue, VariableSubstitution? unifier) result;
+                (bool returnValue, VariableSubstitution unifier) result;
                 result.unifier = new(tc.InitialSubstitutions);
                 result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, ref result.unifier);
                 return result;
