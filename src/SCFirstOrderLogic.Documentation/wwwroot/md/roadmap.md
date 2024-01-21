@@ -5,8 +5,7 @@ I don't intend to add any particularly powerful or specialised inference logic t
 
 Priorities at the time of writing:
 
-* An async version of a path tree, that allows for passing in the root node (thus allowing for implementations that e.g. use secondary storage)
-* *Perhaps* support for parallelism within path & discrimination tree queries.
+* *Easing back on this for the immediate future - working on other stuff.*
 
 Further ahead:
 
