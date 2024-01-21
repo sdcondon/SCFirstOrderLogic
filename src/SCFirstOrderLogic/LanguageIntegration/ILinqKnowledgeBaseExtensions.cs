@@ -6,26 +6,25 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SCFirstOrderLogic.LanguageIntegration
+namespace SCFirstOrderLogic.LanguageIntegration;
+
+/// <summary>
+/// Helpful extension methods for <see cref="ILinqKnowledgeBase{TDomain, TElement}"/> instances.
+/// </summary>
+public static class ILinqKnowledgeBaseExtensions
 {
     /// <summary>
-    /// Helpful extension methods for <see cref="ILinqKnowledgeBase{TDomain, TElement}"/> instances.
+    /// Inform a knowledge base that a given enumerable of expressions about the domain are all true for all models that it will be asked about.
     /// </summary>
-    public static class ILinqKnowledgeBaseExtensions
+    /// <param name="knowledgeBase">The knowledge base to tell.</param>
+    /// <param name="sentences">The expressions that are always true.</param>
+    /// <param name="cancellationToken">A cancellation token for the operation.</param>
+    public static async Task Tell<TDomain, TElement>(this ILinqKnowledgeBase<TDomain, TElement> knowledgeBase, IEnumerable<Expression<Predicate<TDomain>>> sentences, CancellationToken cancellationToken)
+        where TDomain : IEnumerable<TElement>
     {
-        /// <summary>
-        /// Inform a knowledge base that a given enumerable of expressions about the domain are all true for all models that it will be asked about.
-        /// </summary>
-        /// <param name="knowledgeBase">The knowledge base to tell.</param>
-        /// <param name="sentences">The expressions that are always true.</param>
-        /// <param name="cancellationToken">A cancellation token for the operation.</param>
-        public static async Task Tell<TDomain, TElement>(this ILinqKnowledgeBase<TDomain, TElement> knowledgeBase, IEnumerable<Expression<Predicate<TDomain>>> sentences, CancellationToken cancellationToken)
-            where TDomain : IEnumerable<TElement>
+        foreach (var sentence in sentences)
         {
-            foreach (var sentence in sentences)
-            {
-                await knowledgeBase.TellAsync(sentence, cancellationToken);
-            }
+            await knowledgeBase.TellAsync(sentence, cancellationToken);
         }
     }
 }
