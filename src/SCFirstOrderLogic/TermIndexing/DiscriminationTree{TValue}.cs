@@ -77,30 +77,24 @@ public class DiscriminationTree<TValue>
     {
         ArgumentNullException.ThrowIfNull(term);
 
-        var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).GetEnumerator();
-        try
+        using var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).GetEnumerator();
+
+        var currentNode = root;
+        IDiscriminationTreeElementInfo? currentQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
+        while (currentQueryElement != null)
         {
-            var currentNode = root;
-            IDiscriminationTreeElementInfo? currentQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
-            while (currentQueryElement != null)
+            var nextQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
+
+            if (nextQueryElement != null)
             {
-                var nextQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
-
-                if (nextQueryElement != null)
-                {
-                    currentNode = currentNode.GetOrAddInternalChild(currentQueryElement);
-                }
-                else
-                {
-                    currentNode.AddLeafChild(currentQueryElement, value);
-                }
-
-                currentQueryElement = nextQueryElement;
+                currentNode = currentNode.GetOrAddInternalChild(currentQueryElement);
             }
-        }
-        finally
-        {
-            queryElements.Dispose();
+            else
+            {
+                currentNode.AddLeafChild(currentQueryElement, value);
+            }
+
+            currentQueryElement = nextQueryElement;
         }
     }
 
