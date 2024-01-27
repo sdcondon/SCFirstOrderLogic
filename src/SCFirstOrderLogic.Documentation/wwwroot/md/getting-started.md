@@ -121,7 +121,7 @@ var grandparentDefn = SentenceParser.BasicParser.Parse("∀ g, c, IsGrandparentO
 ```
 
 Notes:
-* *The grammar definition is [here](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic/SentenceCreation/FirstOrderLogic.g4)*.
+* *The grammar definition is [here](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic/SentenceCreation/FirstOrderLogic.g4). For those familiar with BNF-like notation, this is perhaps the quickest way to discover the syntax.*
 * Writing strings that include the proper FoL symbols might be awkward, so the parser allows for some alternatives to be used. The following are recognised (NB all **case sensitive**):
   * `∀` ([U+2200](https://www.google.com/search?q=unicode+code+point+U%2B2200)), `forall`, `FORALL`, `for-all` or `FOR-ALL` for universal quantifications
   * `∃` ([U+2203](https://www.google.com/search?q=unicode+code+point+U%2B2203)), `exists`, `EXISTS`, `there-exists` or `THERE-EXISTS` for existential quantifications

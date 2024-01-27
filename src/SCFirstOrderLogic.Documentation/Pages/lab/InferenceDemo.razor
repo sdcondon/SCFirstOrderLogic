@@ -11,33 +11,37 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Inference Demo</h3>
+<h3>Lab - Inference Demo <a data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><span class="bi bi-info-circle" aria-hidden="true"></span></a></h3>
 
-<div class="alert alert-primary alert-dismissible fade show" role="alert">
-    <p>
-        This page is an interactive demonstration of inference with SCFirstOrderLogic that runs in your browser. Note that:
-    </p>
-    <ul>
-        <li>
-            The knowledge base implementations in this package are very basic for now, to the extent that it is very easy to create queries that they will struggle with.
-            Resolution in particular will generally fail to terminate if the query is not provable (a linear strategy and some knowledge of subsumption is on the TODO list..).
-            The goal of this package (for now, at least) is learning and experimentation more than anything else - so I maintain that there is value here as it stands - but improvements will be made (though not to any particular timeline).
-        </li>
-        <li>
-            Querying with this page is slower than it generally would be, due to limitations of the app framework used.
-            Blazor WASM's single-threaded nature necessitates the use of clause stores with some delays coded in, so as not to lock up the browser if a query takes a long time.
-        </li>
-        <li>Use the buttons at the top of the form to populate it with example queries, taken from "Artificial Intelligence: A Modern Approach".</li>
-        <li>Guidance for writing sentences as strings can be found on the <a href="getting-started#writing-sentences-as-strings">getting started</a> page.</li>
-        <li>
-            The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Pages/lab/InferenceDemo.razor">here</a>.
-        </li>
-    </ul>
-    <!-- 
-        No close button because it confuses Blazor, which assumes sole ownership of the DOM.
-        Will introduce Blazorise or somesuch soon.
-    -->
-    <!--<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Lab Explanation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    This page is an interactive demonstration of inference with SCFirstOrderLogic that runs in your browser. Note that:
+                </p>
+                <ul>
+                    <li>
+                        The knowledge base implementations in this package are very basic for now, to the extent that it is very easy to create queries that they will struggle with.
+                        The goal of this package (for now, at least) is learning and experimentation more than anything else - so I maintain that there is value here as it stands - but improvements to the knowledge base implementations will be made (though not to any particular timeline).
+                    </li>
+                    <li>
+                        Querying with this page is slower than it generally would be, due to limitations of the app framework used.
+                        Blazor WASM's single-threaded nature necessitates the use of clause stores with some delays coded in, so as not to lock up the browser if a query takes a long time.
+                    </li>
+                    <li>Use the buttons at the top of the form to populate it with example queries, taken from "Artificial Intelligence: A Modern Approach".</li>
+                    <li>Guidance for writing sentences as strings can be found on the "getting started" page.</li>
+                    <li>
+                        The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Pages/lab/InferenceDemo.razor">here</a>.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
 <EditForm Model=@formData OnSubmit=@HandleFormSubmission style="font-family: monospace">
