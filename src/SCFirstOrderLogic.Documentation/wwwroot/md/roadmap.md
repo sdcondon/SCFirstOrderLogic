@@ -5,11 +5,11 @@ I don't intend to add any particularly powerful or specialised inference logic t
 
 Priorities at the time of writing:
 
-* *Easing back on this for the immediate future - working on other stuff.*
+* *Nothing at the moment - working on other projects.*
 
 Further ahead:
 
-* Next up likely to be more indexing stuff - specifically, to facilitate finding subsuming/subsumed clauses.
+* Next up is likely to be more indexing stuff - specifically, to facilitate finding subsuming/subsumed clauses.
   Might go very old-school and build on discrimination/path trees for this, but will probably at least try to go slightly less old-school and have a crack at a feature vector index implementation.
 * Improvements to inference algorithms. As mentioned above and elsewhere, this package is more about the fundamentals than especially powerful inference logic - but we should probably cover at least some of the relatively fundamental problems and techniques - the inference demo is rather underwhelming at the moment.. For example, some or all of:
   * Create a clause store or two that leverages subsumption.
