@@ -10,20 +10,22 @@
     <PackageProjectUrl>https://sdcondon.net/SCFirstOrderLogic/</PackageProjectUrl>
     <PackageReleaseNotes>See https://github.com/sdcondon/SCFirstOrderLogic/releases.</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Copyright>2021-2023 Simon Condon</Copyright>
+    <Copyright>2021-2024 Simon Condon</Copyright>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
     <!-- NB: timestamp below doesn't include seconds because depending on such a package gets VS into an infinite restore loop.. -->
     <Version>0.0.0-local.$([System.DateTime]::Now.ToString(yyMMddTHHmm))</Version>
+  	<!-- Will make this cleverer if anyone else starts contributing to this (look for local package sources with Powershell, maybe?) -->
+	<LocalPackageSource>$(UserProfile)\Coding\Packages</LocalPackageSource>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' != 'true' And Exists('C:\Users\simon\Coding\Packages')">
-    <PackageOutputPath>C:\Users\simon\Coding\Packages</PackageOutputPath>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' != 'true' And Exists('$(LocalPackageSource)')">
+    <PackageOutputPath>$(LocalPackageSource)</PackageOutputPath>
   </PropertyGroup>
 </Project>
