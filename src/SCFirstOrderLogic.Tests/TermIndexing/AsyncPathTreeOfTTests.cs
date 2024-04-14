@@ -32,10 +32,10 @@ public static class AsyncPathTreeOfTTests
                 QueryTerm: F(C1, C2),
                 ExpectedReturnValue: false),
         })
-        .When(tc =>
+        .WhenAsync(async tc =>
         {
             var tree = new AsyncPathTree<int>(new AsyncPathTreeDictionaryNode<int>(), tc.Contents);
-            return tree.TryGetExactAsync(tc.QueryTerm).GetAwaiter().GetResult().isSucceeded;
+            return (await tree.TryGetExactAsync(tc.QueryTerm)).isSucceeded;
         })
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.ExpectedReturnValue));

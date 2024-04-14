@@ -100,30 +100,30 @@ public static class BackwardChainingKnowledgeBaseTests
             new(
                 Label: "No matching clause",
                 Query: IsEvil(X),
-                Knowledge: new Sentence[]
-                {
+                Knowledge:
+                [
                     IsKing(John),
                     IsGreedy(John),
-                }),
+                ]),
 
             new(
                 Label: "clause with not all conjuncts satisfied",
                 Query: IsEvil(X),
-                Knowledge: new Sentence[]
-                {
+                Knowledge:
+                [
                     IsKing(John),
                     AllGreedyKingsAreEvil,
-                }),
+                ]),
 
             new(
                 Label: "No unifier will work - x is either John or Richard - it can't be both",
                 Query: IsEvil(X),
-                Knowledge: new Sentence[]
-                {
+                Knowledge:
+                [
                     IsKing(John),
                     IsGreedy(Richard),
                     AllGreedyKingsAreEvil,
-                }),
+                ]),
         })
         .When(tc =>
         {
@@ -142,14 +142,14 @@ public static class BackwardChainingKnowledgeBaseTests
             var knowledgeBase = new BackwardChainingKnowledgeBase(new DictionaryClauseStore());
             return knowledgeBase.CreateQuery(IsGreedy(John));
         })
-        .When(q =>
+        .WhenAsync(async q =>
         {
             var task1 = q.ExecuteAsync();
             var task2 = q.ExecuteAsync();
 
             try
             {
-                Task.WhenAll(task1, task2).GetAwaiter().GetResult();
+                await Task.WhenAll(task1, task2);
             }
             catch (InvalidOperationException) { }
 

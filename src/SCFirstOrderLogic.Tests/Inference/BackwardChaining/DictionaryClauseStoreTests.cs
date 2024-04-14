@@ -7,33 +7,33 @@ namespace SCFirstOrderLogic.Inference.BackwardChaining;
 public static class DictionaryClauseStoreTests
 {
     public static Test Smoke => TestThat
-        .Given(() =>
+        .GivenAsync(async () =>
         {
             var store = new DictionaryClauseStore();
-            store.AddAsync(new CNFDefiniteClause(new Predicate("A"))).Wait();
-            store.AddAsync(new CNFDefiniteClause(new Predicate("B"))).Wait();
+            await store.AddAsync(new CNFDefiniteClause(new Predicate("A")));
+            await store.AddAsync(new CNFDefiniteClause(new Predicate("B")));
             return store;
         })
-        .When(store => store.ToArrayAsync().GetAwaiter().GetResult())
+        .WhenAsync(async store => await store.ToArrayAsync())
         .ThenReturns((_, a) => a.Should().BeEquivalentTo(new[] { new CNFClause(new Predicate("A")), new CNFClause(new Predicate("B")) }));
 
     public static Test Concurrency_AddDuringEnum => TestThat
-        .Given(() =>
+        .GivenAsync(async () =>
         {
             // we have a store that has had a couple of clauses added...
             var store = new DictionaryClauseStore();
-            store.AddAsync(new CNFDefiniteClause(new Predicate("A"))).Wait();
-            store.AddAsync(new CNFDefiniteClause(new Predicate("B"))).Wait();
+            await store.AddAsync(new CNFDefiniteClause(new Predicate("A")));
+            await store.AddAsync(new CNFDefiniteClause(new Predicate("B")));
 
             // ..then has had an enumeration started but not completed..
             var enumerator = store.GetAsyncEnumerator();
-            enumerator.MoveNextAsync().AsTask().Wait();
+            await enumerator.MoveNextAsync();
 
             // ..then has had another clause added.
-            store.AddAsync(new CNFDefiniteClause(new Predicate("C"))).Wait();
+            await store.AddAsync(new CNFDefiniteClause(new Predicate("C")));
 
             return new { store, enumerator };
         })
-        .When(g => g.enumerator.MoveNextAsync().AsTask().Wait())
+        .WhenAsync(async g => await g.enumerator.MoveNextAsync())
         .ThenReturns();
 }

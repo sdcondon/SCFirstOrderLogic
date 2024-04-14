@@ -129,14 +129,14 @@ public static class ForwardChainingKnowledgeBaseTests
             var knowledgeBase = new ForwardChainingKnowledgeBase(new HashSetClauseStore());
             return knowledgeBase.CreateQuery(IsGreedy(John));
         })
-        .When(q =>
+        .WhenAsync(async q =>
         {
             var task1 = q.ExecuteAsync();
             var task2 = q.ExecuteAsync();
 
             try
             {
-                Task.WhenAll(task1, task2).GetAwaiter().GetResult();
+                await Task.WhenAll(task1, task2);
             }
             catch (InvalidOperationException) { }
 

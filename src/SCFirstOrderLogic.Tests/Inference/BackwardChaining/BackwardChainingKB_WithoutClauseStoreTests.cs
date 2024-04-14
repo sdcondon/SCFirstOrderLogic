@@ -2,6 +2,7 @@
 using FlUnit;
 using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceFactory.CrimeDomain;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 using static SCFirstOrderLogic.TestUtilities.GreedyKingsDomain;
@@ -12,118 +13,118 @@ public static class BackwardChainingKB_WithoutClauseStoreTests
 {
     public static Test PositiveScenarios => TestThat
         .GivenTestContext()
-        .AndEachOf(() => new BackwardChainingKB_WithoutClauseStore.Query[]
-        {
+        .AndEachOfAsync<BackwardChainingKB_WithoutClauseStore.Query>(async () =>
+        [
             // trivial
-            MakeQuery(
+            await MakeQueryAsync(
                 query: IsKing(John),
-                kb: new Sentence[]
-                {
+                kb:
+                [
                     IsKing(John)
-                }),
+                ]),
 
             // single conjunct, single step
-            MakeQuery(
+            await MakeQueryAsync(
                 query: IsEvil(John),
-                kb: new Sentence[]
-                {
+                kb:
+                [
                     IsGreedy(John),
                     AllGreedyAreEvil
-                }),
+                ]),
 
             // two conjuncts, single step
-            MakeQuery(
+            await MakeQueryAsync(
                 query: IsEvil(John),
-                kb: new Sentence[]
-                {
+                kb:
+                [
                     IsGreedy(John),
                     IsKing(John),
                     AllGreedyKingsAreEvil
-                }),
+                ]),
 
             // two conjuncts, single step, with a red herring
-            MakeQuery(
+            await MakeQueryAsync(
                 query: IsEvil(X),
-                kb: new Sentence[]
-                {
+                kb:
+                [
                     IsKing(John),
                     IsGreedy(Mary),
                     IsQueen(Mary),
                     AllGreedyKingsAreEvil,
                     AllGreedyQueensAreEvil,
-                }),
+                ]),
 
             // Simple multiple proofs
-            MakeQuery(
+            await MakeQueryAsync(
                 query: IsKing(X),
-                kb: new Sentence[]
-                {
+                kb:
+                [
                     IsKing(John),
                     IsKing(Richard),
-                }),
+                ]),
 
             // Uses same var twice in same proof
-            MakeQuery(
+            await MakeQueryAsync(
                 query: Knows(John, Mary),
-                kb: new Sentence[]
-                {
+                kb:
+                [
                     AllGreedyAreEvil,
                     AllEvilKnowEachOther,
                     IsGreedy(John),
                     IsGreedy(Mary),
-                }),
+                ]),
 
             // More complex - Crime example domain
-            MakeQuery(
+            await MakeQueryAsync(
                 query: CrimeDomain.IsCriminal(ColonelWest),
                 kb: CrimeDomain.Axioms),
-        })
-        .When((cxt, query) => query.Execute())
+        ])
+        .When((_, query) => query.Execute())
         .ThenReturns()
         .And((_, _, rv) => rv.Should().BeTrue())
         .And((_, query, _) => query.Result.Should().BeTrue())
         .And((cxt, query, _) => cxt.WriteOutputLine(query.ResultExplanation));
 
     public static Test NegativeScenarios => TestThat
-        .GivenEachOf(() => new BackwardChainingKB_WithoutClauseStore.Query[]
-        {
+        .GivenEachOfAsync<BackwardChainingKB_WithoutClauseStore.Query>(async () =>
+        [
             // no matching clause
-            MakeQuery(
+            await MakeQueryAsync(
                 query: IsEvil(X),
-                kb: new Sentence[]
-                {
+                kb:
+                [
                     IsKing(John),
                     IsGreedy(John),
-                }),
+                ]),
 
             // clause with not all conjuncts satisfied
-            MakeQuery(
+            await MakeQueryAsync(
                 query: IsEvil(X),
-                kb: new Sentence[]
-                {
+                kb:
+                [
                     IsKing(John),
                     AllGreedyKingsAreEvil,
-                }),
+                ]),
 
             // no unifier will work - x is either John or Richard - it can't be both:
-            MakeQuery(
+            await MakeQueryAsync(
                 query: IsEvil(X),
-                kb: new Sentence[]
-                {
+                kb:
+                [
                     IsKing(John),
                     IsGreedy(Richard),
                     AllGreedyKingsAreEvil,
-                }),
-        })
+                ]),
+        ])
         .When(query => query.Execute())
         .ThenReturns()
         .And((_, rv) => rv.Should().BeFalse())
         .And((query, _) => query.Result.Should().BeFalse());
 
-    private static BackwardChainingKB_WithoutClauseStore.Query MakeQuery(Sentence query, IEnumerable<Sentence> kb)
+    private static async Task<BackwardChainingKB_WithoutClauseStore.Query> MakeQueryAsync(Sentence query, IEnumerable<Sentence> kb)
     {
         var knowledgeBase = new BackwardChainingKB_WithoutClauseStore();
         knowledgeBase.Tell(kb);
-        return knowledgeBase.CreateQueryAsync(query).GetAwaiter().GetResult();
+        return await knowledgeBase.CreateQueryAsync(query);
     }
 }

@@ -52,7 +52,7 @@ public static class EqualityAxiomisingKnowledgeBaseTests
                     ForAll(X, Y, If(AreEqual(X, Y), Iff(IsMale(X), IsMale(Y)))), // Equality and IsMale predicate
                 }),
         })
-        .When(tc => tc.KB.TellAsync(tc.Sentence).Wait())
+        .WhenAsync(async tc => await tc.KB.TellAsync(tc.Sentence))
         .ThenReturns()
         .And(tc =>
         {

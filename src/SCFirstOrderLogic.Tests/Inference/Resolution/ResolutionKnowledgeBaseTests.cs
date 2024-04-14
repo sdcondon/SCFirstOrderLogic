@@ -152,14 +152,14 @@ public static class ResolutionKnowledgeBaseTests
 
             return knowledgeBase.CreateQuery(IsGreedy(John));
         })
-        .When(q =>
+        .WhenAsync(async q =>
         {
             var task1 = q.ExecuteAsync();
             var task2 = q.ExecuteAsync();
 
             try
             {
-                Task.WhenAll(task1, task2).GetAwaiter().GetResult();
+                await Task.WhenAll(task1, task2);
             }
             catch (InvalidOperationException) { }
 
@@ -174,14 +174,14 @@ public static class ResolutionKnowledgeBaseTests
     // in a timely fashion. Better way of handling equality, better prioritisation, etc.
     ////public static Test KinshipExample => TestThat
     ////    .GivenTestContext()
-    ////    .When(_ =>
+    ////    .WhenAsync(async _ =>
     ////    {
     ////        var resolutionStrategy = new LinearResolutionStrategy(new HashSetClauseStore());
     ////        var innerKb = new ResolutionKnowledgeBase(resolutionStrategy);
-    ////        var kb = EqualityAxiomisingKnowledgeBase.CreateAsync(innerKb).GetAwaiter().GetResult();
-    ////        kb.TellAsync(KinshipDomain.Axioms).Wait();
-    ////        var query = kb.CreateQueryAsync(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X)))).GetAwaiter().GetResult();
-    ////        query.ExecuteAsync().Wait();
+    ////        var kb = await EqualityAxiomisingKnowledgeBase.CreateAsync(innerKb);
+    ////        await kb.TellAsync(KinshipDomain.Axioms);
+    ////        var query = await kb.CreateQueryAsync(ForAll(X, Y, Iff(IsSibling(X, Y), IsSibling(Y, X))));
+    ////        await query.ExecuteAsync();
     ////        return query;
     ////    })
     ////    .ThenReturns()

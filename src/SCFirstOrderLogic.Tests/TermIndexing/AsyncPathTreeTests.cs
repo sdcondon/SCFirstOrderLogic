@@ -120,11 +120,11 @@ public static class AsyncPathTreeTests
                     },
                 }),
         })
-        .When(tc =>
+        .WhenAsync(async tc =>
         {
             var rootNode = new AsyncPathTreeDictionaryNode<Term>();
             var tree = new AsyncPathTree(rootNode, tc.CurrentTerms);
-            tree.AddAsync(tc.NewTerm).GetAwaiter().GetResult();
+            await tree.AddAsync(tc.NewTerm);
             return GetParameterNodeChildren(rootNode);
 
             static Dictionary<IPathTreeArgumentNodeKey, object> GetParameterNodeChildren(IAsyncPathTreeParameterNode<Term> node)
@@ -162,10 +162,10 @@ public static class AsyncPathTreeTests
                 CurrentTerms: [F(C1)],
                 NewTerm: F(C1)),
         })
-        .When(tc =>
+        .WhenAsync(async tc =>
         {
             var tree = new AsyncPathTree(new AsyncPathTreeDictionaryNode<Term>(), tc.CurrentTerms);
-            tree.AddAsync(tc.NewTerm).GetAwaiter().GetResult();
+            await tree.AddAsync(tc.NewTerm);
         })
         .ThenThrows();
 
@@ -212,10 +212,10 @@ public static class AsyncPathTreeTests
                 QueryTerm: F(C1, Y),
                 ExpectedReturnValue: false),
         })
-        .When(tc =>
+        .WhenAsync(async tc =>
         {
             var tree = new AsyncPathTree(new AsyncPathTreeDictionaryNode<Term>(), tc.StoredTerms);
-            return tree.ContainsAsync(tc.QueryTerm).GetAwaiter().GetResult();
+            return await tree.ContainsAsync(tc.QueryTerm);
         })
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.ExpectedReturnValue));
@@ -253,10 +253,10 @@ public static class AsyncPathTreeTests
                 QueryTerm: F(C1, Y),
                 ExpectedReturnValue: []),
         })
-        .When(tc =>
+        .WhenAsync(async tc =>
         {
             var tree = new AsyncPathTree(new AsyncPathTreeDictionaryNode<Term>(), tc.StoredTerms);
-            return tree.GetInstances(tc.QueryTerm).ToListAsync().GetAwaiter().GetResult(); ;
+            return await tree.GetInstances(tc.QueryTerm).ToListAsync();
         })
         .ThenReturns()
         .And((tc, rv) => rv.Should().BeEquivalentTo(tc.ExpectedReturnValue));
@@ -299,10 +299,10 @@ public static class AsyncPathTreeTests
                 QueryTerm: F(C1, Y),
                 ExpectedReturnValue: []),
         })
-        .When(tc =>
+        .WhenAsync(async tc =>
         {
             var tree = new AsyncPathTree(new AsyncPathTreeDictionaryNode<Term>(), tc.StoredTerms);
-            return tree.GetGeneralisations(tc.QueryTerm).ToListAsync().GetAwaiter().GetResult();
+            return await tree.GetGeneralisations(tc.QueryTerm).ToListAsync();
         })
         .ThenReturns()
         .And((tc, rv) => rv.Should().BeEquivalentTo(tc.ExpectedReturnValue));

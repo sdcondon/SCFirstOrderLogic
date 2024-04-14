@@ -13,12 +13,12 @@ public static class UniqueNamesAxiomisingKnowledgeBaseTests
 {
     public static Test Smoke => TestThat
         .Given(() => new MockKnowledgeBase())
-        .When(kb =>
+        .WhenAsync(async kb =>
         {
             var sut = new UniqueNamesAxiomisingKnowledgeBase(kb);
-            sut.TellAsync(IsMale(new Constant("Bob"))).Wait();
-            sut.TellAsync(IsMale(new Constant("Larry"))).Wait();
-            sut.TellAsync(Not(IsMale(new Constant("Alex")))).Wait();
+            await sut.TellAsync(IsMale(new Constant("Bob")));
+            await sut.TellAsync(IsMale(new Constant("Larry")));
+            await sut.TellAsync(Not(IsMale(new Constant("Alex"))));
         })
         .ThenReturns()
         .And(kb =>

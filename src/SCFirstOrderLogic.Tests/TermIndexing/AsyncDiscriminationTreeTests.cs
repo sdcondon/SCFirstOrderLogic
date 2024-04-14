@@ -117,11 +117,11 @@ public static class AsyncDiscriminationTreeTests
                     },
                 }),
         })
-        .When(tc =>
+        .WhenAsync(async tc =>
         {
             var root = new AsyncDiscriminationTreeDictionaryNode<Term>();
             var tree = new AsyncDiscriminationTree(root, tc.CurrentTerms);
-            tree.AddAsync(tc.NewTerm).GetAwaiter().GetResult();
+            await tree.AddAsync(tc.NewTerm);
             return GetChildren(root);
 
             static Dictionary<IElementInfo, object> GetChildren(IAsyncDiscriminationTreeNode<Term> node)
@@ -151,10 +151,10 @@ public static class AsyncDiscriminationTreeTests
                 CurrentTerms: [F(C1)],
                 NewTerm: F(C1)),
         })
-        .When(tc =>
+        .WhenAsync(async tc =>
         {
             var tree = new AsyncDiscriminationTree(new AsyncDiscriminationTreeDictionaryNode<Term>(), tc.CurrentTerms);
-            tree.AddAsync(tc.NewTerm).GetAwaiter().GetResult();
+            await tree.AddAsync(tc.NewTerm);
         })
         .ThenThrows();
 
@@ -201,10 +201,10 @@ public static class AsyncDiscriminationTreeTests
                 QueryTerm: F(C1, Y),
                 ExpectedReturnValue: false),
         })
-        .When(tc =>
+        .WhenAsync(async tc =>
         {
             var tree = new AsyncDiscriminationTree(new AsyncDiscriminationTreeDictionaryNode<Term>(), tc.StoredTerms);
-            return tree.ContainsAsync(tc.QueryTerm).GetAwaiter().GetResult();
+            return await tree.ContainsAsync(tc.QueryTerm);
         })
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.ExpectedReturnValue));
