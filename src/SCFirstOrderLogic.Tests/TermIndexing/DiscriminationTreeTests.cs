@@ -2,10 +2,10 @@
 using FlUnit;
 using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
-using ConstantInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeConstantInfo;
-using FunctionInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeFunctionInfo;
-using IElementInfo = SCFirstOrderLogic.TermIndexing.IDiscriminationTreeElementInfo;
-using VariableInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeVariableInfo;
+using ConstantInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeConstantNodeKey;
+using FunctionInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeFunctionNodeKey;
+using IElementInfo = SCFirstOrderLogic.TermIndexing.IDiscriminationTreeNodeKey;
+using VariableInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeVariableNodeKey;
 
 namespace SCFirstOrderLogic.TermIndexing;
 

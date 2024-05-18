@@ -8,16 +8,16 @@ namespace SCFirstOrderLogic.TermIndexing;
 internal class DiscriminationTreeVariableBindings
 {
     // TODO-ZZ: does this need to be a dictionary - we should always encounter variables in ordinal order, i think?
-    private readonly Dictionary<int, IDiscriminationTreeElementInfo[]> map;
+    private readonly Dictionary<int, IDiscriminationTreeNodeKey[]> map;
 
     public DiscriminationTreeVariableBindings() => map = new();
 
-    private DiscriminationTreeVariableBindings(IEnumerable<KeyValuePair<int, IDiscriminationTreeElementInfo[]>> content) => map = new(content);
+    private DiscriminationTreeVariableBindings(IEnumerable<KeyValuePair<int, IDiscriminationTreeNodeKey[]>> content) => map = new(content);
 
     // Overall performance would perhaps be better with a tree instead of copying a dictionary
     // Worth a test at some point perhaps (maybe after looking at substitution trees in general).
     // Might not be worth the complexity though.
-    public static bool TryAddOrMatchBinding(int ordinal, IDiscriminationTreeElementInfo[] value, ref DiscriminationTreeVariableBindings bindings)
+    public static bool TryAddOrMatchBinding(int ordinal, IDiscriminationTreeNodeKey[] value, ref DiscriminationTreeVariableBindings bindings)
     {
         // NB the "one-way" nature of this binding means this logic can be
         // simpler than that of unification (see LiteralUnifier) - here, we just need to check for equality.

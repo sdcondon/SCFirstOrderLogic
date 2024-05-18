@@ -12,18 +12,18 @@ namespace SCFirstOrderLogic.TermIndexing;
 /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
 public class DiscriminationTreeDictionaryNode<TValue> : IDiscriminationTreeNode<TValue>
 {
-    private readonly Dictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> children = new();
+    private readonly Dictionary<IDiscriminationTreeNodeKey, IDiscriminationTreeNode<TValue>> children = new();
 
     /// <inheritdoc/>
     // NB: we don't bother wrapping children in a ReadOnlyDict to stop unscrupulous
     // users from casting. Would be more memory for a real edge case.
-    public IReadOnlyDictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> Children => children;
+    public IReadOnlyDictionary<IDiscriminationTreeNodeKey, IDiscriminationTreeNode<TValue>> Children => children;
 
     /// <inheritdoc/>
     public TValue Value => throw new NotSupportedException("Internal node - has no value");
 
     /// <inheritdoc/>
-    public IDiscriminationTreeNode<TValue> GetOrAddInternalChild(IDiscriminationTreeElementInfo elementInfo)
+    public IDiscriminationTreeNode<TValue> GetOrAddInternalChild(IDiscriminationTreeNodeKey elementInfo)
     {
         if (!children.TryGetValue(elementInfo, out var node))
         {
@@ -35,7 +35,7 @@ public class DiscriminationTreeDictionaryNode<TValue> : IDiscriminationTreeNode<
     }
 
     /// <inheritdoc/>
-    public void AddLeafChild(IDiscriminationTreeElementInfo elementInfo, TValue value)
+    public void AddLeafChild(IDiscriminationTreeNodeKey elementInfo, TValue value)
     {
         if (!children.TryAdd(elementInfo, new LeafNode(value)))
         {
@@ -48,24 +48,24 @@ public class DiscriminationTreeDictionaryNode<TValue> : IDiscriminationTreeNode<
     /// </summary>
     private sealed class LeafNode : IDiscriminationTreeNode<TValue>
     {
-        private static readonly ReadOnlyDictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> emptyChildren = new(new Dictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>>());
+        private static readonly ReadOnlyDictionary<IDiscriminationTreeNodeKey, IDiscriminationTreeNode<TValue>> emptyChildren = new(new Dictionary<IDiscriminationTreeNodeKey, IDiscriminationTreeNode<TValue>>());
 
         internal LeafNode(TValue value) => Value = value;
 
         /// <inheritdoc/>
-        public IReadOnlyDictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> Children => emptyChildren;
+        public IReadOnlyDictionary<IDiscriminationTreeNodeKey, IDiscriminationTreeNode<TValue>> Children => emptyChildren;
 
         /// <inheritdoc/>
         public TValue Value { get; }
 
         /// <inheritdoc/>
-        public IDiscriminationTreeNode<TValue> GetOrAddInternalChild(IDiscriminationTreeElementInfo elementInfo)
+        public IDiscriminationTreeNode<TValue> GetOrAddInternalChild(IDiscriminationTreeNodeKey elementInfo)
         {
             throw new NotSupportedException("Leaf node - cannot have children");
         }
 
         /// <inheritdoc/>
-        public void AddLeafChild(IDiscriminationTreeElementInfo elementInfo, TValue value)
+        public void AddLeafChild(IDiscriminationTreeNodeKey elementInfo, TValue value)
         {
             throw new NotSupportedException("Leaf node - cannot have children");
         }

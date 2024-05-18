@@ -60,7 +60,7 @@ public class AsyncDiscriminationTree<TValue>
         try
         {
             IAsyncDiscriminationTreeNode<TValue> currentNode = root;
-            IDiscriminationTreeElementInfo? currentQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
+            IDiscriminationTreeNodeKey? currentQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
             while (currentQueryElement != null)
             {
                 var nextQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
@@ -141,9 +141,9 @@ public class AsyncDiscriminationTree<TValue>
             {
                 var queryElement = queryElements[queryElementIndex];
 
-                if (queryElement is DiscriminationTreeVariableInfo)
+                if (queryElement is DiscriminationTreeVariableNodeKey)
                 {
-                    await foreach (var value in ExpandVariableMatches(node.GetChildren(), queryElementIndex, Enumerable.Empty<IDiscriminationTreeElementInfo>(), 1, variableBindings))
+                    await foreach (var value in ExpandVariableMatches(node.GetChildren(), queryElementIndex, Enumerable.Empty<IDiscriminationTreeNodeKey>(), 1, variableBindings))
                     {
                         yield return value;
                     }
@@ -170,9 +170,9 @@ public class AsyncDiscriminationTree<TValue>
         }
 
         async IAsyncEnumerable<TValue> ExpandVariableMatches(
-            IAsyncEnumerable<KeyValuePair<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>>> nodes,
+            IAsyncEnumerable<KeyValuePair<IDiscriminationTreeNodeKey, IAsyncDiscriminationTreeNode<TValue>>> nodes,
             int queryElementIndex,
-            IEnumerable<IDiscriminationTreeElementInfo> parentVariableMatch,
+            IEnumerable<IDiscriminationTreeNodeKey> parentVariableMatch,
             int parentUnexploredBranchCount,
             DiscriminationTreeVariableBindings priorVariableBindings)
         {
@@ -201,7 +201,7 @@ public class AsyncDiscriminationTree<TValue>
                     var variableBindings = priorVariableBindings;
 
                     var isVariableMatch = DiscriminationTreeVariableBindings.TryAddOrMatchBinding(
-                        ((DiscriminationTreeVariableInfo)queryElements[queryElementIndex]).Ordinal,
+                        ((DiscriminationTreeVariableNodeKey)queryElements[queryElementIndex]).Ordinal,
                         variableMatch.ToArray(),
                         ref variableBindings);
 
@@ -238,7 +238,7 @@ public class AsyncDiscriminationTree<TValue>
                 var nextQueryElementOffset = 1;
                 var childVariableBindings = variableBindings;
 
-                if (childElement is DiscriminationTreeVariableInfo variableInfo)
+                if (childElement is DiscriminationTreeVariableNodeKey variableInfo)
                 {
                     // Here we are setting nextQueryInfoOffset to the size of the whole subtree
                     // with queryInfos[queryInfoIndex] at its root (i.e. the subtree that we are

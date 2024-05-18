@@ -12,7 +12,7 @@ public interface IDiscriminationTreeNode<TValue>
     /// <summary>
     /// Gets the child nodes of this node, keyed by objects that describe the element represented by the child.
     /// </summary>
-    IReadOnlyDictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> Children { get; }
+    IReadOnlyDictionary<IDiscriminationTreeNodeKey, IDiscriminationTreeNode<TValue>> Children { get; }
 
     /// <summary>
     /// Gets the value attached to a leaf node. Will not be called for internal nodes - throwing an exception is acceptable behaviour for them.
@@ -24,12 +24,12 @@ public interface IDiscriminationTreeNode<TValue>
     /// </summary>
     /// <param name="elementInfo">The element info for the retrieved or added node.</param>
     /// <returns>The retrieved or added node.</returns>
-    IDiscriminationTreeNode<TValue> GetOrAddInternalChild(IDiscriminationTreeElementInfo elementInfo);
+    IDiscriminationTreeNode<TValue> GetOrAddInternalChild(IDiscriminationTreeNodeKey elementInfo);
 
     /// <summary>
     /// Adds a child node of this node that is a leaf.
     /// </summary>
     /// <param name="elementInfo">The element info for the added node.</param>
     /// <param name="value">The value to be attached to the new node.</param>
-    void AddLeafChild(IDiscriminationTreeElementInfo elementInfo, TValue value);
+    void AddLeafChild(IDiscriminationTreeNodeKey elementInfo, TValue value);
 }

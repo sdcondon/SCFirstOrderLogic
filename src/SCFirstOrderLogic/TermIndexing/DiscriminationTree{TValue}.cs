@@ -80,7 +80,7 @@ public class DiscriminationTree<TValue>
         using var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).GetEnumerator();
 
         var currentNode = root;
-        IDiscriminationTreeElementInfo? currentQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
+        IDiscriminationTreeNodeKey? currentQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
         while (currentQueryElement != null)
         {
             var nextQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
@@ -150,15 +150,15 @@ public class DiscriminationTree<TValue>
         return ExpandNodes(root.Children, 0, new DiscriminationTreeVariableBindings());
 
         IEnumerable<TValue> ExpandNodes(
-            IReadOnlyDictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> nodes,
+            IReadOnlyDictionary<IDiscriminationTreeNodeKey, IDiscriminationTreeNode<TValue>> nodes,
             int queryElementIndex,
             DiscriminationTreeVariableBindings variableBindings)
         {
             var queryElement = queryElements[queryElementIndex];
 
-            if (queryElement is DiscriminationTreeVariableInfo)
+            if (queryElement is DiscriminationTreeVariableNodeKey)
             {
-                foreach (var value in ExpandVariableMatches(nodes, queryElementIndex, Enumerable.Empty<IDiscriminationTreeElementInfo>(), 1, variableBindings))
+                foreach (var value in ExpandVariableMatches(nodes, queryElementIndex, Enumerable.Empty<IDiscriminationTreeNodeKey>(), 1, variableBindings))
                 {
                     yield return value;
                 }
@@ -173,9 +173,9 @@ public class DiscriminationTree<TValue>
         }
 
         IEnumerable<TValue> ExpandVariableMatches(
-            IReadOnlyDictionary<IDiscriminationTreeElementInfo, IDiscriminationTreeNode<TValue>> nodes,
+            IReadOnlyDictionary<IDiscriminationTreeNodeKey, IDiscriminationTreeNode<TValue>> nodes,
             int queryElementIndex,
-            IEnumerable<IDiscriminationTreeElementInfo> parentVariableMatch,
+            IEnumerable<IDiscriminationTreeNodeKey> parentVariableMatch,
             int parentUnexploredBranchCount,
             DiscriminationTreeVariableBindings priorVariableBindings)
         {
@@ -204,7 +204,7 @@ public class DiscriminationTree<TValue>
                     var variableBindings = priorVariableBindings;
 
                     var isVariableMatch = DiscriminationTreeVariableBindings.TryAddOrMatchBinding(
-                        ((DiscriminationTreeVariableInfo)queryElements[queryElementIndex]).Ordinal,
+                        ((DiscriminationTreeVariableNodeKey)queryElements[queryElementIndex]).Ordinal,
                         variableMatch.ToArray(),
                         ref variableBindings);
 
@@ -261,7 +261,7 @@ public class DiscriminationTree<TValue>
                 var nextQueryElementOffset = 1;
                 var childVariableBindings = variableBindings;
 
-                if (childElement is DiscriminationTreeVariableInfo variableInfo)
+                if (childElement is DiscriminationTreeVariableNodeKey variableInfo)
                 {
                     // Here we are setting nextQueryInfoOffset to the size of the whole subtree
                     // with queryInfos[queryInfoIndex] at its root (i.e. the subtree that we are

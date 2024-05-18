@@ -21,13 +21,13 @@ namespace SCFirstOrderLogic.TermIndexing;
 /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
 public class AsyncDiscriminationTreeDictionaryNode<TValue> : IAsyncDiscriminationTreeNode<TValue>
 {
-    private readonly ConcurrentDictionary<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>> children = new();
+    private readonly ConcurrentDictionary<IDiscriminationTreeNodeKey, IAsyncDiscriminationTreeNode<TValue>> children = new();
 
     /// <inheritdoc/>
     public TValue Value => throw new NotSupportedException("Internal node - has no value");
 
     /// <inheritdoc/>
-    public async IAsyncEnumerable<KeyValuePair<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>>> GetChildren()
+    public async IAsyncEnumerable<KeyValuePair<IDiscriminationTreeNodeKey, IAsyncDiscriminationTreeNode<TValue>>> GetChildren()
     {
         foreach (var child in children)
         {
@@ -36,14 +36,14 @@ public class AsyncDiscriminationTreeDictionaryNode<TValue> : IAsyncDiscriminatio
     }
 
     /// <inheritdoc/>
-    public Task<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeElementInfo elementInfo)
+    public ValueTask<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeNodeKey elementInfo)
     {
         children.TryGetValue(elementInfo, out var child);
-        return Task.FromResult(child);
+        return ValueTask.FromResult(child);
     }
 
     /// <inheritdoc/>
-    public Task<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeElementInfo elementInfo)
+    public ValueTask<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeNodeKey elementInfo)
     {
         IAsyncDiscriminationTreeNode<TValue> node = new AsyncDiscriminationTreeDictionaryNode<TValue>();
         if (!children.TryAdd(elementInfo, node))
@@ -51,18 +51,18 @@ public class AsyncDiscriminationTreeDictionaryNode<TValue> : IAsyncDiscriminatio
             node = children[elementInfo];
         }
 
-        return Task.FromResult(node);
+        return ValueTask.FromResult(node);
     }
 
     /// <inheritdoc/>
-    public Task AddLeafChildAsync(IDiscriminationTreeElementInfo elementInfo, TValue value)
+    public ValueTask AddLeafChildAsync(IDiscriminationTreeNodeKey elementInfo, TValue value)
     {
         if (!children.TryAdd(elementInfo, new LeafNode(value)))
         {
             throw new ArgumentException("Key already present", nameof(elementInfo));
         }
 
-        return Task.CompletedTask;
+        return ValueTask.CompletedTask;
     }
 
     private class LeafNode : IAsyncDiscriminationTreeNode<TValue>
@@ -71,24 +71,24 @@ public class AsyncDiscriminationTreeDictionaryNode<TValue> : IAsyncDiscriminatio
 
         public TValue Value { get; }
 
-        public async IAsyncEnumerable<KeyValuePair<IDiscriminationTreeElementInfo, IAsyncDiscriminationTreeNode<TValue>>> GetChildren()
+        public async IAsyncEnumerable<KeyValuePair<IDiscriminationTreeNodeKey, IAsyncDiscriminationTreeNode<TValue>>> GetChildren()
         {
             yield break;
         }
 
-        public Task<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeElementInfo elementInfo)
+        public ValueTask<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeNodeKey elementInfo)
         {
-            return Task.FromResult<IAsyncDiscriminationTreeNode<TValue>?>(null);
+            return ValueTask.FromResult<IAsyncDiscriminationTreeNode<TValue>?>(null);
         }
 
-        public Task<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeElementInfo elementInfo)
+        public ValueTask<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeNodeKey elementInfo)
         {
-            return Task.FromException<IAsyncDiscriminationTreeNode<TValue>>(new NotSupportedException("Leaf node - cannot have children"));
+            return ValueTask.FromException<IAsyncDiscriminationTreeNode<TValue>>(new NotSupportedException("Leaf node - cannot have children"));
         }
 
-        public Task AddLeafChildAsync(IDiscriminationTreeElementInfo elementInfo, TValue value)
+        public ValueTask AddLeafChildAsync(IDiscriminationTreeNodeKey elementInfo, TValue value)
         {
-            return Task.FromException(new NotSupportedException("Leaf node - cannot have children"));
+            return ValueTask.FromException(new NotSupportedException("Leaf node - cannot have children"));
         }
     }
 }

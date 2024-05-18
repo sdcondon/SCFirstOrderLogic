@@ -6,8 +6,8 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.TermIndexing;
 
 /// <summary>
-/// Transformation logic that converts <see cref="Term"/>s into the equivalent sequence of <see cref="IDiscriminationTreeElementInfo"/>s,
-/// for storage in or querying of a discrimination tree. That is, converts terms into an enumerable of <see cref="IDiscriminationTreeElementInfo"/>s
+/// Transformation logic that converts <see cref="Term"/>s into the equivalent sequence of <see cref="IDiscriminationTreeNodeKey"/>s,
+/// for storage in or querying of a discrimination tree. That is, converts terms into an enumerable of <see cref="IDiscriminationTreeNodeKey"/>s
 /// that represents a depth-first traversal of their constituent elements.
 /// </summary>
 internal class DiscriminationTreeNodeKeyTransformation
@@ -16,7 +16,7 @@ internal class DiscriminationTreeNodeKeyTransformation
     // appear in any given term. Plain old list likely to perform better. Test me.
     private readonly Dictionary<object, int> variableIdMap = new();
 
-    public IEnumerable<IDiscriminationTreeElementInfo> ApplyTo(Term term)
+    public IEnumerable<IDiscriminationTreeNodeKey> ApplyTo(Term term)
     {
         return term switch
         {
@@ -27,14 +27,14 @@ internal class DiscriminationTreeNodeKeyTransformation
         };
     }
 
-    public IEnumerable<IDiscriminationTreeElementInfo> ApplyTo(Constant constant)
+    public IEnumerable<IDiscriminationTreeNodeKey> ApplyTo(Constant constant)
     {
-        yield return new DiscriminationTreeConstantInfo(constant.Identifier);
+        yield return new DiscriminationTreeConstantNodeKey(constant.Identifier);
     }
 
-    public IEnumerable<IDiscriminationTreeElementInfo> ApplyTo(Function function)
+    public IEnumerable<IDiscriminationTreeNodeKey> ApplyTo(Function function)
     {
-        yield return new DiscriminationTreeFunctionInfo(function.Identifier, function.Arguments.Count);
+        yield return new DiscriminationTreeFunctionNodeKey(function.Identifier, function.Arguments.Count);
 
         foreach (var argument in function.Arguments)
         {
@@ -45,7 +45,7 @@ internal class DiscriminationTreeNodeKeyTransformation
         }
     }
 
-    public IEnumerable<IDiscriminationTreeElementInfo> ApplyTo(VariableReference variable)
+    public IEnumerable<IDiscriminationTreeNodeKey> ApplyTo(VariableReference variable)
     {
         // Variable identifiers are "ordinalised".
         // That is, converted into the ordinal of where they first appear in a depth-first traversal of the term.
@@ -57,6 +57,6 @@ internal class DiscriminationTreeNodeKeyTransformation
             ordinal = variableIdMap[variable.Identifier] = variableIdMap.Count;
         }
 
-        yield return new DiscriminationTreeVariableInfo(ordinal);
+        yield return new DiscriminationTreeVariableNodeKey(ordinal);
     }
 }

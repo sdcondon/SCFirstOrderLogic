@@ -7,8 +7,7 @@ namespace SCFirstOrderLogic.TermIndexing;
 /// Interface for types that describe elements of a term, for the purposes of storage in a discrimination tree.
 /// Instances of this type are used as the key for each child of a <see cref="IDiscriminationTreeNode{TValue}"/>.
 /// </summary>
-// TODO-BREAKING-V6: "NodeKey" is a better suffix than "ElementInfo" - because it is more specific (and shorter).
-public interface IDiscriminationTreeElementInfo
+public interface IDiscriminationTreeNodeKey
 {
     /// <summary>
     /// Gets the number of child elements of the element described by this object.
@@ -21,7 +20,7 @@ public interface IDiscriminationTreeElementInfo
 /// </summary>
 /// <param name="Identifier">The identifier of the represented function.</param>
 /// <param name="ArgumentCount">The number of arguments of the represented function.</param>
-public sealed record DiscriminationTreeFunctionInfo(object Identifier, int ArgumentCount) : IDiscriminationTreeElementInfo
+public sealed record DiscriminationTreeFunctionNodeKey(object Identifier, int ArgumentCount) : IDiscriminationTreeNodeKey
 {
     /// <inheritdoc/>
     public int ChildElementCount => ArgumentCount;
@@ -34,7 +33,7 @@ public sealed record DiscriminationTreeFunctionInfo(object Identifier, int Argum
 /// The ordinal of the represented variable - that is, the index of its position in a list of variables that
 /// exist in the term, in the order in which they are first encountered by a depth-first traversal.
 /// </param>
-public sealed record DiscriminationTreeVariableInfo(int Ordinal) : IDiscriminationTreeElementInfo
+public sealed record DiscriminationTreeVariableNodeKey(int Ordinal) : IDiscriminationTreeNodeKey
 {
     /// <inheritdoc/>
     public int ChildElementCount => 0;
@@ -44,7 +43,7 @@ public sealed record DiscriminationTreeVariableInfo(int Ordinal) : IDiscriminati
 /// Information about a constant, for storage against a node of a discrimination tree.
 /// </summary>
 /// <param name="Identifier">The identifier of the represented constant.</param>
-public sealed record DiscriminationTreeConstantInfo(object Identifier) : IDiscriminationTreeElementInfo
+public sealed record DiscriminationTreeConstantNodeKey(object Identifier) : IDiscriminationTreeNodeKey
 {
     /// <inheritdoc/>
     public int ChildElementCount => 0;
