@@ -8,10 +8,12 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification;
 
 /// <summary>
 /// <para>
-/// Utility class for creating unifiers.
+/// Utility class for creating unifiers - that is, variable substitutions that yield the same result when applied each of the expressions that they unify.
 /// </para>
 /// <para>
 /// This implementation includes an occurs check.
+/// </para>
+/// <para>
 /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
 /// </para>
 /// </summary>
@@ -22,7 +24,7 @@ public static class Unifier
     /// </summary>
     /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
     /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
-    /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier - a transformation that will yield identical results when applied to both literals.</param>
+    /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier.</param>
     /// <returns>True if the two literals can be unified, otherwise false.</returns>
     public static bool TryCreate(Literal x, Literal y, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
     {
@@ -36,6 +38,18 @@ public static class Unifier
 
         unifier = null;
         return false;
+    }
+
+    /// <summary>
+    /// Attempts to create the most general unifier for two literals.
+    /// </summary>
+    /// <param name="x">One of the two literals to attempt to create a unifier for.</param>
+    /// <param name="y">One of the two literals to attempt to create a unifier for.</param>
+    /// <returns>The unifier if the literals can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryCreate(Literal x, Literal y)
+    {
+        var unifierAttempt = new VariableSubstitution();
+        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt : null;
     }
 
     /// <summary>
@@ -81,11 +95,24 @@ public static class Unifier
     }
 
     /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies two given literals.
+    /// </summary>
+    /// <param name="x">One of the two literals to attempt to unify.</param>
+    /// <param name="y">One of the two literals to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update.</param>
+    /// <returns>The unifier if the literals can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryUpdate(Literal x, Literal y, VariableSubstitution unifier)
+    {
+        var unifierAttempt = unifier.Clone();
+        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt : null;
+    }
+
+    /// <summary>
     /// Attempts to create the most general unifier for two terms.
     /// </summary>
     /// <param name="x">One of the two terms to attempt to create a unifier for.</param>
     /// <param name="y">One of the two terms to attempt to create a unifier for.</param>
-    /// <param name="unifier">If the terms can be unified, this out parameter will be the unifier - a transformation that will yield identical results when applied to both terms.</param>
+    /// <param name="unifier">If the terms can be unified, this out parameter will be the unifier.</param>
     /// <returns>True if the two terms can be unified, otherwise false.</returns>
     public static bool TryCreate(Term x, Term y, [MaybeNullWhen(false)] out VariableSubstitution unifier)
     {
@@ -99,6 +126,18 @@ public static class Unifier
 
         unifier = null;
         return false;
+    }
+
+    /// <summary>
+    /// Attempts to create the most general unifier for two terms.
+    /// </summary>
+    /// <param name="x">One of the two terms to attempt to create a unifier for.</param>
+    /// <param name="y">One of the two terms to attempt to create a unifier for.</param>
+    /// <returns>The unifier if the terms can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryCreate(Term x, Term y)
+    {
+        var unifierAttempt = new VariableSubstitution();
+        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt : null;
     }
 
     /// <summary>
@@ -141,6 +180,19 @@ public static class Unifier
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies two given terms.
+    /// </summary>
+    /// <param name="x">One of the two terms to attempt to unify.</param>
+    /// <param name="y">One of the two terms to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update.</param>
+    /// <returns>The unifier if the literals can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryUpdate(Term x, Term y, VariableSubstitution unifier)
+    {
+        var unifierAttempt = unifier.Clone();
+        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt : null;
     }
 
     private static bool TryUpdateInPlace(Literal x, Literal y, VariableSubstitution unifier)
