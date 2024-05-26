@@ -116,9 +116,8 @@ public sealed class Literal : IEquatable<Literal>
     public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
 
     /// <summary>
-    /// Defines the (implicit) conversion of a <see cref="SCFirstOrderLogic.Predicate"/> instance to a <see cref="Literal"/>.
-    /// NB: This conversion is implicit because it is always valid and results in no loss of information.
+    /// Defines the conversion of a <see cref="SCFirstOrderLogic.Predicate"/> instance to a <see cref="Literal"/>.
     /// </summary>
     /// <param name="predicate">The predicate to convert.</param>
-    public static implicit operator Literal(Predicate predicate) => new(predicate);
+    public static explicit operator Literal(Predicate predicate) => new(predicate);
 }
