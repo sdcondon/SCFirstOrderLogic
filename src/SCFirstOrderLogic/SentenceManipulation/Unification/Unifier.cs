@@ -108,6 +108,66 @@ public static class Unifier
     }
 
     /// <summary>
+    /// Attempts to create the most general unifier for two predicates.
+    /// </summary>
+    /// <param name="x">One of the two predicates to attempt to create a unifier for.</param>
+    /// <param name="y">One of the two predicates to attempt to create a unifier for.</param>
+    /// <param name="unifier">If the predicates can be unified, this out parameter will be the unifier.</param>
+    /// <returns>True if the two predicates can be unified, otherwise false.</returns>
+    public static bool TryCreate(Predicate x, Predicate y, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
+    {
+        return TryCreate((Literal)x, (Literal)y, out unifier);
+    }
+
+    /// <summary>
+    /// Attempts to create the most general unifier for two predicates.
+    /// </summary>
+    /// <param name="x">One of the two predicates to attempt to create a unifier for.</param>
+    /// <param name="y">One of the two predicates to attempt to create a unifier for.</param>
+    /// <returns>The unifier if the predicates can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryCreate(Predicate x, Predicate y)
+    {
+        return TryCreate((Literal)x, (Literal)y);
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies two given predicates.
+    /// </summary>
+    /// <param name="x">One of the two predicates to attempt to unify.</param>
+    /// <param name="y">One of the two predicates to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update.</param>
+    /// <param name="updatedUnifier">Will be populated with the updated unifier on success, or be null on failure.</param>
+    /// <returns>True if the two predicates can be unified, otherwise false.</returns>
+    public static bool TryUpdate(Predicate x, Predicate y, VariableSubstitution unifier, [MaybeNullWhen(false)] out VariableSubstitution updatedUnifier)
+    {
+        return TryUpdate((Literal)x, (Literal)y, unifier, out updatedUnifier);
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies two given predicates.
+    /// </summary>
+    /// <param name="x">One of the two predicates to attempt to unify.</param>
+    /// <param name="y">One of the two predicates to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update. Will be updated to refer to a new unifier on success, or be unchanged on failure.</param>
+    /// <returns>True if the two predicates can be unified, otherwise false.</returns>
+    public static bool TryUpdate(Predicate x, Predicate y, ref VariableSubstitution unifier)
+    {
+        return TryUpdate((Literal)x, (Literal)y, ref unifier);
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies two given predicates.
+    /// </summary>
+    /// <param name="x">One of the two predicates to attempt to unify.</param>
+    /// <param name="y">One of the two predicates to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update.</param>
+    /// <returns>The unifier if the predicates can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryUpdate(Predicate x, Predicate y, VariableSubstitution unifier)
+    {
+        return TryUpdate((Literal)x, (Literal)y, unifier);
+    }
+
+    /// <summary>
     /// Attempts to create the most general unifier for two terms.
     /// </summary>
     /// <param name="x">One of the two terms to attempt to create a unifier for.</param>
