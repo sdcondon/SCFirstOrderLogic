@@ -106,7 +106,7 @@ public class BackwardChainingProof
         return explanationBuilder.ToString();
     }
 
-    internal Predicate ApplyUnifierTo(Predicate predicate) => Unifier.ApplyTo(predicate).Predicate;
+    internal Predicate ApplyUnifierTo(Predicate predicate) => Unifier.ApplyTo(predicate);
 
     internal void AddStep(Predicate predicate, CNFDefiniteClause rule) => steps[predicate] = rule;
 }

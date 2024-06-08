@@ -52,5 +52,5 @@ public class ForwardChainingProofStep
     /// <summary>
     /// Gets the predicate that was inferred by this step by the application of the rule to the known predicates.
     /// </summary>
-    public Predicate InferredPredicate => Unifier.ApplyTo(Rule.Consequent).Predicate;
+    public Predicate InferredPredicate => Unifier.ApplyTo(Rule.Consequent);
 }

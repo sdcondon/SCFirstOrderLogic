@@ -18,7 +18,7 @@ public class UnifierTests
     private static readonly VariableDeclaration b = new(nameof(b));
 
     public static Test TryCreatePositive => TestThat
-        .GivenEachOf(() => new TryCreatePositiveTestCase<Literal>[]
+        .GivenEachOf(() => new TryCreatePositiveTestCase<Predicate>[]
         {
             new (
                 Input1: Knows(john, x),
@@ -81,7 +81,7 @@ public class UnifierTests
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
     public static Test TryCreateNegative => TestThat
-        .GivenEachOf(() => new TryCreateNegativeTestCase<Literal>[]
+        .GivenEachOf(() => new TryCreateNegativeTestCase<Predicate>[]
         {
             new (
                 Input1: Knows(john, x),
@@ -105,7 +105,7 @@ public class UnifierTests
         .And((tc, r) => r.unifier.Should().BeNull());
 
     public static Test TryUpdatePositive => TestThat
-        .GivenEachOf(() => new TryUpdatePositiveTestCase<Literal>[]
+        .GivenEachOf(() => new TryUpdatePositiveTestCase<Predicate>[]
         {
             new (
                 Input1: Knows(x, y),
@@ -164,7 +164,7 @@ public class UnifierTests
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
     public static Test TryUpdateRefPositive => TestThat
-        .GivenEachOf(() => new TryUpdatePositiveTestCase<Literal>[]
+        .GivenEachOf(() => new TryUpdatePositiveTestCase<Predicate>[]
         {
             new (
                 Input1: Knows(x, y),
@@ -222,7 +222,7 @@ public class UnifierTests
         .And((tc, r) => r.unifier.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
     public static Test TryUpdateNegative => TestThat
-        .GivenEachOf(() => new TryUpdateNegativeTestCase<Literal>[]
+        .GivenEachOf(() => new TryUpdateNegativeTestCase<Predicate>[]
         {
             new (
                 Input1: Knows(x, y),
@@ -252,7 +252,7 @@ public class UnifierTests
         .And((tc, r) => r.unifier.Should().BeNull());
 
     public static Test TryUpdateRefNegative => TestThat
-        .GivenEachOf(() => new TryUpdateNegativeTestCase<Literal>[]
+        .GivenEachOf(() => new TryUpdateNegativeTestCase<Predicate>[]
         {
             new (
                 Input1: Knows(x, y),
