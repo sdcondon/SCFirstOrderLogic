@@ -61,11 +61,11 @@ public class DiscriminationTree_WOVarBinding<TValue>
             throw new ArgumentNullException(nameof(term));
         }
 
-        var queryElements = new ElementInfoTransformation().ApplyTo(term).GetEnumerator();
+        var queryElements = new NodeKeyTransformation().ApplyTo(term).GetEnumerator();
         try
         {
             InternalNode currentNode = Root;
-            IElementInfo? currentQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
+            INodeKey? currentQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
             while (currentQueryElement != null)
             {
                 var nextQueryElement = queryElements.MoveNext() ? queryElements.Current : null;
@@ -102,7 +102,7 @@ public class DiscriminationTree_WOVarBinding<TValue>
         }
 
         INode currentNode = Root;
-        foreach (var queryElement in new ElementInfoTransformation().ApplyTo(term))
+        foreach (var queryElement in new NodeKeyTransformation().ApplyTo(term))
         {
             if (!currentNode.Children.TryGetValue(queryElement, out currentNode!))
             {
@@ -132,11 +132,11 @@ public class DiscriminationTree_WOVarBinding<TValue>
             throw new ArgumentNullException(nameof(term));
         }
 
-        var queryElements = new ElementInfoTransformation().ApplyTo(term).ToList();
+        var queryElements = new NodeKeyTransformation().ApplyTo(term).ToList();
 
         IEnumerable<TValue> ExpandChildNodes(INode parentNode, int queryElementIndex)
         {
-            if (queryElements[queryElementIndex] is VariableInfo)
+            if (queryElements[queryElementIndex] is VariableNodeKey)
             {
                 foreach (var value in ExpandVariableMatches(parentNode, queryElementIndex, 1))
                 {
@@ -210,7 +210,7 @@ public class DiscriminationTree_WOVarBinding<TValue>
             throw new ArgumentNullException(nameof(term));
         }
 
-        var queryElements = new ElementInfoTransformation().ApplyTo(term).ToList();
+        var queryElements = new NodeKeyTransformation().ApplyTo(term).ToList();
 
         IEnumerable<TValue> GetGeneralisations(INode parentNode, int queryElementIndex)
         {
@@ -219,7 +219,7 @@ public class DiscriminationTree_WOVarBinding<TValue>
                 bool isVariableMatch = false;
                 var nextQueryElementOffset = 1;
 
-                if (childElement is VariableInfo)
+                if (childElement is VariableNodeKey)
                 {
                     // Here we are setting nextQueryInfoOffset to the size of the whole subtree
                     // with queryInfos[queryInfoIndex] at its root (i.e. the subtree that we are
@@ -268,7 +268,7 @@ public class DiscriminationTree_WOVarBinding<TValue>
         /// <summary>
         /// Gets the child nodes of this node, keyed by objects that describe the element represented by the child.
         /// </summary>
-        IReadOnlyDictionary<IElementInfo, INode> Children { get; }
+        IReadOnlyDictionary<INodeKey, INode> Children { get; }
 
         /// <summary>
         /// Gets the value attached to a leaf node - throws an exception for internal nodes.
@@ -281,17 +281,17 @@ public class DiscriminationTree_WOVarBinding<TValue>
     /// </summary>
     public sealed class InternalNode : INode
     {
-        private readonly Dictionary<IElementInfo, INode> children = new();
+        private readonly Dictionary<INodeKey, INode> children = new();
 
         /// <inheritdoc/>
         // NB: we don't bother wrapping children in a ReadOnlyDict to stop unscrupulous users from casting.
         // Would be more mem for a real edge case.. 
-        public IReadOnlyDictionary<IElementInfo, INode> Children => children;
+        public IReadOnlyDictionary<INodeKey, INode> Children => children;
 
         /// <inheritdoc/>
         public TValue Value => throw new NotSupportedException("Internal node - has no value");
 
-        internal InternalNode GetOrAddInternalChild(IElementInfo elementInfo)
+        internal InternalNode GetOrAddInternalChild(INodeKey elementInfo)
         {
             if (!Children.TryGetValue(elementInfo, out var node))
             {
@@ -302,7 +302,7 @@ public class DiscriminationTree_WOVarBinding<TValue>
             return (InternalNode)node;
         }
 
-        internal void AddLeafChild(IElementInfo elementInfo, TValue value)
+        internal void AddLeafChild(INodeKey elementInfo, TValue value)
         {
             if (!children.TryAdd(elementInfo, new LeafNode(value)))
             {
@@ -316,12 +316,12 @@ public class DiscriminationTree_WOVarBinding<TValue>
     /// </summary>
     public sealed class LeafNode : INode
     {
-        private static readonly ReadOnlyDictionary<IElementInfo, INode> children = new(new Dictionary<IElementInfo, INode>());
+        private static readonly ReadOnlyDictionary<INodeKey, INode> children = new(new Dictionary<INodeKey, INode>());
 
         internal LeafNode(TValue value) => Value = value;
 
         /// <inheritdoc/>
-        public IReadOnlyDictionary<IElementInfo, INode> Children => children;
+        public IReadOnlyDictionary<INodeKey, INode> Children => children;
 
         /// <inheritdoc/>
         public TValue Value { get; }
@@ -331,7 +331,7 @@ public class DiscriminationTree_WOVarBinding<TValue>
     /// Interface for the types that describe elements of a term.
     /// Instances of this interface are associated with each (non-root) element of a discrimination tree.
     /// </summary>
-    public interface IElementInfo
+    public interface INodeKey
     {
         /// <summary>
         /// Gets the number of child elements of the element described by this object.
@@ -344,7 +344,7 @@ public class DiscriminationTree_WOVarBinding<TValue>
     /// </summary>
     /// <param name="Identifier">The identifier of the represented function.</param>
     /// <param name="ArgumentCount">The number of arguments of the represented function.</param>
-    public sealed record FunctionInfo(object Identifier, int ArgumentCount) : IElementInfo
+    public sealed record FunctionNodeKey(object Identifier, int ArgumentCount) : INodeKey
     {
         /// <inheritdoc/>
         public int ChildElementCount => ArgumentCount;
@@ -354,7 +354,7 @@ public class DiscriminationTree_WOVarBinding<TValue>
     /// Information about a constant, for storage against a node of a <see cref="DiscriminationTree{TValue}"/>.
     /// </summary>
     /// <param name="Identifier">The identifier of the represented constant.</param>
-    public sealed record ConstantInfo(object Identifier) : IElementInfo
+    public sealed record ConstantNodeKey(object Identifier) : INodeKey
     {
         /// <inheritdoc/>
         public int ChildElementCount => 0;
@@ -367,23 +367,23 @@ public class DiscriminationTree_WOVarBinding<TValue>
     /// The ordinal of the represented variable - that is, the index of its position in a list of variables that
     /// exist in the term, in the order in which they are first encountered by a depth-first traversal.
     /// </param>
-    public sealed record VariableInfo(int Ordinal) : IElementInfo
+    public sealed record VariableNodeKey(int Ordinal) : INodeKey
     {
         /// <inheritdoc/>
         public int ChildElementCount => 0;
     }
 
     /// <summary>
-    /// Transformation logic that converts <see cref="Term"/>s into the equivalent path of <see cref="IElementInfo"/>s for storage in or querying of a discrimination tree.
+    /// Transformation logic that converts <see cref="Term"/>s into the equivalent path of <see cref="INodeKey"/>s for storage in or querying of a discrimination tree.
     /// That is, converts terms into an enumerable that represents a depth-first traversal of their constituent elements.
     /// </summary>
-    private class ElementInfoTransformation
+    private class NodeKeyTransformation
     {
         // TODO-PERFORMANCE: a dictionary is almost certainly overkill given the low number of vars likely to appear in any given term.
         // Plain old list likely to perform better. Test me.
         private readonly Dictionary<object, int> variableIdMap = new(); 
 
-        public IEnumerable<IElementInfo> ApplyTo(Term term)
+        public IEnumerable<INodeKey> ApplyTo(Term term)
         {
             return term switch
             {
@@ -394,14 +394,14 @@ public class DiscriminationTree_WOVarBinding<TValue>
             };
         }
 
-        public IEnumerable<IElementInfo> ApplyTo(Constant constant)
+        public IEnumerable<INodeKey> ApplyTo(Constant constant)
         {
-            yield return new ConstantInfo(constant.Identifier);
+            yield return new ConstantNodeKey(constant.Identifier);
         }
 
-        public IEnumerable<IElementInfo> ApplyTo(Function function)
+        public IEnumerable<INodeKey> ApplyTo(Function function)
         {
-            yield return new FunctionInfo(function.Identifier, function.Arguments.Count);
+            yield return new FunctionNodeKey(function.Identifier, function.Arguments.Count);
 
             foreach (var argument in function.Arguments)
             {
@@ -412,7 +412,7 @@ public class DiscriminationTree_WOVarBinding<TValue>
             }
         }
 
-        public IEnumerable<IElementInfo> ApplyTo(VariableReference variable)
+        public IEnumerable<INodeKey> ApplyTo(VariableReference variable)
         {
             // Variable declarations are "ordinalised" (probably not the "right" terminology - need to look this up).
             // That is, converted into the ordinal of where they first appear in a depth-first traversal of the term.
@@ -423,7 +423,7 @@ public class DiscriminationTree_WOVarBinding<TValue>
                 ordinal = variableIdMap[variable.Identifier] = variableIdMap.Count;
             }
 
-            yield return new VariableInfo(ordinal);
+            yield return new VariableNodeKey(ordinal);
         }
     }
 }
