@@ -45,19 +45,123 @@ public class VariableSubstitution : RecursiveSentenceTransformation
     public VariableSubstitution Clone() => new(bindings);
 
     /// <summary>
-    /// Applies the substitution to a literal.
+    /// Applies this substitution to a <see cref="Literal"/> instance.
     /// </summary>
-    /// <param name="literal">The literal to apply the substitution to.</param>
-    /// <returns>The transformed version of the literal.</returns>
+    /// <param name="literal">The <see cref="Literal"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="Literal"/>.</returns>
     public Literal ApplyTo(Literal literal)
     {
         return new Literal((Predicate)base.ApplyTo(literal.Predicate), literal.IsNegated);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Applies this substitution to a <see cref="Conjunction"/> instance.
+    /// </summary>
+    /// <param name="conjunction">The <see cref="Conjunction"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="Conjunction"/>.</returns>
+    public override Conjunction ApplyTo(Conjunction conjunction)
+    {
+        return (Conjunction)base.ApplyTo(conjunction);
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="Disjunction"/> instance.
+    /// </summary>
+    /// <param name="disjunction">The <see cref="Disjunction"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="Disjunction"/>.</returns>
+    public override Disjunction ApplyTo(Disjunction disjunction)
+    {
+        return (Disjunction)base.ApplyTo(disjunction);
+    }
+
+    /// <summary>
+    /// Applies this substitution to an <see cref="Equivalence"/> instance. 
+    /// </summary>
+    /// <param name="equivalence">The <see cref="Equivalence"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="Equivalence"/>.</returns>
+    public override Equivalence ApplyTo(Equivalence equivalence)
+    {
+        return (Equivalence)base.ApplyTo(equivalence);
+    }
+
+    /// <summary>
+    /// Applies this substitution to an <see cref="ExistentialQuantification"/> instance. 
+    /// </summary>
+    /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="ExistentialQuantification"/>.</returns>
+    public override ExistentialQuantification ApplyTo(ExistentialQuantification existentialQuantification)
+    {
+        return (ExistentialQuantification)base.ApplyTo(existentialQuantification);
+    }
+
+    /// <summary>
+    /// Applies this substitution to an <see cref="Implication"/> instance. 
+    /// </summary>
+    /// <param name="implication">The <see cref="Implication"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="Implication"/>.</returns>
+    public override Implication ApplyTo(Implication implication)
+    {
+        return (Implication)base.ApplyTo(implication);
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="Predicate"/> instance. 
+    /// </summary>
+    /// <param name="predicate">The <see cref="Predicate"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="Predicate"/>.</returns>
+    public override Predicate ApplyTo(Predicate predicate)
+    {
+        return (Predicate)base.ApplyTo(predicate);
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="Negation"/> instance. 
+    /// </summary>
+    /// <param name="negation">The <see cref="Negation"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="Negation"/>.</returns>
+    public override Negation ApplyTo(Negation negation)
+    {
+        return (Negation)base.ApplyTo(negation);
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="Quantification"/> instance. 
+    /// </summary>
+    /// <param name="quantification">The <see cref="Quantification"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="Quantification"/>.</returns>
+    public override Quantification ApplyTo(Quantification quantification)
+    {
+        return (Quantification)base.ApplyTo(quantification);
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="UniversalQuantification"/> instance. 
+    /// </summary>
+    /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="UniversalQuantification"/>.</returns>
+    public override UniversalQuantification ApplyTo(UniversalQuantification universalQuantification)
+    {
+        return (UniversalQuantification)base.ApplyTo(universalQuantification);
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="Constant"/> instance.
+    /// </summary>
+    /// <param name="constant">The constant to transform.</param>
+    /// <returns>The transformed <see cref="Constant"/>.</returns>
+    public override Constant ApplyTo(Constant constant)
+    {
+        return (Constant)base.ApplyTo(constant);
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="VariableReference"/> instance.
+    /// </summary>
+    /// <param name="variable">The variable to transform.</param>
+    /// <returns>The transformed <see cref="Term"/>.</returns>
     public override Term ApplyTo(VariableReference variable)
     {
-        if (Bindings.TryGetValue(variable, out var substitutedTerm))
+        if (bindings.TryGetValue(variable, out var substitutedTerm))
         {
             // We need to call base.ApplyTo because we might be switching in a term
             // that itself is or contains variables that also need substituting.
@@ -70,6 +174,16 @@ public class VariableSubstitution : RecursiveSentenceTransformation
         }
 
         return variable;
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="Function"/> instance.
+    /// </summary>
+    /// <param name="function">The function to transform.</param>
+    /// <returns>The transformed <see cref="Function"/>.</returns>
+    public override Function ApplyTo(Function function)
+    {
+        return (Function)base.ApplyTo(function);
     }
 
     /// <inheritdoc />
