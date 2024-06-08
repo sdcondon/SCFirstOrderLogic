@@ -19,7 +19,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Whatever lookup-creating shenannigans the compiler gets up to are apparently quicker than a virtual method call.
     /// </para>
     /// </summary>
-    /// <param name="sentence">The sentence to visit.</param>
+    /// <param name="sentence">The sentence to transform.</param>
     /// <returns>The transformed <see cref="Sentence"/>.</returns>
     public virtual Sentence ApplyTo(Sentence sentence)
     {
@@ -40,7 +40,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to a <see cref="Conjunction"/> instance.
     /// The default implementation returns a <see cref="Conjunction"/> of the result of calling <see cref="ApplyTo(Sentence)"/> on both of the existing sub-sentences.
     /// </summary>
-    /// <param name="conjunction">The <see cref="Conjunction"/> instance to visit.</param>
+    /// <param name="conjunction">The <see cref="Conjunction"/> instance to transform.</param>
     /// <returns>The transformed <see cref="Sentence"/>.</returns>
     public virtual Sentence ApplyTo(Conjunction conjunction)
     {
@@ -58,7 +58,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to a <see cref="Disjunction"/> instance.
     /// The default implementation returns a <see cref="Disjunction"/> of the result of calling <see cref="ApplyTo(Sentence)"/> on both of the existing sub-sentences.
     /// </summary>
-    /// <param name="disjunction">The <see cref="Disjunction"/> instance to visit.</param>
+    /// <param name="disjunction">The <see cref="Disjunction"/> instance to transform.</param>
     /// <returns>The transformed <see cref="Sentence"/>.</returns>
     public virtual Sentence ApplyTo(Disjunction disjunction)
     {
@@ -76,7 +76,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to an <see cref="Equivalence"/> instance. 
     /// The default implementation returns an <see cref="Equivalence"/> of the result of calling <see cref="ApplyTo(Sentence)"/> on both of the existing sub-sentences.
     /// </summary>
-    /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
+    /// <param name="equivalence">The <see cref="Equivalence"/> instance to transform.</param>
     /// <returns>The transformed <see cref="Sentence"/>.</returns>
     public virtual Sentence ApplyTo(Equivalence equivalence)
     {
@@ -94,7 +94,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to an <see cref="ExistentialQuantification"/> instance. 
     /// The default implementation returns an <see cref="ExistentialQuantification"/> for which the variable declaration is the result of <see cref="ApplyTo(VariableDeclaration)"/> on the existing declaration, and the sentence is the result of <see cref="ApplyTo(Sentence)"/> on the existing sentence.
     /// </summary>
-    /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to visit.</param>
+    /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to transform.</param>
     /// <returns>The transformed <see cref="Sentence"/>.</returns>
     public virtual Sentence ApplyTo(ExistentialQuantification existentialQuantification)
     {
@@ -112,7 +112,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to an <see cref="Implication"/> instance. 
     /// The default implementation returns an <see cref="Implication"/> of the result of calling <see cref="ApplyTo(Sentence)"/> on both of the existing sub-sentences.
     /// </summary>
-    /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
+    /// <param name="implication">The <see cref="Implication"/> instance to transform.</param>
     /// <returns>The transformed <see cref="Sentence"/>.</returns>
     public virtual Sentence ApplyTo(Implication implication)
     {
@@ -131,7 +131,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to a <see cref="Predicate"/> instance. 
     /// The default implementation returns a <see cref="Predicate"/> with the same identifier and with an argument list that is the result of calling <see cref="ApplyTo(Term)"/> on all of the existing arguments.
     /// </summary>
-    /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
+    /// <param name="predicate">The <see cref="Predicate"/> instance to transform.</param>
     /// <returns>The transformed <see cref="Sentence"/>.</returns>
     public virtual Sentence ApplyTo(Predicate predicate)
     {
@@ -160,7 +160,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to a <see cref="Negation"/> instance. 
     /// The default implementation returns a <see cref="Negation"/> of the result of calling <see cref="ApplyTo(Sentence)"/> on the current sub-sentence.
     /// </summary>
-    /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
+    /// <param name="negation">The <see cref="Negation"/> instance to transform.</param>
     /// <returns>The transformed <see cref="Sentence"/>.</returns>
     public virtual Sentence ApplyTo(Negation negation)
     {
@@ -178,7 +178,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to a <see cref="Quantification"/> instance. 
     /// The default implementation simply invokes the ApplyTo method appropriate to the type of the quantification.
     /// </summary>
-    /// <param name="quantification">The <see cref="Quantification"/> instance to visit.</param>
+    /// <param name="quantification">The <see cref="Quantification"/> instance to transform.</param>
     /// <returns>The transformed <see cref="Sentence"/>.</returns>
     public virtual Sentence ApplyTo(Quantification quantification)
     {
@@ -194,7 +194,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to a <see cref="UniversalQuantification"/> instance. 
     /// The default implementation returns a <see cref="UniversalQuantification"/> for which the variable declaration is the result of <see cref="ApplyTo(VariableDeclaration)"/> on the existing declaration, and the sentence is the result of <see cref="ApplyTo(Sentence)"/> on the existing sentence.
     /// </summary>
-    /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to visit.</param>
+    /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to transform.</param>
     /// <returns>The transformed <see cref="Sentence"/>.</returns>
     public virtual Sentence ApplyTo(UniversalQuantification universalQuantification)
     {
@@ -218,8 +218,8 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Whatever lookup-creating shenannigans the compiler gets up to are apparently quicker than a virtual method call.
     /// </para>
     /// </summary>
-    /// <param name="term">The term to visit.</param>
-    /// <returns>The transformed term.</returns>
+    /// <param name="term">The term to transform.</param>
+    /// <returns>The transformed <see cref="Term"/>.</returns>
     public virtual Term ApplyTo(Term term)
     {
         return term switch
@@ -235,8 +235,8 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to a <see cref="Constant"/> instance.
     /// The default implementation simply returns the constant unchanged.
     /// </summary>
-    /// <param name="constant">The constant to visit.</param>
-    /// <returns>The transformed term.</returns>
+    /// <param name="constant">The constant to transform.</param>
+    /// <returns>The transformed <see cref="Term"/>.</returns>
     public virtual Term ApplyTo(Constant constant)
     {
         return constant;
@@ -246,8 +246,8 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to a <see cref="VariableReference"/> instance.
     /// The default implementation returns a <see cref="VariableReference"/> referring to the variable that is the result of calling <see cref="ApplyTo(VariableDeclaration)"/> on the current declaration.
     /// </summary>
-    /// <param name="variable">The variable to visit.</param>
-    /// <returns>The transformed term.</returns>
+    /// <param name="variable">The variable to transform.</param>
+    /// <returns>The transformed <see cref="Term"/>.</returns>
     public virtual Term ApplyTo(VariableReference variable)
     {
         var variableDeclaration = ApplyTo(variable.Declaration);
@@ -263,8 +263,8 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to a <see cref="Function"/> instance.
     /// The default implementation returns a <see cref="Function"/> with the same identifier and with an argument list that is the result of calling <see cref="ApplyTo(Term)"/> on each of the existing arguments.
     /// </summary>
-    /// <param name="function">The function to visit.</param>
-    /// <returns>The transformed term.</returns>
+    /// <param name="function">The function to transform.</param>
+    /// <returns>The transformed <see cref="Term"/>.</returns>
     public virtual Term ApplyTo(Function function)
     {
         var isChanged = false;
