@@ -142,7 +142,7 @@ public class BackwardChainingKB_FromAIaMA : IKnowledgeBase
                     var lhs = restandardisedClause.Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
                     var rhs = restandardisedClause.Literals.Single(l => l.IsPositive);
 
-                    if (Unifier.TryUpdate(rhs, goal, θ, out var unifier))
+                    if (Unifier.TryUpdate(rhs, (Literal)goal, θ, out var unifier))
                     {
                         foreach (var θ2 in FOL_BC_AND(lhs, unifier))
                         {
@@ -163,7 +163,7 @@ public class BackwardChainingKB_FromAIaMA : IKnowledgeBase
             {
                 var first = goals.First();
                 var rest = goals.Skip(1);
-                foreach (var θ2 in FOL_BC_OR(θ.ApplyTo(first).Predicate, θ))
+                foreach (var θ2 in FOL_BC_OR(θ.ApplyTo(first), θ))
                 {
                     foreach (var θ3 in FOL_BC_AND(rest, θ2))
                     {

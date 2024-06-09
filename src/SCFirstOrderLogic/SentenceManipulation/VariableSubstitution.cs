@@ -44,20 +44,20 @@ public class VariableSubstitution : RecursiveSentenceTransformation
     public IReadOnlyDictionary<VariableReference, Term> Bindings { get; }
 
     /// <summary>
-    /// Creates a copy of this substitution.
+    /// Creates a read-only copy of this substitution.
     /// </summary>
     /// <returns>A new <see cref="VariableSubstitution"/> instance with the same bindings as this one.</returns>
-    public VariableSubstitution Copy() => new(bindings);
+    public VariableSubstitution CopyAsReadOnly() => new(bindings);
 
     /// <summary>
-    /// Creates a copy of this substitution, with an additional binding.
+    /// Creates a read-only copy of this substitution, with an additional binding.
     /// </summary>
     /// <param name="additionalBinding">The binding to add to the clone.</param>
     /// <returns>A new <see cref="VariableSubstitution"/> instance with the same bindings as this one, plus the given additional one.</returns>
     public VariableSubstitution CopyAndAdd(KeyValuePair<VariableReference, Term> additionalBinding) => new(bindings.Append(additionalBinding));
 
     /// <summary>
-    /// Creates a copy of this substitution, with some additional bindings.
+    /// Creates a read-only copy of this substitution, with some additional bindings.
     /// </summary>
     /// <param name="additionalBindings">The bindings to add to the clone.</param>
     /// <returns>A new <see cref="VariableSubstitution"/> instance with the same bindings as this one, plus the given additional ones.</returns>
@@ -67,7 +67,7 @@ public class VariableSubstitution : RecursiveSentenceTransformation
     /// Creates a mutable copy of this substitution.
     /// </summary>
     /// <returns>A new <see cref="MutableVariableSubstitution"/> instance with the same bindings as this one.</returns>
-    public MutableVariableSubstitution ToMutable() => new(bindings);
+    public MutableVariableSubstitution CopyAsMutable() => new(bindings);
 
     /// <summary>
     /// Applies this substitution to a <see cref="Literal"/> instance.

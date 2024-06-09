@@ -186,7 +186,7 @@ internal static class PathTreeHelpers
 
             if (TryUpdateInPlace(generalisation, instance, unifierAttempt))
             {
-                unifier = unifierAttempt.ToReadOnly();
+                unifier = unifierAttempt.CopyAsReadOnly();
                 return true;
             }
 

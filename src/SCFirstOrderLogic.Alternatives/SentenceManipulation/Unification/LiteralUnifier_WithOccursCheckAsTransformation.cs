@@ -24,7 +24,7 @@ public static class LiteralUnifier_WithOccursCheckAsTransformation
     /// <returns>True if the two literals can be unified, otherwise false.</returns>
     public static bool TryCreate(Literal x, Literal y, [NotNullWhen(returnValue: true)] out VariableSubstitution? unifier)
     {
-        var unifierAttempt = new VariableSubstitution();
+        var unifierAttempt = new MutableVariableSubstitution();
 
         if (!TryUnify(x, y, unifierAttempt))
         {
@@ -32,11 +32,11 @@ public static class LiteralUnifier_WithOccursCheckAsTransformation
             return false;
         }
 
-        unifier = unifierAttempt;
+        unifier = unifierAttempt.CopyAsReadOnly();
         return true;
     }
 
-    private static bool TryUnify(Literal x, Literal y, VariableSubstitution unifier)
+    private static bool TryUnify(Literal x, Literal y, MutableVariableSubstitution unifier)
     {
         if (x.IsNegated != y.IsNegated || !x.Predicate.Identifier.Equals(y.Predicate.Identifier))
         {
@@ -56,7 +56,7 @@ public static class LiteralUnifier_WithOccursCheckAsTransformation
         return true;
     }
 
-    private static bool TryUnify(Term x, Term y, VariableSubstitution unifier)
+    private static bool TryUnify(Term x, Term y, MutableVariableSubstitution unifier)
     {
         return (x, y) switch
         {
@@ -69,7 +69,7 @@ public static class LiteralUnifier_WithOccursCheckAsTransformation
         };
     }
 
-    private static bool TryUnify(VariableReference variable, Term other, VariableSubstitution unifier)
+    private static bool TryUnify(VariableReference variable, Term other, MutableVariableSubstitution unifier)
     {
         if (unifier.Bindings.TryGetValue(variable, out var value))
         {
@@ -97,7 +97,7 @@ public static class LiteralUnifier_WithOccursCheckAsTransformation
         }
     }
 
-    private static bool TryUnify(Function x, Function y, VariableSubstitution unifier)
+    private static bool TryUnify(Function x, Function y, MutableVariableSubstitution unifier)
     {
         if (!x.Identifier.Equals(y.Identifier))
         {

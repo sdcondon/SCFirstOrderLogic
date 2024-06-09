@@ -33,13 +33,4 @@ public class MutableVariableSubstitution : VariableSubstitution
     {
         bindings.Add(variable, term);
     }
-
-    /// <summary>
-    /// Creates an immutable copy of this substitution.
-    /// </summary>
-    /// <returns>A new <see cref="VariableSubstitution"/> instance with the same bindings as this one.</returns>
-    public VariableSubstitution ToReadOnly()
-    {
-        return new VariableSubstitution(bindings);
-    }
 }

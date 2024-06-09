@@ -131,7 +131,7 @@ public sealed class ForwardChainingKB_FromAIaMA : IKnowledgeBase
 
                     foreach (var θ in MatchWithKnownFacts(rule))
                     {
-                        var qDash = θ.ApplyTo(q).Predicate;
+                        var qDash = θ.ApplyTo(q);
                         var qDashAsClause = new CNFDefiniteClause(qDash); // Worth looking into a bit more type fluidity at some point..
 
                         if (!qDashAsClause.UnifiesWithAnyOf(kb) && !qDashAsClause.UnifiesWithAnyOf(@new))
