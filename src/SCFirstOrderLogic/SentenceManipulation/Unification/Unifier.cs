@@ -28,11 +28,11 @@ public static class Unifier
     /// <returns>True if the two literals can be unified, otherwise false.</returns>
     public static bool TryCreate(Literal x, Literal y, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
     {
-        var unifierAttempt = new VariableSubstitution();
+        var unifierAttempt = new MutableVariableSubstitution();
 
         if (TryUpdateInPlace(x, y, unifierAttempt))
         {
-            unifier = unifierAttempt;
+            unifier = unifierAttempt.ToReadOnly();
             return true;
         }
 
@@ -48,8 +48,8 @@ public static class Unifier
     /// <returns>The unifier if the literals can be unified, otherwise null.</returns>
     public static VariableSubstitution? TryCreate(Literal x, Literal y)
     {
-        var unifierAttempt = new VariableSubstitution();
-        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt : null;
+        var unifierAttempt = new MutableVariableSubstitution();
+        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.ToReadOnly() : null;
     }
 
     /// <summary>
@@ -62,11 +62,11 @@ public static class Unifier
     /// <returns>True if the two literals can be unified, otherwise false.</returns>
     public static bool TryUpdate(Literal x, Literal y, VariableSubstitution unifier, [MaybeNullWhen(false)] out VariableSubstitution updatedUnifier)
     {
-        var potentialUpdatedUnifier = unifier.Clone();
+        var potentialUpdatedUnifier = unifier.ToMutable();
 
         if (TryUpdateInPlace(x, y, potentialUpdatedUnifier))
         {
-            updatedUnifier = potentialUpdatedUnifier;
+            updatedUnifier = potentialUpdatedUnifier.ToReadOnly();
             return true;
         }
 
@@ -83,11 +83,11 @@ public static class Unifier
     /// <returns>True if the two literals can be unified, otherwise false.</returns>
     public static bool TryUpdate(Literal x, Literal y, ref VariableSubstitution unifier)
     {
-        var updatedUnifier = unifier.Clone();
+        var updatedUnifier = unifier.ToMutable();
 
         if (TryUpdateInPlace(x, y, updatedUnifier))
         {
-            unifier = updatedUnifier;
+            unifier = updatedUnifier.ToReadOnly();
             return true;
         }
 
@@ -103,8 +103,8 @@ public static class Unifier
     /// <returns>The unifier if the literals can be unified, otherwise null.</returns>
     public static VariableSubstitution? TryUpdate(Literal x, Literal y, VariableSubstitution unifier)
     {
-        var unifierAttempt = unifier.Clone();
-        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt : null;
+        var unifierAttempt = unifier.ToMutable();
+        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.ToReadOnly() : null;
     }
 
     /// <summary>
@@ -176,11 +176,11 @@ public static class Unifier
     /// <returns>True if the two terms can be unified, otherwise false.</returns>
     public static bool TryCreate(Term x, Term y, [MaybeNullWhen(false)] out VariableSubstitution unifier)
     {
-        var unifierAttempt = new VariableSubstitution();
+        var unifierAttempt = new MutableVariableSubstitution();
 
         if (TryUpdateInPlace(x, y, unifierAttempt))
         {
-            unifier = unifierAttempt;
+            unifier = unifierAttempt.ToReadOnly();
             return true;
         }
 
@@ -196,8 +196,8 @@ public static class Unifier
     /// <returns>The unifier if the terms can be unified, otherwise null.</returns>
     public static VariableSubstitution? TryCreate(Term x, Term y)
     {
-        var unifierAttempt = new VariableSubstitution();
-        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt : null;
+        var unifierAttempt = new MutableVariableSubstitution();
+        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.ToReadOnly() : null;
     }
 
     /// <summary>
@@ -210,11 +210,11 @@ public static class Unifier
     /// <returns>True if the two terms can be unified, otherwise false.</returns>
     public static bool TryUpdate(Term x, Term y, VariableSubstitution unifier, [MaybeNullWhen(false)] out VariableSubstitution updatedUnifier)
     {
-        var potentialUpdatedUnifier = unifier.Clone();
+        var potentialUpdatedUnifier = unifier.ToMutable();
 
         if (TryUpdateInPlace(x, y, potentialUpdatedUnifier))
         {
-            updatedUnifier = potentialUpdatedUnifier;
+            updatedUnifier = potentialUpdatedUnifier.ToReadOnly();
             return true;
         }
 
@@ -231,11 +231,11 @@ public static class Unifier
     /// <returns>True if the two terms can be unified, otherwise false.</returns>
     public static bool TryUpdate(Term x, Term y, ref VariableSubstitution unifier)
     {
-        var updatedUnifier = unifier.Clone();
+        var updatedUnifier = unifier.ToMutable();
 
         if (TryUpdateInPlace(x, y, updatedUnifier))
         {
-            unifier = updatedUnifier;
+            unifier = updatedUnifier.ToReadOnly();
             return true;
         }
 
@@ -251,11 +251,11 @@ public static class Unifier
     /// <returns>The unifier if the literals can be unified, otherwise null.</returns>
     public static VariableSubstitution? TryUpdate(Term x, Term y, VariableSubstitution unifier)
     {
-        var unifierAttempt = unifier.Clone();
-        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt : null;
+        var unifierAttempt = unifier.ToMutable();
+        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.ToReadOnly() : null;
     }
 
-    private static bool TryUpdateInPlace(Literal x, Literal y, VariableSubstitution unifier)
+    private static bool TryUpdateInPlace(Literal x, Literal y, MutableVariableSubstitution unifier)
     {
         if (x.IsNegated != y.IsNegated 
             || !x.Predicate.Identifier.Equals(y.Predicate.Identifier)
@@ -275,7 +275,7 @@ public static class Unifier
         return true;
     }
 
-    private static bool TryUpdateInPlace(Term x, Term y, VariableSubstitution unifier)
+    private static bool TryUpdateInPlace(Term x, Term y, MutableVariableSubstitution unifier)
     {
         return (x, y) switch
         {
@@ -289,7 +289,7 @@ public static class Unifier
         };
     }
 
-    private static bool TryUpdateInPlace(VariableReference variable, Term other, VariableSubstitution unifier)
+    private static bool TryUpdateInPlace(VariableReference variable, Term other, MutableVariableSubstitution unifier)
     {
         if (variable.Equals(other))
         {
@@ -319,7 +319,7 @@ public static class Unifier
         }
     }
 
-    private static bool TryUpdateInPlace(Function x, Function y, VariableSubstitution unifier)
+    private static bool TryUpdateInPlace(Function x, Function y, MutableVariableSubstitution unifier)
     {
         if (!x.Identifier.Equals(y.Identifier) || x.Arguments.Count != y.Arguments.Count)
         {

@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic.SentenceManipulation;
 
 public static class VariableSubstitutionTests
 {
-    // NB: Application tested via Literalunifier tests - probably shouldn't be
+    // NB: Application of substitution tested via Unifier tests - probably shouldn't be
 
     private record EqualityTestCase(VariableSubstitution X, VariableSubstitution Y, bool ExpectedEquality);
 
@@ -14,8 +14,8 @@ public static class VariableSubstitutionTests
         .GivenEachOf(() => new EqualityTestCase[]
         {
             new(
-                X: new(new Dictionary<VariableReference, Term>()),
-                Y: new(new Dictionary<VariableReference, Term>()),
+                X: new([]),
+                Y: new([]),
                 ExpectedEquality: true),
 
             new(

@@ -2,26 +2,29 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation;
 
 /// <summary>
 /// Sentence transformation class that makes some substitutions for <see cref="VariableReference"/> instances.
-/// In addition to the <see cref="RecursiveSentenceTransformation.ApplyTo(Sentence)"/> method
-/// offered by the base class, this also offers an <see cref="ApplyTo(Literal)"/> method.
+/// In addition to the various method ApplyTo methods offered by the base class that operate on <see cref="Sentence"/>
+/// and <see cref="Term"/> subtypes, this class also offers an <see cref="ApplyTo(Literal)"/> method.
 /// </summary>
-// TODO-FEATURE/ROBUSTNESS: Make VariableSubstitution read-only (i.e. even internally),
-// and add MutableVariableSubstitution : VariableSubstitution.
 public class VariableSubstitution : RecursiveSentenceTransformation
 {
-    private readonly Dictionary<VariableReference, Term> bindings;
+    /// <summary>
+    /// The individual substitutions made by this substitution.
+    /// </summary>
+    protected readonly Dictionary<VariableReference, Term> bindings;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VariableSubstitution"/> class that is empty.
     /// </summary>
     public VariableSubstitution()
+        : this(Enumerable.Empty<KeyValuePair<VariableReference, Term>>())
     {
-        bindings = new();
     }
 
     /// <summary>
@@ -31,18 +34,40 @@ public class VariableSubstitution : RecursiveSentenceTransformation
     public VariableSubstitution(IEnumerable<KeyValuePair<VariableReference, Term>> bindings)
     {
         this.bindings = new(bindings);
+        Bindings = new ReadOnlyDictionary<VariableReference, Term>(this.bindings);
     }
 
     /// <summary>
-    /// Gets the substitutions applied by this transformation.
+    /// Gets the individuals substitutions applied by this substitution.
+    /// Gets a mapping from replaced variable reference to the term that replaces it.
     /// </summary>
-    public IReadOnlyDictionary<VariableReference, Term> Bindings => bindings;
+    public IReadOnlyDictionary<VariableReference, Term> Bindings { get; }
 
     /// <summary>
     /// Creates a copy of this substitution.
     /// </summary>
     /// <returns>A new <see cref="VariableSubstitution"/> instance with the same bindings as this one.</returns>
-    public VariableSubstitution Clone() => new(bindings);
+    public VariableSubstitution Copy() => new(bindings);
+
+    /// <summary>
+    /// Creates a copy of this substitution, with an additional binding.
+    /// </summary>
+    /// <param name="additionalBinding">The binding to add to the clone.</param>
+    /// <returns>A new <see cref="VariableSubstitution"/> instance with the same bindings as this one, plus the given additional one.</returns>
+    public VariableSubstitution CopyAndAdd(KeyValuePair<VariableReference, Term> additionalBinding) => new(bindings.Append(additionalBinding));
+
+    /// <summary>
+    /// Creates a copy of this substitution, with some additional bindings.
+    /// </summary>
+    /// <param name="additionalBindings">The bindings to add to the clone.</param>
+    /// <returns>A new <see cref="VariableSubstitution"/> instance with the same bindings as this one, plus the given additional ones.</returns>
+    public VariableSubstitution CopyAndAdd(IEnumerable<KeyValuePair<VariableReference, Term>> additionalBindings) => new(bindings.Concat(additionalBindings));
+
+    /// <summary>
+    /// Creates a mutable copy of this substitution.
+    /// </summary>
+    /// <returns>A new <see cref="MutableVariableSubstitution"/> instance with the same bindings as this one.</returns>
+    public MutableVariableSubstitution ToMutable() => new(bindings);
 
     /// <summary>
     /// Applies this substitution to a <see cref="Literal"/> instance.
@@ -226,15 +251,5 @@ public class VariableSubstitution : RecursiveSentenceTransformation
         }
 
         return hashCode.ToHashCode();
-    }
-
-    /// <summary>
-    /// Adds a binding.
-    /// </summary>
-    /// <param name="variable">A reference to the variable to be substituted out.</param>
-    /// <param name="term">The term to be substituted in.</param>
-    internal void AddBinding(VariableReference variable, Term term)
-    {
-        bindings.Add(variable, term);
     }
 }

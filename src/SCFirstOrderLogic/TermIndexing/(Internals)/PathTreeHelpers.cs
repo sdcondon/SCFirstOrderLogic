@@ -182,11 +182,11 @@ internal static class PathTreeHelpers
     {
         public static bool TryCreate(Term generalisation, Term instance, [MaybeNullWhen(false)] out VariableSubstitution unifier)
         {
-            var unifierAttempt = new VariableSubstitution();
+            var unifierAttempt = new MutableVariableSubstitution();
 
             if (TryUpdateInPlace(generalisation, instance, unifierAttempt))
             {
-                unifier = unifierAttempt;
+                unifier = unifierAttempt.ToReadOnly();
                 return true;
             }
 
@@ -194,7 +194,7 @@ internal static class PathTreeHelpers
             return false;
         }
 
-        private static bool TryUpdateInPlace(Term generalisation, Term instance, VariableSubstitution unifier)
+        private static bool TryUpdateInPlace(Term generalisation, Term instance, MutableVariableSubstitution unifier)
         {
             return (generalisation, instance) switch
             {
@@ -207,7 +207,7 @@ internal static class PathTreeHelpers
             };
         }
 
-        private static bool TryUpdateInPlace(VariableReference variable, Term instanceTerm, VariableSubstitution unifier)
+        private static bool TryUpdateInPlace(VariableReference variable, Term instanceTerm, MutableVariableSubstitution unifier)
         {
             if (variable.Equals(instanceTerm))
             {
@@ -226,7 +226,7 @@ internal static class PathTreeHelpers
             }
         }
 
-        private static bool TryUpdateInPlace(Function x, Function y, VariableSubstitution unifier)
+        private static bool TryUpdateInPlace(Function x, Function y, MutableVariableSubstitution unifier)
         {
             if (!x.Identifier.Equals(y.Identifier) || x.Arguments.Count != y.Arguments.Count)
             {
@@ -243,10 +243,5 @@ internal static class PathTreeHelpers
 
             return true;
         }
-    }
-
-    private static class AsyncEnumerable
-    {
-
     }
 }
