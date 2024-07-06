@@ -292,6 +292,7 @@ public static class OperableSentenceFactory
         /// <param name="sentence">The sentence to convert.</param>
         public static implicit operator Sentence(OperableSentence sentence) => sentence switch
         {
+            null => throw new ArgumentNullException(nameof(sentence)),
             OperableConjunction conjunction => new Conjunction(conjunction.Left, conjunction.Right),
             OperableDisjunction disjunction => new Disjunction(disjunction.Left, disjunction.Right),
             OperableEquivalence equivalence => new Equivalence(equivalence.Left, equivalence.Right),
@@ -520,10 +521,11 @@ public static class OperableSentenceFactory
         /// <param name="term">The term to convert.</param>
         public static implicit operator Term(OperableTerm term) => term switch
         {
+            null => throw new ArgumentNullException(nameof(term)),
             OperableConstant constant => new Constant(constant.Identifier),
             OperableFunction function => new Function(function.Identifier, function.Arguments.Select(a => (Term)a).ToArray()),
             OperableVariableReference variableReference => new VariableReference(variableReference.Declaration.Identifier),
-            _ => throw new ArgumentException("Unsupported OperableTerm subtype"),
+            _ => throw new ArgumentException($"Cannot convert unsupported OperableTerm subtype {term.GetType()} to Term"),
         };
 
         /// <summary>
@@ -532,10 +534,11 @@ public static class OperableSentenceFactory
         /// <param name="term">The term to convert.</param>
         public static implicit operator OperableTerm(Term term) => term switch
         {
+            null => throw new ArgumentNullException(nameof(term)),
             Constant constant => new OperableConstant(constant.Identifier),
             Function function => new OperableFunction(function.Identifier, function.Arguments.Select(a => (OperableTerm)a).ToArray()),
             VariableReference variableReference => new OperableVariableReference(variableReference.Declaration.Identifier),
-            _ => throw new ArgumentException("Unsupported Term subtype"),
+            _ => throw new ArgumentException($"Cannot convert unsupported Term subtype {term.GetType()} to OperableTerm"),
         };
 
         /// <summary>
