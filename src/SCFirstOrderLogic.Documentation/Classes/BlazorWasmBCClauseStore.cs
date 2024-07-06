@@ -3,7 +3,7 @@ using SCFirstOrderLogic.SentenceManipulation.Unification;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
-namespace SCFirstOrderLogic.Inference.BackwardChaining;
+namespace SCFirstOrderLogic.Inference.Basic.BackwardChaining;
 
 /// <summary>
 /// Implementation of <see cref="IClauseStore"/> geared towards use in Blazor WASM, before multithreading support is added in v8.

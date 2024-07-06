@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SCFirstOrderLogic.Alternatives\SCFirstOrderLogic.Alternatives.csproj" />
-    <ProjectReference Include="..\SCFirstOrderLogic.ExampleDomains\SCFirstOrderLogic.ExampleDomains.csproj" />
     <ProjectReference Include="..\SCFirstOrderLogic\SCFirstOrderLogic.csproj" />
   </ItemGroup>
 

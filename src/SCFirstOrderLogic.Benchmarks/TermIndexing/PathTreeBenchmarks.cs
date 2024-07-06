@@ -6,7 +6,7 @@ using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 namespace SCFirstOrderLogic.TermIndexing;
 
-using static SCFirstOrderLogic.ExampleDomains.FromMpg.TermIndexingExample;
+using static SCFirstOrderLogic.TestProblems.FromMpg.TermIndexingExample;
 
 [MemoryDiagnoser]
 [InProcess]

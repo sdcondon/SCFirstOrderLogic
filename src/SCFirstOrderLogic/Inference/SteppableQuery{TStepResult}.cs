@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic.Inference;
 
 /// <summary>
-/// Base class for <see cref="IQuery"/> implementations that are executable step-by-step.
+/// Handy base class for <see cref="IQuery"/> implementations that are executable step-by-step.
 /// </summary>
 /// <typeparam name="TStepResult">The type of the result of each step. This type should be a container for information on what happened during the step.</typeparam>
 public abstract class SteppableQuery<TStepResult> : IQuery

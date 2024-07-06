@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
-namespace SCFirstOrderLogic.Inference.Resolution;
+namespace SCFirstOrderLogic.Inference.Basic.Resolution;
 
 /// <summary>
 /// Implementation of <see cref="IClauseStore"/> geared towwards use in Blazor WASM, before multithreading support is added in v8.

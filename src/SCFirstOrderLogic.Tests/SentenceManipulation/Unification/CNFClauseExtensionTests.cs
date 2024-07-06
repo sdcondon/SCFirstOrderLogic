@@ -2,32 +2,34 @@
 using FlUnit;
 using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
-using static SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter8.UsingOperableSentenceFactory.KinshipDomain;
 
 namespace SCFirstOrderLogic.SentenceManipulation.Unification;
 
 public static class CNFClauseExtensionTests
 {
-    private record UnifiesWithAnyOfTestCase(CNFClause Clause, IEnumerable<CNFClause> Clauses, bool ExpectedResult);
-
     public static Test UnifiesWithAnyOfBehaviour => TestThat
         .GivenEachOf(() => new UnifiesWithAnyOfTestCase[]
         {
             new (
-                Clause: new CNFClause(IsParent(P, C)),
+                Clause: new CNFClause(P(X, Y)),
                 Clauses: new CNFClause[] { },
                 ExpectedResult: false),
 
             new (
-                Clause: new CNFClause(IsParent(P, C)),
-                Clauses: new CNFClause[] { new CNFClause(IsParent(X, Y)) },
+                Clause: new CNFClause(P(X, Y)),
+                Clauses: new CNFClause[] { new(P(A, B)) },
                 ExpectedResult: true),
 
             new (
-                Clause: new CNFClause(IsParent(X, Y) | IsChild(X, Y)),
-                Clauses: new CNFClause[] { new CNFClause(IsParent(A, B) | IsChild(A, B)) },
+                Clause: new CNFClause(P(X, Y) | Q(X, Y)),
+                Clauses: new CNFClause[] { new CNFClause(P(A, B) | Q(A, B)) },
                 ExpectedResult: true),
         })
         .When(tc => tc.Clause.UnifiesWithAnyOf(tc.Clauses))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.ExpectedResult));
+
+    private static OperablePredicate P(Term x, Term y) => new(nameof(P), x, y);
+    private static OperablePredicate Q(Term x, Term y) => new(nameof(Q), x, y);
+
+    private record UnifiesWithAnyOfTestCase(CNFClause Clause, IEnumerable<CNFClause> Clauses, bool ExpectedResult);
 }

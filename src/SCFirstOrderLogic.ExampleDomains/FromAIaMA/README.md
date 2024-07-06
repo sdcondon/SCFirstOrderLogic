@@ -1,1 +1,0 @@
-The examples in this directory are taken from "Artificial Intelligence: A Modern Approach" (Russell & Norvig)

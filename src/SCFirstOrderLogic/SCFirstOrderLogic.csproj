@@ -55,6 +55,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="InternalUtilities\" />
     <Folder Include="SentenceCreation\Antlr\" />
   </ItemGroup>
 

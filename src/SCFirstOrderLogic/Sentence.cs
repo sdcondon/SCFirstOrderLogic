@@ -19,8 +19,8 @@ namespace SCFirstOrderLogic;
 /// <para>
 /// Also, note that there's no validation method (for e.g. catching of variable declaration the
 /// identifier of which is equal to one already in scope, or of references to non-declared variables).
-/// We'll do this during the normalisation process if and when we want it. Again, this is to keep the
-/// core classes as dumb (and thus flexible) as possible.
+/// This is better left to the normalisation process. Again, this is to keep the core classes as dumb
+/// (and thus flexible) as possible.
 /// </para>
 /// </summary>
 public abstract class Sentence

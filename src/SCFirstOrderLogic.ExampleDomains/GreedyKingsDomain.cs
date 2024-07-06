@@ -1,15 +1,15 @@
 ﻿using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
-namespace SCFirstOrderLogic.TestUtilities;
+namespace SCFirstOrderLogic.TestProblems;
 
 /// <summary>
 /// Extremely simple domain for basic test cases. Just because it is used for a couple of examples in the source material.
 /// </summary>
 internal static class GreedyKingsDomain
 {
-    public static OperableConstant John { get; } = new OperableConstant(nameof(John));
-    public static OperableConstant Richard { get; } = new OperableConstant(nameof(Richard));
-    public static OperableConstant Mary { get; } = new OperableConstant(nameof(Mary));
+    public static OperableConstant John { get; } = new Constant(nameof(John));
+    public static OperableConstant Richard { get; } = new Constant(nameof(Richard));
+    public static OperableConstant Mary { get; } = new Constant(nameof(Mary));
 
     public static OperableSentence AllGreedyAreEvil { get; } = ForAll(X, If(IsGreedy(X), IsEvil(X)));
     public static OperableSentence AllGreedyKingsAreEvil { get; } = ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X)));
