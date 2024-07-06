@@ -139,13 +139,13 @@
 @code {
     private static Dictionary<string, Func<IKnowledgeBase>> KnowledgeBaseOptions = new()
     {
-        ["Backward Chaining"] = () => new BackwardChainingKnowledgeBase(
+        ["Basic Backward Chaining"] = () => new BackwardChainingKnowledgeBase(
             new BlazorWasmBCClauseStore()),
 
-        ["Forward Chaining"] = () => new ForwardChainingKnowledgeBase(
+        ["Basic Forward Chaining"] = () => new ForwardChainingKnowledgeBase(
             new BlazorWasmFCClauseStore()),
 
-        ["Resolution (Unit Preference)"] = () => new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
+        ["Basic Resolution (Unit Preference)"] = () => new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
             new BlazorWasmResClauseStore(),
             DelegateResolutionStrategy.Filters.None,
             DelegateResolutionStrategy.PriorityComparisons.UnitPreference)),
@@ -154,17 +154,17 @@
     private static Dictionary<string, Func<FormData>> Presets = new()
     {
         ["[Empty]"] = () => new(
-            knowledgeBaseDescription: "Backward Chaining",
+            knowledgeBaseDescription: "Basic Backward Chaining",
             knowledge: string.Empty,
             query: string.Empty),
 
         ["Crime"] = () => new(
-            knowledgeBaseDescription: "Backward Chaining",
+            knowledgeBaseDescription: "Basic Backward Chaining",
             knowledge: string.Join(Environment.NewLine, CrimeDomain.UnparsedAxioms),
             query: CrimeDomain.UnparsedExampleQuery),
 
         ["Curiousity and the Cat"] = () => new(
-            knowledgeBaseDescription: "Resolution (Unit Preference)",
+            knowledgeBaseDescription: "Basic Resolution (Unit Preference)",
             knowledge: string.Join(Environment.NewLine, CuriousityAndTheCatDomain.UnparsedAxioms),
             query: CuriousityAndTheCatDomain.UnparsedExampleQuery),
     };
