@@ -12,8 +12,8 @@ public static class AsyncPathTreeOfTTests
     private static Function F(params Term[] a) => new(nameof(F), a);
 
     public static Test ContainsAsyncBehaviour => TestThat
-        .GivenEachOf(() => new TryGetExactAsyncTestCase<int>[]
-        {
+        .GivenEachOf<TryGetExactAsyncTestCase<int>>(() =>
+        [
             new(
                 Contents: new()
                 {
@@ -31,7 +31,7 @@ public static class AsyncPathTreeOfTTests
                 },
                 QueryTerm: F(C1, C2),
                 ExpectedReturnValue: false),
-        })
+        ])
         .WhenAsync(async tc =>
         {
             var tree = new AsyncPathTree<int>(new AsyncPathTreeDictionaryNode<int>(), tc.Contents);

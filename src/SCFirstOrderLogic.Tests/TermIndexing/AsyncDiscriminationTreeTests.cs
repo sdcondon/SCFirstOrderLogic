@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
-using ConstantInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeConstantNodeKey;
-using FunctionInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeFunctionNodeKey;
-using IElementInfo = SCFirstOrderLogic.TermIndexing.IDiscriminationTreeNodeKey;
-using VariableInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeVariableNodeKey;
+using ConstantNodeKey = SCFirstOrderLogic.TermIndexing.DiscriminationTreeConstantNodeKey;
+using FunctionNodeKey = SCFirstOrderLogic.TermIndexing.DiscriminationTreeFunctionNodeKey;
+using INodeKey = SCFirstOrderLogic.TermIndexing.IDiscriminationTreeNodeKey;
+using VariableNodeKey = SCFirstOrderLogic.TermIndexing.DiscriminationTreeVariableNodeKey;
 
 namespace SCFirstOrderLogic.TermIndexing;
 
@@ -23,43 +23,43 @@ public static class AsyncDiscriminationTreeTests
         .GivenEachOf(() => new PositiveAddTestCase[]
         {
             new(
-                CurrentTerms: Array.Empty<Term>(),
+                CurrentTerms: [],
                 NewTerm: C1,
                 ExpectedRootChildren: new()
                 {
-                    [new ConstantInfo("C1")] = new { Value = C1 },
+                    [new ConstantNodeKey("C1")] = new { Value = C1 },
                 }),
 
             new(
-                CurrentTerms: new[] { F(X) },
+                CurrentTerms: [F(X)],
                 NewTerm: F(C1),
                 ExpectedRootChildren: new()
                 {
-                    [new FunctionInfo("F", 1)] = new
+                    [new FunctionNodeKey("F", 1)] = new
                     {
-                        Children = new Dictionary<IElementInfo, object>
+                        Children = new Dictionary<INodeKey, object>
                         {
-                            [new VariableInfo(0)] = new { Value = F(X) },
-                            [new ConstantInfo("C1")] = new { Value = F(C1) },
+                            [new VariableNodeKey(0)] = new { Value = F(X) },
+                            [new ConstantNodeKey("C1")] = new { Value = F(C1) },
                         }
                     },
                 }),
 
             new(
-                CurrentTerms: new[] { F(X, C2) },
+                CurrentTerms: [F(X, C2)],
                 NewTerm: F(X, C1),
                 ExpectedRootChildren: new()
                 {
-                    [new FunctionInfo("F", 2)] = new
+                    [new FunctionNodeKey("F", 2)] = new
                     {
-                        Children = new Dictionary<IElementInfo, object>
+                        Children = new Dictionary<INodeKey, object>
                         {
-                            [new VariableInfo(0)] = new
+                            [new VariableNodeKey(0)] = new
                             { 
-                                Children = new Dictionary<IElementInfo, object>
+                                Children = new Dictionary<INodeKey, object>
                                 {
-                                    [new ConstantInfo("C1")] = new { Value = F(X, C1) },
-                                    [new ConstantInfo("C2")] = new { Value = F(X, C2) },
+                                    [new ConstantNodeKey("C1")] = new { Value = F(X, C1) },
+                                    [new ConstantNodeKey("C2")] = new { Value = F(X, C2) },
                                 }
                             },
                         }
@@ -67,27 +67,27 @@ public static class AsyncDiscriminationTreeTests
                 }),
 
             new(
-                CurrentTerms: Array.Empty<Term>(),
+                CurrentTerms: [],
                 NewTerm: F(F(C1), F(C2)),
                 ExpectedRootChildren: new()
                 {
-                    [new FunctionInfo("F", 2)] = new
+                    [new FunctionNodeKey("F", 2)] = new
                     {
-                        Children = new Dictionary<IElementInfo, object>
+                        Children = new Dictionary<INodeKey, object>
                         {
-                            [new FunctionInfo("F", 1)] = new
+                            [new FunctionNodeKey("F", 1)] = new
                             {
-                                Children = new Dictionary<IElementInfo, object>
+                                Children = new Dictionary<INodeKey, object>
                                 {
-                                    [new ConstantInfo("C1")] = new
+                                    [new ConstantNodeKey("C1")] = new
                                     {
-                                        Children = new Dictionary<IElementInfo, object>
+                                        Children = new Dictionary<INodeKey, object>
                                         {
-                                            [new FunctionInfo("F", 1)] = new
+                                            [new FunctionNodeKey("F", 1)] = new
                                             {
-                                                Children = new Dictionary<IElementInfo, object>
+                                                Children = new Dictionary<INodeKey, object>
                                                 {
-                                                    [new ConstantInfo("C2")] = new { Value = F(F(C1), F(C2)) },
+                                                    [new ConstantNodeKey("C2")] = new { Value = F(F(C1), F(C2)) },
                                                 }
                                             },
                                         }
@@ -100,19 +100,19 @@ public static class AsyncDiscriminationTreeTests
 
             // Same function identifier with different arg count shouldn't cause problems:
             new(
-                CurrentTerms: new[] { F() },
+                CurrentTerms: [F()],
                 NewTerm: F(C1),
                 ExpectedRootChildren: new()
                 {
-                    [new FunctionInfo("F", 0)] = new
+                    [new FunctionNodeKey("F", 0)] = new
                     {
                         Value = new Function("F")
                     },
-                    [new FunctionInfo("F", 1)] = new
+                    [new FunctionNodeKey("F", 1)] = new
                     {
-                        Children = new Dictionary<IElementInfo, object>
+                        Children = new Dictionary<INodeKey, object>
                         {
-                            [new ConstantInfo("C1")] = new { Value = new Function("F", C1) }
+                            [new ConstantNodeKey("C1")] = new { Value = new Function("F", C1) }
                         }
                     },
                 }),
@@ -124,9 +124,9 @@ public static class AsyncDiscriminationTreeTests
             await tree.AddAsync(tc.NewTerm);
             return GetChildren(root);
 
-            static Dictionary<IElementInfo, object> GetChildren(IAsyncDiscriminationTreeNode<Term> node)
+            static Dictionary<INodeKey, object> GetChildren(IAsyncDiscriminationTreeNode<Term> node)
             {
-                return new(node.GetChildren().ToListAsync().GetAwaiter().GetResult().Select(kvp =>
+                return new(node.GetChildren().ToListAsync().AsTask().GetAwaiter().GetResult().Select(kvp =>
                 {
                     var children = GetChildren(kvp.Value);
                     object comparisonObject = children.Count > 0 ? new { Children = children } : new { kvp.Value.Value };
@@ -210,8 +210,8 @@ public static class AsyncDiscriminationTreeTests
         .And((tc, rv) => rv.Should().Be(tc.ExpectedReturnValue));
 
     public static Test GetInstancesBehaviour => TestThat
-        .GivenEachOf<GetTestCase>(() => new GetTestCase[]
-        {
+        .GivenEachOf<GetTestCase>(() =>
+        [
             new( // Exact match
                 StoredTerms: [C1, C2, X],
                 QueryTerm: C1,
@@ -241,7 +241,7 @@ public static class AsyncDiscriminationTreeTests
                 StoredTerms: [F(X, C2)],
                 QueryTerm: F(C1, Y),
                 ExpectedReturnValue: []),
-        })
+        ])
         .When(async tc =>
         {
             var tree = new AsyncDiscriminationTree(new AsyncDiscriminationTreeDictionaryNode<Term>(), tc.StoredTerms);
@@ -251,8 +251,8 @@ public static class AsyncDiscriminationTreeTests
         .And((tc, rv) => rv.Result.Should().BeEquivalentTo(tc.ExpectedReturnValue));
 
     public static Test GetGeneralisationsBehaviour => TestThat
-        .GivenEachOf<GetTestCase>(() => new GetTestCase[]
-        {
+        .GivenEachOf<GetTestCase>(() =>
+        [
             new(
                 StoredTerms: [C1, C2, X],
                 QueryTerm: C1,
@@ -287,7 +287,7 @@ public static class AsyncDiscriminationTreeTests
                 StoredTerms: [F(X, C2)],
                 QueryTerm: F(C1, Y),
                 ExpectedReturnValue: []),
-        })
+        ])
         .When(async tc =>
         {
             var tree = new AsyncDiscriminationTree(new AsyncDiscriminationTreeDictionaryNode<Term>(), tc.StoredTerms);
@@ -296,7 +296,7 @@ public static class AsyncDiscriminationTreeTests
         .ThenReturns()
         .And((tc, rv) => rv.Result.Should().BeEquivalentTo(tc.ExpectedReturnValue));
 
-    private record PositiveAddTestCase(Term[] CurrentTerms, Term NewTerm, Dictionary<IElementInfo, object> ExpectedRootChildren);
+    private record PositiveAddTestCase(Term[] CurrentTerms, Term NewTerm, Dictionary<INodeKey, object> ExpectedRootChildren);
 
     private record NegativeAddTestCase(Term[] CurrentTerms, Term NewTerm);
 
