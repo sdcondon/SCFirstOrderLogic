@@ -5,9 +5,9 @@ using System.Linq;
 namespace SCFirstOrderLogic.SentenceFormatting;
 
 /// <summary>
-/// Composite <see cref="ILabeller"/> implementation that can use a different sub-labeller
-/// for different object types. Falls back to <see cref="object.ToString"/> for identifiers
-/// of types for which no labeller is registered.
+/// Composite <see cref="ILabeller"/> implementation that can use a different labeller
+/// for different identifier types. Falls back to <see cref="object.ToString"/> for types
+/// for which no labeller is registered.
 /// </summary>
 public class ByTypeLabeller : ILabeller
 {
