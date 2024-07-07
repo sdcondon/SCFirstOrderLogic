@@ -6,15 +6,18 @@ It is intended first and foremost to assist with learning and experimentation, b
 Included are:
 
 * Implementations of both raw and CNF sentence representation. 
-  Multiple ways of instantiating raw sentences, ranging from string parsing, through a number of code-based approaches, all the way to a language-integrated approach that allows (the domain to be modelled as an IEnumerable&lt;T&gt; and) sentences to be provided as lambda expressions.
-* Knowledge base implementations that, while using *very* basic (i.e. not production ready) versions of their respective algorithms, do use abstracted, asynchronous clause storage (which could be re-used in more sophisticated knowledge base implementations) and expose properties for the retrieval of proof details.
+* Multiple ways of instantiating raw sentences, ranging from string parsing, through a number of code-based approaches, all the way to a language-integrated approach that allows (the domain to be modelled as an IEnumerable&lt;T&gt; and) sentences to be provided as lambda expressions.
+* Sentence manipulation logic - base classes for sentence visitors and transformations, as well as some implementations - e.g. variable substitutions and basic unification logic.
 * Sentence formatting logic that allows for (customisable) unique labelling of standardised variables and Skolem functions across a set of sentences.
+* Some abstractions for knowledge base implementations to implement.
 
-As mentioned above, the main goal here is for it to be a resource for learning and experimentation.
-As such, care has also been taken to include good type and member documentation, as well as [Source Link](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/sourcelink) to allow for debugging - and explanatory inline comments in the source code where appropriate.
+Accompanying the core SCFirstOrderLogic package are two supporting packages:
+
+* SCFirstOrderLogic.ExampleDomains: A few simple first-order logic domains declared using the models found in the SCFirstOrderLogic package - for use in tests and demos.
+* SCFirstOrderLogic.Inference.Basic: Very basic first-order logic knowledge base implementations that use the models defined by the SCFirstOrderLogic package. Not useful for anything resembling a production scenario, but perhaps useful as a tool for learning and experimentation.
 
 The recommended initial learning path is as follows:
 
-1. **[Library Overview](library-overview.md):** This is the recommended first stop. Provides a quick overview of the library - useful context for diving a little deeper
-1. **[Getting Started](getting-started.md):** Guidance for writing your first code that consumes this library
+1. **[Library Overview](library-overview.md):** This is the recommended first stop. Provides a quick overview of the core and basic inference packages - useful context for diving a little deeper
+1. **[Getting Started](getting-started.md):** Guidance for writing your first code that consumes these libraries
 1. **[Beyond Getting Started](beyond-getting-started):** Brings attention to a few things not mentioned in 'getting started'

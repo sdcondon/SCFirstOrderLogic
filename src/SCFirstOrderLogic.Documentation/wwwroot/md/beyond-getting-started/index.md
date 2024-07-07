@@ -14,13 +14,6 @@ Having said all that, some hopefully useful notes do follow here.
 * **Equality:** The SCFirstOrderLogic namespace includes EqualityIdentifier, intended to be used as the identifier for the equality predicate.
   The various sentence creation methods make use of this in created sentences where appropriate.
 
-### `SCFirstOrderLogic.Inference`
-
-* **Decorator knowledge bases:** this namespace directly contains some [decorator](https://en.wikipedia.org/wiki/Decorator_pattern) knowledge base implementations.
-  * **EqualityAxiomisingKnowledgeBase:** None of the knowledge bases included in the package use particular techniques (e.g. demodulation, paramodulation) to handle equality.
-  However, the Inference namespace does include EqualityAxiomisingKnowledgeBase, which adds rules pertaining to equality as knowledge is added.
-  * **UniqueNamesAxiomisingKnowledgeBase:** Adds "axioms" for the unique names assumption as knowledge is added. That is, Adds "not equal" statements for all constant pairs whose identifiers do not match.
-
 ### `SCFirstOrderLogic.LanguageIntegration`
 
 As mentioned briefly in 'getting started', a language-integrated approach to sentence creation is available. See [here](beyond-getting-started/language-integration.md) for details.
@@ -36,13 +29,3 @@ While they are not yet used by any of the clause store types in the library, sev
 There are implementations of both discrimination trees and path indices.
 An abstraction for the nodes of these structures allows for customisation of the underlying storage.
 The only implementations provided in the library store things in memory, however.
-
-## Learning Resources in the Repository
-
-The source repository contains a few resources aside from the source of the library itself that people might find interesting and/or useful:
-
-* **['ExampleDomains' project](https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.ExampleDomains):** Example domains, declared using each of the sentence creation options.
-* **['Alternatives' project](https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.Alternatives):** this class library contains a number of alternative implementations of things.
-  Some of these implementations are "rawer" recreations of algorithms as listed in the source material (these tend to have names suffixed with `_FromAIaMA`), others just exhibit slightly different performance or complexity characteristics.
-  These have been created for learning and benchmarking.
-* **['Benchmarks' project](https://github.com/sdcondon/SCFirstOrderLogic/tree/main/src/SCFirstOrderLogic.Benchmarks):** benchmark project for evaluating performance of the algorithms in the NuGet package and in the 'Alternatives' project.
