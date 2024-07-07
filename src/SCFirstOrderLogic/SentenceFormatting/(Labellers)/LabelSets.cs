@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.SentenceFormatting;
 
 /// <summary>
-/// Sets of labels to use for things, intended to be useful for providing to <see cref="LabelSetLabeller{T}"/> instances.
+/// Sets of labels to use for things, intended to be useful for providing to <see cref="LabelSetLabeller"/> instances.
 /// </summary>
 public static class LabelSets
 {

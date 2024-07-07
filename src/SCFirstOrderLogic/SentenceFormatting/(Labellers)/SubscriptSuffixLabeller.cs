@@ -6,27 +6,31 @@ namespace SCFirstOrderLogic.SentenceFormatting;
 
 /// <summary>
 /// <para>
-/// An implementation of <see cref="ILabeller{T}"/> of <see cref="StandardisedVariableIdentifier"/> that outputs the
-/// (ToString of the) original identifier of the standardised variable, along with a subscript numeric suffix, as required
-/// for uniqueness.
+/// An implementation of <see cref="ILabeller"/> of that outputs the ToString of the identifier,
+/// along with a subscript numeric suffix, as required for uniqueness.
 /// </para>
 /// <para>
 /// NB: Doesn't have any specific handling if the identifier's ToString already ends in a numeric subscript. So this could
 /// result in confusing suffixes (though there is no risk to uniqueness).
 /// </para>
 /// </summary>
-public class SubscriptSuffixLabeller : ILabeller<StandardisedVariableIdentifier>
+public class SubscriptSuffixLabeller : ILabeller
 {
     /// <inheritdoc />
-    public ILabellingScope<StandardisedVariableIdentifier> MakeLabellingScope() => new LabellingScope();
+    public ILabellingScope MakeLabellingScope(IDictionary<object, string> labelsByIdentifier) => new LabellingScope(labelsByIdentifier);
 
-    private class LabellingScope : ILabellingScope<StandardisedVariableIdentifier>
+    private class LabellingScope : ILabellingScope
     {
         private static readonly char[] SuffixDigits = new[] { '₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉' };
-        private readonly Dictionary<StandardisedVariableIdentifier, string> labelsByIdentifier = new();
+        private readonly IDictionary<object, string> labelsByIdentifier;
+
+        public LabellingScope(IDictionary<object, string> labelsByIdentifier)
+        {
+            this.labelsByIdentifier = labelsByIdentifier;
+        }
 
         /// <inheritdoc />
-        public string GetLabel(StandardisedVariableIdentifier identifier)
+        public string GetLabel(object identifier)
         {
             if (labelsByIdentifier.TryGetValue(identifier, out var label))
             {
@@ -35,11 +39,11 @@ public class SubscriptSuffixLabeller : ILabeller<StandardisedVariableIdentifier>
             else
             {
                 int suffix = 1;
-                label = identifier.OriginalIdentifier.ToString() + ToSubscriptString(suffix);
-                while (labelsByIdentifier.ContainsValue(label))
+                label = identifier.ToString() + ToSubscriptString(suffix);
+                while (labelsByIdentifier.Values.Contains(label))
                 {
                     suffix++;
-                    label = identifier.OriginalIdentifier.ToString() + ToSubscriptString(suffix);
+                    label = identifier.ToString() + ToSubscriptString(suffix);
                 }
 
                 return labelsByIdentifier[identifier] = label;

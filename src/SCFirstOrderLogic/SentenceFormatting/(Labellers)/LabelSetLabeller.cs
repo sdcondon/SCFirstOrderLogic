@@ -6,31 +6,34 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.SentenceFormatting;
 
 /// <summary>
-/// An implementation of <see cref="ILabeller{T}"/> that just uses a given set of labels - failing if this is exhausted.
+/// An implementation of <see cref="ILabeller"/> that just uses a given set of labels - failing if this is exhausted.
 /// </summary>
-public class LabelSetLabeller<T> : ILabeller<T>
-    where T : class
+public class LabelSetLabeller : ILabeller
 {
     private readonly IEnumerable<string> labelSet;
 
     /// <summary>
-    /// Initialises a new instances of the <see cref="LabelSetLabeller{T}"/> class.
+    /// Initialises a new instances of the <see cref="LabelSetLabeller"/> class.
     /// </summary>
     /// <param name="labelSet">The set of labels to use.</param>
     public LabelSetLabeller(IEnumerable<string> labelSet) => this.labelSet = labelSet;
 
     /// <inheritdoc />
-    public ILabellingScope<T> MakeLabellingScope() => new LabelSetLabellingScope(labelSet.GetEnumerator());
+    public ILabellingScope MakeLabellingScope(IDictionary<object, string> labelsByIdentifier) => new LabellingScope(labelSet.GetEnumerator(), labelsByIdentifier);
 
-    private class LabelSetLabellingScope : ILabellingScope<T>
+    private class LabellingScope : ILabellingScope
     {
         private readonly IEnumerator<string> labelEnumerator;
-        private readonly Dictionary<T, string> labelsByIdentifier = new();
+        private readonly IDictionary<object, string> labelsByIdentifier;
 
-        public LabelSetLabellingScope(IEnumerator<string> labelEnumerator) => this.labelEnumerator = labelEnumerator;
+        public LabellingScope(IEnumerator<string> labelEnumerator, IDictionary<object, string> labelsByIdentifier)
+        {
+            this.labelEnumerator = labelEnumerator;
+            this.labelsByIdentifier = labelsByIdentifier;
+        }
 
         /// <inheritdoc />
-        public string GetLabel(T identifier)
+        public string GetLabel(object identifier)
         {
             if (labelsByIdentifier.TryGetValue(identifier, out var label))
             {

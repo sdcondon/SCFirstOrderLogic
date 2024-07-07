@@ -6,13 +6,12 @@ namespace SCFirstOrderLogic.SentenceFormatting;
 /// Interface for types that represent a labelling scope - a scope within which labels
 /// should be uniquely assigned to identifiers.
 /// </summary>
-/// <typeparam name="T">The type of the identifiers to be labelled.</typeparam>
-public interface ILabellingScope<T>
+public interface ILabellingScope
 {
     /// <summary>
     /// Get the label for a given identifier.
     /// </summary>
     /// <param name="identifier">The identifier to make or retrieve the label for.</param>
     /// <returns>A label for the identifier that is unique within this scope.</returns>
-    string GetLabel(T identifier);
+    string GetLabel(object identifier);
 }
