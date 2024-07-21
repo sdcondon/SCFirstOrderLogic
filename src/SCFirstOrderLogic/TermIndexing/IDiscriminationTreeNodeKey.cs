@@ -38,13 +38,3 @@ public sealed record DiscriminationTreeVariableNodeKey(int Ordinal) : IDiscrimin
     /// <inheritdoc/>
     public int ChildElementCount => 0;
 }
-
-/// <summary>
-/// Information about a constant, for storage against a node of a discrimination tree.
-/// </summary>
-/// <param name="Identifier">The identifier of the represented constant.</param>
-public sealed record DiscriminationTreeConstantNodeKey(object Identifier) : IDiscriminationTreeNodeKey
-{
-    /// <inheritdoc/>
-    public int ChildElementCount => 0;
-}

@@ -160,9 +160,6 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch<TState> : ISentenc
     {
         switch (term)
         {
-            case Constant constant:
-                Visit(constant, ref state);
-                break;
             case VariableReference variable:
                 Visit(variable, ref state);
                 break;
@@ -172,15 +169,6 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch<TState> : ISentenc
             default:
                 throw new ArgumentException($"Unsupported Term type '{term.GetType()}'", nameof(term));
         }
-    }
-
-    /// <summary>
-    /// Visits a <see cref="Constant"/> instance.
-    /// The default implementation doesn't do anything.
-    /// </summary>
-    /// <param name="term">The constant to visit.</param>
-    public virtual void Visit(Constant constant, ref TState state)
-    {
     }
 
     /// <summary>

@@ -189,17 +189,6 @@ public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransf
     }
 
     /// <summary>
-    /// Applies this transformation to a <see cref="Constant"/> instance.
-    /// The default implementation simply returns the constant unchanged.
-    /// </summary>
-    /// <param name="term">The constant to visit.</param>
-    /// <returns>The transformed term.</returns>
-    public virtual Term ApplyTo(Constant constant)
-    {
-        return constant;
-    }
-
-    /// <summary>
     /// Applies this transformation to a <see cref="VariableReference"/> instance.
     /// The default implementation returns a <see cref="VariableReference"/> of the result of calling <see cref="ApplyTo"/> on the current declaration.
     /// </summary>

@@ -171,16 +171,6 @@ public class VariableSubstitution : RecursiveSentenceTransformation
     }
 
     /// <summary>
-    /// Applies this substitution to a <see cref="Constant"/> instance.
-    /// </summary>
-    /// <param name="constant">The constant to transform.</param>
-    /// <returns>The transformed <see cref="Constant"/>.</returns>
-    public override Constant ApplyTo(Constant constant)
-    {
-        return (Constant)base.ApplyTo(constant);
-    }
-
-    /// <summary>
     /// Applies this substitution to a <see cref="VariableReference"/> instance.
     /// </summary>
     /// <param name="variable">The variable to transform.</param>

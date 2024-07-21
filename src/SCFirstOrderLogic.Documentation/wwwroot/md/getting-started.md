@@ -131,7 +131,8 @@ Notes:
   * `⇒` ([U+21D2](https://www.google.com/search?q=unicode+code+point+U%2B21D2)), `->` or `=>` for implications
   * `⇔` ([U+21D4](https://www.google.com/search?q=unicode+code+point+U%2B21D4)), `<->` or `<=>` for equivalences
 * You can use `[ ... ]` or `( ... )` for bracketing sub-sentences.
-* Constant, variable, function and predicate identifiers must be alphanumeric (i.e. must match the regex `[A-Za-z0-9]+`).
+* Variable, function and predicate identifiers must be alphanumeric (i.e. must match the regex `[A-Za-z0-9]+`).
+* Constants (that is, zero-arity functions) can be written with or without parentheses. Whether the returned identifiers for `myConstant` and `myConstant()` are the same depends upon the configuration of the parser. 
 * To create a predicate that refers to the `EqualityIdentifier` type (and thus capable of being leveraged by KBs that have particular handling for equality, etc), use `{term} = {term}`.
 * An identifier where a term is expected is interpreted as a variable reference if a matching declaration (from a quantification) is in scope - otherwise it is interpreted as a constant.
 * All identifiers are **case sensitive**. This is, for example, something to double-check if you're seeing something interpreted as a constant that you intend as a variable reference.

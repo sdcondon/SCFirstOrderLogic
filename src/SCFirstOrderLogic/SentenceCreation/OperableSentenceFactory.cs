@@ -320,31 +320,6 @@ public static class OperableSentenceFactory
     }
 
     /// <summary>
-    /// Surrogate for <see cref="Constant"/> instances that derives from <see cref="OperableTerm"/> and can thus be operated on with the  == operator
-    /// to create equality predicate instances. N.B. constructor is intentionally not public - can be implicitly converted from (and to) <see cref="Constant"/>
-    /// instances. E.g.
-    /// <code>OperableConstant MyConstant { get; } = new Constant(nameof(MyConstant));</code>
-    /// </summary>
-    public sealed class OperableConstant : OperableTerm
-    {
-        internal OperableConstant(object identifier) => Identifier = identifier;
-
-        internal object Identifier { get; }
-
-        /// <summary>
-        /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableConstant"/>.
-        /// </summary>
-        /// <param name="constant">The constant to convert.</param>
-        public static implicit operator OperableConstant(Constant constant) => new(constant.Identifier);
-
-        /// <summary>
-        /// Implicitly converts an <see cref="OperableConstant"/> instance to an equivalent <see cref="OperableConstant"/>.
-        /// </summary>
-        /// <param name="constant">The constant to convert.</param>
-        public static implicit operator Constant(OperableConstant constant) => new(constant.Identifier);
-    }
-
-    /// <summary>
     /// Surrogate for <see cref="Conjunction"/> instances that derives from <see cref="OperableSentence"/> and can thus be operated on with |, &amp; and ! operators
     /// to create disjunctions, conjunctions and negations respectively. N.B. constructor is intentionally not public - should only be created via the | operator acting on
     /// <see cref="OperableSentence"/> instances.
@@ -528,7 +503,6 @@ public static class OperableSentenceFactory
         public static implicit operator Term(OperableTerm term) => term switch
         {
             null => throw new ArgumentNullException(nameof(term)),
-            OperableConstant constant => new Constant(constant.Identifier),
             OperableFunction function => new Function(function.Identifier, function.Arguments.Select(a => (Term)a).ToArray()),
             OperableVariableReference variableReference => new VariableReference(variableReference.Declaration.Identifier),
             _ => throw new ArgumentException($"Cannot convert unsupported OperableTerm subtype {term.GetType()} to Term"),
@@ -541,17 +515,10 @@ public static class OperableSentenceFactory
         public static implicit operator OperableTerm(Term term) => term switch
         {
             null => throw new ArgumentNullException(nameof(term)),
-            Constant constant => new OperableConstant(constant.Identifier),
             Function function => new OperableFunction(function.Identifier, function.Arguments.Select(a => (OperableTerm)a).ToArray()),
             VariableReference variableReference => new OperableVariableReference(variableReference.Declaration.Identifier),
             _ => throw new ArgumentException($"Cannot convert unsupported Term subtype {term.GetType()} to OperableTerm"),
         };
-
-        /// <summary>
-        /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableTerm"/>.
-        /// </summary>
-        /// <param name="constant">The cpnstant to convert.</param>
-        public static implicit operator OperableTerm(Constant constant) => new OperableConstant(constant.Identifier);
 
         /// <summary>
         /// Implicitly converts a <see cref="Function"/> instance to an equivalent <see cref="OperableTerm"/>.
@@ -560,7 +527,7 @@ public static class OperableSentenceFactory
         public static implicit operator OperableTerm(Function function) => new OperableFunction(function.Identifier, function.Arguments.Select(a => (OperableTerm)a).ToArray());
 
         /// <summary>
-        /// Implicitly converts a <see cref="Constant"/> instance to an equivalent <see cref="OperableTerm"/>.
+        /// Implicitly converts a <see cref="VariableReference"/> instance to an equivalent <see cref="OperableTerm"/>.
         /// </summary>
         /// <param name="variableReference">The variable reference to convert.</param>
         public static implicit operator OperableTerm(VariableReference variableReference) => new OperableVariableReference(variableReference.Declaration.Identifier);

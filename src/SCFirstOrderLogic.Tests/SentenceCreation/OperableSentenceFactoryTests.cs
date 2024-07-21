@@ -9,8 +9,8 @@ public class OperableSentenceFactoryTests
 {
     private record TestCase(OperableSentence SentenceSurrogate, Sentence ExpectedSentence);
 
-    private static OperableConstant Constant1 => new Constant(nameof(Constant1));
-    private static OperableConstant Constant2 => new Constant(nameof(Constant2));
+    private static OperableFunction Constant1 => new Function(nameof(Constant1));
+    private static OperableFunction Constant2 => new Function(nameof(Constant2));
     private static OperablePredicate GroundPredicate1 => new Predicate(nameof(GroundPredicate1));
     private static OperablePredicate GroundPredicate2 => new Predicate(nameof(GroundPredicate2));
     private static OperablePredicate UnaryPredicate(OperableTerm term) => new Predicate(nameof(UnaryPredicate), term);
@@ -23,7 +23,7 @@ public class OperableSentenceFactoryTests
                 SentenceSurrogate: GroundPredicate1 & UnaryPredicate(Constant1),
                 ExpectedSentence: new Conjunction(
                     new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()),
-                    new Predicate(nameof(UnaryPredicate), new Constant(nameof(Constant1))))),
+                    new Predicate(nameof(UnaryPredicate), new Function(nameof(Constant1))))),
 
             new(
                 SentenceSurrogate: GroundPredicate1 | GroundPredicate2,
@@ -35,8 +35,8 @@ public class OperableSentenceFactoryTests
                 SentenceSurrogate: Constant1 == Constant2,
                 ExpectedSentence: new Predicate(
                     EqualityIdentifier.Instance,
-                    new Constant(nameof(Constant1)),
-                    new Constant(nameof(Constant2)))),
+                    new Function(nameof(Constant1)),
+                    new Function(nameof(Constant2)))),
 
             new(
                 SentenceSurrogate: Iff(GroundPredicate1, GroundPredicate2),
@@ -51,7 +51,7 @@ public class OperableSentenceFactoryTests
                     new Predicate(
                         EqualityIdentifier.Instance,
                         new Function(nameof(UnaryFunction), new[] { new VariableReference(new VariableDeclaration("X")) }),
-                        new Constant(nameof(Constant1))))),
+                        new Function(nameof(Constant1))))),
 
             new(
                 SentenceSurrogate: If(GroundPredicate1, GroundPredicate2),
@@ -71,7 +71,7 @@ public class OperableSentenceFactoryTests
                     new Predicate(
                         EqualityIdentifier.Instance,
                         new Function(nameof(UnaryFunction), new[] { new VariableReference(new VariableDeclaration("X")) }),
-                        new Constant(nameof(Constant1))))),
+                        new Function(nameof(Constant1))))),
         ])
         .When(tc => (Sentence)tc.SentenceSurrogate)
         .ThenReturns((tc, sentence) =>

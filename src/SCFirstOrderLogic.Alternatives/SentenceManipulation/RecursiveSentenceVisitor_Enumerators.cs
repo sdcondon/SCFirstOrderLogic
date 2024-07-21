@@ -112,15 +112,6 @@ public abstract class RecursiveSentenceVisitor_Enumerators : ISentenceVisitor, I
     public virtual void Visit(Term term) => term.Accept(this);
 
     /// <summary>
-    /// Visits a <see cref="Constant"/> instance.
-    /// The default implementation doesn't do anything.
-    /// </summary>
-    /// <param name="constant">The constant to visit.</param>
-    public virtual void Visit(Constant constant)
-    {
-    }
-
-    /// <summary>
     /// Visits a <see cref="VariableReference"/> instance.
     /// The default implementation just visits the variable declaration.
     /// </summary>

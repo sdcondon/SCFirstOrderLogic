@@ -126,16 +126,6 @@ public abstract class RecursiveSentenceVisitor<TState> : ISentenceVisitor<TState
     public virtual void Visit(Term term, TState state) => term.Accept(this, state);
 
     /// <summary>
-    /// Visits a <see cref="Constant"/> instance.
-    /// The default implementation doesn't do anything.
-    /// </summary>
-    /// <param name="constant">The constant to visit.</param>
-    /// <param name="state">The state of this visitation.</param>
-    public virtual void Visit(Constant constant, TState state)
-    {
-    }
-
-    /// <summary>
     /// Visits a <see cref="VariableReference"/> instance.
     /// The default implementation just visits the variable declaration.
     /// </summary>

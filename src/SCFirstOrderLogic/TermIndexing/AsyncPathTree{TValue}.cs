@@ -257,12 +257,6 @@ public class AsyncPathTree<TValue>
 
         public TermAdditionVisitor(Term term, TValue value) => (this.term, this.value) = (term, value);
 
-        public async ValueTask ApplyTo(Constant constant, IAsyncPathTreeParameterNode<TValue> state)
-        {
-            var node = await state.GetOrAddChildAsync(new PathTreeConstantNodeKey(constant.Identifier));
-            await node.AddValueAsync(term, value);
-        }
-
         public async ValueTask ApplyTo(Function function, IAsyncPathTreeParameterNode<TValue> state)
         {
             var functionArgCount = function.Arguments.Count;

@@ -2,7 +2,6 @@
 using FlUnit;
 using System.Collections.Generic;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
-using ConstantInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeConstantNodeKey;
 using FunctionInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeFunctionNodeKey;
 using IElementInfo = SCFirstOrderLogic.TermIndexing.IDiscriminationTreeNodeKey;
 using VariableInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeVariableNodeKey;
@@ -11,8 +10,8 @@ namespace SCFirstOrderLogic.TermIndexing;
 
 public static class DiscriminationTreeTests
 {
-    private static readonly Constant C1 = new(nameof(C1));
-    private static readonly Constant C2 = new(nameof(C2));
+    private static readonly Function C1 = new(nameof(C1));
+    private static readonly Function C2 = new(nameof(C2));
 
     private static Function F(params Term[] a) => new(nameof(F), a);
 
@@ -25,7 +24,7 @@ public static class DiscriminationTreeTests
                 NewTerm: C1,
                 ExpectedRootChildren: new()
                 {
-                    [new ConstantInfo("C1")] = new { Value = C1 },
+                    [new FunctionInfo("C1", 0)] = new { Value = C1 },
                 }),
 
             new(
@@ -38,7 +37,7 @@ public static class DiscriminationTreeTests
                         Children = new Dictionary<IElementInfo, object>
                         {
                             [new VariableInfo(0)] = new { Value = F(X) },
-                            [new ConstantInfo("C1")] = new { Value = F(C1) },
+                            [new FunctionInfo("C1", 0)] = new { Value = F(C1) },
                         }
                     },
                 }),
@@ -56,8 +55,8 @@ public static class DiscriminationTreeTests
                             { 
                                 Children = new Dictionary<IElementInfo, object>
                                 {
-                                    [new ConstantInfo("C1")] = new { Value = F(X, C1) },
-                                    [new ConstantInfo("C2")] = new { Value = F(X, C2) },
+                                    [new FunctionInfo("C1", 0)] = new { Value = F(X, C1) },
+                                    [new FunctionInfo("C2", 0)] = new { Value = F(X, C2) },
                                 }
                             },
                         }
@@ -77,7 +76,7 @@ public static class DiscriminationTreeTests
                             {
                                 Children = new Dictionary<IElementInfo, object>
                                 {
-                                    [new ConstantInfo("C1")] = new
+                                    [new FunctionInfo("C1", 0)] = new
                                     {
                                         Children = new Dictionary<IElementInfo, object>
                                         {
@@ -85,7 +84,7 @@ public static class DiscriminationTreeTests
                                             {
                                                 Children = new Dictionary<IElementInfo, object>
                                                 {
-                                                    [new ConstantInfo("C2")] = new { Value = F(F(C1), F(C2)) },
+                                                    [new FunctionInfo("C2", 0)] = new { Value = F(F(C1), F(C2)) },
                                                 }
                                             },
                                         }
@@ -110,7 +109,7 @@ public static class DiscriminationTreeTests
                     {
                         Children = new Dictionary<IElementInfo, object>
                         {
-                            [new ConstantInfo("C1")] = new { Value = new Function("F", C1) }
+                            [new FunctionInfo("C1", 0)] = new { Value = new Function("F", C1) }
                         }
                     },
                 }),

@@ -19,13 +19,6 @@ namespace SCFirstOrderLogic.SentenceManipulation;
 public interface ITermTransformation<out TOut, in TState>
 {
     /// <summary>
-    /// Applies the transformation to a <see cref="Constant"/> instance.
-    /// </summary>
-    /// <param name="constant">The constant to transform.</param>
-    /// <param name="state">The state of this transformation.</param>
-    TOut ApplyTo(Constant constant, TState state);
-
-    /// <summary>
     /// Applies the transformation to a <see cref="Function"/> instance.
     /// </summary>
     /// <param name="function">The function to transform.</param>

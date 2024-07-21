@@ -351,16 +351,6 @@ public class DiscriminationTree_WOVarBinding<TValue>
     }
 
     /// <summary>
-    /// Information about a constant, for storage against a node of a <see cref="DiscriminationTree{TValue}"/>.
-    /// </summary>
-    /// <param name="Identifier">The identifier of the represented constant.</param>
-    public sealed record ConstantNodeKey(object Identifier) : INodeKey
-    {
-        /// <inheritdoc/>
-        public int ChildElementCount => 0;
-    }
-
-    /// <summary>
     /// Information about a variable, for storage against a node of a <see cref="DiscriminationTree{TValue}"/>.
     /// </summary>
     /// <param name="Ordinal">
@@ -387,16 +377,10 @@ public class DiscriminationTree_WOVarBinding<TValue>
         {
             return term switch
             {
-                Constant constant => ApplyTo(constant),
                 VariableReference variable => ApplyTo(variable),
                 Function function => ApplyTo(function),
                 _ => throw new ArgumentException($"Unrecognised Term type '{term.GetType()}'", nameof(term))
             };
-        }
-
-        public IEnumerable<INodeKey> ApplyTo(Constant constant)
-        {
-            yield return new ConstantNodeKey(constant.Identifier);
         }
 
         public IEnumerable<INodeKey> ApplyTo(Function function)

@@ -12,7 +12,7 @@ Benefits of using LINQ expressions:
 * Your sentences of propositional logic can be expressed in the familiar, plain-old C#, with the operators you would expect (e.g. `&&`, `||` and `!`).
 * Further, your rules are expressed in code that is directly integrable with domain implementations, should they exist. This (may turn out to be useless, but) may:
   * Provide a way of integrating the rest of your business logic (in particular, known constants) with the knowledge base.
-    For example, a knowledge base could derive known constants and their functions/predicates by enumerating an actual implementation of IEnumerable&lt;TElement&gt;.
+    For example, a knowledge base could derive functions/predicates by enumerating an actual implementation of IEnumerable&lt;TElement&gt;.
     Of course, the fact that we often only know particular things about constants doesn't mesh particularly well with having a real object graph.
     However, given that any implementation is likely to be an adapter anyway (as, for example, SCFirstOrderLogic doesn't engage with the .NET type system - more on this below),
     there could be a convention based thing where exceptions thrown by the implementation are classed as unknowns by the knowledge base.
@@ -54,8 +54,7 @@ The mapping between bool-valued C# expressions (that act on the TDomain) and FoL
 |Universal quantification|`∀ {variable}, {sentence}`|`{domain}.All({variable} => {expression})` †|
 |Equality|`{term} = {term}`|`{expression} == {expression}`|
 |Predicate|`{predicate symbol}({term}, ..)`|A boolean-valued property or method call on a TElement, or a boolean-valued property or method call on TDomain (for ground predicates).|
-|Constant|`{constant symbol}`|Access of a TElement-valued property or parameterless method on TDomain ‡|
-|Function|`{function symbol}({term}, ...)`|Invocation of a TElement-valued method on TElement that accepts only TElement-valued paramaters, or access of a TElement-valued property of TElement|
+|Function|`{function symbol}({term}, ...)`|Invocation of a TElement-valued method on TElement that accepts only TElement-valued paramaters, access of a TElement-valued property of TElement, or access of a TElement-valued property or parameterless method on TDomain ‡|
 |Variable|`{variable symbol}`|A variable from the lambda passed to All or Any|
 
 \* C# lacks a single operator appropriate for material equivalence and implication, so we offer some shorthand methods in the `Operators` static class.

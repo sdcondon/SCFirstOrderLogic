@@ -62,7 +62,7 @@ public sealed class PathTreeDictionaryNode<TValue> : IPathTreeParameterNode<TVal
 
     /// <summary>
     /// An <see cref="IPathTreeArgumentNode{TValue}"/> that represents a term element that has no children -
-    /// a variable reference, a constant, or a function with no parameters.
+    /// a variable reference or a function with no parameters.
     /// </summary>
     private sealed class LeafNode : IPathTreeArgumentNode<TValue>
     {

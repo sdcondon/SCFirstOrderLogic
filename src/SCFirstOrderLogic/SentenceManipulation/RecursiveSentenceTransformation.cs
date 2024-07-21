@@ -224,22 +224,10 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     {
         return term switch
         {
-            Constant constant => ApplyTo(constant),
             VariableReference variable => ApplyTo(variable),
             Function function => ApplyTo(function),
             _ => throw new ArgumentException($"Unsupported Term type '{term.GetType()}'", nameof(term))
         };
-    }
-
-    /// <summary>
-    /// Applies this transformation to a <see cref="Constant"/> instance.
-    /// The default implementation simply returns the constant unchanged.
-    /// </summary>
-    /// <param name="constant">The constant to transform.</param>
-    /// <returns>The transformed <see cref="Term"/>.</returns>
-    public virtual Term ApplyTo(Constant constant)
-    {
-        return constant;
     }
 
     /// <summary>

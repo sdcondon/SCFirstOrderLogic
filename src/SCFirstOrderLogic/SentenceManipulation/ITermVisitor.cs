@@ -8,12 +8,6 @@ namespace SCFirstOrderLogic.SentenceManipulation;
 public interface ITermVisitor
 {
     /// <summary>
-    /// Visits a <see cref="Constant"/> instance.
-    /// </summary>
-    /// <param name="constant">The constant to visit.</param>
-    void Visit(Constant constant);
-
-    /// <summary>
     /// Visits a <see cref="Function"/> instance.
     /// </summary>
     /// <param name="function">The function to visit.</param>

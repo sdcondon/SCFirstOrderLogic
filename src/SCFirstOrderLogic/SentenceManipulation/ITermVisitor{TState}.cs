@@ -15,13 +15,6 @@ namespace SCFirstOrderLogic.SentenceManipulation;
 public interface ITermVisitor<in TState>
 {
     /// <summary>
-    /// Visits a <see cref="Constant"/> instance.
-    /// </summary>
-    /// <param name="constant">The constant to visit.</param>
-    /// <param name="state">The state for this visitation.</param>
-    void Visit(Constant constant, TState state);
-
-    /// <summary>
     /// Visits a <see cref="Function"/> instance.
     /// </summary>
     /// <param name="function">The function to visit.</param>

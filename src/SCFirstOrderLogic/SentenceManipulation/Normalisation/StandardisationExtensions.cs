@@ -93,7 +93,6 @@ public static class StandardisationExtensions
     {
         return term switch
         {
-            Constant c => c,
             VariableReference v => new VariableReference(GetOrAddNewIdentifier(v.Identifier)),
             Function f => new Function(f.Identifier, f.Arguments.Select(t => Standardise(t, idMap)).ToArray()),
             _ => throw new ArgumentException($"Unexpected term type '{term.GetType()}' encountered", nameof(term)),

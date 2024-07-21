@@ -187,16 +187,16 @@ public static class SentenceFactory
             if (expression is MemberExpression memberExpr
                 && typeof(TDomain).IsAssignableFrom(memberExpr.Expression?.Type)) // BUG-MINOR: Should check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
             {
-                // TElement-valued property access of the domain is interpreted as a constant.
-                term = new Constant(new MemberConstantIdentifier(memberExpr.Member));
+                // TElement-valued property access of the domain is interpreted as a zero-arity function.
+                term = new Function(new MemberConstantIdentifier(memberExpr.Member));
                 return true;
             }
             else if (expression is MethodCallExpression methodCallExpr
                 && typeof(TDomain).IsAssignableFrom(methodCallExpr.Object?.Type) // BUG-MINOR: Should check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
                 && methodCallExpr.Arguments.Count == 0)
             {
-                // TElement-valued parameterless method call of the domain is interpreted as a constant.
-                term = new Constant(new MemberConstantIdentifier(methodCallExpr.Method));
+                // TElement-valued parameterless method call of the domain is interpreted as a zero-arity function.
+                term = new Function(new MemberConstantIdentifier(methodCallExpr.Method));
                 return true;
             }
         }

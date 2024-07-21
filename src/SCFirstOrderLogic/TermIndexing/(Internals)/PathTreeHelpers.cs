@@ -24,7 +24,6 @@ internal static class PathTreeHelpers
         return term switch
         {
             Function function => new PathTreeFunctionNodeKey(function.Identifier, function.Arguments.Count),
-            Constant constant => new PathTreeConstantNodeKey(constant.Identifier),
             VariableReference variable => new PathTreeVariableNodeKey((int)variable.Identifier),
             _ => throw new ArgumentException("Unrecognised term type", nameof(term))
         };

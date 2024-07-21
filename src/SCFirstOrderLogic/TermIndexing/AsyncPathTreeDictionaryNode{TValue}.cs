@@ -95,7 +95,7 @@ public sealed class AsyncPathTreeDictionaryNode<TValue> : IAsyncPathTreeParamete
 
     /// <summary>
     /// An <see cref="IAsyncPathTreeArgumentNode{TValue}"/> that represents a term element that has no children -
-    /// a variable reference, a constant, or a function with no parameters.
+    /// a variable reference or a function with no parameters.
     /// </summary>
     private sealed class LeafNode : IAsyncPathTreeArgumentNode<TValue>
     {

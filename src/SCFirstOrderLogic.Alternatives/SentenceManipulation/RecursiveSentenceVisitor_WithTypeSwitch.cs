@@ -162,9 +162,6 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : ISentenceVisitor
     {
         switch (term)
         {
-            case Constant constant:
-                Visit(constant);
-                break;
             case VariableReference variable:
                 Visit(variable);
                 break;
@@ -174,15 +171,6 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : ISentenceVisitor
             default:
                 throw new ArgumentException($"Unsupported Term type '{term.GetType()}'", nameof(term));
         }
-    }
-
-    /// <summary>
-    /// Visits a <see cref="Constant"/> instance.
-    /// The default implementation doesn't do anything.
-    /// </summary>
-    /// <param name="term">The constant to visit.</param>
-    public virtual void Visit(Constant constant)
-    {
     }
 
     /// <summary>

@@ -237,7 +237,7 @@ public class SentenceParser
             else
             {
                 // identifier doesn't match any variable in scope - interpret as a constant
-                return new Constant(identifier);
+                return new Function(identifier);
             }
         }
 

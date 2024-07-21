@@ -10,8 +10,8 @@ public class UnifierTests
     private static Function Father(Term child) => new(nameof(Father), child);
     private static Predicate Knows(Term knower, Term known) => new(nameof(Knows), knower, known);
 
-    private static readonly Constant john = new("John");
-    private static readonly Constant jane = new("Jane");
+    private static readonly Function john = new("John");
+    private static readonly Function jane = new("Jane");
     private static readonly VariableDeclaration x = new(nameof(x));
     private static readonly VariableDeclaration y = new(nameof(y));
     private static readonly VariableDeclaration a = new(nameof(a));

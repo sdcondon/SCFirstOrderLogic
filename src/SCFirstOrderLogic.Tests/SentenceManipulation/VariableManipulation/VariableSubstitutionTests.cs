@@ -21,46 +21,46 @@ public static class VariableSubstitutionTests
             new(
                 X: new(new Dictionary<VariableReference, Term>()
                 {
-                    [new VariableReference("V")] = new Constant("C")
+                    [new VariableReference("V")] = new Function("C")
                 }),
                 Y: new(new Dictionary<VariableReference, Term>()
                 {
-                    [new VariableReference("V")] = new Constant("C")
+                    [new VariableReference("V")] = new Function("C")
                 }),
                 ExpectedEquality: true),
 
             new(
                 X: new(new Dictionary<VariableReference, Term>()
                 {
-                    [new VariableReference("V")] = new Constant("C1")
+                    [new VariableReference("V")] = new Function("C1")
                 }),
                 Y: new(new Dictionary<VariableReference, Term>()
                 {
-                    [new VariableReference("V")] = new Constant("C2")
+                    [new VariableReference("V")] = new Function("C2")
                 }),
                 ExpectedEquality: false),
 
             new(
                 X: new(new Dictionary<VariableReference, Term>()
                 {
-                    [new VariableReference("V1")] = new Constant("C1")
+                    [new VariableReference("V1")] = new Function("C1")
                 }),
                 Y: new(new Dictionary<VariableReference, Term>()
                 {
-                    [new VariableReference("V1")] = new Constant("C1"),
-                    [new VariableReference("V2")] = new Constant("C2")
+                    [new VariableReference("V1")] = new Function("C1"),
+                    [new VariableReference("V2")] = new Function("C2")
                 }),
                 ExpectedEquality: false),
 
             new(
                 X: new(new Dictionary<VariableReference, Term>()
                 {
-                    [new VariableReference("V2")] = new Constant("C2"),
-                    [new VariableReference("V1")] = new Constant("C1"),   
+                    [new VariableReference("V2")] = new Function("C2"),
+                    [new VariableReference("V1")] = new Function("C1"),   
                 }),
                 Y: new(new Dictionary<VariableReference, Term>()
                 {
-                    [new VariableReference("V1")] = new Constant("C1")
+                    [new VariableReference("V1")] = new Function("C1")
                 }),
                 ExpectedEquality: false),
         ])

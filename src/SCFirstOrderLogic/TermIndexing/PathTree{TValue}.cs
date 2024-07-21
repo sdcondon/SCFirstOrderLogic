@@ -264,12 +264,6 @@ public class PathTree<TValue>
 
         public TermAdditionVisitor(Term term, TValue value) => (this.term, this.value) = (term, value);
 
-        public void Visit(Constant constant, IPathTreeParameterNode<TValue> state)
-        {
-            var node = state.GetOrAddChild(new PathTreeConstantNodeKey(constant.Identifier));
-            node.AddValue(term, value);
-        }
-
         public void Visit(Function function, IPathTreeParameterNode<TValue> state)
         {
             var functionArgCount = function.Arguments.Count;

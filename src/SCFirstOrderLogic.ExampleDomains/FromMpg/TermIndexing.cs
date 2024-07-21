@@ -10,10 +10,10 @@ namespace SCFirstOrderLogic.TestProblems.FromMpg;
 /// </summary>
 public static class TermIndexingExample
 {
-    public static readonly Constant A = new(nameof(A));
-    public static readonly Constant B = new(nameof(B));
-    public static readonly Constant C = new(nameof(C));
-    public static readonly Constant D = new(nameof(D));
+    public static readonly Function A = new(nameof(A));
+    public static readonly Function B = new(nameof(B));
+    public static readonly Function C = new(nameof(C));
+    public static readonly Function D = new(nameof(D));
 
     public static Function F(Term x, Term y) => new(nameof(F), x, y);
     public static Function G(Term x, Term y) => new(nameof(G), x, y);

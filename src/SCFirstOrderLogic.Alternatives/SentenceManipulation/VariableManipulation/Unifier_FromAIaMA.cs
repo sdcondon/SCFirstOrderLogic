@@ -78,7 +78,6 @@ public static class Unifier_FromAIaMA
     {
         return (x, y) switch
         {
-            (Constant cx, Constant cy) => cx.Identifier.Equals(cy.Identifier),
             (VariableReference vx, VariableReference vy) => vx.Declaration.Identifier.Equals(vy.Declaration.Identifier),
             (Operator ox, Operator oy) => ox.Identifier.Equals(oy.Identifier),
             (List<object> lx, List<object> ly) => lx.Count == 0 && ly.Count == 0, // NB: Important aspect of this implementation is that empty lists are considered equal
@@ -107,7 +106,7 @@ public static class Unifier_FromAIaMA
             Negation => true,
             Predicate => true,
             UniversalQuantification => true,
-            _ => false // e.g. Constant, VariableReference or List<object>..
+            _ => false // e.g. VariableReference or List<object>..
         };
     }
 
@@ -125,7 +124,7 @@ public static class Unifier_FromAIaMA
             Negation => "¬",
             Predicate p => p.Identifier,
             UniversalQuantification => "∀",
-            _ => throw new ArgumentException("Arg is not a compound", nameof(x)) // e.g. Constant, VariableReference or List<object>..
+            _ => throw new ArgumentException("Arg is not a compound", nameof(x)) // e.g. VariableReference or List<object>..
         });
     }
 
@@ -142,7 +141,7 @@ public static class Unifier_FromAIaMA
             Negation n => n.Sentence,
             Predicate p => p.Arguments.ToList<object>(),
             UniversalQuantification uq => uq.Sentence,
-            _ => throw new ArgumentException("Arg is not a compound", nameof(x)) // e.g. Constant, VariableReference or List<object>..
+            _ => throw new ArgumentException("Arg is not a compound", nameof(x)) // e.g. VariableReference or List<object>..
         };
     }
 

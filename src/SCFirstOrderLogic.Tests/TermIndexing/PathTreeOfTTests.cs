@@ -6,8 +6,8 @@ namespace SCFirstOrderLogic.TermIndexing;
 
 public static class PathTreeOfTTests
 {
-    private static readonly Constant C1 = new("C1");
-    private static readonly Constant C2 = new("C2");
+    private static readonly Function C1 = new("C1");
+    private static readonly Function C2 = new("C2");
 
     private static Term F(params Term[] a) => new Function(nameof(F), a);
 

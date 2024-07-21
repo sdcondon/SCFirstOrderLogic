@@ -20,16 +20,10 @@ internal class DiscriminationTreeNodeKeyTransformation
     {
         return term switch
         {
-            Constant constant => ApplyTo(constant),
             VariableReference variable => ApplyTo(variable),
             Function function => ApplyTo(function),
             _ => throw new ArgumentException($"Unrecognised Term type '{term.GetType()}'", nameof(term))
         };
-    }
-
-    public IEnumerable<IDiscriminationTreeNodeKey> ApplyTo(Constant constant)
-    {
-        yield return new DiscriminationTreeConstantNodeKey(constant.Identifier);
     }
 
     public IEnumerable<IDiscriminationTreeNodeKey> ApplyTo(Function function)

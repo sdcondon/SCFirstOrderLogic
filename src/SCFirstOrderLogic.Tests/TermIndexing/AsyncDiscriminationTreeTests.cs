@@ -3,7 +3,6 @@ using FlUnit;
 using System.Collections.Generic;
 using System.Linq;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
-using ConstantNodeKey = SCFirstOrderLogic.TermIndexing.DiscriminationTreeConstantNodeKey;
 using FunctionNodeKey = SCFirstOrderLogic.TermIndexing.DiscriminationTreeFunctionNodeKey;
 using INodeKey = SCFirstOrderLogic.TermIndexing.IDiscriminationTreeNodeKey;
 using VariableNodeKey = SCFirstOrderLogic.TermIndexing.DiscriminationTreeVariableNodeKey;
@@ -12,8 +11,8 @@ namespace SCFirstOrderLogic.TermIndexing;
 
 public static class AsyncDiscriminationTreeTests
 {
-    private static readonly Constant C1 = new(nameof(C1));
-    private static readonly Constant C2 = new(nameof(C2));
+    private static readonly Function C1 = new(nameof(C1));
+    private static readonly Function C2 = new(nameof(C2));
 
     private static Function F(params Term[] a) => new(nameof(F), a);
 
@@ -26,7 +25,7 @@ public static class AsyncDiscriminationTreeTests
                 NewTerm: C1,
                 ExpectedRootChildren: new()
                 {
-                    [new ConstantNodeKey("C1")] = new { Value = C1 },
+                    [new FunctionNodeKey("C1", 0)] = new { Value = C1 },
                 }),
 
             new(
@@ -39,7 +38,7 @@ public static class AsyncDiscriminationTreeTests
                         Children = new Dictionary<INodeKey, object>
                         {
                             [new VariableNodeKey(0)] = new { Value = F(X) },
-                            [new ConstantNodeKey("C1")] = new { Value = F(C1) },
+                            [new FunctionNodeKey("C1", 0)] = new { Value = F(C1) },
                         }
                     },
                 }),
@@ -57,8 +56,8 @@ public static class AsyncDiscriminationTreeTests
                             { 
                                 Children = new Dictionary<INodeKey, object>
                                 {
-                                    [new ConstantNodeKey("C1")] = new { Value = F(X, C1) },
-                                    [new ConstantNodeKey("C2")] = new { Value = F(X, C2) },
+                                    [new FunctionNodeKey("C1", 0)] = new { Value = F(X, C1) },
+                                    [new FunctionNodeKey("C2", 0)] = new { Value = F(X, C2) },
                                 }
                             },
                         }
@@ -78,7 +77,7 @@ public static class AsyncDiscriminationTreeTests
                             {
                                 Children = new Dictionary<INodeKey, object>
                                 {
-                                    [new ConstantNodeKey("C1")] = new
+                                    [new FunctionNodeKey("C1", 0)] = new
                                     {
                                         Children = new Dictionary<INodeKey, object>
                                         {
@@ -86,7 +85,7 @@ public static class AsyncDiscriminationTreeTests
                                             {
                                                 Children = new Dictionary<INodeKey, object>
                                                 {
-                                                    [new ConstantNodeKey("C2")] = new { Value = F(F(C1), F(C2)) },
+                                                    [new FunctionNodeKey("C2", 0)] = new { Value = F(F(C1), F(C2)) },
                                                 }
                                             },
                                         }
@@ -111,7 +110,7 @@ public static class AsyncDiscriminationTreeTests
                     {
                         Children = new Dictionary<INodeKey, object>
                         {
-                            [new ConstantNodeKey("C1")] = new { Value = new Function("F", C1) }
+                            [new FunctionNodeKey("C1", 0)] = new { Value = new Function("F", C1) }
                         }
                     },
                 }),

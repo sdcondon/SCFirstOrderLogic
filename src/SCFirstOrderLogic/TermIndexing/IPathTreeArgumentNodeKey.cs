@@ -26,16 +26,6 @@ public sealed record PathTreeFunctionNodeKey(object Identifier, int ArgumentCoun
 }
 
 /// <summary>
-/// Information about a constant, for storage against a node of a <see cref="PathTree{TValue}"/>.
-/// </summary>
-/// <param name="Identifier">The identifier of the represented constant.</param>
-public sealed record PathTreeConstantNodeKey(object Identifier) : IPathTreeArgumentNodeKey
-{
-    /// <inheritdoc/>
-    public int ChildElementCount => 0;
-}
-
-/// <summary>
 /// Information about a variable, for storage against a node of a <see cref="PathTree{TValue}"/>.
 /// </summary>
 /// <param name="Ordinal">

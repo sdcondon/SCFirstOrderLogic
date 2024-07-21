@@ -8,8 +8,8 @@ public class UnificationBenchmarks
 {
     private static Function Mother(Term child) => new("Mother", child);
     private static Predicate Knows(Term knower, Term known) => new("Knows", knower, known);
-    private static readonly Constant john = new("John");
-    private static readonly Constant jane = new("Jane");
+    private static readonly Function john = new("John");
+    private static readonly Function jane = new("Jane");
     private static readonly VariableDeclaration x = new("x");
     private static readonly VariableDeclaration y = new("y");
 

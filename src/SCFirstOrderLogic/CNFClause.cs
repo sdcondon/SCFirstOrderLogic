@@ -100,7 +100,6 @@ public class CNFClause : IEquatable<CNFClause>
 
         Term RestandardiseTerm(Term term) => term switch
         {
-            Constant c => c,
             VariableReference v => new VariableReference(GetOrAddNewIdentifier((StandardisedVariableIdentifier)v.Identifier)),
             Function f => new Function(f.Identifier, f.Arguments.Select(RestandardiseTerm).ToArray()),
             _ => throw new ArgumentException($"Unexpected term type '{term.GetType()}' encountered", nameof(term)),

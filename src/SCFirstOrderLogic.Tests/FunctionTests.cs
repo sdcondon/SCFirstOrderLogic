@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic;
 
 public static class FunctionTests
 {
-    private static Constant C => new(nameof(C));
+    private static Function C => new(nameof(C));
     private static VariableReference X => new(nameof(X));
     private static Function F(params Term[] t) => new(nameof(F), t);
 

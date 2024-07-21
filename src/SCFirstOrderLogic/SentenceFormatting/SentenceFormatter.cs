@@ -190,19 +190,10 @@ public class SentenceFormatter
     public string Format(Term term) => term switch
     {
         null => throw new ArgumentNullException(nameof(term)),
-        Constant constant => Format(constant),
         VariableReference variable => Format(variable),
         Function function => Format(function),
         _ => throw new ArgumentException($"Unsupported Term type '{term.GetType()}'")
     };
-
-    /// <summary>
-    /// Returns a string representation of a given <see cref="Constant"/> instance.
-    /// </summary>
-    /// <param name="constant">The constant to be formatted.</param>
-    /// <returns>A string representation of the given constant.</returns>
-    public string Format(Constant constant) =>
-        Format(constant.Identifier);
 
     /// <summary>
     /// Returns a string representation of a given <see cref="VariableReference"/> instance.

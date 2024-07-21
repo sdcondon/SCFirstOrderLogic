@@ -35,11 +35,11 @@ public static class SentenceParserTests
 
             new(
                 Sentence: "P(x) ∧ Q(y)",
-                ExpectedResult: new Conjunction(new Predicate("P", new Constant("x")), new Predicate("Q", new Constant("y")))),
+                ExpectedResult: new Conjunction(new Predicate("P", new Function("x")), new Predicate("Q", new Function("y")))),
 
             new(
                 Sentence: "P(x) ∨ ¬Q(y)",
-                ExpectedResult: new Disjunction(new Predicate("P", new Constant("x")), new Negation(new Predicate("Q", new Constant("y"))))),
+                ExpectedResult: new Disjunction(new Predicate("P", new Function("x")), new Negation(new Predicate("Q", new Function("y"))))),
 
             new(
                 Sentence: "P() ∨ ¬[Q() ∧ R()]",
@@ -47,15 +47,15 @@ public static class SentenceParserTests
 
             new(
                 Sentence: "P(x) ⇒ Q(y)",
-                ExpectedResult: new Implication(new Predicate("P", new Constant("x")), new Predicate("Q", new Constant("y")))),
+                ExpectedResult: new Implication(new Predicate("P", new Function("x")), new Predicate("Q", new Function("y")))),
 
             new(
                 Sentence: "P(x) ⇔ Q(y)",
-                ExpectedResult: new Equivalence(new Predicate("P", new Constant("x")), new Predicate("Q", new Constant("y")))),
+                ExpectedResult: new Equivalence(new Predicate("P", new Function("x")), new Predicate("Q", new Function("y")))),
 
             new(
                 Sentence: "F1() = F2(x, y)",
-                ExpectedResult: new Predicate(EqualityIdentifier.Instance, new Function("F1"), new Function("F2", new Constant("x"), new Constant("y")))),
+                ExpectedResult: new Predicate(EqualityIdentifier.Instance, new Function("F1"), new Function("F2", new Function("x"), new Function("y")))),
         ])
         .When(tc => SentenceParser.BasicParser.Parse(tc.Sentence))
         .ThenReturns()
@@ -80,7 +80,7 @@ public static class SentenceParserTests
         .Given(() => new SentenceParser(s => $"p.{s}", s => $"f.{s}", s => $"vc.{s}"))
         .When(p => p.Parse("forall x, P(F(x, C))"))
         .ThenReturns()
-        .And((_, rv) => rv.Should().Be(new UniversalQuantification(new("vc.x"), new Predicate("p.P", new Function("f.F", new VariableReference("vc.x"), new Constant("vc.C"))))));
+        .And((_, rv) => rv.Should().Be(new UniversalQuantification(new("vc.x"), new Predicate("p.P", new Function("f.F", new VariableReference("vc.x"), new Function("vc.C"))))));
 
     public static Test ParseList_PositiveTestCases => TestThat
         .GivenEachOf<ParseListTestCase>(() =>

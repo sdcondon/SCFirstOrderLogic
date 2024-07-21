@@ -7,8 +7,8 @@ namespace SCFirstOrderLogic.TermIndexing;
 
 public static class PathTreeTests
 {
-    private static readonly Constant C1 = new("C1");
-    private static readonly Constant C2 = new("C2");
+    private static readonly Function C1 = new("C1");
+    private static readonly Function C2 = new("C2");
 
     private static Function F(params Term[] a) => new(nameof(F), a);
 
@@ -21,7 +21,7 @@ public static class PathTreeTests
                 NewTerm: C1,
                 ExpectedRootChildren: new()
                 {
-                    [new PathTreeConstantNodeKey("C1")] = new
+                    [new PathTreeFunctionNodeKey("C1", 0)] = new
                     {
                         Values = new[] { KeyValuePair.Create(C1, C1) }
                     },
@@ -44,7 +44,7 @@ public static class PathTreeTests
                                     {
                                         Values = new[] { KeyValuePair.Create(F(Var(0)), F(X)) }
                                     },
-                                    [new PathTreeConstantNodeKey("C1")] = new
+                                    [new PathTreeFunctionNodeKey("C1", 0)] = new
                                     {
                                         Values = new[] { KeyValuePair.Create(F(C1), F(C1)) }
                                     },
@@ -77,11 +77,11 @@ public static class PathTreeTests
                             {
                                 Children = new Dictionary<IPathTreeArgumentNodeKey, object>
                                 {
-                                    [new PathTreeConstantNodeKey("C1")] = new
+                                    [new PathTreeFunctionNodeKey("C1", 0)] = new
                                     {
                                         Values = new[] { KeyValuePair.Create(F(Var(0), C1), F(X, C1)) }
                                     },
-                                    [new PathTreeConstantNodeKey("C2")] = new
+                                    [new PathTreeFunctionNodeKey("C2", 0)] = new
                                     {
                                         Values = new[] { KeyValuePair.Create(F(Var(0), C2), F(Y, C2)) }
                                     },
@@ -109,7 +109,7 @@ public static class PathTreeTests
                             {
                                 Children = new Dictionary<IPathTreeArgumentNodeKey, object>
                                 {
-                                    [new PathTreeConstantNodeKey("C1")] = new
+                                    [new PathTreeFunctionNodeKey("C1", 0)] = new
                                     {
                                         Values = new[] { KeyValuePair.Create(new Function("F", C1), new Function("F", C1)) }
                                     }
