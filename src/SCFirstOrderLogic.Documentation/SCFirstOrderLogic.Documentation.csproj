@@ -19,7 +19,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.7" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
     <PackageReference Include="SCFirstOrderLogic.ExampleDomains" Version="1.0.0" />
-    <PackageReference Include="SCFirstOrderLogic.Inference.Basic" Version="1.0.0" />
+    <PackageReference Include="SCFirstOrderLogic.Inference.Basic" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>

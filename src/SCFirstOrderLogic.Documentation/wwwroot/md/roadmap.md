@@ -5,16 +5,14 @@ I don't intend to add any particularly powerful or specialised inference logic t
 
 Priorities at the time of writing:
 
-* *Nothing at the moment - working on other projects.*
+* A feature vector index implementation in the TermIndexing namespace of the core package.
+* A linear resolution strategy in the Inference.Basic package.
 
 Further ahead:
 
-* Next up is likely to be more indexing stuff - specifically, to facilitate finding subsuming/subsumed clauses.
-  Might go very old-school and build on discrimination/path trees for this, but will probably at least try to go slightly less old-school and have a crack at a feature vector index implementation.
-* Improvements to inference algorithms. As mentioned above and elsewhere, this package is more about the fundamentals than especially powerful inference logic - but we should probably cover at least some of the relatively fundamental problems and techniques - the inference demo is rather underwhelming at the moment.. For example, some or all of:
-  * Create a clause store or two that leverages subsumption.
+* Some improvements to the inference algorithms in Inference.Basic package.
+  As mentioned above and elsewhere, this package is more about the fundamentals than especially powerful inference logic, but we should probably cover at least some of the relatively fundamental problems and techniques - the inference demo is rather underwhelming at the moment.
+  For example, some or all of:
+  * Some clause store implementations that leverage subsumption
   * Handling of loops when chaining
-  * More flexibility when chaining. Obviously the current implementations are very constrained in their consideration of clauses.
-  * A linear resolution strategy
-
-
+  * More flexibility when chaining. The current implementations are very constrained in their consideration of clauses.
