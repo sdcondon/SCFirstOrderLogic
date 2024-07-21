@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
@@ -20,8 +19,8 @@ public static class AsyncDiscriminationTreeTests
 
     // Discrimination trees are a well-known data structure - so I'm asserting that asserting on the internal structure is valid. Probably.
     public static Test AddBehaviour_Positive => TestThat
-        .GivenEachOf(() => new PositiveAddTestCase[]
-        {
+        .GivenEachOf<PositiveAddTestCase>(() =>
+        [
             new(
                 CurrentTerms: [],
                 NewTerm: C1,
@@ -116,7 +115,7 @@ public static class AsyncDiscriminationTreeTests
                         }
                     },
                 }),
-        })
+        ])
         .WhenAsync(async tc =>
         {
             var root = new AsyncDiscriminationTreeDictionaryNode<Term>();
@@ -137,8 +136,8 @@ public static class AsyncDiscriminationTreeTests
         .ThenReturns((tc, rv) => rv.Should().BeEquivalentTo(tc.ExpectedRootChildren));
 
     public static Test AddBehaviour_Negative => TestThat
-        .GivenEachOf(() => new NegativeAddTestCase[]
-        {
+        .GivenEachOf<NegativeAddTestCase>(() =>
+        [
             new(
                 CurrentTerms: [C1],
                 NewTerm: C1),
@@ -150,7 +149,7 @@ public static class AsyncDiscriminationTreeTests
             new(
                 CurrentTerms: [F(C1)],
                 NewTerm: F(C1)),
-        })
+        ])
         .WhenAsync(async tc =>
         {
             var tree = new AsyncDiscriminationTree(new AsyncDiscriminationTreeDictionaryNode<Term>(), tc.CurrentTerms);
@@ -159,8 +158,8 @@ public static class AsyncDiscriminationTreeTests
         .ThenThrows();
 
     public static Test ContainsBehaviour => TestThat
-        .GivenEachOf(() => new ContainsTestCase[]
-        {
+        .GivenEachOf<ContainsTestCase>(() =>
+        [
             new(
                 StoredTerms: [C1, C2, X],
                 QueryTerm: C1,
@@ -200,7 +199,7 @@ public static class AsyncDiscriminationTreeTests
                 StoredTerms: [F(X, C2)],
                 QueryTerm: F(C1, Y),
                 ExpectedReturnValue: false),
-        })
+        ])
         .WhenAsync(async tc =>
         {
             var tree = new AsyncDiscriminationTree(new AsyncDiscriminationTreeDictionaryNode<Term>(), tc.StoredTerms);

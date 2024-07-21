@@ -18,8 +18,8 @@ public static class DiscriminationTreeTests
 
     // Discrimination trees are a well-known data structure - so I'm asserting that asserting on the internal structure is valid. Probably.
     public static Test AddBehaviour_Positive => TestThat
-        .GivenEachOf(() => new PositiveAddTestCase[]
-        {
+        .GivenEachOf<PositiveAddTestCase>(() =>
+        [
             new(
                 CurrentTerms: [],
                 NewTerm: C1,
@@ -114,7 +114,7 @@ public static class DiscriminationTreeTests
                         }
                     },
                 }),
-        })
+        ])
         .When(tc =>
         {
             var root = new DiscriminationTreeDictionaryNode<Term>();
@@ -125,8 +125,8 @@ public static class DiscriminationTreeTests
         .ThenReturns((tc, rv) => rv.Should().BeEquivalentTo(tc.ExpectedRootChildren));
 
     public static Test AddBehaviour_Negative => TestThat
-        .GivenEachOf(() => new NegativeAddTestCase[]
-        {
+        .GivenEachOf<NegativeAddTestCase>(() =>
+        [
             new(
                 CurrentTerms: [C1],
                 NewTerm: C1),
@@ -138,7 +138,7 @@ public static class DiscriminationTreeTests
             new(
                 CurrentTerms: [F(C1)],
                 NewTerm: F(C1)),
-        })
+        ])
         .When(tc =>
         {
             var tree = new DiscriminationTree(tc.CurrentTerms);
@@ -147,8 +147,8 @@ public static class DiscriminationTreeTests
         .ThenThrows();
 
     public static Test ContainsBehaviour => TestThat
-        .GivenEachOf(() => new ContainsTestCase[]
-        {
+        .GivenEachOf<ContainsTestCase>(() =>
+        [
             new( // match to constant
                 StoredTerms: [C1, C2, X],
                 QueryTerm: C1,
@@ -188,7 +188,7 @@ public static class DiscriminationTreeTests
                 StoredTerms: [F(X, C2)],
                 QueryTerm: F(C1, Y),
                 ExpectedReturnValue: false),
-        })
+        ])
         .When(tc =>
         {
             var tree = new DiscriminationTree(tc.StoredTerms);
@@ -198,8 +198,8 @@ public static class DiscriminationTreeTests
         .And((tc, rv) => rv.Should().Be(tc.ExpectedReturnValue));
 
     public static Test GetInstancesBehaviour => TestThat
-        .GivenEachOf<GetTestCase>(() => new GetTestCase[]
-        {
+        .GivenEachOf<GetTestCase>(() =>
+        [
             new( // Exact match
                 StoredTerms: [C1, C2, X],
                 QueryTerm: C1,
@@ -229,7 +229,7 @@ public static class DiscriminationTreeTests
                 StoredTerms: [F(X, C2)],
                 QueryTerm: F(C1, Y),
                 ExpectedReturnValue: []),
-        })
+        ])
         .When(tc =>
         {
             var tree = new DiscriminationTree(tc.StoredTerms);
@@ -239,8 +239,8 @@ public static class DiscriminationTreeTests
         .And((tc, rv) => rv.Should().BeEquivalentTo(tc.ExpectedReturnValue));
 
     public static Test GetGeneralisationsBehaviour => TestThat
-        .GivenEachOf<GetTestCase>(() => new GetTestCase[]
-        {
+        .GivenEachOf<GetTestCase>(() =>
+        [
             new(
                 StoredTerms: [C1, C2, X],
                 QueryTerm: C1,
@@ -275,7 +275,7 @@ public static class DiscriminationTreeTests
                 StoredTerms: [F(X, C2)],
                 QueryTerm: F(C1, Y),
                 ExpectedReturnValue: []),
-        })
+        ])
         .When(tc =>
         {
             var tree = new DiscriminationTree(tc.StoredTerms);

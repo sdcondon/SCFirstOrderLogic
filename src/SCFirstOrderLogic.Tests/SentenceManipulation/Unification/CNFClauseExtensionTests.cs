@@ -8,23 +8,23 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification;
 public static class CNFClauseExtensionTests
 {
     public static Test UnifiesWithAnyOfBehaviour => TestThat
-        .GivenEachOf(() => new UnifiesWithAnyOfTestCase[]
-        {
+        .GivenEachOf<UnifiesWithAnyOfTestCase>(() =>
+        [
             new (
                 Clause: new CNFClause(P(X, Y)),
-                Clauses: new CNFClause[] { },
+                Clauses: [],
                 ExpectedResult: false),
 
             new (
                 Clause: new CNFClause(P(X, Y)),
-                Clauses: new CNFClause[] { new(P(A, B)) },
+                Clauses: [new(P(A, B))],
                 ExpectedResult: true),
 
             new (
                 Clause: new CNFClause(P(X, Y) | Q(X, Y)),
-                Clauses: new CNFClause[] { new CNFClause(P(A, B) | Q(A, B)) },
+                Clauses: [new CNFClause(P(A, B) | Q(A, B))],
                 ExpectedResult: true),
-        })
+        ])
         .When(tc => tc.Clause.UnifiesWithAnyOf(tc.Clauses))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.ExpectedResult));
 

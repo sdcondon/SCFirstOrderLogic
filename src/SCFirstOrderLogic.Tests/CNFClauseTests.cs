@@ -18,8 +18,8 @@ public static class CNFClauseTests
     private record EqualityTestCase(CNFClause X, CNFClause Y, bool ExpectedEquality);
 
     public static Test EqualityBehaviour => TestThat
-        .GivenEachOf(() => new EqualityTestCase[]
-        {
+        .GivenEachOf<EqualityTestCase>(() =>
+        [
             new(
                 X: new(Array.Empty<Literal>()),
                 Y: new(Array.Empty<Literal>()),
@@ -49,7 +49,7 @@ public static class CNFClauseTests
                 X: new(P | Q | R),
                 Y: new(P | Q),
                 ExpectedEquality: false),
-        })
+        ])
         .When(tc => (Equality: tc.X.Equals(tc.Y), HashCodeEquality: tc.X.GetHashCode() == tc.Y.GetHashCode()))
         .ThenReturns()
         .And((tc, rv) => rv.Equality.Should().Be(tc.ExpectedEquality))

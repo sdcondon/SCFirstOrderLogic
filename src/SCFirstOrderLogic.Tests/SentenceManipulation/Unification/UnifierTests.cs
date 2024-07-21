@@ -18,8 +18,8 @@ public class UnifierTests
     private static readonly VariableDeclaration b = new(nameof(b));
 
     public static Test TryCreatePositive => TestThat
-        .GivenEachOf(() => new TryCreatePositiveTestCase<Predicate>[]
-        {
+        .GivenEachOf<TryCreatePositiveTestCase<Predicate>>(() =>
+        [
             new (
                 Input1: Knows(john, x),
                 Input2: Knows(john, jane),
@@ -68,7 +68,7 @@ public class UnifierTests
                     [y] = x,
                 },
                 ExpectedUnified: Knows(john, john)),
-        })
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
@@ -81,8 +81,8 @@ public class UnifierTests
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
     public static Test TryCreateNegative => TestThat
-        .GivenEachOf(() => new TryCreateNegativeTestCase<Predicate>[]
-        {
+        .GivenEachOf<TryCreateNegativeTestCase<Predicate>>(() =>
+        [
             new (
                 Input1: Knows(john, x),
                 Input2: Knows(x, jane)),
@@ -94,7 +94,7 @@ public class UnifierTests
             new ( // non-trivial occurs check failure
                 Input1: Knows(x, Mother(x)),
                 Input2: Knows(Father(y), y)),
-        })
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
@@ -105,8 +105,8 @@ public class UnifierTests
         .And((tc, r) => r.unifier.Should().BeNull());
 
     public static Test TryUpdatePositive => TestThat
-        .GivenEachOf(() => new TryUpdatePositiveTestCase<Predicate>[]
-        {
+        .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
+        [
             new (
                 Input1: Knows(x, y),
                 Input2: Knows(john, jane),
@@ -149,7 +149,7 @@ public class UnifierTests
                     [y] = b,
                 },
                 ExpectedUnified: Knows(a, b)),
-        })
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
@@ -164,8 +164,8 @@ public class UnifierTests
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
     public static Test TryUpdateRefPositive => TestThat
-        .GivenEachOf(() => new TryUpdatePositiveTestCase<Predicate>[]
-        {
+        .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
+        [
             new (
                 Input1: Knows(x, y),
                 Input2: Knows(john, jane),
@@ -208,7 +208,7 @@ public class UnifierTests
                     [y] = b,
                 },
                 ExpectedUnified: Knows(a, b)),
-        })
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution unifier) result;
@@ -222,8 +222,8 @@ public class UnifierTests
         .And((tc, r) => r.unifier.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
     public static Test TryUpdateNegative => TestThat
-        .GivenEachOf(() => new TryUpdateNegativeTestCase<Predicate>[]
-        {
+        .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
+        [
             new (
                 Input1: Knows(x, y),
                 Input2: Knows(john, jane),
@@ -239,7 +239,7 @@ public class UnifierTests
                 {
                     [x] = jane,
                 }),
-        })
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
@@ -252,8 +252,8 @@ public class UnifierTests
         .And((tc, r) => r.unifier.Should().BeNull());
 
     public static Test TryUpdateRefNegative => TestThat
-        .GivenEachOf(() => new TryUpdateNegativeTestCase<Predicate>[]
-        {
+        .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
+        [
             new (
                 Input1: Knows(x, y),
                 Input2: Knows(john, jane),
@@ -269,7 +269,7 @@ public class UnifierTests
                 {
                     [x] = jane,
                 }),
-        })
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution unifier) result;
@@ -282,8 +282,8 @@ public class UnifierTests
         .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialSubstitutions));
 
     public static Test TryCreatePositive_Terms => TestThat
-        .GivenEachOf(() => new TryCreatePositiveTestCase<Term>[]
-        {
+        .GivenEachOf<TryCreatePositiveTestCase<Term>>(() =>
+        [
             new (
                 Input1: x,
                 Input2: Mother(john),
@@ -292,7 +292,7 @@ public class UnifierTests
                     [x] = Mother(john),
                 },
                 ExpectedUnified: Mother(john)),
-        })
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;

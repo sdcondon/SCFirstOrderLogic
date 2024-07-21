@@ -7,8 +7,8 @@ namespace SCFirstOrderLogic.SentenceCreation;
 public static class SentenceParserTests
 {
     public static Test Parse_PositiveTestCases => TestThat
-        .GivenEachOf(() => new ParseTestCase[]
-        {
+        .GivenEachOf<ParseTestCase>(() =>
+        [
             new(
                 Sentence: "P()",
                 ExpectedResult: new Predicate("P")),
@@ -56,7 +56,7 @@ public static class SentenceParserTests
             new(
                 Sentence: "F1() = F2(x, y)",
                 ExpectedResult: new Predicate(EqualityIdentifier.Instance, new Function("F1"), new Function("F2", new Constant("x"), new Constant("y")))),
-        })
+        ])
         .When(tc => SentenceParser.BasicParser.Parse(tc.Sentence))
         .ThenReturns()
         .And((ParseTestCase tc, Sentence rv) => rv.Should().Be(tc.ExpectedResult));
@@ -83,8 +83,8 @@ public static class SentenceParserTests
         .And((_, rv) => rv.Should().Be(new UniversalQuantification(new("vc.x"), new Predicate("p.P", new Function("f.F", new VariableReference("vc.x"), new Constant("vc.C"))))));
 
     public static Test ParseList_PositiveTestCases => TestThat
-        .GivenEachOf(() => new ParseListTestCase[]
-        {
+        .GivenEachOf<ParseListTestCase>(() =>
+        [
             new(
                 Sentences: string.Empty,
                 Expectation: Array.Empty<Sentence>()),
@@ -116,7 +116,7 @@ public static class SentenceParserTests
             new(
                 Sentences: " P() ; Q() ; ",
                 Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
-        })
+        ])
         .When(tc => SentenceParser.BasicParser.ParseList(tc.Sentences))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Equal(tc.Expectation));

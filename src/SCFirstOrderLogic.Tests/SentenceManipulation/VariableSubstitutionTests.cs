@@ -11,8 +11,8 @@ public static class VariableSubstitutionTests
     private record EqualityTestCase(VariableSubstitution X, VariableSubstitution Y, bool ExpectedEquality);
 
     public static Test EqualityBehaviour => TestThat
-        .GivenEachOf(() => new EqualityTestCase[]
-        {
+        .GivenEachOf<EqualityTestCase>(() =>
+        [
             new(
                 X: new([]),
                 Y: new([]),
@@ -63,7 +63,7 @@ public static class VariableSubstitutionTests
                     [new VariableReference("V1")] = new Constant("C1")
                 }),
                 ExpectedEquality: false),
-        })
+        ])
         .When(tc => (Equality: tc.X.Equals(tc.Y), HashCodeEquality: tc.X.GetHashCode() == tc.Y.GetHashCode()))
         .ThenReturns()
         .And((tc, rv) => rv.Equality.Should().Be(tc.ExpectedEquality))

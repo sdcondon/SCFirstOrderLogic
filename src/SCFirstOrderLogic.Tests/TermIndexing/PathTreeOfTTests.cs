@@ -12,8 +12,8 @@ public static class PathTreeOfTTests
     private static Term F(params Term[] a) => new Function(nameof(F), a);
 
     public static Test ContainsBehaviour => TestThat
-        .GivenEachOf(() => new TryGetExactTestCase<int>[]
-        {
+        .GivenEachOf<TryGetExactTestCase<int>>(() =>
+        [
             new(
                 Contents:
                 [
@@ -40,7 +40,7 @@ public static class PathTreeOfTTests
                 ],
                 QueryTerm: F(C1, C2),
                 ExpectedReturnValue: false),
-        })
+        ])
         .When(tc =>
         {
             var tree = new PathTree<int>(tc.Contents);

@@ -17,34 +17,34 @@ public class OperableSentenceFactoryTests
     private static OperableFunction UnaryFunction(OperableTerm term) => new Function(nameof(UnaryFunction), term);
 
     public static Test CreationAndCasting => TestThat
-        .GivenEachOf(() => new[]
-        {
-            new TestCase(
+        .GivenEachOf<TestCase>(() =>
+        [
+            new(
                 SentenceSurrogate: GroundPredicate1 & UnaryPredicate(Constant1),
                 ExpectedSentence: new Conjunction(
                     new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()),
                     new Predicate(nameof(UnaryPredicate), new Constant(nameof(Constant1))))),
 
-            new TestCase(
+            new(
                 SentenceSurrogate: GroundPredicate1 | GroundPredicate2,
                 ExpectedSentence: new Disjunction(
                     new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()),
                     new Predicate(nameof(GroundPredicate2), Array.Empty<Term>()))),
 
-            new TestCase(
+            new(
                 SentenceSurrogate: Constant1 == Constant2,
                 ExpectedSentence: new Predicate(
                     EqualityIdentifier.Instance,
                     new Constant(nameof(Constant1)),
                     new Constant(nameof(Constant2)))),
 
-            new TestCase(
+            new(
                 SentenceSurrogate: Iff(GroundPredicate1, GroundPredicate2),
                 ExpectedSentence: new Equivalence(
                     new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()),
                     new Predicate(nameof(GroundPredicate2), Array.Empty<Term>()))),
 
-            new TestCase(
+            new(
                 SentenceSurrogate: ThereExists(X, UnaryFunction(X) == Constant1),
                 ExpectedSentence: new ExistentialQuantification(
                     new VariableDeclaration("X"),
@@ -53,18 +53,18 @@ public class OperableSentenceFactoryTests
                         new Function(nameof(UnaryFunction), new[] { new VariableReference(new VariableDeclaration("X")) }),
                         new Constant(nameof(Constant1))))),
 
-            new TestCase(
+            new(
                 SentenceSurrogate: If(GroundPredicate1, GroundPredicate2),
                 ExpectedSentence: new Implication(
                     new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()),
                     new Predicate(nameof(GroundPredicate2), Array.Empty<Term>()))),
 
-            new TestCase(
+            new(
                 SentenceSurrogate: !GroundPredicate1,
                 ExpectedSentence: new Negation(
                     new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()))),
 
-            new TestCase(
+            new(
                 SentenceSurrogate: ForAll(X, UnaryFunction(X) == Constant1),
                 ExpectedSentence: new UniversalQuantification(
                     new VariableDeclaration("X"),
@@ -72,7 +72,7 @@ public class OperableSentenceFactoryTests
                         EqualityIdentifier.Instance,
                         new Function(nameof(UnaryFunction), new[] { new VariableReference(new VariableDeclaration("X")) }),
                         new Constant(nameof(Constant1))))),
-        })
+        ])
         .When(tc => (Sentence)tc.SentenceSurrogate)
         .ThenReturns((tc, sentence) =>
         {
