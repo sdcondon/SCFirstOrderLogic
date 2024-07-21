@@ -22,5 +22,5 @@ Further ahead:
     I have kept it so far to keep notions of equality "simple" in the face of the parser allowing both (e.g.) `f` and `f()`.
     I would argue that in most cases a caller including e.g. both `f` and `f()` in parsed statements would expect the two to NOT be considered the same from an equality perspective.
     While this is easily accomplised (by using identifiers that are more than just the symbol text), I would **also** argue that the default parser using just "plain" strings as identifiers is a good, intuitive behaviour.
-    But I really want to sort it out - after all, dealing with something that should really just be a parsing concern in the model isn't a great state of affairs.
+    But I realise this is a poor excuse and (having considered it but bottled out for v6,) have decided I do want to change it - after all, dealing with something that should really just be a parsing concern in the model isn't a great state of affairs.
     So I'm likely to do this in v7 - and account for it in the parser by (tweaking the delegates that the parser ctor accepts and) splitting the `Basic` parser into two - one that just uses strings (making `f` and `f()` identical) and one that uses an identifier that encodes whether parentheses were included or not (making `f` and `f()` different).
