@@ -136,7 +136,7 @@ Notes:
 * An identifier where a term is expected is interpreted as a variable reference if a matching declaration (from a quantification) is in scope - otherwise it is interpreted as a constant.
 * All identifiers are **case sensitive**. This is, for example, something to double-check if you're seeing something interpreted as a constant that you intend as a variable reference.
 
-## Storing Knowledge and Making Inferences - SCFirstOrderLogic.Inference.Basic
+## Storing Knowledge & Making Inferences - with SCFirstOrderLogic.Inference.Basic
 
 Once you have some sentences, storing them and making inferences can be done with the aid of the types in the `SCFirstOrderLogic.Inference.Basic` package.
 This library includes a few very simple knowledge bases - one that uses forward chaining, one that uses backward chaining, and one that uses resolution.
