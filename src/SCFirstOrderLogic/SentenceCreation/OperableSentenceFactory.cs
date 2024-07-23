@@ -420,6 +420,12 @@ public static class OperableSentenceFactory
         /// </summary>
         /// <param name="function">The function to convert.</param>
         public static implicit operator Function(OperableFunction function) => new(function.Identifier, function.Arguments.Select(a => (Term)a).ToArray());
+
+        /// <summary>
+        /// Implicitly converts an <see cref="OperableFunction"/> instance to an equivalent <see cref="Term"/>.
+        /// </summary>
+        /// <param name="function">The function to convert.</param>
+        public static implicit operator Term(OperableFunction function) => new Function(function.Identifier, function.Arguments.Select(a => (Term)a).ToArray());
     }
 
     /// <summary>
