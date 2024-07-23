@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) 2021-2024 Simon Condon.
+// You may use this file in accordance with the terms of the MIT license.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,9 +11,8 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// An implementation of a feature vector index for <see cref="CNFClause"/>s. Specifically, one for which the attached values are the clauses themselves.
 /// </para>
 /// <para>
-/// Feature vector indexing is an non-perfect indexing method for CNF clauses.
-/// Specifically, for fast retrieval of the stored clauses that subsume or are subsumed by a query clause.
-/// Details of the algorithm can be found here: http://wwwlehre.dhbw-stuttgart.de/~sschulz/PAPERS/Schulz2013-FVI.pdf.
+/// Feature vector indexing is an non-perfect indexing method for clause subsumption.
+/// That is, feature vector indices can be used to store clauses in such a way that we can quickly look up the stored clauses that subsume or are subsumed by a query clause.
 /// </para>
 /// </summary>
 /// <seealso href="http://wwwlehre.dhbw-stuttgart.de/~sschulz/PAPERS/Schulz2013-FVI.pdf"/>
@@ -22,41 +23,41 @@ public class FeatureVectorIndex
     /// <summary>
     /// Initializes a new instance of the <see cref="FeatureVectorIndex"/> class.
     /// </summary>
-    /// <param name="featureSelector"></param>
-    public FeatureVectorIndex(Func<CNFClause, object> featureSelector)
+    /// <param name="featureVectorSelector"></param>
+    public FeatureVectorIndex(Func<CNFClause, IEnumerable<KeyValuePair<object, int>>> featureVectorSelector)
     {
-        actualIndex = new(featureSelector);
+        actualIndex = new(featureVectorSelector);
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FeatureVectorIndex"/> class with a specified root node.
     /// </summary>
-    /// <param name="featureSelector"></param>
+    /// <param name="featureVectorSelector"></param>
     /// <param name="root">The root node of the index.</param>
-    public FeatureVectorIndex(Func<CNFClause, object> featureSelector, IFeatureVectorIndexNode<CNFClause> root)
+    public FeatureVectorIndex(Func<CNFClause, IEnumerable<KeyValuePair<object, int>>> featureVectorSelector, IFeatureVectorIndexNode<CNFClause> root)
     {
-        actualIndex = new(featureSelector, root);
+        actualIndex = new(featureVectorSelector, root);
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FeatureVectorIndex"/> class with some initial content.
     /// </summary>
-    /// <param name="featureSelector"></param>
+    /// <param name="featureVectorSelector"></param>
     /// <param name="content">The initial content to be added to the index.</param>
-    public FeatureVectorIndex(Func<CNFClause, object> featureSelector, IEnumerable<CNFClause> content)
+    public FeatureVectorIndex(Func<CNFClause, IEnumerable<KeyValuePair<object, int>>> featureVectorSelector, IEnumerable<CNFClause> content)
     {
-        actualIndex = new(featureSelector, content.Select(c => KeyValuePair.Create(c, c)));
+        actualIndex = new(featureVectorSelector, content.Select(c => KeyValuePair.Create(c, c)));
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FeatureVectorIndex"/> class with a specified root node and some initial content.
     /// </summary>
-    /// <param name="featureSelector"></param>
+    /// <param name="featureVectorSelector"></param>
     /// <param name="root">The root node of the index.</param>
     /// <param name="content">The initial content to be added to the index.</param>
-    public FeatureVectorIndex(Func<CNFClause, object> featureSelector, IFeatureVectorIndexNode<CNFClause> root, IEnumerable<CNFClause> content)
+    public FeatureVectorIndex(Func<CNFClause, IEnumerable<KeyValuePair<object, int>>> featureVectorSelector, IFeatureVectorIndexNode<CNFClause> root, IEnumerable<CNFClause> content)
     {
-        actualIndex = new(featureSelector, root, content.Select(c => KeyValuePair.Create(c, c)));
+        actualIndex = new(featureVectorSelector, root, content.Select(c => KeyValuePair.Create(c, c)));
     }
 
     /// <summary>
@@ -72,7 +73,7 @@ public class FeatureVectorIndex
     /// <param name="clause"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public IEnumerable<CNFClause> GetSubsumingClauses(CNFClause clause) => actualIndex.GetSubsuming(clause);
+    public IEnumerable<CNFClause> GetSubsuming(CNFClause clause) => actualIndex.GetSubsuming(clause);
 
     /// <summary>
     /// 
@@ -80,5 +81,5 @@ public class FeatureVectorIndex
     /// <param name="clause"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public IEnumerable<CNFClause> GetSubsumedClauses(CNFClause clause) => actualIndex.GetSubsumed(clause);
+    public IEnumerable<CNFClause> GetSubsumed(CNFClause clause) => actualIndex.GetSubsumed(clause);
 }
