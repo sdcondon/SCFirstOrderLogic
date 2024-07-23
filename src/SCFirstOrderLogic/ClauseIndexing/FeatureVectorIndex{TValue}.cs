@@ -6,26 +6,26 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 
 /// <summary>
 /// <para>
-/// An implementation of a feature vector index for <see cref="CNFClause"/>s. Specifically, one for which the attached values are the clauses themselves.
+/// An implementation of a feature vector index for <see cref="CNFClause"/>s.
 /// </para>
 /// <para>
 /// Feature vector indexing is an non-perfect indexing method for CNF clauses.
 /// Specifically, for fast retrieval of the stored clauses that subsume or are subsumed by a query clause.
-/// Details of the algorithm can be found here: http://wwwlehre.dhbw-stuttgart.de/~sschulz/PAPERS/Schulz2013-FVI.pdf.
 /// </para>
 /// </summary>
 /// <seealso href="http://wwwlehre.dhbw-stuttgart.de/~sschulz/PAPERS/Schulz2013-FVI.pdf"/>
-public class FeatureVectorIndex
+public class FeatureVectorIndex<TValue>
 {
-    private readonly FeatureVectorIndex<CNFClause> actualIndex;
+    private readonly IFeatureVectorIndexNode<TValue> root;
+    private readonly Func<CNFClause, object> featureSelector;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FeatureVectorIndex"/> class.
     /// </summary>
     /// <param name="featureSelector"></param>
     public FeatureVectorIndex(Func<CNFClause, object> featureSelector)
+        : this(featureSelector, new FeatureVectorIndexDictionaryNode<TValue>(), Enumerable.Empty<KeyValuePair<CNFClause, TValue>>())
     {
-        actualIndex = new(featureSelector);
     }
 
     /// <summary>
@@ -33,9 +33,9 @@ public class FeatureVectorIndex
     /// </summary>
     /// <param name="featureSelector"></param>
     /// <param name="root">The root node of the index.</param>
-    public FeatureVectorIndex(Func<CNFClause, object> featureSelector, IFeatureVectorIndexNode<CNFClause> root)
+    public FeatureVectorIndex(Func<CNFClause, object> featureSelector, IFeatureVectorIndexNode<TValue> root)
+        : this(featureSelector, root, Enumerable.Empty<KeyValuePair<CNFClause, TValue>>())
     {
-        actualIndex = new(featureSelector, root);
     }
 
     /// <summary>
@@ -43,9 +43,9 @@ public class FeatureVectorIndex
     /// </summary>
     /// <param name="featureSelector"></param>
     /// <param name="content">The initial content to be added to the index.</param>
-    public FeatureVectorIndex(Func<CNFClause, object> featureSelector, IEnumerable<CNFClause> content)
+    public FeatureVectorIndex(Func<CNFClause, object> featureSelector, IEnumerable<KeyValuePair<CNFClause, TValue>> content)
+        : this(featureSelector, new FeatureVectorIndexDictionaryNode<TValue>(), content)
     {
-        actualIndex = new(featureSelector, content.Select(c => KeyValuePair.Create(c, c)));
     }
 
     /// <summary>
@@ -54,9 +54,15 @@ public class FeatureVectorIndex
     /// <param name="featureSelector"></param>
     /// <param name="root">The root node of the index.</param>
     /// <param name="content">The initial content to be added to the index.</param>
-    public FeatureVectorIndex(Func<CNFClause, object> featureSelector, IFeatureVectorIndexNode<CNFClause> root, IEnumerable<CNFClause> content)
+    public FeatureVectorIndex(Func<CNFClause, object> featureSelector, IFeatureVectorIndexNode<TValue> root, IEnumerable<KeyValuePair<CNFClause, TValue>> content)
     {
-        actualIndex = new(featureSelector, root, content.Select(c => KeyValuePair.Create(c, c)));
+        this.root = root ?? throw new ArgumentNullException(nameof(root));
+        this.featureSelector = featureSelector ?? throw new ArgumentNullException(nameof(featureSelector));
+
+        foreach (var (key, value) in content)
+        {
+            Add(key, value);
+        }
     }
 
     /// <summary>
@@ -64,7 +70,10 @@ public class FeatureVectorIndex
     /// </summary>
     /// <param name="clause"></param>
     /// <exception cref="NotImplementedException"></exception>
-    public void Add(CNFClause clause) => actualIndex.Add(clause, clause);
+    public void Add(CNFClause clause, TValue value)
+    {
+        throw new NotImplementedException();
+    }
 
     /// <summary>
     /// 
@@ -72,7 +81,10 @@ public class FeatureVectorIndex
     /// <param name="clause"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public IEnumerable<CNFClause> GetSubsumingClauses(CNFClause clause) => actualIndex.GetSubsuming(clause);
+    public IEnumerable<TValue> GetSubsuming(CNFClause clause)
+    {
+        throw new NotImplementedException();
+    }
 
     /// <summary>
     /// 
@@ -80,5 +92,8 @@ public class FeatureVectorIndex
     /// <param name="clause"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public IEnumerable<CNFClause> GetSubsumedClauses(CNFClause clause) => actualIndex.GetSubsumed(clause);
+    public IEnumerable<TValue> GetSubsumed(CNFClause clause)
+    {
+        throw new NotImplementedException();
+    }
 }

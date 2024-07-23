@@ -2,6 +2,6 @@
 
 namespace SCFirstOrderLogic.ClauseIndexing;
 
-public interface IFeatureVectorIndexNode
+public interface IFeatureVectorIndexNode<TValue>
 {
 }
