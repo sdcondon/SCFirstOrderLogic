@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2021-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 #if false
-// TODO-BREAKING-V6: awkwardness - don't like the need for that explanatory comment about the type
+// TODO: awkwardness - don't like the need for that explanatory comment about the type
 // of the new identifiers. Perhaps look at adding this at the same time as moving/renaming
 // the normalisation identifiers, to make it clear that they are only one way of representing
 // the concepts, and are specific to our conversion classes.
@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 /// <summary>
 /// Extension methods related to standardisation.

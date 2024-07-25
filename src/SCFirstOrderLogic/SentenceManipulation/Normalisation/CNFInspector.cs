@@ -3,8 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-// TODO-BREAKING: Thinking more and more that a SentenceInspection namespace 
-// is probably worthwhile..?
+// TODO-BREAKING-V7: Change namespace to SCFirstOrderLogic.SentenceManipulation.Normalisation
 namespace SCFirstOrderLogic.SentenceManipulation;
 
 /// <summary>

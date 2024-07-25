@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
 
+// TODO-BREAKING-V7: Change namespace to SCFirstOrderLogic.SentenceManipulation.VariableManipulation
 namespace SCFirstOrderLogic.SentenceManipulation;
 
 /// <summary>
