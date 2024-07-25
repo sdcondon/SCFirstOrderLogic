@@ -15,7 +15,7 @@ internal class DiscriminationTreeVariableBindings
     private DiscriminationTreeVariableBindings(IEnumerable<KeyValuePair<int, IDiscriminationTreeNodeKey[]>> content) => map = new(content);
 
     // Overall performance would perhaps be better with a tree instead of copying a dictionary
-    // Worth a test at some point perhaps (maybe after looking at substitution trees in general).
+    // Worth a test at some point perhaps (maybe after looking at substitution trees in general - something to add to SentenceManipulation.VariableManipulation, perhaps?).
     // Might not be worth the complexity though.
     public static bool TryAddOrMatchBinding(int ordinal, IDiscriminationTreeNodeKey[] value, ref DiscriminationTreeVariableBindings bindings)
     {
