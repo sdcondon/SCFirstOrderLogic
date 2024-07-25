@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
