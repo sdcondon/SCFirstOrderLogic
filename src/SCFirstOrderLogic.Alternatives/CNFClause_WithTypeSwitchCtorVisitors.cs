@@ -34,7 +34,7 @@ public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTyp
     /// Initialises a new instance of the <see cref="CNFClause_WithTypeSwitchCtorVisitors"/> class from an enumerable of literals (removing any mutually-negating literals and duplicates as it does so).
     /// </summary>
     /// <param name="literals">The set of literals to be included in the clause.</param>
-    public CNFClause_WithTypeSwitchCtorVisitors(IEnumerable<CNFLiteral_WithTypeSwitchCtorVisitors> literals)
+    public CNFClause_WithTypeSwitchCtorVisitors(IEnumerable<Literal_WithTypeSwitchCtorVisitors> literals)
     {
         // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
         // its a super low-level class and I'd rather err on the side of using the simplest/smallest implementation possible.
@@ -45,12 +45,12 @@ public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTyp
     /// <summary>
     /// Gets an instance of the empty clause.
     /// </summary>
-    public static CNFClause_WithTypeSwitchCtorVisitors Empty { get; } = new CNFClause_WithTypeSwitchCtorVisitors(Array.Empty<CNFLiteral_WithTypeSwitchCtorVisitors>());
+    public static CNFClause_WithTypeSwitchCtorVisitors Empty { get; } = new CNFClause_WithTypeSwitchCtorVisitors(Array.Empty<Literal_WithTypeSwitchCtorVisitors>());
 
     /// <summary>
     /// Gets the collection of literals that comprise this clause.
     /// </summary>
-    public IReadOnlyCollection<CNFLiteral_WithTypeSwitchCtorVisitors> Literals { get; }
+    public IReadOnlyCollection<Literal_WithTypeSwitchCtorVisitors> Literals { get; }
 
     /// <summary>
     /// <para>
@@ -140,7 +140,7 @@ public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTyp
 
     private class ClauseConstructor : RecursiveSentenceVisitor_WithTypeSwitch
     {
-        public HashSet<CNFLiteral_WithTypeSwitchCtorVisitors> Literals { get; } = new();
+        public HashSet<Literal_WithTypeSwitchCtorVisitors> Literals { get; } = new();
 
         public override void Visit(Sentence sentence)
         {
@@ -154,7 +154,7 @@ public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTyp
                 // Assume we've hit a literal. NB will throw if its not actually a literal.
                 // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFLiteral ctor that
                 // we invoke here does so to figure out the details of the literal). So we can just return rather than invoking base.Visit.
-                Literals.Add(new CNFLiteral_WithTypeSwitchCtorVisitors(sentence));
+                Literals.Add(new Literal_WithTypeSwitchCtorVisitors(sentence));
             }
         }
     }

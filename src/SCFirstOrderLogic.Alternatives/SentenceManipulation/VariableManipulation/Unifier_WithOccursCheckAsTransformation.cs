@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification;
 /// Differs from production version by using an occurs check that is a SentenceTransformation.
 /// </para>
 /// </summary>
-public static class LiteralUnifier_WithOccursCheckAsTransformation
+public static class Unifier_WithOccursCheckAsTransformation
 {
     /// <summary>
     /// Attempts to create the most general unifier for two literals.
