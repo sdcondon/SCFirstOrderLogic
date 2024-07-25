@@ -228,9 +228,7 @@ public class SentenceFormatter
     /// Returns a string representation of a given identifier.
     /// </summary>
     /// <param name="identifier">The identifier to be formatted.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="ArgumentException"></exception>
+    /// <returns>A string representation of a given identifier.</returns>
     public string Format(object identifier) =>
         labellingScope.GetLabel(identifier);
 }
