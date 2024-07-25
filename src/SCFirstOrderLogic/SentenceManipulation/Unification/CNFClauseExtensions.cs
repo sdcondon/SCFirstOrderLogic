@@ -21,9 +21,6 @@ public static class CNFClauseExtensions
     /// <para>
     /// Checks whether "this" clause unifies with any of an enumeration of other definite clauses.
     /// </para>
-    /// <para>
-    /// NB: this logic is not specific to definite clauses - so perhaps belongs elsewhere?
-    /// </para>
     /// </summary>
     /// <param name="thisClause">"This" clause.</param>
     /// <param name="clauses">The clauses to check for unification with.</param>

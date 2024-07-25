@@ -27,22 +27,22 @@ public static class TermExtensions
     }
 
     /// <summary>
-    /// Checks whether "this" term is an instance of another.
+    /// Checks whether this term is an instance of another.
     /// </summary>
     /// <param name="term">The potential instance.</param>
     /// <param name="generalisation">The generalisation.</param>
-    /// <returns>A value indicating whether "this" term is an instance of the generalisation.</returns>
+    /// <returns>A value indicating whether this term is an instance of the generalisation.</returns>
     public static bool IsInstanceOf(this Term term, Term generalisation)
     {
         return InstanceUnifier.TryCreate(generalisation, term, out _);
     }
 
     /// <summary>
-    /// Checks whether "this" term is a generalisation of another.
+    /// Checks whether this term is a generalisation of another.
     /// </summary>
     /// <param name="term">The potential generalisation.</param>
     /// <param name="instance">The instance.</param>
-    /// <returns>A value indicating whether "this" term is an generalisation of the instance.</returns>
+    /// <returns>A value indicating whether this term is an generalisation of the instance.</returns>
     public static bool IsGeneralisationOf(this Term term, Term instance)
     {
         return InstanceUnifier.TryCreate(term, instance, out _);
