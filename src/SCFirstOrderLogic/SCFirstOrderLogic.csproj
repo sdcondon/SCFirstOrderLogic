@@ -8,7 +8,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Basic but fully functional and documented first-order logic implementations. Includes multiple ways to write sentences, as well as simple but extensible chaining and resolution knowledge base implementations that allow for proof tree retrieval.</Description>
+    <Description>Basic but fully functional and documented first-order logic implementations. Includes models for raw and CNF sentences, as well as extensible logic for creating, manipulating, formatting and indexing them.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>first order predicate logic inference engine knowledge base linq</PackageTags>
     <Product>SCFirstOrderLogic</Product>
