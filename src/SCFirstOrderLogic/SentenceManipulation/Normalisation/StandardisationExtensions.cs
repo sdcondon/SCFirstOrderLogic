@@ -5,14 +5,11 @@
 // of the new identifiers. Perhaps look at adding this at the same time as moving/renaming
 // the normalisation identifiers, to make it clear that they are only one way of representing
 // the concepts, and are specific to our conversion classes.
-// And/or (don't like this, but..) could introduce StandardisedLiteral, StandardisedPredicate,
-// StandardisedTerm, StandardisedFunction, StandardisedVariable, etc - in which variable identifiers
-// are StandardisedVariableIdentifier, not object..
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Normalisation;
 
 /// <summary>
 /// Extension methods related to standardisation.
