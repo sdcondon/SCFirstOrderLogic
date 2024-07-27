@@ -87,6 +87,8 @@ public class CNFClause : IEquatable<CNFClause>
     /// A clause that is the same as this one, except for the fact that all referenced
     /// variables are replaced with new ones.
     /// </returns>
+    // TODO-BREAKING-V7: uses particular identifier types - and as such doesn't belong here.
+    // Somewhere in Normalisation namespace, probably
     public CNFClause Restandardise()
     {
         var newIdentifiersByOld = new Dictionary<StandardisedVariableIdentifier, StandardisedVariableIdentifier>();
