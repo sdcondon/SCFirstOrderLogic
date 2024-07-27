@@ -12,6 +12,7 @@ namespace SCFirstOrderLogic;
 /// Representation of a function term within a sentence of first order logic. In typical FOL syntax, this is written as:
 /// <code>{function identifier}({term}, ..)</code>
 /// </summary>
+// TODO-V7: Don't forget to update the summary text - "...or, for functions with arity zero that represent constant terms, just.."
 public sealed class Function : Term
 {
     /// <summary>
