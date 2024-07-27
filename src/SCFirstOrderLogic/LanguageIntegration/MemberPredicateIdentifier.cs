@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.LanguageIntegration;
 public class MemberPredicateIdentifier
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MemberConstantIdentifier"/> class.
+    /// Initializes a new instance of the <see cref="MemberPredicateIdentifier"/> class.
     /// </summary>
     /// <param name="memberInfo"></param>
     public MemberPredicateIdentifier(MemberInfo memberInfo) => MemberInfo = memberInfo;

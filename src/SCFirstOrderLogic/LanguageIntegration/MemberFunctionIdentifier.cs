@@ -8,13 +8,13 @@ namespace SCFirstOrderLogic.LanguageIntegration;
 /// Representation of the identifier of a <see cref="Function"/> that refers to a particular element-valued method or property of elements of the domain.
 /// </summary>
 /// <remarks>
-/// Might ultimately be useful to make the Member..Identifier classes generic in the same way as ILinqKnowledgeBase - for
+/// Might ultimately be useful to make the Member...Identifier classes generic in the same way as ILinqKnowledgeBase - for
 /// validation, as well as potential manipulation power.
 /// </remarks>
 public class MemberFunctionIdentifier
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MemberConstantIdentifier"/> class.
+    /// Initializes a new instance of the <see cref="MemberFunctionIdentifier"/> class.
     /// </summary>
     /// <param name="memberInfo"></param>
     public MemberFunctionIdentifier(MemberInfo memberInfo) => MemberInfo = memberInfo;

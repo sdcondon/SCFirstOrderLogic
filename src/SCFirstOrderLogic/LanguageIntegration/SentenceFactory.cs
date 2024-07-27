@@ -179,37 +179,6 @@ public static class SentenceFactory
         return false;
     }
 
-    private static bool TryCreateConstant<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Term? term)
-        where TDomain : IEnumerable<TElement>
-    {
-        if (typeof(TElement).IsAssignableFrom(expression.Type)) // Constants must be elements of the domain
-        {
-            if (expression is MemberExpression memberExpr
-                && typeof(TDomain).IsAssignableFrom(memberExpr.Expression?.Type)) // BUG-MINOR: Should check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
-            {
-                // TElement-valued property access of the domain is interpreted as a zero-arity function.
-                term = new Function(new MemberConstantIdentifier(memberExpr.Member));
-                return true;
-            }
-            else if (expression is MethodCallExpression methodCallExpr
-                && typeof(TDomain).IsAssignableFrom(methodCallExpr.Object?.Type) // BUG-MINOR: Should check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
-                && methodCallExpr.Arguments.Count == 0)
-            {
-                // TElement-valued parameterless method call of the domain is interpreted as a zero-arity function.
-                term = new Function(new MemberConstantIdentifier(methodCallExpr.Method));
-                return true;
-            }
-        }
-
-        // Perhaps we should allow literals here too? For cases where the domain is of primitive types, it seems
-        // silly to require d => d.Hello rather than d => "Hello". For user provided types is of less value because
-        // it requires an instantiation of the constant (where otherwise just working with interfaces is fine), but
-        // as far as I can see there's no reason (aside from equality et al - probably solvable) to actually forbid it..?
-
-        term = null;
-        return false;
-    }
-
     /// <summary>
     /// Tries to create a <see cref="Disjunction"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
     /// <code>{expression} {|| or |} {expression}</code>
@@ -325,15 +294,21 @@ public static class SentenceFactory
         if (typeof(TElement).IsAssignableFrom(expression.Type))
         {
             if (expression is MemberExpression memberExpr
-                && memberExpr.Expression != null
-                && TryCreateTerm<TDomain, TElement>(memberExpr.Expression, out var argument))
+                && typeof(TDomain).IsAssignableFrom(memberExpr.Expression?.Type)) // BUG-MINOR: Should check if its accessing the domain-valued param (think of weird situations where its a domain-valued prop of an element or somat)..
             {
-                // TElement-valued property access is interpreted as a unary function.
-                term = new Function(new MemberFunctionIdentifier(memberExpr.Member), new[] { argument });
+                // TElement-valued property access of the domain is interpreted as a zero-arity function.
+                term = new Function(new MemberFunctionIdentifier(memberExpr.Member));
                 return true;
             }
-            else if (expression is MethodCallExpression methodCallExpr
-                && (methodCallExpr.Object != null || methodCallExpr.Arguments.Count > 0)) // NB: There must be at least one arg - otherwise its a constant, not a function..
+            else if (expression is MemberExpression memberExpr2
+                && memberExpr2.Expression != null
+                && TryCreateTerm<TDomain, TElement>(memberExpr2.Expression, out var argument))
+            {
+                // TElement-valued property access is interpreted as a unary function.
+                term = new Function(new MemberFunctionIdentifier(memberExpr2.Member), new[] { argument });
+                return true;
+            }
+            else if (expression is MethodCallExpression methodCallExpr)
             {
                 var arguments = new List<Term>();
 
@@ -364,6 +339,11 @@ public static class SentenceFactory
                 return true;
             }
         }
+
+        // Perhaps we should allow literals here too? For cases where the domain is of primitive types, it seems
+        // silly to require d => d.Hello rather than d => "Hello". For user provided types is of less value because
+        // it requires an instantiation of the constant (where otherwise just working with interfaces is fine), but
+        // as far as I can see there's no reason (aside from equality et al - probably solvable) to actually forbid it..?
 
         term = null;
         return false;
@@ -486,7 +466,6 @@ public static class SentenceFactory
         where TDomain : IEnumerable<TElement>
     {
         return TryCreateFunction<TDomain, TElement>(expression, out sentence)
-            || TryCreateConstant<TDomain, TElement>(expression, out sentence)
             || TryCreateVariable<TDomain, TElement>(expression, out sentence);
     }
 
