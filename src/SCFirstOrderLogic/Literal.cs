@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic;
 
 /// <summary>
 /// <para>
-/// Streamlined representation of a literal (i.e. a predicate or a negated predicate) of first-order logic.
+/// Streamlined representation of a literal (that is, a predicate or a negated predicate) of first-order logic.
 /// </para>
 /// <para>
 /// Note that this type is NOT a subtype of <see cref="Sentence"/>. To represent literals as <see cref="Sentence"/>s, 

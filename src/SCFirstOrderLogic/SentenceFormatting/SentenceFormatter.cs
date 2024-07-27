@@ -48,6 +48,10 @@ public class SentenceFormatter
     /// <see cref="SkolemFunctionIdentifier"/>s.
     /// </para>
     /// </summary>
+    // TODO-BREAKING-V7-PERHAPS: don't want ANY knowledge of normalised identifier types here, really.
+    // Move me into normalisation namespace. Probably of course means that we should either make the default
+    // behaviour simply ToString the identifiers, OR should remove parameterless ctor altogether (though that
+    // would also mean removing the tostring overrides of mode classes.. Hmm. Perhaps for the best?) 
     public static ILabeller DefaultLabeller { get; set; } = new ByTypeLabeller(new Dictionary<Type, ILabeller>()
     {
         [typeof(StandardisedVariableIdentifier)] = new SubscriptSuffixLabeller(),
