@@ -8,6 +8,7 @@ namespace SCFirstOrderLogic;
 /// <summary>
 /// Representation of a constant term within a sentence of first order logic.
 /// </summary>
+// TODO-BREAKING-V7: Pointless class. Its removal is long overdue. Distinguishing between e.g. C and C() (or not) when parsing should just be down the the identifier callback.
 public sealed class Constant : Term
 {
     /// <summary>
