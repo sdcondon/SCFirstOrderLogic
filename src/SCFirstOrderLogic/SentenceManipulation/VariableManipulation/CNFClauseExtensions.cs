@@ -3,40 +3,55 @@ using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation
 {
-    ////public static class CNFClauseExtensions
-    ////{
-    ////    /// <summary>
-    ////    /// <para>
-    ////    /// Gets a value indicating whether 'this' clause subsumes another.
-    ////    /// </para>
-    ////    /// <para>
-    ////    /// That is, whether the other clause is logically entailed by this one.
-    ////    /// </para>
-    ////    /// </summary>
-    ////    /// <param name="thisClause"></param>
-    ////    /// <param name="otherClause"></param>
-    ////    /// <returns>True if this clause subsumes the other; otherwise false.</returns>
-    ////    public static bool Subsumes(this CNFClause thisClause, CNFClause otherClause)
-    ////    {
-    ////        throw new NotImplementedException();
-    ////    }
-    ////
-    ////    /// <summary>
-    ////    /// <para>
-    ////    /// Gets a value indicating whether another clause subsumes this one.
-    ////    /// </para>
-    ////    /// <para>
-    ////    /// That is, whether this clause is logically entailed by the other.
-    ////    /// </para>
-    ////    /// </summary>
-    ////    /// <param name="thisClause"></param>
-    ////    /// <param name="otherClause"></param>
-    ////    /// <returns>True if the other clause subsumes this one; otherwise false.</returns>
-    ////    public static bool IsSubsumedBy(this CNFClause thisClause, CNFClause otherClause)
-    ////    {
-    ////        return otherClause.Subsumes(thisClause);
-    ////    }
-    ////}
+    public static class CNFClauseExtensions
+    {
+        /// <summary>
+        /// <para>
+        /// Gets a value indicating whether 'this' clause subsumes another.
+        /// </para>
+        /// <para>
+        /// That is, whether the other clause is logically entailed by this one.
+        /// </para>
+        /// </summary>
+        /// <param name="thisClause"></param>
+        /// <param name="otherClause"></param>
+        /// <returns>True if this clause subsumes the other; otherwise false.</returns>
+        public static bool Subsumes(this CNFClause thisClause, CNFClause otherClause)
+        {
+            if (thisClause.IsEmpty)
+            {
+                return false;
+            }
+
+            VariableSubstitution substitution = new();
+
+            foreach (var literal in thisClause.Literals)
+            {
+                if (!otherClause.Literals.Any(l => InstanceUnifier.TryUpdate(literal, l, ref substitution)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// <para>
+        /// Gets a value indicating whether another clause subsumes this one.
+        /// </para>
+        /// <para>
+        /// That is, whether this clause is logically entailed by the other.
+        /// </para>
+        /// </summary>
+        /// <param name="thisClause"></param>
+        /// <param name="otherClause"></param>
+        /// <returns>True if the other clause subsumes this one; otherwise false.</returns>
+        public static bool IsSubsumedBy(this CNFClause thisClause, CNFClause otherClause)
+        {
+            return otherClause.Subsumes(thisClause);
+        }
+    }
 }
 
 namespace SCFirstOrderLogic.SentenceManipulation.Unification
