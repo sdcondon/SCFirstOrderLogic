@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
@@ -69,76 +68,6 @@ public static class TermExtensions
             }
 
             return declaration;
-        }
-    }
-
-    /// <summary>
-    /// Unification logic that is "one-way" - only allows variables present in one of the arguments (the "generalisation") to be substituted.
-    /// </summary>
-    private static class InstanceUnifier
-    {
-        public static bool TryCreate(Term generalisation, Term instance, [MaybeNullWhen(false)] out VariableSubstitution unifier)
-        {
-            var unifierAttempt = new MutableVariableSubstitution();
-
-            if (TryUpdateInPlace(generalisation, instance, unifierAttempt))
-            {
-                unifier = unifierAttempt.CopyAsReadOnly();
-                return true;
-            }
-
-            unifier = null;
-            return false;
-        }
-
-        private static bool TryUpdateInPlace(Term generalisation, Term instance, MutableVariableSubstitution unifier)
-        {
-            return (generalisation, instance) switch
-            {
-                (VariableReference variable, _) => TryUpdateInPlace(variable, instance, unifier),
-                (Function functionX, Function functionY) => TryUpdateInPlace(functionX, functionY, unifier),
-                // Below, the only potential for equality is if they're both constants. Perhaps worth testing this
-                // versus that explicitly and a default that just returns false. Similar from a performance
-                // perspective.
-                _ => generalisation.Equals(instance),
-            };
-        }
-
-        private static bool TryUpdateInPlace(VariableReference variable, Term instanceTerm, MutableVariableSubstitution unifier)
-        {
-            if (variable.Equals(instanceTerm))
-            {
-                return true;
-            }
-            else if (unifier.Bindings.TryGetValue(variable, out var variableValue))
-            {
-                // The variable is already mapped to something - we need to make sure that the
-                // mapping is consistent with the "other" value.
-                return TryUpdateInPlace(variableValue, instanceTerm, unifier);
-            }
-            else
-            {
-                unifier.AddBinding(variable, instanceTerm);
-                return true;
-            }
-        }
-
-        private static bool TryUpdateInPlace(Function x, Function y, MutableVariableSubstitution unifier)
-        {
-            if (!x.Identifier.Equals(y.Identifier) || x.Arguments.Count != y.Arguments.Count)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < x.Arguments.Count; i++)
-            {
-                if (!TryUpdateInPlace(x.Arguments[i], y.Arguments[i], unifier))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 }
