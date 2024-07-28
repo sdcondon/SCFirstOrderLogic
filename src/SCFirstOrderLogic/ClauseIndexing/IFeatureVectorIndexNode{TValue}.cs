@@ -4,6 +4,9 @@ using System;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
 
+/// <summary>
+/// Interface shared by all nodes of a <see cref="FeatureVectorIndex{TValue}"/>.
+/// </summary>
 public interface IFeatureVectorIndexNode<TValue>
 {
 }

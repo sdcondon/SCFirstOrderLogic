@@ -8,63 +8,50 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 
 public static class FeatureVectorIndexTests
 {
+    private static readonly IEnumerable<Sentence> IndexContent =
+    [
+        P(),
+        P(C),
+        P(X),
+        P(C) | P(D),
+        P(C) | Q(C),
+        P(C) | Q(D),
+        P(C) | Q(X),
+        P(X) | Q(Y),
+        P(X) | Q(X),
+        Q(C),
+    ];
+
     private static OperableFunction C => new Function(nameof(C));
     private static OperableFunction D => new Function(nameof(D));
-    private static OperableFunction E => new Function(nameof(E));
-    private static OperableFunction F(params Term[] arguments) => new Function(nameof(F), arguments);
-    private static OperableFunction G(params Term[] arguments) => new Function(nameof(G), arguments);
-    private static OperableFunction H(params Term[] arguments) => new Function(nameof(H), arguments);
     private static OperablePredicate P(params Term[] arguments) => new Predicate(nameof(P), arguments);
     private static OperablePredicate Q(params Term[] arguments) => new Predicate(nameof(Q), arguments);
-    private static OperablePredicate R(params Term[] arguments) => new Predicate(nameof(R), arguments);
     private static OperableVariableReference X => new VariableReference(nameof(X));
     private static OperableVariableReference Y => new VariableReference(nameof(Y));
     private static OperableVariableReference Z => new VariableReference(nameof(Z));
 
-    private record GetTestCase(IEnumerable<Sentence> Content, Sentence Query, IEnumerable<Sentence> Expected);
+    private record GetTestCase(Sentence Query, IEnumerable<Sentence> Expected);
+
+    // TODO: shouldn't be allowed to add empty clause
 
     public static Test GetSubsumedBehaviour => TestThat
         .GivenEachOf<GetTestCase>(() =>
         [
-            new( // Empty index
-                Content: [],
-                Query: P(),
-                Expected: []),
-
-            new( // Trivial exact match
-                Content: [P()],
-                Query: P(),
-                Expected: [P()]),
-
-            new( // Single matching predicate for which all args are instances of query arg
-                Content: [P(C, Y)],
-                Query: P(X, Y),
-                Expected: [P(C, Y)]),
-
-            new( // variable identifiers don't matter
-                Content: [P(C, Y)],
-                Query: P(Y, Z),
-                Expected: [P(C, Y)]),
-
-            new( // variable binding consistency does matter
-                Content: [P(C, Y)],
-                Query: P(X, X),
-                Expected: []),
-
-            new( // Extra literal
-                Content: [P(C) | Q(D)],
-                Query: P(X),
-                Expected: [P(C) | Q(D)]),
-
-            new( // Missing literal
-                Content: [P(C)],
-                Query: P(X) | Q(D),
-                Expected: []),
+            new(Query: P(), Expected: [P()]),
+            new(Query: P(C), Expected: [P(C), P(C) | P(D), P(C) | Q(C), P(C) | Q(D), P(C) | Q(X)]),
+            new(Query: P(X), Expected: [P(C), P(X), P(C) | P(D), P(C) | Q(C), P(C) | Q(D), P(C) | Q(X), P(X) | Q(Y), P(X) | Q(X) ]),
+            new(Query: P(C) | P(D), Expected: [P(C) | P(D)]),
+            new(Query: P(C) | Q(X), Expected: [P(C) | Q(X), P(C) | Q(D), P(C) | Q(C)]),
+            new(Query: P(X) | Q(Y), Expected: [P(X) | Q(Y), P(C) | Q(D), P(X) | Q(X), P(C) | Q(C)]),
+            new(Query: P(C) | Q(D), Expected: [P(C) | Q(D)]),
+            new(Query: P(X) | Q(X), Expected: [P(X) | Q(X), P(C) | Q(C)]),
+            new(Query: P(C) | Q(C), Expected: [P(C) | Q(C)]),
+            new(Query: Q(C), Expected: [Q(C), P(C) | Q(C)]),
         ])
         .When(tc =>
         {
-            var index = new FeatureVectorIndex(c => null, tc.Content.Select(s => new CNFClause(s)));
-            return index.GetSubsumedClauses(tc.Query.ToCNF().Clauses.Single());
+            var index = new FeatureVectorIndex(c => null, IndexContent.Select(s => new CNFClause(s)));
+            return index.GetSubsumed(tc.Query.ToCNF().Clauses.Single());
         })
         .ThenReturns()
         .And((tc, rv) => rv.Should().BeEquivalentTo(tc.Expected.Select(s => s.ToCNF().Clauses.Single())));
@@ -72,11 +59,21 @@ public static class FeatureVectorIndexTests
     public static Test GetSubsumingBehaviour => TestThat
         .GivenEachOf<GetTestCase>(() =>
         [
+            new(Query: P(), Expected: [P(C)]),
+            new(Query: P(X), Expected: []),
+            new(Query: P(C), Expected: []),
+            new(Query: P(C) | P(D), Expected: []),
+            new(Query: P(C) | Q(X), Expected: []),
+            new(Query: P(X) | Q(Y), Expected: []),
+            new(Query: P(C) | Q(D), Expected: []),
+            new(Query: P(X) | Q(X), Expected: []),
+            new(Query: P(C) | Q(C), Expected: []),
+            new(Query: Q(C), Expected: []),
         ])
         .When(tc =>
         {
-            var index = new FeatureVectorIndex(c => null, tc.Content.Select(s => new CNFClause(s)));
-            return index.GetSubsumingClauses(tc.Query.ToCNF().Clauses.Single());
+            var index = new FeatureVectorIndex(c => null, IndexContent.Select(s => new CNFClause(s)));
+            return index.GetSubsuming(tc.Query.ToCNF().Clauses.Single());
         })
         .ThenReturns()
         .And((tc, rv) => rv.Should().BeEquivalentTo(tc.Expected));
