@@ -1,0 +1,194 @@
+﻿@page "/lab/path-tree-visualiser"
+
+@using SCFirstOrderLogic;
+@using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParser;
+@using SCFirstOrderLogic.Inference;
+@using SCFirstOrderLogic.Inference.Basic.BackwardChaining;
+@using SCFirstOrderLogic.Inference.Basic.ForwardChaining;
+@using SCFirstOrderLogic.Inference.Basic.Resolution;
+@using SCFirstOrderLogic.SentenceCreation;
+@using System.ComponentModel.DataAnnotations;
+@using SCFirstOrderLogic.SentenceManipulation
+@using SCFirstOrderLogic.TermIndexing
+@using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+@inject IJSRuntime JS
+
+<h3>Lab - Path Tree Visualiser <a data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><span class="bi bi-info-circle" aria-hidden="true"></span></a></h3>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Lab Explanation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    This page is an interactive visualiser for the path trees, as implemented by SCFirstOrderLogic. 
+                </p>
+                <p>
+                    A path tree's structure is essentially the same as the structure of terms themselves. That is, a path tree is
+                    essentially all of its stored terms merged together - with extra branching at (the root and) each function
+                    parameter, to allow for all of the different argument values that have been stored. Attached to each leaf
+                    of a path tree is a list of all (values associated with the) terms in which the leaf's path appears.
+                    Path trees are good for looking up instances of a query term.
+                </p>
+                <p>
+                    Note that:
+                </p>
+                <ul>
+                    <li>This one is admittedly a little rough around the edges with regards to the tree view and input validation. It'll be iterated upon.</li>
+                    <li>You can add terms to the tree by entering them into the Term text box and clicking the 'Add' button.</li>
+                    <li>When parsing the term, identifiers not followed by any parentheses (to indicate a function) will be interpreted as variables if they feature in the "variables" text box. Otherwise they will be interpreted as zero-arity functions (i.e. constants).</li>
+                    <li>Guidance for writing terms as strings can be found on the "getting started" page.</li>
+                    <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Razor/Pages/lab/PathTreeVisualiser.razor">here</a>.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<EditForm Model=@formData Context="editContext" style="font-family: monospace">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="variablesText">Variables (comma-separated)</label>
+        <InputText class="form-control" id="variablesText" @bind-Value=formData.Variables />
+        <ValidationMessage For="@(() => formData.Variables)" />
+    </div>
+    <div class="form-group">
+        <label for="queryText">Term</label>
+        <InputText class="form-control" id="queryText" @bind-Value=formData.Term />
+        <ValidationMessage For="@(() => formData.Term)" />
+    </div>
+    <div class="form-group mt-2">
+        <button type="submit" @onclick="@(() => Add(editContext))" class="btn btn-primary">Add</button>
+        <button type="submit" @onclick="@(() => RemoveAll(editContext))" class="btn btn-primary">Remove All</button>
+    </div>
+</EditForm>
+
+@{
+    void RenderPathTreeParameterNode(string label, IPathTreeParameterNode<Term> node)
+    {
+        <li>
+            @label
+            <ul>
+                @foreach (var (childNodeKey, childNode) in node.Children)
+                {
+                    var childNodeLabel = childNodeKey switch
+                    {
+                        PathTreeConstantNodeKey constantNodeKey => $"FUNCTION: {constantNodeKey.Identifier} (ARITY {constantNodeKey.ChildElementCount})",
+                        PathTreeFunctionNodeKey functionNodeKey => $"FUNCTION: {functionNodeKey.Identifier} (ARITY {functionNodeKey.ChildElementCount})",
+                        PathTreeVariableNodeKey variableNodeKey => $"VARIABLE: {variableNodeKey.Ordinal}",
+                        _ => throw new ArgumentException(nameof(node))
+                    };
+
+                    RenderPathTreeArgumentNode(childNodeLabel, childNode);
+                }
+            </ul>
+        </li>
+    }
+
+    void RenderPathTreeArgumentNode(string label, IPathTreeArgumentNode<Term> node)
+    {
+        <li>
+            @label
+            <ul>
+            @if (node.Children.Count > 0)
+            {
+                for (int i = 0; i < node.Children.Count; i++)
+                {
+                    RenderPathTreeParameterNode($"ARG {i}", node.Children[i]);
+                }
+            }
+            else
+            {
+                foreach (var (key, value) in node.Values)
+                {
+                    <li>VALUE: @value</li>
+                }
+            }
+            </ul>
+        </li>
+    }
+}
+
+<ul class="mt-4">
+    @{
+        RenderPathTreeParameterNode("ROOT", pathTreeRootNode);
+    }
+</ul>
+
+@code {
+    private PathTreeDictionaryNode<Term> pathTreeRootNode;
+    private PathTree pathTree;
+    private FormData formData = new FormData("u, v, w, x, y, z", "");
+
+    public PathTreeVisualiser()
+    {
+        pathTreeRootNode = new PathTreeDictionaryNode<Term>();
+        pathTree = new PathTree(pathTreeRootNode);
+    }
+
+    private void Add(EditContext editContext)
+    {
+        if (editContext.Validate())
+        {
+            // TODO: probably useful to offer term parsing..
+            var sentence = SentenceParser.BasicParser.Parse($"forall {formData.Variables}, P({formData.Term})");
+            var visitor = new TermExtractor();
+            visitor.Visit(sentence);
+            pathTree.Add(visitor.Term);
+            StateHasChanged();
+        }
+    }
+
+    private void RemoveAll(EditContext editContext)
+    {
+        pathTreeRootNode = new PathTreeDictionaryNode<Term>();
+        pathTree = new PathTree(pathTreeRootNode);
+        StateHasChanged();
+    }
+
+    private class FormData : IValidatableObject
+    {
+        public FormData(string variables, string term)
+        {
+            this.Variables = variables;
+            this.Term = term;
+        }
+
+        public string Variables { get; set; }
+
+        public string Term { get; set; }
+
+        public string SubmitType { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            // Yes, could cache the parse results to avoid parsing multiple times, but not worth it for now at least.
+            // TODO-FEATURE: Some "TryParse.." methods might be useful - they'd certainly make this method a bit cleaner.
+            // TODO-FEATURE: If we had a ParseError exception type, we could perhaps highlight the offending text.
+            List<ValidationResult> errors = new();
+            try
+            {
+                var sentence = SentenceParser.BasicParser.Parse($"forall {Variables}, P({Term})");
+            }
+            catch (Exception e)
+            {
+                errors.Add(new ValidationResult(e.Message, new[] { nameof(Term) }));
+            }
+
+            return errors;
+        }
+    }
+
+    private class TermExtractor : RecursiveSentenceVisitor
+    {
+        public Term? Term { get; private set; }
+
+        public override void Visit(Predicate predicate)
+        {
+            Term = predicate.Arguments.Single();
+        }
+    }
+}
