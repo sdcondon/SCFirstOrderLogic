@@ -24,17 +24,18 @@
             </div>
             <div class="modal-body">
                 <p>
-                    This page is an interactive visualiser for the disrimination trees, as implemented by SCFirstOrderLogic.
+                    This page is an interactive visualiser for the disrimination trees, as implemented by SCFirstOrderLogic (in the SCFirstOrderLogic.TermIndexing namespace).
                 </p>
                 <p>
+                    Discrimination trees are an indexing structure for terms.
                     Each path from root to leaf in a discrimination tree consists of a depth-first traversal of the elements of the term that the leaf represents.
-                    Discrimination trees are particularly well-suited to (i.e. performant at) looking up generalisations of a query term.
+                    Discrimination trees are good for looking up generalisations of a query term.
                 </p>
                 <p>
                     Note that:
                 </p>
                 <ul>
-                    <li>This one is admittedly a little rough around the edges with regards to the tree view and input validation. It'll be iterated upon.</li>
+                    <li>This lab is admittedly a little rough around the edges with regards to the tree view itself (currently just nested unordered lists) and input validation. It'll be iterated upon.</li>
                     <li>You can add terms to the tree by entering them into the Term text box and clicking the 'Add' button.</li>
                     <li>When parsing the term, identifiers not followed by any parentheses (to indicate a function) will be interpreted as variables if they feature in the "variables" text box. Otherwise they will be interpreted as zero-arity functions (i.e. constants).</li>
                     <li>Guidance for writing terms as strings can be found on the "getting started" page.</li>

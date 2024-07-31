@@ -24,9 +24,10 @@
             </div>
             <div class="modal-body">
                 <p>
-                    This page is an interactive visualiser for the path trees, as implemented by SCFirstOrderLogic. 
+                    This page is an interactive visualiser for the path trees, as implemented by SCFirstOrderLogic (in the SCFirstOrderLogic.TermIndexing namespace). 
                 </p>
                 <p>
+                    Path trees are an indexing structure for terms.
                     A path tree's structure is essentially the same as the structure of terms themselves. That is, a path tree is
                     essentially all of its stored terms merged together - with extra branching at (the root and) each function
                     parameter, to allow for all of the different argument values that have been stored. Attached to each leaf
@@ -37,7 +38,7 @@
                     Note that:
                 </p>
                 <ul>
-                    <li>This one is admittedly a little rough around the edges with regards to the tree view and input validation. It'll be iterated upon.</li>
+                    <li>This lab is admittedly a little rough around the edges with regards to the tree view itself (currently just nested unordered lists) and input validation. It'll be iterated upon.</li>
                     <li>You can add terms to the tree by entering them into the Term text box and clicking the 'Add' button.</li>
                     <li>When parsing the term, identifiers not followed by any parentheses (to indicate a function) will be interpreted as variables if they feature in the "variables" text box. Otherwise they will be interpreted as zero-arity functions (i.e. constants).</li>
                     <li>Guidance for writing terms as strings can be found on the "getting started" page.</li>
