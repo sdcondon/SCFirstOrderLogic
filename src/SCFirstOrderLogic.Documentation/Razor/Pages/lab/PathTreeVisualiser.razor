@@ -156,8 +156,6 @@
 
         public string Term { get; set; }
 
-        public string SubmitType { get; set; }
-
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // Yes, could cache the parse results to avoid parsing multiple times, but not worth it for now at least.
