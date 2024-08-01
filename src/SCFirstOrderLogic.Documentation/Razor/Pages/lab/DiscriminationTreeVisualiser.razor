@@ -1,11 +1,6 @@
 ﻿@page "/lab/discrimination-tree-visualiser"
 
 @using SCFirstOrderLogic;
-@using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParser;
-@using SCFirstOrderLogic.Inference;
-@using SCFirstOrderLogic.Inference.Basic.BackwardChaining;
-@using SCFirstOrderLogic.Inference.Basic.ForwardChaining;
-@using SCFirstOrderLogic.Inference.Basic.Resolution;
 @using SCFirstOrderLogic.SentenceCreation;
 @using System.ComponentModel.DataAnnotations;
 @using SCFirstOrderLogic.SentenceManipulation
@@ -13,13 +8,13 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Discrimination Tree Visualiser <a data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><span class="bi bi-info-circle" aria-hidden="true"></span></a></h3>
+<h3>Lab - Discrimination Tree Visualiser <a data-bs-toggle="modal" data-bs-target="#infoModal" href="#"><span class="bi bi-info-circle" aria-hidden="true"></span></a></h3>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Lab Explanation</h5>
+                <h5 class="modal-title" id="infoModalLabel">Lab Explanation</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -27,9 +22,8 @@
                     This page is an interactive visualiser for discrimination trees, as implemented by SCFirstOrderLogic (in the SCFirstOrderLogic.TermIndexing namespace).
                 </p>
                 <p>
-                    Discrimination trees are an indexing structure for terms.
+                    Discrimination trees are an indexing structure for terms that are particularly good for looking up generalisations of a query term.
                     Each path from root to leaf in a discrimination tree consists of a depth-first traversal of the elements of the term that the leaf represents.
-                    Discrimination trees are good for looking up generalisations of a query term.
                 </p>
                 <p>
                     Note that:

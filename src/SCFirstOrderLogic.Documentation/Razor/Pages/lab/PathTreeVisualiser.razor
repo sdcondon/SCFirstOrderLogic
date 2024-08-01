@@ -1,11 +1,6 @@
 ﻿@page "/lab/path-tree-visualiser"
 
 @using SCFirstOrderLogic;
-@using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParser;
-@using SCFirstOrderLogic.Inference;
-@using SCFirstOrderLogic.Inference.Basic.BackwardChaining;
-@using SCFirstOrderLogic.Inference.Basic.ForwardChaining;
-@using SCFirstOrderLogic.Inference.Basic.Resolution;
 @using SCFirstOrderLogic.SentenceCreation;
 @using System.ComponentModel.DataAnnotations;
 @using SCFirstOrderLogic.SentenceManipulation
@@ -13,13 +8,13 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Path Tree Visualiser <a data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><span class="bi bi-info-circle" aria-hidden="true"></span></a></h3>
+<h3>Lab - Path Tree Visualiser <a data-bs-toggle="modal" data-bs-target="#infoModal" href="#"><span class="bi bi-info-circle" aria-hidden="true"></span></a></h3>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Lab Explanation</h5>
+                <h5 class="modal-title" id="infoModalLabel">Lab Explanation</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -27,12 +22,11 @@
                     This page is an interactive visualiser for path trees, as implemented by SCFirstOrderLogic (in the SCFirstOrderLogic.TermIndexing namespace). 
                 </p>
                 <p>
-                    Path trees are an indexing structure for terms.
+                    Path trees are an indexing structure for terms that are particularly good for looking up instances of a query term.
                     A path tree's structure is essentially the same as the structure of terms themselves. That is, a path tree is
                     essentially all of its stored terms merged together - with extra branching at (the root and) each function
                     parameter, to allow for all of the different argument values that have been stored. Attached to each leaf
                     of a path tree is a list of all (values associated with the) terms in which the leaf's path appears.
-                    Path trees are good for looking up instances of a query term.
                 </p>
                 <p>
                     Note that:
