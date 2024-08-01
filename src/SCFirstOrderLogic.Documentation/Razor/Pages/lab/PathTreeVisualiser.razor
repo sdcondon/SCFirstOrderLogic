@@ -132,7 +132,7 @@
             var sentence = SentenceParser.BasicParser.Parse($"forall {formData.Variables}, P({formData.Term})");
             var visitor = new TermExtractor();
             visitor.Visit(sentence);
-            pathTree.Add(visitor.Term);
+            pathTree.Add(visitor.Term!);
             StateHasChanged();
         }
     }
@@ -144,17 +144,11 @@
         StateHasChanged();
     }
 
-    private class FormData : IValidatableObject
+    private class FormData(string variables, string term) : IValidatableObject
     {
-        public FormData(string variables, string term)
-        {
-            this.Variables = variables;
-            this.Term = term;
-        }
+        public string Variables { get; set; } = variables;
 
-        public string Variables { get; set; }
-
-        public string Term { get; set; }
+        public string Term { get; set; } = term;
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
