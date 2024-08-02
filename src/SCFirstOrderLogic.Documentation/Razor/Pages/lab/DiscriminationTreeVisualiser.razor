@@ -70,9 +70,9 @@
                 {
                     var childNodeLabel = childNodeKey switch
                     {
-                        DiscriminationTreeConstantNodeKey constantNodeKey => $"FUNCTION: {constantNodeKey.Identifier} (ARITY {constantNodeKey.ChildElementCount})",
-                        DiscriminationTreeFunctionNodeKey functionNodeKey => $"FUNCTION: {functionNodeKey.Identifier} (ARITY {functionNodeKey.ChildElementCount})",
-                        DiscriminationTreeVariableNodeKey variableNodeKey => $"VARIABLE: {variableNodeKey.Ordinal}",
+                        DiscriminationTreeConstantNodeKey constantNodeKey => $"function: {constantNodeKey.Identifier} (arity {constantNodeKey.ChildElementCount})",
+                        DiscriminationTreeFunctionNodeKey functionNodeKey => $"function: {functionNodeKey.Identifier} (arity {functionNodeKey.ChildElementCount})",
+                        DiscriminationTreeVariableNodeKey variableNodeKey => $"variable: #{variableNodeKey.Ordinal}",
                         _ => throw new ArgumentException(nameof(node))
                     };
 
@@ -85,7 +85,7 @@
                     try
                     {
                         value = node.Value;
-                        <li>VALUE: @value</li>
+                        <li>value: @value</li>
                     }
                     catch
                     {
@@ -99,14 +99,14 @@
 
 <ul class="mt-4">
     @{
-        RenderDiscriminationTreeNode("ROOT", discriminationTreeRootNode);
+        RenderDiscriminationTreeNode("(root node)", discriminationTreeRootNode);
     }
 </ul>
 
 @code {
     private DiscriminationTreeDictionaryNode<Term> discriminationTreeRootNode;
     private DiscriminationTree discriminationTree;
-    private FormData formData = new FormData("u, v, w, x, y, z", "");
+    private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
 
     public DiscriminationTreeVisualiser()
     {

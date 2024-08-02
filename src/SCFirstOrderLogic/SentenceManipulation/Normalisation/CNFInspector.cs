@@ -24,7 +24,8 @@ public static class CNFInspector
 
     /// <summary>
     /// Returns an enumerable of all of the Terms created by the normalisation process (as opposed to featuring in the original sentences).
-    /// That is, standardised variables and Skolem functions. Intended to be useful in creating a "legend" of such terms.
+    /// That is, standardised variables (whose identifier is a <see cref="StandardisedVariableIdentifier"/> instance) and Skolem functions
+    /// (whose identifier is a <see cref="SkolemFunctionIdentifier"/> instance). Intended to be useful in creating a "legend" of such terms.
     /// </summary>
     /// <returns>An enumerable of the (distinct) standardised variable references and Skolem functions found within the clauses.</returns>
     public static IEnumerable<Term> FindNormalisationTerms(IEnumerable<Predicate> predicates)
