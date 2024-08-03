@@ -28,11 +28,11 @@ public class SentenceParser
     /// </para>
     /// <para>
     /// These are combined because we check whether the returned value is among the identifiers of variables
-    /// that are in scope in order to determine whether something is a variable reference or a constant.
-    /// If they were separate, you'd end up in the awkward situation where you'd have to bear in mind that
-    /// "getVariableIdentifier" actually gets called for things that are constants, and for constants two "gets"
-    /// would end up being performed. Or of course we could offer the ability to customise this determination
-    /// logic - which feels overcomplicated.
+    /// that are in scope in order to determine whether something is a variable reference or a zero arity function
+    /// without parentheses. If they were separate, you'd end up in the awkward situation where you'd have to bear
+    /// in mind that "getVariableIdentifier" actually gets called for things that are zero arity functions, and for
+    /// zero arity functions two "gets" would end up being performed. Or of course we could offer the ability to 
+    /// customise this determination logic - which feels overcomplicated.
     /// </para>
     /// </param>
     public SentenceParser(
@@ -47,7 +47,8 @@ public class SentenceParser
     }
 
     /// <summary>
-    /// Retrieves an instance of a parser that just uses the symbol text as the identifier for returned predicates, functions, constants and variables.
+    /// Retrieves an instance of a parser that just uses the symbol text as the identifier for returned predicates, functions, and variables.
+    /// NB: This means that the identifiers for the zero arity functions declared as `f` and as `f()` are identical.
     /// </summary>
     public static SentenceParser BasicParser { get; } = new SentenceParser(s => s, s => s, s => s);
 
@@ -236,7 +237,7 @@ public class SentenceParser
             }
             else
             {
-                // identifier doesn't match any variable in scope - interpret as a constant
+                // identifier doesn't match any variable in scope - interpret as a zero arity function
                 return new Function(identifier);
             }
         }
