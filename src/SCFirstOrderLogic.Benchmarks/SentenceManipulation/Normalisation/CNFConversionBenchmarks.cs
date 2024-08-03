@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Normalisation;
 
 [MemoryDiagnoser]
 [InProcess]

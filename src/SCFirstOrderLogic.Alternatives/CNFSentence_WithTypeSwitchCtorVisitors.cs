@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2021-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using System.Collections.Generic;
-using System.Linq;
+using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic;
 
 /// <summary>
 /// Representation of a <see cref="Sentence"/> in conjunctive normal form (CNF).
@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.SentenceManipulation;
 public class CNFSentence_WithTypeSwitchCtorVisitors
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="AltCNFSentence_WithTypeSwitch"/> class, implicitly converting the provided sentence to CNF in the process.
+    /// Initialises a new instance of the <see cref="CNFSentence_WithTypeSwitchCtorVisitors"/> class, implicitly converting the provided sentence to CNF in the process.
     /// </summary>
     /// <param name="sentence">The sentence to (convert and) represent.</param>
     public CNFSentence_WithTypeSwitchCtorVisitors(Sentence sentence)

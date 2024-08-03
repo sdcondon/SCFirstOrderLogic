@@ -51,31 +51,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation
             .When(tc => tc.X.IsSubsumedBy(tc.Y))
             .ThenReturns((tc, rv) => rv.Should().Be(tc.Expected));
 
-        private static Function C => new(nameof(C));
-        private static Function D => new(nameof(D));
-        private static OperablePredicate F(params OperableTerm[] arguments) => new(nameof(F), arguments);
-        private static OperablePredicate G(params OperableTerm[] arguments) => new(nameof(G), arguments);
-        private static OperablePredicate P(params OperableTerm[] arguments) => new(nameof(P), arguments);
-        private static OperablePredicate Q(params OperableTerm[] arguments) => new(nameof(Q), arguments);
-
-        private record SubsumptionTestCase(CNFClause X, CNFClause Y, bool Expected)
-        {
-            public SubsumptionTestCase(Sentence X, Sentence Y, bool Expected)
-                : this(X.ToCNF().Clauses.Single(), Y.ToCNF().Clauses.Single(), Expected) { }
-
-            public SubsumptionTestCase(CNFClause X, Sentence Y, bool Expected)
-                : this(X, Y.ToCNF().Clauses.Single(), Expected) { }
-
-            public SubsumptionTestCase(Sentence X, CNFClause Y, bool Expected)
-                : this(X.ToCNF().Clauses.Single(), Y, Expected) { }
-        }
-    }
-}
-
-namespace SCFirstOrderLogic.SentenceManipulation.Unification
-{
-    public static class CNFClauseExtensionTests
-    {
         public static Test UnifiesWithAnyOfBehaviour => TestThat
             .GivenEachOf<UnifiesWithAnyOfTestCase>(() =>
             [
@@ -97,8 +72,24 @@ namespace SCFirstOrderLogic.SentenceManipulation.Unification
             .When(tc => tc.Clause.ToCNF().Clauses.Single().UnifiesWithAnyOf(tc.Clauses.Select(s => s.ToCNF().Clauses.Single())))
             .ThenReturns((tc, rv) => rv.Should().Be(tc.ExpectedResult));
 
+        private static Function C => new(nameof(C));
+        private static Function D => new(nameof(D));
+        private static OperablePredicate F(params OperableTerm[] arguments) => new(nameof(F), arguments);
+        private static OperablePredicate G(params OperableTerm[] arguments) => new(nameof(G), arguments);
         private static OperablePredicate P(params OperableTerm[] arguments) => new(nameof(P), arguments);
         private static OperablePredicate Q(params OperableTerm[] arguments) => new(nameof(Q), arguments);
+
+        private record SubsumptionTestCase(CNFClause X, CNFClause Y, bool Expected)
+        {
+            public SubsumptionTestCase(Sentence X, Sentence Y, bool Expected)
+                : this(X.ToCNF().Clauses.Single(), Y.ToCNF().Clauses.Single(), Expected) { }
+
+            public SubsumptionTestCase(CNFClause X, Sentence Y, bool Expected)
+                : this(X, Y.ToCNF().Clauses.Single(), Expected) { }
+
+            public SubsumptionTestCase(Sentence X, CNFClause Y, bool Expected)
+                : this(X.ToCNF().Clauses.Single(), Y, Expected) { }
+        }
 
         private record UnifiesWithAnyOfTestCase(Sentence Clause, IEnumerable<Sentence> Clauses, bool ExpectedResult);
     }

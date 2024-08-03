@@ -3,8 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-// TODO-BREAKING-V7: Change namespace to SCFirstOrderLogic.SentenceManipulation.Normalisation
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Normalisation;
 
 /// <summary>
 /// <para>

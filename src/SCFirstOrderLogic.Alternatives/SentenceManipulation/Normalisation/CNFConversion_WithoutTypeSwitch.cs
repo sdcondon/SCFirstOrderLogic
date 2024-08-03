@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Normalisation;
 
 public static class CNFConversion_WithoutTypeSwitch
 {

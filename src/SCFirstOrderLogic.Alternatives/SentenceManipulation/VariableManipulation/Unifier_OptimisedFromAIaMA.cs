@@ -2,7 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System.Diagnostics.CodeAnalysis;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Unification;
+namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 /// <summary>
 /// Most general unifier logic - optimised from the version presented in the source material,

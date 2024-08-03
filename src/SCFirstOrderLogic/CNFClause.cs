@@ -80,43 +80,6 @@ public class CNFClause : IEquatable<CNFClause>
     public bool IsEmpty => Literals.Count == 0;
 
     /// <summary>
-    /// Constructs and returns a clause that is the same as this one, except for the
-    /// fact that all referenced (standardised) variable declarations are replaced with new ones.
-    /// </summary>
-    /// <returns>
-    /// A clause that is the same as this one, except for the fact that all referenced
-    /// variables are replaced with new ones.
-    /// </returns>
-    // TODO-BREAKING-V7: uses particular identifier types - and as such doesn't belong here.
-    // Somewhere in Normalisation namespace, probably
-    public CNFClause Restandardise()
-    {
-        var newIdentifiersByOld = new Dictionary<StandardisedVariableIdentifier, StandardisedVariableIdentifier>();
-        return new CNFClause(Literals.Select(RestandardiseLiteral));
-
-        Literal RestandardiseLiteral(Literal literal) => new(RestandardisePredicate(literal.Predicate), literal.IsNegated);
-
-        Predicate RestandardisePredicate(Predicate predicate) => new(predicate.Identifier, predicate.Arguments.Select(RestandardiseTerm).ToArray());
-
-        Term RestandardiseTerm(Term term) => term switch
-        {
-            VariableReference v => new VariableReference(GetOrAddNewIdentifier((StandardisedVariableIdentifier)v.Identifier)),
-            Function f => new Function(f.Identifier, f.Arguments.Select(RestandardiseTerm).ToArray()),
-            _ => throw new ArgumentException($"Unexpected term type '{term.GetType()}' encountered", nameof(term)),
-        };
-
-        StandardisedVariableIdentifier GetOrAddNewIdentifier(StandardisedVariableIdentifier oldIdentifier)
-        {
-            if (!newIdentifiersByOld!.TryGetValue(oldIdentifier, out var newIdentifier))
-            {
-                newIdentifier = newIdentifiersByOld[oldIdentifier] = new StandardisedVariableIdentifier(oldIdentifier.OriginalVariableScope, oldIdentifier.OriginalSentence);
-            }
-
-            return newIdentifier;
-        }
-    }
-
-    /// <summary>
     /// <para>
     /// Returns a string that represents the current object.
     /// </para>

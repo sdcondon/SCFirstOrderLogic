@@ -2,7 +2,7 @@
 using FlUnit;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Unification;
+namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 public class UnifierTests
 {

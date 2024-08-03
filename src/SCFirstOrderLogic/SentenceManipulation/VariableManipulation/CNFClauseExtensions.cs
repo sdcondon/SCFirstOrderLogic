@@ -51,24 +51,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation
         {
             return otherClause.Subsumes(thisClause);
         }
-    }
-}
 
-namespace SCFirstOrderLogic.SentenceManipulation.Unification
-{
-    /// <summary>
-    /// <para>
-    /// Extension methods pertaining to the unification of clauses.
-    /// </para>
-    /// <para>
-    /// NB: Of course, these methods COULD just be added to <see cref="CNFClause"/>. It felt a little messy
-    /// to have CNFClause depend on code in the Unification namespace though. Perhaps a slightly idiosyncratic 
-    /// design decision (after all, I'm fine with CNFClause depending on SentenceManipulation), but I'm sticking by it.
-    /// </para>
-    /// </summary>
-    // TODO-BREAKING-V7: Merge me into class above
-    public static class CNFClauseExtensions
-    {
         /// <summary>
         /// <para>
         /// Checks whether "this" clause unifies with any of an enumeration of other definite clauses.

@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Unification;
+namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 [MemoryDiagnoser]
 [InProcess]

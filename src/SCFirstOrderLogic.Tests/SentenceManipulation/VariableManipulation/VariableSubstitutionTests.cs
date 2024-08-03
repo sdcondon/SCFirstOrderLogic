@@ -2,7 +2,7 @@
 using FlUnit;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 public static class VariableSubstitutionTests
 {

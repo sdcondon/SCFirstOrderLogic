@@ -50,8 +50,8 @@ public class SentenceFactoryTests
                 Expression: d => d.Constant1.Parent == d.Constant1,
                 ExpectedSentence: new Predicate(
                     EqualityIdentifier.Instance,
-                    new Function(new MemberFunctionIdentifier(parent), new[] { new Function(new MemberConstantIdentifier(constant1)) }),
-                    new Function(new MemberConstantIdentifier(constant1)))),
+                    new Function(new MemberFunctionIdentifier(parent), [new Function(new MemberFunctionIdentifier(constant1))]),
+                    new Function(new MemberFunctionIdentifier(constant1)))),
 
             new TestCase(
                 Expression: d => Iff(d.GroundPredicate1, d.GroundPredicate2),
@@ -65,8 +65,8 @@ public class SentenceFactoryTests
                     new VariableDeclaration("x"),
                     new Predicate(
                         EqualityIdentifier.Instance,
-                        new Function(new MemberFunctionIdentifier(parent), new[] { new VariableReference(new VariableDeclaration("x")) }),
-                        new Function(new MemberConstantIdentifier(constant1))))),
+                        new Function(new MemberFunctionIdentifier(parent), [new VariableReference(new VariableDeclaration("x"))]),
+                        new Function(new MemberFunctionIdentifier(constant1))))),
 
             new TestCase(
                 Expression: d => If(d.GroundPredicate1, d.GroundPredicate2),
@@ -85,8 +85,8 @@ public class SentenceFactoryTests
                     new VariableDeclaration("x"),
                     new Predicate(
                         EqualityIdentifier.Instance,
-                        new Function(new MemberFunctionIdentifier(parent), new[] { new VariableReference(new VariableDeclaration("x")) }),
-                        new Function(new MemberConstantIdentifier(constant1))))),
+                        new Function(new MemberFunctionIdentifier(parent), [new VariableReference(new VariableDeclaration("x"))]),
+                        new Function(new MemberFunctionIdentifier(constant1))))),
         })
         .When(tc => SentenceFactory.Create<IDomain, IElement>(tc.Expression))
         .ThenReturns((tc, sentence) =>

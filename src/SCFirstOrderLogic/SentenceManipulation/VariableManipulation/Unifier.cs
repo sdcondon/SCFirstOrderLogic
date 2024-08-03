@@ -4,8 +4,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-// TODO-BREAKING-V7: Move to VariableManipulation
-namespace SCFirstOrderLogic.SentenceManipulation.Unification;
+namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 /// <summary>
 /// <para>

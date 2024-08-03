@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Equivalency;
+using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 using System;
 using System.Collections.Generic;
 
@@ -55,7 +56,7 @@ public static class EquivalencyOptions
     public static EquivalencyAssertionOptions<TRoot> UsingJustAConsistencyCheckFor<TRoot, TType>(this EquivalencyAssertionOptions<TRoot> opts, Func<TType, bool>? filter = null)
         where TType : class
     {
-        Dictionary<(string root, TType expectation), TType> actualByExpectation = new();
+        Dictionary<(string root, TType expectation), TType> actualByExpectation = [];
 
         return opts
             .Using<TType>(ctx =>

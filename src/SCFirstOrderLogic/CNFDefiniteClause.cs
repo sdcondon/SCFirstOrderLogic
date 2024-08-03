@@ -42,14 +42,4 @@ public class CNFDefiniteClause : CNFClause
     /// Gets the conjuncts that combine to form the antecedent of this clause (that is, the P₁, .. Pₙ in P₁ ∧ P₂ ∧ .. ∧ Pₙ ⇒ Q).
     /// </summary>
     public IEnumerable<Predicate> Conjuncts => Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
-
-    /// <summary>
-    /// Constructs and returns a clause that is the same as this one, except for the
-    /// fact that all variable declarations are replaced with new ones.
-    /// </summary>
-    /// <returns>
-    /// A clause that is the same as this one, except for the fact that all variable
-    /// references are replaced with new ones.
-    /// </returns>
-    public new CNFDefiniteClause Restandardise() => new(base.Restandardise());
 }

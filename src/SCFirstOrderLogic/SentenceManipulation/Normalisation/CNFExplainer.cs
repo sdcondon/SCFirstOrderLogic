@@ -1,8 +1,9 @@
 ﻿// Copyright (c) 2021-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using SCFirstOrderLogic.SentenceFormatting;
 using System;
 
-namespace SCFirstOrderLogic.SentenceFormatting;
+namespace SCFirstOrderLogic.SentenceManipulation.Normalisation;
 
 /// <summary>
 /// Utility logic for human-readable explanations of CNF clauses - notably, the normalisation terms (standardised variables and Skolem functions) within them.

@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-// TODO-BREAKING-V7: Change namespace to SCFirstOrderLogic.SentenceManipulation.VariableManipulation
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 /// <summary>
 /// Sentence transformation class that makes some substitutions for <see cref="VariableReference"/> instances.
