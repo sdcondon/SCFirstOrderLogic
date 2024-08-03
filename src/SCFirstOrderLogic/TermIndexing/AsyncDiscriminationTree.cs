@@ -15,16 +15,19 @@ public class AsyncDiscriminationTree
     private readonly AsyncDiscriminationTree<Term> actualTree;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncDiscriminationTree"/> class that is empty to begin with.
+    /// Initializes a new instance of the <see cref="AsyncDiscriminationTree"/> class with a specified root node.
     /// </summary>
+    /// <param name="root">The root node of the tree.</param>
     public AsyncDiscriminationTree(IAsyncDiscriminationTreeNode<Term> root)
     {
         actualTree = new(root);
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncDiscriminationTree"/> class with some initial content.
+    /// Initializes a new instance of the <see cref="AsyncDiscriminationTree"/> class with a specified root node and some (additional) initial content.
     /// </summary>
+    /// <param name="root">The root node of the tree.</param>
+    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
     public AsyncDiscriminationTree(IAsyncDiscriminationTreeNode<Term> root, IEnumerable<Term> content)
     {
         actualTree = new(root, content.Select(t => KeyValuePair.Create(t, t)));

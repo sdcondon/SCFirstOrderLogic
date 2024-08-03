@@ -23,7 +23,7 @@ public class AsyncDiscriminationTree<TValue>
     private readonly IAsyncDiscriminationTreeNode<TValue> root;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncDiscriminationTree{TValue}"/> class that is empty to begin with.
+    /// Initializes a new instance of the <see cref="AsyncDiscriminationTree{TValue}"/> class with a specified root node.
     /// </summary>
     /// <param name="root">The root node of the tree.</param>
     public AsyncDiscriminationTree(IAsyncDiscriminationTreeNode<TValue> root)
@@ -32,10 +32,10 @@ public class AsyncDiscriminationTree<TValue>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncDiscriminationTree{TValue}"/> class with some initial content.
+    /// Initializes a new instance of the <see cref="AsyncDiscriminationTree{TValue}"/> class with a specified root node and some (additional) initial content.
     /// </summary>
     /// <param name="root">The root node of the tree.</param>
-    /// <param name="content">The initial content to add to the tree.</param>
+    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
     public AsyncDiscriminationTree(IAsyncDiscriminationTreeNode<TValue> root, IEnumerable<KeyValuePair<Term, TValue>> content)
     {
         this.root = root ?? throw new ArgumentNullException(nameof(root));
@@ -106,7 +106,7 @@ public class AsyncDiscriminationTree<TValue>
         }
 
         // NB: can safely grab Value here because the current node must ALWAYS be a leaf node at this point.
-        // It is not possible for prefix element info enumerations to occur, because the the number of
+        // It is not possible for prefix element info enumerations to occur, because the number of
         // elements in the path is always one more than the summation of the ChildElementCounts (NB: used in
         // equality check) of all encountered elements.
         return (true, currentNode.Value);

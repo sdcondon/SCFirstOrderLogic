@@ -30,7 +30,7 @@ public class AsyncPathTree<TValue>
     private readonly IAsyncPathTreeParameterNode<TValue> root;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncPathTree{TValue}"/> class with a specified root node and no (additional) initial content.
+    /// Initializes a new instance of the <see cref="AsyncPathTree{TValue}"/> class with a specified root node.
     /// </summary>
     /// <param name="rootNode">The root node of the tree.</param>
     public AsyncPathTree(IAsyncPathTreeParameterNode<TValue> rootNode)
@@ -39,10 +39,10 @@ public class AsyncPathTree<TValue>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncPathTree{TValue}"/> class with a specified root node and some initial content.
+    /// Initializes a new instance of the <see cref="AsyncPathTree{TValue}"/> class with a specified root node and some (additional) initial content.
     /// </summary>
     /// <param name="rootNode">The root node of the tree.</param>
-    /// <param name="content">The initial content of the tree.</param>
+    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
     public AsyncPathTree(IAsyncPathTreeParameterNode<TValue> rootNode, IEnumerable<KeyValuePair<Term, TValue>> content)
     {
         this.root = rootNode ?? throw new ArgumentNullException(nameof(rootNode));

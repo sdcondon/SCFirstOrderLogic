@@ -23,7 +23,7 @@ public class AsyncPathTree
     private readonly AsyncPathTree<Term> actualTree;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncPathTree"/> class with a specific root node.
+    /// Initializes a new instance of the <see cref="AsyncPathTree"/> class with a specified root node.
     /// </summary>
     /// <param name="rootNode">The root node of the tree.</param>
     public AsyncPathTree(IAsyncPathTreeParameterNode<Term> rootNode)
@@ -32,10 +32,10 @@ public class AsyncPathTree
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PathTree"/> class with a specific root node and some initial content.
+    /// Initializes a new instance of the <see cref="PathTree"/> class with a specific root node and some (additional) initial content.
     /// </summary>
     /// <param name="rootNode">The root node of the tree.</param>
-    /// <param name="content">The initial content of the tree.</param>
+    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
     public AsyncPathTree(IAsyncPathTreeParameterNode<Term> rootNode, IEnumerable<Term> content)
     {
         actualTree = new(rootNode, content.Select(t => KeyValuePair.Create(t, t)));

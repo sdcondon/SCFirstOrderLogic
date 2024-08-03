@@ -35,7 +35,7 @@ public class DiscriminationTree<TValue>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with a specified root node and no (additional) initial content.
+    /// Initializes a new instance of the <see cref="DiscriminationTree{TValue}"/> class with a specified root node.
     /// </summary>
     /// <param name="root">The root node of the tree.</param>
     public DiscriminationTree(IDiscriminationTreeNode<TValue> root)

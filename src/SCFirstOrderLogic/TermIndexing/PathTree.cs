@@ -22,7 +22,7 @@ public class PathTree
     private readonly PathTree<Term> actualTree;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PathTree"/> class.
+    /// Initializes a new instance of the <see cref="PathTree"/> class with a new <see cref="PathTreeDictionaryNode{TValue}"/> root node and no initial content.
     /// </summary>
     public PathTree()
     {
@@ -30,7 +30,7 @@ public class PathTree
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PathTree"/> class with a specific root node.
+    /// Initializes a new instance of the <see cref="PathTree"/> class with a specified root node.
     /// </summary>
     /// <param name="rootNode">The root node of the tree.</param>
     public PathTree(IPathTreeParameterNode<Term> rootNode)
@@ -39,7 +39,7 @@ public class PathTree
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PathTree"/> class with some initial content.
+    /// Initializes a new instance of the <see cref="PathTree"/> class with a new <see cref="PathTreeDictionaryNode{TValue}"/> root node and some initial content.
     /// </summary>
     /// <param name="content">The initial content of the tree.</param>
     public PathTree(IEnumerable<Term> content)
@@ -48,10 +48,10 @@ public class PathTree
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PathTree"/> class with a specific root node and some initial content.
+    /// Initializes a new instance of the <see cref="PathTree"/> class with a specified root node and some (additional) initial content.
     /// </summary>
     /// <param name="rootNode">The root node of the tree.</param>
-    /// <param name="content">The initial content of the tree.</param>
+    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
     public PathTree(IPathTreeParameterNode<Term> rootNode, IEnumerable<Term> content)
     {
         actualTree = new(rootNode, content.Select(t => KeyValuePair.Create(t, t)));

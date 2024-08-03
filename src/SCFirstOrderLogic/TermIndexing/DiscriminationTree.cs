@@ -20,7 +20,7 @@ public class DiscriminationTree
     private readonly DiscriminationTree<Term> actualTree;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DiscriminationTree"/> class.
+    /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with a new <see cref="DiscriminationTreeDictionaryNode{TValue}"/> root node and no initial content.
     /// </summary>
     public DiscriminationTree()
     {
@@ -30,22 +30,26 @@ public class DiscriminationTree
     /// <summary>
     /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with a specified root node.
     /// </summary>
+    /// <param name="root">The root node of the tree.</param>
     public DiscriminationTree(IDiscriminationTreeNode<Term> root)
     {
         actualTree = new(root);
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with some initial content.
+    /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with a new <see cref="DiscriminationTreeDictionaryNode{TValue}"/> root node and some initial content.
     /// </summary>
+    /// <param name="content">The initial content to be added to the tree.</param>
     public DiscriminationTree(IEnumerable<Term> content)
     {
         actualTree = new(content.Select(t => KeyValuePair.Create(t, t)));
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with a specified root node and some initial content.
+    /// Initializes a new instance of the <see cref="DiscriminationTree"/> class with a specified root node and some (additional) initial content.
     /// </summary>
+    /// <param name="root">The root node of the tree.</param>
+    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
     public DiscriminationTree(IDiscriminationTreeNode<Term> root, IEnumerable<Term> content)
     {
         actualTree = new(root, content.Select(t => KeyValuePair.Create(t, t)));
