@@ -121,7 +121,7 @@ public static class Unifier_OptimisedFromAIaMA
             (VariableReference variable, _) => TryUnify(variable, y, unifier),
             (_, VariableReference variable) => TryUnify(variable, x, unifier),
             (Function functionX, Function functionY) => TryUnify(functionX, functionY, unifier),
-            _ => x.Equals(y), // only potential for equality is if they're both constants. Worth being explicit?
+            _ => throw new ArgumentException("Null or unsupported type of Term encountered - cannot be unified"),
         };
     }
 

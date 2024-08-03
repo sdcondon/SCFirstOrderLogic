@@ -63,9 +63,7 @@ public static class Unifier_WithOccursCheckAsTransformation
             (VariableReference variable, _) => TryUnify(variable, y, unifier),
             (_, VariableReference variable) => TryUnify(variable, x, unifier),
             (Function functionX, Function functionY) => TryUnify(functionX, functionY, unifier),
-            // only potential for equality is if they're both constants. Perhaps worth testing this vs that explicitly and a default that just returns false.
-            // Very similar from a performace perspective (constant equality does type check)
-            _ => x.Equals(y),
+            _ => throw new ArgumentException("Null or unsupported type of Term encountered - cannot be unified"),
         };
     }
 

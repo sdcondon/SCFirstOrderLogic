@@ -282,10 +282,7 @@ public static class Unifier
             (VariableReference variable, _) => TryUpdateInPlace(variable, y, unifier),
             (_, VariableReference variable) => TryUpdateInPlace(variable, x, unifier),
             (Function functionX, Function functionY) => TryUpdateInPlace(functionX, functionY, unifier),
-            // Below, the only potential for equality is if they're both constants. Perhaps worth testing this
-            // versus that explicitly and a default that just returns false. Similar from a performance
-            // perspective.
-            _ => x.Equals(y),
+            _ => throw new ArgumentException("Null or unsupported type of Term encountered - cannot be unified"),
         };
     }
 

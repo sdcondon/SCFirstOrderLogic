@@ -114,7 +114,7 @@ public static class SentenceFactory
     /// </para>
     /// <para>
     /// This method serves as a shorthand for <see cref="TryCreate{TDomain, TElement}"/> where the domain is
-    /// just <c>IEnumerable&lt;TElement&gt;</c> - which suffices when the domain contains no constants or ground
+    /// just <c>IEnumerable&lt;TElement&gt;</c> - which suffices when the domain contains no constant terms or ground
     /// predicates.
     /// </para>
     /// </summary>
@@ -161,7 +161,7 @@ public static class SentenceFactory
     }
 
     /// <summary>
-    /// Tries to create a <see cref="Conjunction"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+    /// Tries to create a <see cref="Conjunction"/> from an expression acting on the domain (and any relevant variables) of the form:
     /// <code>{expression} {&amp;&amp; or &amp;} {expression}</code>
     /// </summary>
     private static bool TryCreateConjunction<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
@@ -180,7 +180,7 @@ public static class SentenceFactory
     }
 
     /// <summary>
-    /// Tries to create a <see cref="Disjunction"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+    /// Tries to create a <see cref="Disjunction"/> from an expression acting on the domain (and any relevant variables) of the form:
     /// <code>{expression} {|| or |} {expression}</code>
     /// </summary>
     private static bool TryCreateDisjunction<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
@@ -199,7 +199,7 @@ public static class SentenceFactory
     }
 
     /// <summary>
-    /// Tries to create a <see cref="Predicate"/> with the <see cref="EqualityIdentifier"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+    /// Tries to create a <see cref="Predicate"/> with the <see cref="EqualityIdentifier"/> from an expression acting on the domain (and any relevant variables) of the form:
     /// <code>{expression} == {expression}</code>
     /// </summary>
     private static bool TryCreateEquality<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
@@ -219,7 +219,7 @@ public static class SentenceFactory
     }
 
     /// <summary>
-    /// Tries to create a <see cref="Equivalence"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+    /// Tries to create a <see cref="Equivalence"/> from an expression acting on the domain (and any relevant variables) of the form:
     /// <code>Operators.Iff({expression}, {expression})</code>
     /// (Consumers are encouraged to include <c>using static SCFirstOrderLogic.Operators;</c> to make this a little shorter)
     /// </summary>
@@ -239,7 +239,7 @@ public static class SentenceFactory
     }
 
     /// <summary>
-    /// Tries to create a <see cref="ExistentialQuantification"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+    /// Tries to create a <see cref="ExistentialQuantification"/> from an expression acting on the domain (and any relevant variables) of the form:
     /// <code>{domain}.Any({variable} => {expression})</code>
     /// </summary>
     private static bool TryCreateExistentialQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
@@ -350,7 +350,7 @@ public static class SentenceFactory
     }
 
     /// <summary>
-    /// Tries to create a <see cref="Implication"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+    /// Tries to create a <see cref="Implication"/> from an expression acting on the domain (and any relevant variables) of the form:
     /// <code>Operators.If({expression}, {expression})</code>
     /// (Consumers are encouraged to include <c>using static SCFirstOrderLogic.LanguageIntegration.Operators;</c> to make this a little shorter)
     /// </summary>
@@ -370,7 +370,7 @@ public static class SentenceFactory
     }
 
     /// <summary>
-    /// Tries to create a <see cref="Negation"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+    /// Tries to create a <see cref="Negation"/> from an expression acting on the domain (and any relevant variables) of the form:
     /// <code>!{expression}</code>
     /// We also interpret <c>!=</c> as a negation of an equality.
     /// </summary>
@@ -396,7 +396,7 @@ public static class SentenceFactory
     }
 
     /// <summary>
-    /// Tries to create a <see cref="MemberPredicateIdentifier"/> from an expression acting on the domain (and any relevant variables and constants) that
+    /// Tries to create a <see cref="MemberPredicateIdentifier"/> from an expression acting on the domain (and any relevant variables) that
     /// is a boolean-valued property or method call on an element object, or a boolean-valued property or method call on a domain object.
     /// </summary>
     private static bool TryCreatePredicate<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
@@ -470,7 +470,7 @@ public static class SentenceFactory
     }
 
     /// <summary>
-    /// Tries to create a <see cref="UniversalQuantification"/> from an expression acting on the domain (and any relevant variables and constants) of the form:
+    /// Tries to create a <see cref="UniversalQuantification"/> from an expression acting on the domain (and any relevant variables) of the form:
     /// <code>{domain}.All({variable} => {expression})</code>
     /// </summary>
     private static bool TryCreateUniversalQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)

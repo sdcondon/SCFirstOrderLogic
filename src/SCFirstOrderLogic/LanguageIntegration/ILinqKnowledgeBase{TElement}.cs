@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.LanguageIntegration;
 /// <para>
 /// This interface is just a shorthand for <see cref="ILinqKnowledgeBase{TDomain, TElement}"/>, where <c>TDomain</c>
 /// is <c>IEnumerable&lt;TElement&gt;</c>. It is explicitly included because a concrete type for TDomain is only
-/// needed when there are constants or ground predicates - which is by no means all cases.
+/// needed when there are constant terms or ground predicates - which is by no means all cases.
 /// </para>
 /// </summary>
 /// <typeparam name="TElement">

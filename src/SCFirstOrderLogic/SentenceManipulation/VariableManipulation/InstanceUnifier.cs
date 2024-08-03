@@ -11,15 +11,15 @@ internal static class InstanceUnifier
     /// <summary>
     /// Attempts to update a unifier so that it (also) unifies two given literals.
     /// </summary>
-    /// <param name="x">One of the two literals to attempt to unify.</param>
-    /// <param name="y">One of the two literals to attempt to unify.</param>
+    /// <param name="generalisation">One of the two literals to attempt to unify.</param>
+    /// <param name="instance">One of the two literals to attempt to unify.</param>
     /// <param name="unifier">The unifier to update. Will be updated to refer to a new unifier on success, or be unchanged on failure.</param>
     /// <returns>True if the two literals can be unified, otherwise false.</returns>
-    public static bool TryUpdate(Literal x, Literal y, ref VariableSubstitution unifier)
+    public static bool TryUpdate(Literal generalisation, Literal instance, ref VariableSubstitution unifier)
     {
         var updatedUnifier = unifier.CopyAsMutable();
 
-        if (TryUpdateInPlace(x, y, updatedUnifier))
+        if (TryUpdateInPlace(generalisation, instance, updatedUnifier))
         {
             unifier = updatedUnifier.CopyAsReadOnly();
             return true;
@@ -42,16 +42,16 @@ internal static class InstanceUnifier
         return false;
     }
 
-    private static bool TryUpdateInPlace(Literal x, Literal y, MutableVariableSubstitution unifier)
+    private static bool TryUpdateInPlace(Literal generalisation, Literal instance, MutableVariableSubstitution unifier)
     {
-        if (x.IsNegated != y.IsNegated
-            || !x.Predicate.Identifier.Equals(y.Predicate.Identifier)
-            || x.Predicate.Arguments.Count != y.Predicate.Arguments.Count)
+        if (generalisation.IsNegated != instance.IsNegated
+            || !generalisation.Predicate.Identifier.Equals(instance.Predicate.Identifier)
+            || generalisation.Predicate.Arguments.Count != instance.Predicate.Arguments.Count)
         {
             return false;
         }
 
-        foreach (var args in x.Predicate.Arguments.Zip(y.Predicate.Arguments, (x, y) => (x, y)))
+        foreach (var args in generalisation.Predicate.Arguments.Zip(instance.Predicate.Arguments, (x, y) => (x, y)))
         {
             if (!TryUpdateInPlace(args.x, args.y, unifier))
             {
@@ -68,10 +68,8 @@ internal static class InstanceUnifier
         {
             (VariableReference variable, _) => TryUpdateInPlace(variable, instance, unifier),
             (Function functionX, Function functionY) => TryUpdateInPlace(functionX, functionY, unifier),
-            // Below, the only potential for equality is if they're both constants. Perhaps worth testing this
-            // versus that explicitly and a default that just returns false. Similar from a performance
-            // perspective.
-            _ => generalisation.Equals(instance),
+            // Otherwise we must have (Function, Variable) which can't be unified in this case
+            _ => false,
         };
     }
 
