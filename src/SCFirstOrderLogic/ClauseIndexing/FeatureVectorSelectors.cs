@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.ClauseIndexing;
 
 /// <summary>
-/// A static class offering a couple of handy default feature vector selection methods to use -
+/// A static class offering a couple of handy common feature vector selection methods to use -
 /// taken from Stephan Schulz's 2013 paper.
 /// </summary>
 /// <seealso href="http://wwwlehre.dhbw-stuttgart.de/~sschulz/PAPERS/Schulz2013-FVI.pdf"/>
