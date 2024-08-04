@@ -274,15 +274,15 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     }
 
     /// <summary>
-    /// Returns an enumerable of the values associated with each stored subset of a given set.
+    /// Returns an enumerable of the values associated with each stored clause that subsumes a given clause.
     /// </summary>
-    /// <param name="key">The values associated with the stored subsets of this set will be retrieved.</param>
-    /// <returns>An async enumerable of the values associated with each stored subset of the given set.</returns>
-    public IAsyncEnumerable<TValue> GetSubsets(CNFClause key)
+    /// <param name="clause">The values associated with the stored clauses that subsume this clause will be retrieved.</param>
+    /// <returns>An async enumerable of the values associated with each stored clause that subsumes the given clause.</returns>
+    public IAsyncEnumerable<TValue> GetSubsuming(CNFClause clause)
     {
-        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(clause);
 
-        var featureVector = MakeOrderedFeatureVector(key);
+        var featureVector = MakeOrderedFeatureVector(clause);
 
         return ExpandNode(root, 0);
 
@@ -316,15 +316,15 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     }
 
     /// <summary>
-    /// Returns an enumerable of the values associated with each stored superset a given set.
+    /// Returns an enumerable of the values associated with each stored clause that is subsumed by a given clause.
     /// </summary>
-    /// <param name="key">The values associated with the stored supersets of this set will be retrieved.</param>
-    /// <returns>An async enumerable of the values associated with each stored superset a given set.</returns>
-    public IAsyncEnumerable<TValue> GetSupersets(CNFClause key)
+    /// <param name="clause">The values associated with the stored clauses that are subsumed by this clause will be retrieved.</param>
+    /// <returns>An async enumerable of the values associated with each stored clause that is subsumed by the given clause.</returns>
+    public IAsyncEnumerable<TValue> GetSubsumed(CNFClause clause)
     {
-        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(clause);
 
-        var featureVector = MakeOrderedFeatureVector(key);
+        var featureVector = MakeOrderedFeatureVector(clause);
 
         return ExpandNode(root, 0);
 

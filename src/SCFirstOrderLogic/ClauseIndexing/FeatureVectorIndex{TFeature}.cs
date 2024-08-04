@@ -190,22 +190,22 @@ public class FeatureVectorIndex<TFeature>
     public bool Contains(CNFClause key) => innerIndex.TryGet(key, out _);
 
     /// <summary>
-    /// Returns an enumerable of each stored subset of a given set.
+    /// Returns an enumerable of each stored clause that subsumes a given clause.
     /// </summary>
-    /// <param name="key">The stored subsets of this set will be retrieved.</param>
-    /// <returns>An enumerable each stored subset of the given set.</returns>
-    public IEnumerable<CNFClause> GetSubsets(CNFClause key)
+    /// <param name="clause">The stored clauses that subsume this clause will be retrieved.</param>
+    /// <returns>An enumerable each stored clause that subsumes the given clause.</returns>
+    public IEnumerable<CNFClause> GetSubsuming(CNFClause clause)
     {
-        return innerIndex.GetSubsets(key);
+        return innerIndex.GetSubsuming(clause);
     }
 
     /// <summary>
-    /// Returns an enumerable of teach stored superset a given set.
+    /// Returns an enumerable of each stored clause that is subsumed by a given clause.
     /// </summary>
-    /// <param name="key">The stored supersets of this set will be retrieved.</param>
-    /// <returns>An enumerable of each stored superset the given set.</returns>
-    public IEnumerable<CNFClause> GetSupersets(CNFClause key)
+    /// <param name="clause">The stored clauses that are subsumed by this clause will be retrieved.</param>
+    /// <returns>An enumerable of each stored clause that is subsumed by the given clause.</returns>
+    public IEnumerable<CNFClause> GetSubsumed(CNFClause clause)
     {
-        return innerIndex.GetSupersets(key);
+        return innerIndex.GetSubsumed(clause);
     }
 }

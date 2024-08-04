@@ -185,16 +185,16 @@ public class AsyncFeatureVectorIndex<TFeature>
     public async Task<bool> ContainsAsync(CNFClause key) => (await innerIndex.TryGetAsync(key)).isSucceeded;
 
     /// <summary>
-    /// Returns an enumerable of each stored subset of a given set.
+    /// Returns an enumerable of each stored clause that subsumes a given clause.
     /// </summary>
-    /// <param name="key">The stored subsets of this set will be retrieved.</param>
-    /// <returns>An async enumerable each stored subset of the given set.</returns>
-    public IAsyncEnumerable<CNFClause> GetSubsets(CNFClause key) => innerIndex.GetSubsets(key);
+    /// <param name="clause">The stored clauses that subsume this clause will be retrieved.</param>
+    /// <returns>An async enumerable each stored clause that subsumes the given clause.</returns>
+    public IAsyncEnumerable<CNFClause> GetSubsuming(CNFClause clause) => innerIndex.GetSubsuming(clause);
 
     /// <summary>
-    /// Returns an enumerable of teach stored superset a given set.
+    /// Returns an enumerable of each stored clause that is subsumed by a given clause.
     /// </summary>
-    /// <param name="key">The stored supersets of this set will be retrieved.</param>
-    /// <returns>An async enumerable of each stored superset the given set.</returns>
-    public IAsyncEnumerable<CNFClause> GetSupersets(CNFClause key) => innerIndex.GetSupersets(key);
+    /// <param name="clause">The stored clauses that are subsumed by this clause will be retrieved.</param>
+    /// <returns>An async enumerable of each clause that is subsumed by the given clause.</returns>
+    public IAsyncEnumerable<CNFClause> GetSubsumed(CNFClause clause) => innerIndex.GetSubsumed(clause);
 }
