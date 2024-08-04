@@ -180,10 +180,10 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     }
 
     /// <summary>
-    /// Adds a set and associated value to the trie.
+    /// Adds a clause and associated value to the index.
     /// </summary>
-    /// <param name="key">The set to add.</param>
-    /// <param name="value">The value to associate with the set.</param>
+    /// <param name="key">The clause to add.</param>
+    /// <param name="value">The value to associate with the clause.</param>
     public async Task AddAsync(CNFClause key, TValue value)
     {
         ArgumentNullException.ThrowIfNull(key);
@@ -201,10 +201,10 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     }
 
     /// <summary>
-    /// Removes a set from the trie.
+    /// Removes a clause from the index.
     /// </summary>
-    /// <param name="key">The set to remove.</param>
-    /// <returns>A value indicating whether the set was present prior to this operation.</returns>
+    /// <param name="key">The clause to remove.</param>
+    /// <returns>A value indicating whether the clause was present prior to this operation.</returns>
     public async Task<bool> RemoveAsync(CNFClause key)
     {
         ArgumentNullException.ThrowIfNull(key);
@@ -247,9 +247,9 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     }
 
     /// <summary>
-    /// Attempts to retrieve the value associated with a set.
+    /// Attempts to retrieve the value associated with a clause.
     /// </summary>
-    /// <param name="key">The set to retrieve the associated value of.</param>
+    /// <param name="key">The clause to retrieve the associated value of.</param>
     /// <returns>A task that returns a value indicating whether it was successful, and if so what the retrieved value is.</returns>
     public async Task<(bool isSucceeded, TValue? value)> TryGetAsync(CNFClause key)
     {

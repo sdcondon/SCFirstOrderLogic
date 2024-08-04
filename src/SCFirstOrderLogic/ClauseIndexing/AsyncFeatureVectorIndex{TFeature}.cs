@@ -164,24 +164,24 @@ public class AsyncFeatureVectorIndex<TFeature>
     }
 
     /// <summary>
-    /// Adds a set to the trie.
+    /// Adds a clause to the index.
     /// </summary>
-    /// <param name="key">The set to add.</param>
+    /// <param name="key">The clause to add.</param>
     /// <returns>A task representing completion of the operation.</returns>
     public Task AddAsync(CNFClause key) => innerIndex.AddAsync(key, key);
 
     /// <summary>
-    /// Removes a set from the trie.
+    /// Removes a clause from the index.
     /// </summary>
-    /// <param name="key">The set to remove.</param>
-    /// <returns>A value indicating whether the set was present prior to this operation.</returns>
+    /// <param name="key">The clause to remove.</param>
+    /// <returns>A value indicating whether the clause was present prior to this operation.</returns>
     public Task<bool> RemoveAsync(CNFClause key) => innerIndex.RemoveAsync(key);
 
     /// <summary>
-    /// Determines whether a given set (matched exactly) is present in the trie.
+    /// Determines whether a given clause (matched exactly) is present in the index.
     /// </summary>
-    /// <param name="key">The set to check for.</param>
-    /// <returns>True if and only if the set is present in the trie.</returns>
+    /// <param name="key">The clause to check for.</param>
+    /// <returns>True if and only if the clause is present in the index.</returns>
     public async Task<bool> ContainsAsync(CNFClause key) => (await innerIndex.TryGetAsync(key)).isSucceeded;
 
     /// <summary>

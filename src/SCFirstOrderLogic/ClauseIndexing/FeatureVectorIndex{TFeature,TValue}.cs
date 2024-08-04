@@ -177,10 +177,10 @@ public class FeatureVectorIndex<TFeature, TValue>
     }
 
     /// <summary>
-    /// Adds a set and associated value to the trie.
+    /// Adds a clause and associated value to the index.
     /// </summary>
-    /// <param name="key">The set to add.</param>
-    /// <param name="value">The value to associate with the set.</param>
+    /// <param name="key">The clause to add.</param>
+    /// <param name="value">The value to associate with the clause.</param>
     public void Add(CNFClause key, TValue value)
     {
         ArgumentNullException.ThrowIfNull(key);
@@ -198,10 +198,10 @@ public class FeatureVectorIndex<TFeature, TValue>
     }
 
     /// <summary>
-    /// Removes a set from the trie.
+    /// Removes a clause from the index.
     /// </summary>
-    /// <param name="key">The set to remove.</param>
-    /// <returns>A value indicating whether the set was present prior to this operation.</returns>
+    /// <param name="key">The clause to remove.</param>
+    /// <returns>A value indicating whether the clause was present prior to this operation.</returns>
     public bool Remove(CNFClause key)
     {
         ArgumentNullException.ThrowIfNull(key);
@@ -243,9 +243,9 @@ public class FeatureVectorIndex<TFeature, TValue>
     }
 
     /// <summary>
-    /// Attempts to retrieve the value associated with a set, matched exactly.
+    /// Attempts to retrieve the value associated with a clause, matched exactly.
     /// </summary>
-    /// <param name="key">The set to retrieve the associated value of.</param>
+    /// <param name="key">The clause to retrieve the associated value of.</param>
     /// <param name="value">Will be populated with the retrieved value.</param>
     /// <returns>True if and only if a value was successfully retrieved.</returns>
     public bool TryGet(CNFClause key, [MaybeNullWhen(false)] out TValue value)

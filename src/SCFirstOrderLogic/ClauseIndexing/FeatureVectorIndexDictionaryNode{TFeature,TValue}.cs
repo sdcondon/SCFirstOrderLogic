@@ -30,8 +30,8 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// </summary>
     /// <param name="equalityComparer">
     /// The equality comparer that should be used by the child dictionary.
-    /// For correct behaviour, trie instances accessing this node should be using an <see cref="IComparer{T}"/> that is consistent with it. 
-    /// That is, one that only returns zero for elements considered equal by the equality comparer used by this instance.
+    /// For correct behaviour, index instances accessing this node should be using an <see cref="IComparer{T}"/> that is consistent with it. 
+    /// That is, one that only returns zero for features considered equal by the equality comparer used by this instance.
     /// </param>
     public FeatureVectorIndexDictionaryNode(IEqualityComparer<TFeature> equalityComparer)
     {

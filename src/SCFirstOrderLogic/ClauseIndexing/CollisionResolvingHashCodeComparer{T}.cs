@@ -13,7 +13,9 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// for feature comparison. It is however important to note that these arbitrary decisions
 /// will not be the same across runs (or even across instances). As such, this type
 /// should NOT be used when the "same" index is used across runs - that is, when any
-/// kind of persistence is involved.
+/// kind of persistence is involved. And of course it also can't be used if the hash code
+/// semantics aren't appropriate - if, for example, hash code is reference based, but we
+/// are going to be looking stuff up that and expecting to match based on value.
 /// </summary>
 public class CollisionResolvingHashCodeComparer<T> : IComparer<T>
     where T : notnull
@@ -48,7 +50,7 @@ public class CollisionResolvingHashCodeComparer<T> : IComparer<T>
     /// </summary>
     // TODO: not sure why ive bothered making this public, given that ive not also allowed
     // it to be set on instantiation (so doesn't help anyone wanting to, say, serialise this
-    // alongside a trie instance).
+    // alongside a index instance).
     public IReadOnlyDictionary<(T, T), int> CollisionResolutions { get; }
 
 #pragma warning disable CS8767 // This is fine - T has notnull constraint
