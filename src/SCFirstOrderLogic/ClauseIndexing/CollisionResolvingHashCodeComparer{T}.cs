@@ -9,10 +9,10 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// A <see cref="IComparer{T}"/> implementation that uses hash code for comparison,
 /// but also makes an arbitrary but consistent decision when two distinct objects
 /// have colliding hash codes. This results in a comparer that defines a "less than
-/// or equal" relation that is antisymmetric - and is thus usable by set tries for
-/// element comparison. It is however important to note that these arbitrary decisions
+/// or equal" relation that is antisymmetric - and is thus usable by feature vector indices
+/// for feature comparison. It is however important to note that these arbitrary decisions
 /// will not be the same across runs (or even across instances). As such, this type
-/// should NOT be used when the "same" trie is used across runs - that is, when any
+/// should NOT be used when the "same" index is used across runs - that is, when any
 /// kind of persistence is involved.
 /// </summary>
 public class CollisionResolvingHashCodeComparer<T> : IComparer<T>

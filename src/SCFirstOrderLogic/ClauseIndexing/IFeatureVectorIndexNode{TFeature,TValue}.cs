@@ -8,14 +8,14 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// <summary>
 /// Interface for types capable of serving as nodes of a <see cref="FeatureVectorIndex{TKeyElement, TValue}"/>.
 /// </summary>
-/// <typeparam name="TKeyElement">The type of the keys of the feature vectors.</typeparam>
+/// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
-public interface IFeatureVectorIndexNode<TKeyElement, TValue>
+public interface IFeatureVectorIndexNode<TFeature, TValue>
 {
     /// <summary>
     /// Gets the child nodes of this node, keyed by the element represented by the child.
     /// </summary>
-    IReadOnlyDictionary<TKeyElement, IFeatureVectorIndexNode<TKeyElement, TValue>> Children { get; }
+    IReadOnlyDictionary<TFeature, IFeatureVectorIndexNode<TFeature, TValue>> Children { get; }
 
     /// <summary>
     /// Gets a value indicating whether a value is stored against this node.
@@ -34,16 +34,13 @@ public interface IFeatureVectorIndexNode<TKeyElement, TValue>
     /// </summary>
     /// <param name="keyElement">The element represented by the node to be retrieved or added.</param>
     /// <returns>The retrieved or added node.</returns>
-    // TODO-BREAKING: Arrrgh, I used "ChildNode" here, but just "Child" below. Really shouldn't bug me but does.
-    // Not worth a major version bump, but the next time I'm making breaking changes anyway.. Given that it'd
-    // mean consistency with the async version, should probably drop from here rather than adding to the below.
-    IFeatureVectorIndexNode<TKeyElement, TValue> GetOrAddChildNode(TKeyElement keyElement);
+    IFeatureVectorIndexNode<TFeature, TValue> GetOrAddChild(TFeature keyElement);
 
     /// <summary>
     /// Deletes a child of this node.
     /// </summary>
     /// <param name="keyElement">The element represented by the node to be removed.</param>
-    void DeleteChild(TKeyElement keyElement);
+    void DeleteChild(TFeature keyElement);
 
     /// <summary>
     /// Adds a value to this node, in so doing specifying that this node represents the "last" element of a stored set.

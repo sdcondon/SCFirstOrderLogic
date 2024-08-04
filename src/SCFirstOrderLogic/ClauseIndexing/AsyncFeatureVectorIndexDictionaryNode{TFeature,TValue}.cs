@@ -10,40 +10,40 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 #pragma warning disable CS1998 // async lacks await. See 'NB' in class summary.
 /// <summary>
 /// <para>
-/// An implementation of <see cref="IAsyncFeatureVectorIndexNode{TKeyElement, TValue}"/> that just stores its content in memory.
+/// An implementation of <see cref="IAsyncFeatureVectorIndexNode{TFeature, TValue}"/> that just stores its content in memory.
 /// Uses a <see cref="ConcurrentDictionary{TKey, TValue}"/> for child nodes.
 /// </para>
 /// <para>
-/// NB: If you are using this type, you should consider just using <see cref="FeatureVectorIndex{TKeyElement, TValue}"/> to avoid the overhead of asynchronicity.
-/// <see cref="AsyncFeatureVectorIndex{TKeyElement, TValue}"/> is intended to facilitate tries that use secondary storage - this type is primarily
+/// NB: If you are using this type, you should consider just using <see cref="FeatureVectorIndex{TFeature, TValue}"/> to avoid the overhead of asynchronicity.
+/// <see cref="AsyncFeatureVectorIndex{TFeature, TValue}"/> is intended to facilitate tries that use secondary storage - this type is primarily
 /// intended as an example implementation to base real (secondary storage utilising) implementations on.
 /// </para>
 /// </summary>
-/// <typeparam name="TKeyElement">The type of the keys of the feature vectors.</typeparam>
+/// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
-public class AsyncFeatureVectorIndexDictionaryNode<TKeyElement, TValue> : IAsyncFeatureVectorIndexNode<TKeyElement, TValue>
-    where TKeyElement : notnull
+public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFeatureVectorIndexNode<TFeature, TValue>
+    where TFeature : notnull
 {
-    private readonly ConcurrentDictionary<TKeyElement, IAsyncFeatureVectorIndexNode<TKeyElement, TValue>> children;
+    private readonly ConcurrentDictionary<TFeature, IAsyncFeatureVectorIndexNode<TFeature, TValue>> children;
     private TValue? value;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TKeyElement, TValue}"/> class.
+    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
     /// </summary>
     public AsyncFeatureVectorIndexDictionaryNode()
-        : this(EqualityComparer<TKeyElement>.Default)
+        : this(EqualityComparer<TFeature>.Default)
     {
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TKeyElement, TValue}"/> class.
+    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
     /// </summary>
     /// <param name="equalityComparer">
     /// The equality comparer that should be used by the child dictionary.
     /// For correct behaviour, trie instances accessing this node should be using an <see cref="IComparer{T}"/> that is consistent with it. 
     /// That is, one that only returns zero for elements considered equal by equality comparer used by this instance.
     /// </param>
-    public AsyncFeatureVectorIndexDictionaryNode(IEqualityComparer<TKeyElement> equalityComparer)
+    public AsyncFeatureVectorIndexDictionaryNode(IEqualityComparer<TFeature> equalityComparer)
     {
         children = new(equalityComparer);
     }
@@ -55,7 +55,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TKeyElement, TValue> : IAsync
     public TValue Value => HasValue ? value! : throw new InvalidOperationException("Node has no attached value");
 
     /// <inheritdoc/>
-    public async IAsyncEnumerable<KeyValuePair<TKeyElement, IAsyncFeatureVectorIndexNode<TKeyElement, TValue>>> GetChildren()
+    public async IAsyncEnumerable<KeyValuePair<TFeature, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> GetChildren()
     {
         foreach (var kvp in children)
         {
@@ -64,16 +64,16 @@ public class AsyncFeatureVectorIndexDictionaryNode<TKeyElement, TValue> : IAsync
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncFeatureVectorIndexNode<TKeyElement, TValue>?> TryGetChildAsync(TKeyElement keyElement)
+    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(TFeature keyElement)
     {
         children.TryGetValue(keyElement, out var child);
         return ValueTask.FromResult(child);
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncFeatureVectorIndexNode<TKeyElement, TValue>> GetOrAddChildAsync(TKeyElement keyElement)
+    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(TFeature keyElement)
     {
-        IAsyncFeatureVectorIndexNode<TKeyElement, TValue> node = new AsyncFeatureVectorIndexDictionaryNode<TKeyElement, TValue>();
+        IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue>();
         if (!children.TryAdd(keyElement, node))
         {
             node = children[keyElement];
@@ -83,7 +83,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TKeyElement, TValue> : IAsync
     }
 
     /// <inheritdoc/>
-    public ValueTask DeleteChildAsync(TKeyElement keyElement)
+    public ValueTask DeleteChildAsync(TFeature keyElement)
     {
         children.Remove(keyElement, out _);
         return ValueTask.CompletedTask;
