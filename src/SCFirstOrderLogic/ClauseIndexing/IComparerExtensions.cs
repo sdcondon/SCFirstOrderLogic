@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.ClauseIndexing
 {
     internal static class IComparerExtensions
     {
-        public static T[] Sort<T>(this IComparer<T> comparer, ISet<T> set)
+        public static T[] Sort<T>(this IComparer<T> comparer, IEnumerable<T> set)
         {
             var elements = set.ToArray();
             Array.Sort(elements, comparer);

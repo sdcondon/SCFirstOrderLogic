@@ -26,7 +26,7 @@ public class FeatureVectorIndex<TFeature, TValue>
 
     private readonly Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector;
     private readonly IFeatureVectorIndexNode<TFeature, TValue> root;
-    private readonly IComparer<TFeature> elementComparer;
+    private readonly IComparer<TFeature> featureComparer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature,TValue}"/> class with a new 
@@ -163,12 +163,14 @@ public class FeatureVectorIndex<TFeature, TValue>
         IComparer<TFeature> elementComparer, IFeatureVectorIndexNode<TFeature, TValue> root,
         IEnumerable<KeyValuePair<CNFClause, TValue>> content)
     {
+        ArgumentNullException.ThrowIfNull(featureVectorSelector);
         ArgumentNullException.ThrowIfNull(root);
         ArgumentNullException.ThrowIfNull(elementComparer);
         ArgumentNullException.ThrowIfNull(content);
 
+        this.featureVectorSelector = featureVectorSelector;
         this.root = root;
-        this.elementComparer = elementComparer;
+        this.featureComparer = elementComparer;
 
         foreach (var kvp in content)
         {
@@ -185,13 +187,10 @@ public class FeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var keyElements = featureVectorSelector(key);
-        // TODO: sort keyelements by key then by value
-
         var currentNode = root;
-        foreach (var keyElement in keyElements)
+        foreach (var element in MakeOrderedFeatureVector(key))
         {
-            currentNode = currentNode.GetOrAddChildNode(keyElement);
+            currentNode = currentNode.GetOrAddChildNode(element);
         }
 
         currentNode.AddValue(value);
@@ -206,25 +205,24 @@ public class FeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var keyElements = featureVectorSelector(key);
-        // TODO: sort keyelements by key then by value
+        var featureVector = MakeOrderedFeatureVector(key);
 
         return ExpandNode(root, 0);
 
         bool ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
         {
-            if (keyElementIndex < keyElements.Length)
+            if (keyElementIndex < featureVector.Count)
             {
-                var keyElement = keyElements[keyElementIndex];
+                var element = featureVector[keyElementIndex];
 
-                if (!node.Children.TryGetValue(keyElement, out var childNode) || !ExpandNode(childNode, keyElementIndex + 1))
+                if (!node.Children.TryGetValue(element, out var childNode) || !ExpandNode(childNode, keyElementIndex + 1))
                 {
                     return false;
                 }
 
                 if (childNode.Children.Count == 0 && !childNode.HasValue)
                 {
-                    node.DeleteChild(keyElement);
+                    node.DeleteChild(element);
                 }
 
                 return true;
@@ -252,11 +250,8 @@ public class FeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var keyElements = featureVectorSelector(key);
-        // TODO: sort keyelements by key then by value
-
         var currentNode = root;
-        foreach (var keyElement in keyElements)
+        foreach (var keyElement in MakeOrderedFeatureVector(key))
         {
             if (currentNode.Children.TryGetValue(keyElement, out var childNode))
             {
@@ -288,16 +283,15 @@ public class FeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var keyElements = featureVectorSelector(key);
-        // TODO: sort keyelements by key then by value
+        var featureVector = MakeOrderedFeatureVector(key);
 
         return ExpandNode(root, 0);
 
         IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
         {
-            if (keyElementIndex < keyElements.Length)
+            if (keyElementIndex < featureVector.Count)
             {
-                if (node.Children.TryGetValue(keyElements[keyElementIndex], out var childNode))
+                if (node.Children.TryGetValue(featureVector[keyElementIndex], out var childNode))
                 {
                     foreach (var value in ExpandNode(childNode, keyElementIndex + 1))
                     {
@@ -329,20 +323,19 @@ public class FeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var keyElements = featureVectorSelector(key);
-        // TODO: sort keyelements by key then by value
+        var featureVector = MakeOrderedFeatureVector(key);
 
         return ExpandNode(root, 0);
 
         IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
         {
-            if (keyElementIndex < keyElements.Length)
+            if (keyElementIndex < featureVector.Count)
             {
                 foreach (var (childKeyElement, childNode) in node.Children)
                 {
-                    if (keyElementIndex == 0 || elementComparer.Compare(childKeyElement, keyElements[keyElementIndex - 1]) > 0)
+                    if (keyElementIndex == 0 || featureComparer.Compare(childKeyElement, featureVector[keyElementIndex - 1]) > 0)
                     {
-                        var childComparedToCurrent = elementComparer.Compare(childKeyElement, keyElements[keyElementIndex]);
+                        var childComparedToCurrent = featureComparer.Compare(childKeyElement, featureVector[keyElementIndex]);
 
                         if (childComparedToCurrent <= 0)
                         {
@@ -380,5 +373,10 @@ public class FeatureVectorIndex<TFeature, TValue>
                 }
             }
         }
+    }
+
+    private IList<KeyValuePair<TFeature, int>> MakeOrderedFeatureVector(CNFClause clause)
+    {
+        return featureVectorSelector(clause).OrderBy(kvp => kvp.Key, featureComparer).ToList();
     }
 }

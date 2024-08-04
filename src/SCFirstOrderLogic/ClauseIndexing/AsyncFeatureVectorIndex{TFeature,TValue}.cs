@@ -26,7 +26,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
     private readonly Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector;
     private readonly IAsyncFeatureVectorIndexNode<TFeature, TValue> root;
-    private readonly IComparer<TFeature> elementComparer;
+    private readonly IComparer<TFeature> featureComparer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature,TValue}"/> class with a new 
@@ -171,7 +171,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
         this.featureVectorSelector = featureVectorSelector;
         this.root = root;
-        this.elementComparer = featureComparer;
+        this.featureComparer = featureComparer;
 
         foreach (var kvp in content)
         {
@@ -188,13 +188,10 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var keyElements = featureVectorSelector(key);
-        // TODO: sort keyelements by key then by value
-
         var currentNode = root;
-        foreach (var keyElement in keyElements)
+        foreach (var element in MakeOrderedFeatureVector(key))
         {
-            currentNode = await currentNode.GetOrAddChildAsync(keyElement);
+            currentNode = await currentNode.GetOrAddChildAsync(element);
         }
 
         await currentNode.AddValueAsync(value);
@@ -209,26 +206,25 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var keyElements = featureVectorSelector(key);
-        // TODO: sort keyelements by key then by value
+        var featureVector = MakeOrderedFeatureVector(key);
 
         return await ExpandNodeAsync(root, 0);
 
-        async ValueTask<bool> ExpandNodeAsync(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
+        async ValueTask<bool> ExpandNodeAsync(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
         {
-            if (keyElementIndex < keyElements.Length)
+            if (elementIndex < featureVector.Count)
             {
-                var keyElement = keyElements[keyElementIndex];
-                var childNode = await node.TryGetChildAsync(keyElement);
+                var element = featureVector[elementIndex];
+                var childNode = await node.TryGetChildAsync(element);
 
-                if (childNode == null || !await ExpandNodeAsync(childNode, keyElementIndex + 1))
+                if (childNode == null || !await ExpandNodeAsync(childNode, elementIndex + 1))
                 {
                     return false;
                 }
 
                 if (!await childNode.GetChildren().GetAsyncEnumerator().MoveNextAsync() && !childNode.HasValue)
                 {
-                    await node.DeleteChildAsync(keyElement);
+                    await node.DeleteChildAsync(element);
                 }
 
                 return true;
@@ -255,13 +251,10 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var keyElements = featureVectorSelector(key);
-        // TODO: sort keyelements by key then by value
-
         var currentNode = root;
-        foreach (var keyElement in keyElements)
+        foreach (var element in MakeOrderedFeatureVector(key))
         {
-            var childNode = await currentNode.TryGetChildAsync(keyElement);
+            var childNode = await currentNode.TryGetChildAsync(element);
             if (childNode != null)
             {
                 currentNode = childNode;
@@ -289,26 +282,25 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var keyElements = featureVectorSelector(key);
-        // TODO: sort keyelements by key then by value
+        var featureVector = MakeOrderedFeatureVector(key);
 
         return ExpandNode(root, 0);
 
-        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
+        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
         {
-            if (keyElementIndex < keyElements.Length)
+            if (elementIndex < featureVector.Count)
             {
-                var childNode = await node.TryGetChildAsync(keyElements[keyElementIndex]);
+                var childNode = await node.TryGetChildAsync(featureVector[elementIndex]);
 
                 if (childNode != null)
                 {
-                    await foreach (var value in ExpandNode(childNode, keyElementIndex + 1))
+                    await foreach (var value in ExpandNode(childNode, elementIndex + 1))
                     {
                         yield return value;
                     }
                 }
 
-                await foreach (var value in ExpandNode(node, keyElementIndex + 1))
+                await foreach (var value in ExpandNode(node, elementIndex + 1))
                 {
                     yield return value;
                 }
@@ -332,26 +324,25 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var keyElements = featureVectorSelector(key);
-        // TODO: sort keyelements by key then by value
+        var featureVector = MakeOrderedFeatureVector(key);
 
         return ExpandNode(root, 0);
 
-        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
+        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
         {
-            if (keyElementIndex < keyElements.Length)
+            if (elementIndex < featureVector.Count)
             {
                 await foreach (var (childKeyElement, childNode) in node.GetChildren())
                 {
-                    if (keyElementIndex == 0 || elementComparer.Compare(childKeyElement, keyElements[keyElementIndex - 1]) > 0)
+                    if (elementIndex == 0 || featureComparer.Compare(childKeyElement, featureVector[elementIndex - 1]) > 0)
                     {
-                        var childComparedToCurrent = elementComparer.Compare(childKeyElement, keyElements[keyElementIndex]);
+                        var childComparedToCurrent = featureComparer.Compare(childKeyElement, featureVector[elementIndex]);
 
                         if (childComparedToCurrent <= 0)
                         {
                             var keyElementIndexOffset = childComparedToCurrent == 0 ? 1 : 0;
 
-                            await foreach (var value in ExpandNode(childNode, keyElementIndex + keyElementIndexOffset))
+                            await foreach (var value in ExpandNode(childNode, elementIndex + keyElementIndexOffset))
                             {
                                 yield return value;
                             }
@@ -383,5 +374,10 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
                 }
             }
         }
+    }
+
+    private IList<KeyValuePair<TFeature, int>> MakeOrderedFeatureVector(CNFClause clause)
+    {
+        return featureVectorSelector(clause).OrderBy(kvp => kvp.Key, featureComparer).ToList();
     }
 }
