@@ -5,11 +5,11 @@ I don't intend to add any particularly powerful or specialised inference logic t
 
 Priorities at the time of writing:
 
-* v7, including:
+* v7 of the core package, including:
   * (done - pre-release published) `Constant` type dropped from model.
     There's never been any real need for it - a constant is just a function with arity zero.
   * (done - pre-release published) Some namespace changes
-  * (WIP) A feature vector index implementation in a new ClauseIndexing namespace of the core package.
+  * (WIP) A feature vector index implementation in a new ClauseIndexing namespace.
 
 Further ahead:
 
