@@ -26,4 +26,8 @@
     <Folder Include="wwwroot\lib\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SCFirstOrderLogic\SCFirstOrderLogic.csproj" />
+  </ItemGroup>
+
 </Project>
