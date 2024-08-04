@@ -284,6 +284,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
         var featureVector = MakeOrderedFeatureVector(clause);
 
+        // TODO: need to filter to clauses that actually subsume (expanding node will return candidate set)
         return ExpandNode(root, 0);
 
         async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
@@ -326,6 +327,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
         var featureVector = MakeOrderedFeatureVector(clause);
 
+        // TODO: need to filter to clauses that are actually subsumed (expanding node will return candidate set)
         return ExpandNode(root, 0);
 
         async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)

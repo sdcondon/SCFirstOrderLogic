@@ -285,6 +285,7 @@ public class FeatureVectorIndex<TFeature, TValue>
 
         var featureVector = MakeOrderedFeatureVector(clause);
 
+        // TODO: need to filter to clauses that actually subsume (expanding node will return candidate set)
         return ExpandNode(root, 0);
 
         IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
@@ -325,6 +326,7 @@ public class FeatureVectorIndex<TFeature, TValue>
 
         var featureVector = MakeOrderedFeatureVector(clause);
 
+        // TODO: need to filter to clauses that are actually subsumed (expanding node will return candidate set)
         return ExpandNode(root, 0);
 
         IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
