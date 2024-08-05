@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2021-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -34,5 +35,70 @@ public static class FeatureVectorSelectors
     public static IEnumerable<KeyValuePair<object, int>> MaxDepths(CNFClause clause)
     {
         return null;
+    }
+
+    private class IdentifierFeature
+    {
+
+    }
+
+    private class OccurenceCountVisitor : RecursiveSentenceVisitor
+    {
+        private readonly IDictionary<object, int> featureVector;
+
+        public OccurenceCountVisitor(IDictionary<object, int> featureVector)
+        {
+            this.featureVector = featureVector;
+        }
+
+        public override void Visit(Predicate predicate)
+        {
+            AddOccurence(predicate.Identifier);
+            base.Visit(predicate);
+        }
+
+        public override void Visit(Function function)
+        {
+            AddOccurence(function.Identifier);
+            base.Visit(function);
+        }
+
+        private void AddOccurence(object identifier)
+        {
+            featureVector.TryGetValue(identifier, out var value);
+            featureVector[identifier] = value++;
+        }
+    }
+
+    private class MaxDepthsVisitor : RecursiveSentenceVisitor<int>
+    {
+        private readonly IDictionary<object, int> featureVector;
+
+        public MaxDepthsVisitor(IDictionary<object, int> featureVector)
+        {
+            this.featureVector = featureVector;
+        }
+
+        public override void Visit(Predicate predicate, int depth)
+        {
+            UpdateMaxDepth(predicate.Identifier, depth);
+            base.Visit(predicate, depth + 1);
+        }
+
+        public override void Visit(Function function, int depth)
+        {
+            UpdateMaxDepth(function.Identifier, depth);
+            base.Visit(function, depth + 1);
+        }
+
+        private void UpdateMaxDepth(object identifier, int depth)
+        {
+            featureVector.TryGetValue(identifier, out var maxDepth);
+
+            if (depth > maxDepth)
+            {
+                featureVector[identifier] = depth;
+            }
+        }
     }
 }
