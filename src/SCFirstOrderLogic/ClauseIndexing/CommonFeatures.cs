@@ -1,0 +1,195 @@
+﻿// Copyright (c) 2021-2024 Simon Condon.
+// You may use this file in accordance with the terms of the MIT license.
+using SCFirstOrderLogic.SentenceManipulation;
+using System.Collections.Generic;
+
+namespace SCFirstOrderLogic.ClauseIndexing;
+
+/// <summary>
+/// A static class offering a couple of useful feature vector selection methods (and
+/// accompanying feature comparers) to use - taken from Stephan Schulz's 2013 paper.
+/// </summary>
+/// <seealso href="http://wwwlehre.dhbw-stuttgart.de/~sschulz/PAPERS/Schulz2013-FVI.pdf"/>
+public static class CommonFeatures
+{
+    /// <summary>
+    /// Feature vector selection logic that returns a feature vector consisting of: 
+    /// positive literal count, negative literal count, occurence count of each occuring
+    /// identifier among positive literals, and occurence count of each occuring identifier
+    /// among negative literals.
+    /// </summary>
+    /// <param name="clause">The clause to retrieve a feature vector for.</param>
+    /// <returns>A feature vector.</returns>
+    public static IEnumerable<KeyValuePair<object, int>> MakeOccurenceCountsFeatureVector(CNFClause clause)
+    {
+        Dictionary<object, int> featureVector = new();
+
+        foreach (var literal in clause.Literals)
+        {
+            literal.Predicate.Accept(new OccurenceCountVisitor(featureVector, literal.IsPositive));
+        }
+
+        return featureVector;
+    }
+
+    /// <summary>
+    /// Feature vector selection logic that returns a feature vector consisting of the max depth
+    /// of each occuring identifier among positive literals, and the max depth of each occuring 
+    /// identifier among negative literals.
+    /// </summary>
+    /// <param name="clause">The clause to retrieve a feature vector for.</param>
+    /// <returns>A feature vector.</returns>
+    public static IEnumerable<KeyValuePair<object, int>> MakeMaxDepthsFeatureVector(CNFClause clause)
+    {
+        Dictionary<object, int> featureVector = new();
+
+        foreach (var literal in clause.Literals)
+        {
+            literal.Predicate.Accept(new MaxDepthsVisitor(featureVector, literal.IsPositive), 1);
+        }
+
+        return featureVector;
+    }
+
+    /// <summary>
+    /// Makes a comparer that can be used (to determine the ordering of nodes in the index) with the features included
+    /// in feature vectors created by <see cref="MakeOccurenceCountsFeatureVector(CNFClause)"/>.
+    /// </summary>
+    /// <param name="identifierComparer">The comparer to use to compare identifiers.</param>
+    /// <returns>A new <see cref="IComparer{T}"/>.</returns>
+    public static IComparer<OccurenceCountFeature> MakeOccurenceCountFeatureComparer(IComparer<object> identifierComparer)
+    {
+        return Comparer<OccurenceCountFeature>.Create((x, y) =>
+        {
+            if (x.Identifier != null && y.Identifier != null)
+            {
+                var identifierComparison = identifierComparer.Compare(x.Identifier, y.Identifier);
+                if (identifierComparison != 0)
+                {
+                    return identifierComparison;
+                }
+                else
+                {
+                    // NB: this an arbitrary decision. We just need a consistent comparison - there's no
+                    // reason to think that positive literals are more or less informative tha negative ones.
+                    return x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral);
+                }
+            }
+            else
+            {
+                // literal counts are of low informativeness, so we score them lower than identifier occurence counts:
+                return (x.Identifier != null, y.Identifier != null) switch
+                {
+                    (false, false) => x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral),
+                    (false, true) => -1,
+                    (true, false) => 1,
+                    (true, true) => x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral) // todo: will never happen. refactor me. 
+                };
+            }
+        });
+    }
+
+    /// <summary>
+    /// Makes a comparer that can be used (to determine the ordering of nodes in the index) with the features included
+    /// in feature vectors created by <see cref="MakeMaxDepthsFeatureVector(CNFClause)"/>.
+    /// </summary>
+    /// <param name="identifierComparer">The comparer to use to compare identifiers.</param>
+    /// <returns>A new <see cref="IComparer{T}"/>.</returns>
+    public static IComparer<MaxDepthFeature> MakeMaxDepthFeatureComparer(IComparer<object> identifierComparer)
+    {
+        return Comparer<MaxDepthFeature>.Create((x, y) =>
+        {
+            var identifierComparison = identifierComparer.Compare(x.Identifier, y.Identifier);
+            if (identifierComparison != 0)
+            {
+                return identifierComparison;
+            }
+            else
+            {
+                // NB: this an arbitrary decision. We just need a consistent comparison - there's no
+                // reason to think that positive literals are more or less informative tha negative ones.
+                return x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral);
+            }
+        });
+    }
+
+    /// <summary>
+    /// Identifying record for a feature that is the occurence count of a particular identifier within positive or negative literals.
+    /// </summary>
+    /// <param name="Identifier">The identifier to which this feature relates, or null if it is for literal counts.</param>
+    /// <param name="IsInPositiveLiteral">A value indicating whether this feature relates to occurence counts in (or of) positive literals, or negative.</param>
+    public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral);
+
+    /// <summary>
+    /// Identifying record for a feature that is the (1-based) max depth of a particular identifier within positive or negative literals.
+    /// </summary>
+    /// <param name="Identifier">The identifier to which this feature relates.</param>
+    /// <param name="IsInPositiveLiteral">A value indicating whether this feature relates to max depths in positive literals, or negative.</param>
+    public record MaxDepthFeature(object Identifier, bool IsInPositiveLiteral);
+
+    private class OccurenceCountVisitor : RecursiveSentenceVisitor
+    {
+        private readonly IDictionary<object, int> featureVector;
+        private readonly bool forPositiveLiterals;
+
+        public OccurenceCountVisitor(IDictionary<object, int> featureVector, bool forPositiveLiterals)
+        {
+            this.featureVector = featureVector;
+            this.forPositiveLiterals = forPositiveLiterals;
+        }
+
+        public override void Visit(Predicate predicate)
+        {
+            AddOccurence(predicate.Identifier);
+            base.Visit(predicate);
+        }
+
+        public override void Visit(Function function)
+        {
+            AddOccurence(function.Identifier);
+            base.Visit(function);
+        }
+
+        private void AddOccurence(object identifier)
+        {
+            var feature = new OccurenceCountFeature(identifier, forPositiveLiterals);
+            featureVector.TryGetValue(feature, out var value);
+            featureVector[feature] = value++;
+        }
+    }
+
+    private class MaxDepthsVisitor : RecursiveSentenceVisitor<int>
+    {
+        private readonly IDictionary<object, int> featureVector;
+        private readonly bool forPositiveLiterals;
+
+        public MaxDepthsVisitor(IDictionary<object, int> featureVector, bool forPositiveLiterals)
+        {
+            this.featureVector = featureVector;
+            this.forPositiveLiterals = forPositiveLiterals;
+        }
+
+        public override void Visit(Predicate predicate, int depth)
+        {
+            UpdateMaxDepth(predicate.Identifier, depth);
+            base.Visit(predicate, depth + 1);
+        }
+
+        public override void Visit(Function function, int depth)
+        {
+            UpdateMaxDepth(function.Identifier, depth);
+            base.Visit(function, depth + 1);
+        }
+
+        private void UpdateMaxDepth(object identifier, int depth)
+        {
+            var feature = new MaxDepthFeature(identifier, forPositiveLiterals);
+            featureVector.TryGetValue(feature, out var maxDepth);
+
+            if (depth > maxDepth)
+            {
+                featureVector[feature] = depth;
+            }
+        }
+    }
+}
