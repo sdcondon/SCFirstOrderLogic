@@ -28,7 +28,7 @@ public static class CommonFeatures
         {
             var literalCountFeature = new OccurenceCountFeature(null, literal.IsPositive);
             featureVector.TryGetValue(literalCountFeature, out var value);
-            featureVector[literalCountFeature] = value++;
+            featureVector[literalCountFeature] = value + 1;
 
             literal.Predicate.Accept(new OccurenceCountVisitor(featureVector, literal.IsPositive));
         }
@@ -158,7 +158,7 @@ public static class CommonFeatures
         {
             var feature = new OccurenceCountFeature(identifier, forPositiveLiterals);
             featureVector.TryGetValue(feature, out var value);
-            featureVector[feature] = value++;
+            featureVector[feature] = value + 1;
         }
     }
 
