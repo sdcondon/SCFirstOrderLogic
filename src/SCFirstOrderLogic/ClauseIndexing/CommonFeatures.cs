@@ -26,6 +26,10 @@ public static class CommonFeatures
 
         foreach (var literal in clause.Literals)
         {
+            var literalCountFeature = new OccurenceCountFeature(null, literal.IsPositive);
+            featureVector.TryGetValue(literalCountFeature, out var value);
+            featureVector[literalCountFeature] = value++;
+
             literal.Predicate.Accept(new OccurenceCountVisitor(featureVector, literal.IsPositive));
         }
 
