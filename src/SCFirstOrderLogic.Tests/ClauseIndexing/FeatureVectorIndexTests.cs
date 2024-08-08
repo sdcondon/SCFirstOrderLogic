@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using FlUnit;
+using SCFirstOrderLogic.ClauseIndexing.Features;
 using System.Collections.Generic;
 using System.Linq;
 using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
@@ -50,9 +51,9 @@ public static class FeatureVectorIndexTests
         ])
         .When(tc =>
         {
-            var index = new FeatureVectorIndex<CommonFeatures.OccurenceCountFeature>(
-                CommonFeatures.MakeOccurenceCountsFeatureVector,
-                CommonFeatures.MakeOccurenceCountFeatureComparer(Comparer<object>.Default),
+            var index = new FeatureVectorIndex<OccurenceCountFeature>(
+                OccurenceCountFeature.MakeFeatureVector,
+                OccurenceCountFeature.MakeFeatureComparer(Comparer<object>.Default),
                 IndexContent.Select(s => new CNFClause(s)));
             return index.GetSubsumed(tc.Query.ToCNF().Clauses.Single());
         })
@@ -75,9 +76,9 @@ public static class FeatureVectorIndexTests
         ])
         .When(tc =>
         {
-            var index = new FeatureVectorIndex<CommonFeatures.OccurenceCountFeature>(
-                CommonFeatures.MakeOccurenceCountsFeatureVector,
-                CommonFeatures.MakeOccurenceCountFeatureComparer(Comparer<object>.Default),
+            var index = new FeatureVectorIndex<OccurenceCountFeature>(
+                OccurenceCountFeature.MakeFeatureVector,
+                OccurenceCountFeature.MakeFeatureComparer(Comparer<object>.Default),
                 IndexContent.Select(s => new CNFClause(s)));
             return index.GetSubsuming(tc.Query.ToCNF().Clauses.Single());
         })
