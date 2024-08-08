@@ -288,10 +288,15 @@ public class FeatureVectorIndex<TFeature, TValue>
         // TODO: need to filter to clauses that actually subsume (expanding node will return candidate set)
         return ExpandNode(root, 0);
 
+        // nts: subsumed clauses will have equal or higher vector elements
+        // so subsuming clauses will have equal or lower
+        // and zero-valued elements can be omitted
+        // so the logic here is subsets plus a bit
         IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
         {
             if (keyElementIndex < featureVector.Count)
             {
+                // if matching feature (TODO: WITH LOWER VALUE), then recurse
                 if (node.Children.TryGetValue(featureVector[keyElementIndex], out var childNode))
                 {
                     foreach (var value in ExpandNode(childNode, keyElementIndex + 1))
@@ -300,6 +305,8 @@ public class FeatureVectorIndex<TFeature, TValue>
                     }
                 }
 
+                // matching feature might not be there at all in stored clause (=> has value zero)
+                // in wwhich case just skip
                 foreach (var value in ExpandNode(node, keyElementIndex + 1))
                 {
                     yield return value;
@@ -329,6 +336,9 @@ public class FeatureVectorIndex<TFeature, TValue>
         // TODO: need to filter to clauses that are actually subsumed (expanding node will return candidate set)
         return ExpandNode(root, 0);
 
+        // nts: subsumed clauses will have equal or higher vector elements
+        // and zero-valued elements can be omitted
+        // so the logic here is superset plus a bit
         IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
         {
             if (keyElementIndex < featureVector.Count)

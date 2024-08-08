@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -20,9 +21,9 @@ public static class CommonFeatures
     /// </summary>
     /// <param name="clause">The clause to retrieve a feature vector for.</param>
     /// <returns>A feature vector.</returns>
-    public static IEnumerable<KeyValuePair<object, int>> MakeOccurenceCountsFeatureVector(CNFClause clause)
+    public static IEnumerable<KeyValuePair<OccurenceCountFeature, int>> MakeOccurenceCountsFeatureVector(CNFClause clause)
     {
-        Dictionary<object, int> featureVector = new();
+        Dictionary<OccurenceCountFeature, int> featureVector = new();
 
         foreach (var literal in clause.Literals)
         {
@@ -37,31 +38,12 @@ public static class CommonFeatures
     }
 
     /// <summary>
-    /// Feature vector selection logic that returns a feature vector consisting of the max depth
-    /// of each occuring identifier among positive literals, and the max depth of each occuring 
-    /// identifier among negative literals.
-    /// </summary>
-    /// <param name="clause">The clause to retrieve a feature vector for.</param>
-    /// <returns>A feature vector.</returns>
-    public static IEnumerable<KeyValuePair<object, int>> MakeMaxDepthsFeatureVector(CNFClause clause)
-    {
-        Dictionary<object, int> featureVector = new();
-
-        foreach (var literal in clause.Literals)
-        {
-            literal.Predicate.Accept(new MaxDepthsVisitor(featureVector, literal.IsPositive), 1);
-        }
-
-        return featureVector;
-    }
-
-    /// <summary>
     /// Makes a comparer that can be used (to determine the ordering of nodes in the index) with the features included
     /// in feature vectors created by <see cref="MakeOccurenceCountsFeatureVector(CNFClause)"/>.
     /// </summary>
     /// <param name="identifierComparer">The comparer to use to compare identifiers.</param>
     /// <returns>A new <see cref="IComparer{T}"/>.</returns>
-    public static IComparer<OccurenceCountFeature> MakeOccurenceCountFeatureComparer(IComparer<object> identifierComparer)
+    public static IComparer<OccurenceCountFeature> MakeOccurenceCountFeatureComparer(IComparer identifierComparer)
     {
         return Comparer<OccurenceCountFeature>.Create((x, y) =>
         {
@@ -94,12 +76,31 @@ public static class CommonFeatures
     }
 
     /// <summary>
+    /// Feature vector selection logic that returns a feature vector consisting of the max depth
+    /// of each occuring identifier among positive literals, and the max depth of each occuring 
+    /// identifier among negative literals.
+    /// </summary>
+    /// <param name="clause">The clause to retrieve a feature vector for.</param>
+    /// <returns>A feature vector.</returns>
+    public static IEnumerable<KeyValuePair<object, int>> MakeMaxDepthsFeatureVector(CNFClause clause)
+    {
+        Dictionary<object, int> featureVector = new();
+
+        foreach (var literal in clause.Literals)
+        {
+            literal.Predicate.Accept(new MaxDepthsVisitor(featureVector, literal.IsPositive), 1);
+        }
+
+        return featureVector;
+    }
+
+    /// <summary>
     /// Makes a comparer that can be used (to determine the ordering of nodes in the index) with the features included
     /// in feature vectors created by <see cref="MakeMaxDepthsFeatureVector(CNFClause)"/>.
     /// </summary>
     /// <param name="identifierComparer">The comparer to use to compare identifiers.</param>
     /// <returns>A new <see cref="IComparer{T}"/>.</returns>
-    public static IComparer<MaxDepthFeature> MakeMaxDepthFeatureComparer(IComparer<object> identifierComparer)
+    public static IComparer<MaxDepthFeature> MakeMaxDepthFeatureComparer(IComparer identifierComparer)
     {
         return Comparer<MaxDepthFeature>.Create((x, y) =>
         {
@@ -133,10 +134,10 @@ public static class CommonFeatures
 
     private class OccurenceCountVisitor : RecursiveSentenceVisitor
     {
-        private readonly IDictionary<object, int> featureVector;
+        private readonly IDictionary<OccurenceCountFeature, int> featureVector;
         private readonly bool forPositiveLiterals;
 
-        public OccurenceCountVisitor(IDictionary<object, int> featureVector, bool forPositiveLiterals)
+        public OccurenceCountVisitor(IDictionary<OccurenceCountFeature, int> featureVector, bool forPositiveLiterals)
         {
             this.featureVector = featureVector;
             this.forPositiveLiterals = forPositiveLiterals;

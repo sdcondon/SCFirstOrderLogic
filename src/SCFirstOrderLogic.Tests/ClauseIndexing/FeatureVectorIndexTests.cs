@@ -50,7 +50,10 @@ public static class FeatureVectorIndexTests
         ])
         .When(tc =>
         {
-            var index = new FeatureVectorIndex(c => null, IndexContent.Select(s => new CNFClause(s)));
+            var index = new FeatureVectorIndex<CommonFeatures.OccurenceCountFeature>(
+                CommonFeatures.MakeOccurenceCountsFeatureVector,
+                CommonFeatures.MakeOccurenceCountFeatureComparer(Comparer<object>.Default),
+                IndexContent.Select(s => new CNFClause(s)));
             return index.GetSubsumed(tc.Query.ToCNF().Clauses.Single());
         })
         .ThenReturns()
@@ -72,7 +75,10 @@ public static class FeatureVectorIndexTests
         ])
         .When(tc =>
         {
-            var index = new FeatureVectorIndex(c => null, IndexContent.Select(s => new CNFClause(s)));
+            var index = new FeatureVectorIndex<CommonFeatures.OccurenceCountFeature>(
+                CommonFeatures.MakeOccurenceCountsFeatureVector,
+                CommonFeatures.MakeOccurenceCountFeatureComparer(Comparer<object>.Default),
+                IndexContent.Select(s => new CNFClause(s)));
             return index.GetSubsuming(tc.Query.ToCNF().Clauses.Single());
         })
         .ThenReturns()
