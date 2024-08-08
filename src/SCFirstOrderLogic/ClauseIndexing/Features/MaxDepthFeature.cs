@@ -20,9 +20,9 @@ public record MaxDepthFeature(object Identifier, bool IsInPositiveLiteral)
     /// </summary>
     /// <param name="clause">The clause to retrieve a feature vector for.</param>
     /// <returns>A feature vector.</returns>
-    public static IEnumerable<KeyValuePair<object, int>> MakeFeatureVector(CNFClause clause)
+    public static IEnumerable<KeyValuePair<MaxDepthFeature, int>> MakeFeatureVector(CNFClause clause)
     {
-        Dictionary<object, int> featureVector = new();
+        Dictionary<MaxDepthFeature, int> featureVector = new();
 
         foreach (var literal in clause.Literals)
         {
@@ -58,10 +58,10 @@ public record MaxDepthFeature(object Identifier, bool IsInPositiveLiteral)
 
     private class MaxDepthsVisitor : RecursiveSentenceVisitor<int>
     {
-        private readonly IDictionary<object, int> featureVector;
+        private readonly IDictionary<MaxDepthFeature int> featureVector;
         private readonly bool forPositiveLiterals;
 
-        public MaxDepthsVisitor(IDictionary<object, int> featureVector, bool forPositiveLiterals)
+        public MaxDepthsVisitor(IDictionary<MaxDepthFeature, int> featureVector, bool forPositiveLiterals)
         {
             this.featureVector = featureVector;
             this.forPositiveLiterals = forPositiveLiterals;

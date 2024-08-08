@@ -4,7 +4,7 @@ using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.ClauseIndexing;
+namespace SCFirstOrderLogic.ClauseIndexing.Features;
 
 /// <summary>
 /// Identifying record for a feature that is the occurence count of a particular identifier within positive or negative literals.
