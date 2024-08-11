@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic;
 public class CNFDefiniteClause : CNFClause
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="CNFDefiniteClause"/> that is a copy of an existing <see cref="CNFClause"/>.
+    /// Initializes a new instance of the <see cref="CNFDefiniteClause"/> class that is a copy of an existing <see cref="CNFClause"/>.
     /// </summary>
     /// <param name="definiteClause">The definite clause.</param>
     public CNFDefiniteClause(CNFClause definiteClause)
@@ -25,7 +25,7 @@ public class CNFDefiniteClause : CNFClause
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CNFDefiniteClause"/> that is just a unit clause.
+    /// Initializes a new instance of the <see cref="CNFDefiniteClause"/> class that is just a unit clause.
     /// </summary>
     /// <param name="predicate">The sole predicate of the unit clause.</param>
     public CNFDefiniteClause(Predicate predicate)
