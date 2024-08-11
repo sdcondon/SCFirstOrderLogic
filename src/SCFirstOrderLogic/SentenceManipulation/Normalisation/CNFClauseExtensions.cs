@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation.Normalisation
 {
+    /// <summary>
+    /// Useful normalisation methods for <see cref="CNFClause"/> instances.
+    /// </summary>
     public static class CNFClauseExtensions
     {
         /// <summary>

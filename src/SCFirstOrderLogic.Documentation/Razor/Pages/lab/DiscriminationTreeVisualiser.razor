@@ -122,7 +122,7 @@
             var sentence = SentenceParser.BasicParser.Parse($"forall {formData.Variables}, P({formData.Term})");
             var visitor = new TermExtractor();
             visitor.Visit(sentence);
-            discriminationTree.Add(visitor.Term);
+            discriminationTree.Add(visitor.Term!);
             StateHasChanged();
         }
     }

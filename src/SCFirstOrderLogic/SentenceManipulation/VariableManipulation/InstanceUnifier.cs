@@ -73,13 +73,13 @@ internal static class InstanceUnifier
         };
     }
 
-    private static bool TryUpdateInPlace(VariableReference variable, Term instanceTerm, MutableVariableSubstitution unifier)
+    private static bool TryUpdateInPlace(VariableReference generalisationVariable, Term instanceTerm, MutableVariableSubstitution unifier)
     {
-        if (variable.Equals(instanceTerm))
+        if (generalisationVariable.Equals(instanceTerm))
         {
             return true;
         }
-        else if (unifier.Bindings.TryGetValue(variable, out var variableValue))
+        else if (unifier.Bindings.TryGetValue(generalisationVariable, out var variableValue))
         {
             // The variable is already mapped to something - we need to make sure that the
             // mapping is consistent with the "other" value.
@@ -87,21 +87,21 @@ internal static class InstanceUnifier
         }
         else
         {
-            unifier.AddBinding(variable, instanceTerm);
+            unifier.AddBinding(generalisationVariable, instanceTerm);
             return true;
         }
     }
 
-    private static bool TryUpdateInPlace(Function x, Function y, MutableVariableSubstitution unifier)
+    private static bool TryUpdateInPlace(Function generalisation, Function instance, MutableVariableSubstitution unifier)
     {
-        if (!x.Identifier.Equals(y.Identifier) || x.Arguments.Count != y.Arguments.Count)
+        if (!generalisation.Identifier.Equals(instance.Identifier) || generalisation.Arguments.Count != instance.Arguments.Count)
         {
             return false;
         }
 
-        for (int i = 0; i < x.Arguments.Count; i++)
+        for (int i = 0; i < generalisation.Arguments.Count; i++)
         {
-            if (!TryUpdateInPlace(x.Arguments[i], y.Arguments[i], unifier))
+            if (!TryUpdateInPlace(generalisation.Arguments[i], instance.Arguments[i], unifier))
             {
                 return false;
             }

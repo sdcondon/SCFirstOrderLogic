@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation
 {
+    /// <summary>
+    /// Useful variable inspection and manipulation methods for <see cref="CNFClause"/> instances.
+    /// </summary>
     public static class CNFClauseExtensions
     {
         /// <summary>
