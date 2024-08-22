@@ -25,15 +25,6 @@ public class CNFSentence : IEquatable<CNFSentence>
     {
     }
 
-    /// <summary>
-    /// Initialises a new instance of the <see cref="CNFSentence"/> class, implicitly converting the provided sentence to CNF in the process.
-    /// </summary>
-    /// <param name="sentence">The sentence to (convert and) represent.</param>
-    public CNFSentence(Sentence sentence)
-        : this(ConstructionVisitor.GetClauses(sentence))
-    {
-    }
-
     // NB: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
     // but this is a very low-level class, so I've opted to be lean and mean.
     internal CNFSentence(HashSet<CNFClause> clauses) => this.clauses = clauses;
@@ -76,37 +67,5 @@ public class CNFSentence : IEquatable<CNFSentence>
     public override int GetHashCode()
     {
         return ClausesEqualityComparer.GetHashCode(clauses);
-    }
-
-    /// <summary>
-    /// Sentence visitor that constructs a set of <see cref="CNFClause"/> objects from a <see cref="Sentence"/> in CNF.
-    /// </summary>
-    private class ConstructionVisitor : RecursiveSentenceVisitor
-    {
-        private readonly HashSet<CNFClause> clauses = new();
-
-        public static HashSet<CNFClause> GetClauses(Sentence sentence)
-        {
-            var visitor = new ConstructionVisitor();
-            visitor.Visit(CNFConversion.ApplyTo(sentence));
-            return visitor.clauses;
-        }
-
-        /// <inheritdoc />
-        public override void Visit(Sentence sentence)
-        {
-            if (sentence is Conjunction conjunction)
-            {
-                // The expression is already in CNF - so the root down until the individual clauses will all be Conjunctions - we just skip past those.
-                Visit(conjunction);
-            }
-            else
-            {
-                // We've hit a clause.
-                // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFClause ctor that
-                // we invoke here does so to figure out the details of the clause). So we can just return rather than invoking base.Visit.
-                clauses.Add(new CNFClause(sentence));
-            }
-        }
     }
 }

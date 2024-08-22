@@ -84,10 +84,4 @@ public abstract class Sentence
     /// </summary>
     /// <returns>A string that represents the current object.</returns>
     public override string ToString() => new SentenceFormatter().Format(this);
-
-    /// <summary>
-    /// Converts this sentence to conjunctive normal form.
-    /// </summary>
-    /// <returns>A new <see cref="CNFSentence"/> object.</returns>
-    public CNFSentence ToCNF() => new(this);
 }
