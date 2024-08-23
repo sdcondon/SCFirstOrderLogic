@@ -18,12 +18,16 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.7" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
-    <PackageReference Include="SCFirstOrderLogic.ExampleDomains" Version="1.0.0" />
-    <PackageReference Include="SCFirstOrderLogic.Inference.Basic" Version="1.1.0" />
+    <PackageReference Include="SCFirstOrderLogic.ExampleDomains" Version="1.1.0-pre.1" />
+    <PackageReference Include="SCFirstOrderLogic.Inference.Basic" Version="1.2.0-pre.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\lib\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SCFirstOrderLogic\SCFirstOrderLogic.csproj" />
   </ItemGroup>
 
 </Project>

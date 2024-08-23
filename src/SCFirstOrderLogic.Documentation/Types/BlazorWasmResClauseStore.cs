@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using SCFirstOrderLogic.SentenceManipulation.Normalisation;
+using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
 namespace SCFirstOrderLogic.Inference.Basic.Resolution;

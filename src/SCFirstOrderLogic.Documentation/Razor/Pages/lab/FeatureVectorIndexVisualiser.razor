@@ -1,0 +1,171 @@
+﻿@page "/lab/feature-vector-index-visualiser"
+
+@using SCFirstOrderLogic;
+@using SCFirstOrderLogic.ClauseIndexing
+@using SCFirstOrderLogic.ClauseIndexing.Features
+@using SCFirstOrderLogic.SentenceCreation;
+@using System.ComponentModel.DataAnnotations;
+@using SCFirstOrderLogic.SentenceManipulation
+@using SCFirstOrderLogic.SentenceManipulation.Normalisation
+@using SCFirstOrderLogic.TermIndexing
+@using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+@inject IJSRuntime JS
+
+<h3>Lab - Feature Vector Index Visualiser <a data-bs-toggle="modal" data-bs-target="#infoModal" href="#"><span class="bi bi-info-circle" aria-hidden="true"></span></a></h3>
+
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalLabel">Lab Explanation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    This page is an interactive visualiser for feature vector indices, as implemented by SCFirstOrderLogic (in the SCFirstOrderLogic.ClauseIndexing namespace).
+                </p>
+                <p>
+                    Feature vector indices (in this context, at least) are an indexing structure for CNF clauses that enable quick lookup of stored clauses that subsume or are subsumed by a query term.
+                    The general idea is that each stored clause and query clause, we calculate a set of "features" (metrics) that will always a greater or equal value for subsumed clauses.
+                </p>
+                <p>
+                    Note that:
+                </p>
+                <ul>
+                    <li>This lab is admittedly a little rough around the edges with regards to the tree view itself (currently just nested unordered lists) and input validation. It'll be iterated upon.</li>
+                    <li>You can add clauses to the tree by entering them into the Clause text box and clicking the 'Add' button.</li>
+                    <li>When parsing the clause, identifiers not followed by any parentheses (to indicate a function) will be interpreted as variables if they feature in the "variables" text box. Otherwise they will be interpreted as zero-arity functions (i.e. constants).</li>
+                    <li>Guidance for writing clauses as strings can be found on the "getting started" page.</li>
+                    <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Razor/Pages/lab/FeatureVectorIndexVisualiser.razor">here</a>.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<EditForm Model=@formData Context="editContext" style="font-family: monospace">
+    <DataAnnotationsValidator />
+    (TODO: allow choice of feature set)
+    <div class="form-group">
+        <label for="variablesText">Variables (comma-separated)</label>
+        <InputText class="form-control" id="variablesText" @bind-Value=formData.Variables />
+        <ValidationMessage For="@(() => formData.Variables)" />
+    </div>
+    <div class="form-group">
+        <label for="queryText">Clause (or clauses - all will be added if it normalises to multi-clause sentence)</label>
+        <InputText class="form-control" id="queryText" @bind-Value=formData.Sentence />
+        <ValidationMessage For="@(() => formData.Sentence)" />
+    </div>
+    <div class="form-group mt-2">
+        <button type="submit" @onclick="@(() => Add(editContext))" class="btn btn-primary">Add</button>
+        <button type="submit" @onclick="@(() => RemoveAll(editContext))" class="btn btn-primary">Remove All</button>
+    </div>
+</EditForm>
+
+@{
+    void RenderFeatureVectorIndexNode(string label, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> node)
+    {
+        <li>
+            @label
+            <ul>
+            @if (node.Children.Count > 0)
+            {
+                @foreach (var ((childFeature, childMagnitude), childNode) in node.Children)
+                {
+                    RenderFeatureVectorIndexNode($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode);
+                }
+            }
+            else
+            {
+                foreach (var (_, clause) in node.Values)
+                {
+                    <li>Value: @clause</li>
+                }
+            }
+            </ul>
+        </li>
+    }
+}
+
+<ul class="mt-4">
+@{
+    RenderFeatureVectorIndexNode("(root node)", rootNode);
+}
+</ul>
+
+@code {
+    private FeatureVectorIndexDictionaryNode<MaxDepthFeature, CNFClause> rootNode;
+    private FeatureVectorIndex<MaxDepthFeature> index;
+    private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
+
+    public FeatureVectorIndexVisualiser()
+    {
+        rootNode = new FeatureVectorIndexDictionaryNode<MaxDepthFeature, CNFClause>();
+        index = new FeatureVectorIndex<MaxDepthFeature>(
+            MaxDepthFeature.MakeFeatureVector,
+            MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default),
+            rootNode);
+    }
+
+    private void Add(EditContext editContext)
+    {
+        if (editContext.Validate())
+        {
+            var sentence = SentenceParser.BasicParser.Parse($"forall {formData.Variables}, {formData.Sentence}");
+            var cnfSentence = sentence.ToCNF();
+
+            foreach (var clause in cnfSentence.Clauses)
+            {
+                index.Add(clause);
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    private void RemoveAll(EditContext editContext)
+    {
+        rootNode = new FeatureVectorIndexDictionaryNode<MaxDepthFeature, CNFClause>();
+        index = new FeatureVectorIndex<MaxDepthFeature>(
+            MaxDepthFeature.MakeFeatureVector,
+            MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default),
+            rootNode);
+        StateHasChanged();
+    }
+
+    private class FormData : IValidatableObject
+    {
+        public FormData(string variables, string sentence)
+        {
+            this.Variables = variables;
+            this.Sentence = sentence;
+        }
+
+        public string Variables { get; set; }
+
+        public string Sentence { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            // Yes, could cache the parse results to avoid parsing multiple times, but not worth it for now at least.
+            // TODO-FEATURE: Some "TryParse.." methods might be useful - they'd certainly make this method a bit cleaner.
+            // TODO-FEATURE: If we had a ParseError exception type, we could perhaps highlight the offending text.
+            List<ValidationResult> errors = new();
+
+            Sentence sentence;
+            try
+            {
+                sentence = SentenceParser.BasicParser.Parse($"forall {Variables}, {Sentence}");
+            }
+            catch (Exception e)
+            {
+                errors.Add(new ValidationResult(e.Message, new[] { nameof(Sentence) }));
+                return errors;
+            }
+
+            // todo: check that each clause is not already present in the index
+
+            return errors;
+        }
+    }
+}

@@ -71,7 +71,6 @@
                 {
                     var childNodeLabel = childNodeKey switch
                     {
-                        PathTreeConstantNodeKey constantNodeKey => $"function: {constantNodeKey.Identifier} (arity {constantNodeKey.ChildElementCount})",
                         PathTreeFunctionNodeKey functionNodeKey => $"function: {functionNodeKey.Identifier} (arity {functionNodeKey.ChildElementCount})",
                         PathTreeVariableNodeKey variableNodeKey => $"variable: #{variableNodeKey.Ordinal}",
                         _ => throw new ArgumentException(nameof(node))

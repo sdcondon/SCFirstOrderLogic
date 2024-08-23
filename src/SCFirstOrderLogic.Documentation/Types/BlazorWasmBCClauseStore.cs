@@ -1,5 +1,5 @@
-﻿using SCFirstOrderLogic.SentenceManipulation;
-using SCFirstOrderLogic.SentenceManipulation.Unification;
+﻿using SCFirstOrderLogic.SentenceManipulation.Normalisation;
+using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 

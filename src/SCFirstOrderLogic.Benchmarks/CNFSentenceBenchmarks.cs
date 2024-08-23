@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
-using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Normalisation;
+using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 namespace SCFirstOrderLogic;
@@ -15,8 +16,9 @@ public class CNFSentenceBenchmarks
             ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
             ThereExists(Y, Loves(Y, X))));
 
+    // todo: strictly speaking not fair test any more
     [Benchmark(Baseline = true)]
-    public static CNFSentence DoCNFCtor_ProductionVersion() => new(NonTrivialSentence);
+    public static CNFSentence DoCNFCtor_ProductionVersion() => NonTrivialSentence.ToCNF();
 
     [Benchmark]
     public static CNFSentence_WithTypeSwitchCtorVisitors DoCNFCtor_WithTypeSwitch() => new(NonTrivialSentence);

@@ -77,8 +77,8 @@ public class AsyncPathTree<TValue>
         ArgumentNullException.ThrowIfNull(term);
 
         term = term.Ordinalise();
-        var (key, value) = await ExpandParameterNode(root, term).TryGetCommonValueAsync();
-        return (key, value.Value);
+        var (isSucceeded, (_, value)) = await ExpandParameterNode(root, term).TryGetCommonValueAsync();
+        return (isSucceeded, value);
 
         static async IAsyncEnumerable<IAsyncEnumerable<KeyValuePair<Term, TValue>>> ExpandParameterNode(IAsyncPathTreeParameterNode<TValue> node, Term term)
         {

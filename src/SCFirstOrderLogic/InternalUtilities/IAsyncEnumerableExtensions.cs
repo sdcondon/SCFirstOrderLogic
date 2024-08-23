@@ -97,4 +97,16 @@ internal static class IAsyncEnumerableExtensions
             yield return map(enumerator.Current, i);
         }
     }
+
+    public static async IAsyncEnumerable<TOut> Select<TIn, TOut>(
+        this IAsyncEnumerable<TIn> asyncEnumerable,
+        Func<TIn, TOut> map,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await using var enumerator = asyncEnumerable.GetAsyncEnumerator(cancellationToken);
+        for (int i = 0; await enumerator.MoveNextAsync(); i++)
+        {
+            yield return map(enumerator.Current);
+        }
+    }
 }
