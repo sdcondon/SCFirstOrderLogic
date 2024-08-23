@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Razor\Pages\lab\FeatureVectorIndexVisualiser.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Markdig" Version="0.37.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.7" PrivateAssets="all" />
@@ -27,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SCFirstOrderLogic\SCFirstOrderLogic.csproj" />
+    <None Include="Razor\Pages\lab\FeatureVectorIndexVisualiser.razor" />
   </ItemGroup>
 
 </Project>
