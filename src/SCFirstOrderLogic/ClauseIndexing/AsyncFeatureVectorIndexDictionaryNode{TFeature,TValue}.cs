@@ -14,9 +14,9 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// Uses a <see cref="ConcurrentDictionary{TKey, TValue}"/> for child nodes.
 /// </para>
 /// <para>
-/// NB: If you are using this type, you should consider just using <see cref="FeatureVectorIndex{TFeature, TValue}"/> to avoid the overhead of asynchronicity.
-/// <see cref="AsyncFeatureVectorIndex{TFeature, TValue}"/> is intended to facilitate tries that use secondary storage - this type is primarily
-/// intended as an example implementation to base real (secondary storage utilising) implementations on.
+/// NB: If you are using this type, you should consider using <see cref="FeatureVectorIndex{TFeature, TValue}"/> instead, to avoid the overhead of asynchronicity.
+/// <see cref="AsyncFeatureVectorIndex{TFeature, TValue}"/> is intended for use with node implementations that interact with external (i.e. I/O-requiring) storage.
+/// This type is intended only as an example implementation to base real implementations on.
 /// </para>
 /// </summary>
 /// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
