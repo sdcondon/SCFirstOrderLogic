@@ -17,9 +17,9 @@ public interface IFeatureVectorIndexNode<TFeature, TValue>
     IReadOnlyDictionary<KeyValuePair<TFeature, int>, IFeatureVectorIndexNode<TFeature, TValue>> Children { get; }
 
     /// <summary>
-    /// Gets the values attached to the node.
+    /// 
     /// </summary>
-    IReadOnlyDictionary<CNFClause, TValue> Values { get; }
+    bool HasValues { get; }
 
     /// <summary>
     /// Gets or adds a child of this node.
@@ -44,5 +44,28 @@ public interface IFeatureVectorIndexNode<TFeature, TValue>
     /// <summary>
     /// Removes a value from this node.
     /// </summary>
+    /// <param name="clause"></param>
     bool RemoveValue(CNFClause clause);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="clause"></param>
+    /// <returns></returns>
+    public IEnumerable<TValue> GetSubsumedValues(CNFClause clause);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="clause"></param>
+    /// <returns></returns>
+    public IEnumerable<TValue> GetSubsumingValues(CNFClause clause);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="clause"></param>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    bool TryGetValue(CNFClause clause, out TValue value);
 }

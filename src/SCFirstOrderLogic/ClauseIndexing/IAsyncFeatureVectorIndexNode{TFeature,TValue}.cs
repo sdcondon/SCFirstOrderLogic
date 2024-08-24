@@ -38,20 +38,9 @@ public interface IAsyncFeatureVectorIndexNode<TFeature, TValue>
     ValueTask DeleteChildAsync(KeyValuePair<TFeature, int> vectorElement);
 
     /// <summary>
-    /// Gets the values stored against the node.
-    /// </summary>
-    IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetValues();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="clause"></param>
-    /// <returns></returns>
-    ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause);
-
-    /// <summary>
     /// Adds a value to this node, in so doing specifying that this node represents the "last" element of a stored set.
     /// </summary>
+    /// <param name="clause"></param>
     /// <param name="value">The value to store.</param>
     ValueTask AddValueAsync(CNFClause clause, TValue value);
 
@@ -59,4 +48,30 @@ public interface IAsyncFeatureVectorIndexNode<TFeature, TValue>
     /// Removes the value from this node, in so doing specifying that this node no longer represents the "last" element of a stored set.
     /// </summary>
     ValueTask<bool> RemoveValueAsync(CNFClause clause);
+
+    /// <summary>
+    /// Gets a value indicating whether any values are stored against the node.
+    /// </summary>
+    ValueTask<bool> GetHasValues();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="clause"></param>
+    /// <returns></returns>
+    IAsyncEnumerable<TValue> GetSubsumedValues(CNFClause clause);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="clause"></param>
+    /// <returns></returns>
+    IAsyncEnumerable<TValue> GetSubsumingValues(CNFClause clause);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="clause"></param>
+    /// <returns></returns>
+    ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause);
 }

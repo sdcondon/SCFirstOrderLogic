@@ -188,8 +188,6 @@ public class FeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        // TODO: getting there, but need ordinalisation here and in queries.
-        // and gotcha is around ordering of clauses.. is there a better way?
         var currentNode = root;
         foreach (var element in MakeOrderedFeatureVector(key))
         {
@@ -223,7 +221,7 @@ public class FeatureVectorIndex<TFeature, TValue>
                     return false;
                 }
 
-                if (childNode.Children.Count == 0 && !childNode.Values.Any())
+                if (childNode.Children.Count == 0 && !childNode.HasValues)
                 {
                     node.DeleteChild(element);
                 }
@@ -261,7 +259,7 @@ public class FeatureVectorIndex<TFeature, TValue>
             }
         }
 
-        return currentNode.Values.TryGetValue(key, out value);
+        return currentNode.TryGetValue(key, out value);
     }
 
     /// <summary>
@@ -275,16 +273,12 @@ public class FeatureVectorIndex<TFeature, TValue>
 
         var featureVector = MakeOrderedFeatureVector(clause);
 
-        // NB: note that we need to filter to the clauses that actually subsume the query clause.
-        // Expanding the root node returns a candidate set.
-        return ExpandNode(root, 0)
-            .Where(kvp => kvp.Key.Subsumes(clause))
-            .Select(kvp => kvp.Value);
+        return ExpandNode(root, 0);
 
         // NB: subsumed clauses will have equal or higher vector elements. So subsuming clauses will have equal or lower vector elements.
         // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what identifiers are possible ahead of time).
         // This makes the logic here a little similar to what you'd find in a set trie when querying for subsets.
-        IEnumerable<KeyValuePair<CNFClause, TValue>> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
+        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
         {
             if (keyElementIndex < featureVector.Count)
             {
@@ -310,9 +304,11 @@ public class FeatureVectorIndex<TFeature, TValue>
             }
             else
             {
-                foreach (var kvp in node.Values)
+                // NB: note that we need to filter the values to those keyed by the clauses that
+                // actually subsume the query clause. The values of the node are the candidate set.
+                foreach (var value in node.GetSubsumingValues(clause))
                 {
-                    yield return kvp;
+                    yield return value;
                 }
             }
         }
@@ -329,16 +325,12 @@ public class FeatureVectorIndex<TFeature, TValue>
 
         var featureVector = MakeOrderedFeatureVector(clause);
 
-        // NB: note that we need to filter to the clauses that are actually subsumed by the query clause.
-        // Expanding the root node returns a candidate set.
-        return ExpandNode(root, 0)
-            .Where(kvp => clause.Subsumes(kvp.Key))
-            .Select(kvp => kvp.Value);
+        return ExpandNode(root, 0);
 
         // NB: subsumed clauses will have equal or higher vector elements.
         // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what identifiers are possible ahead of time).
         // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
-        IEnumerable<KeyValuePair<CNFClause, TValue>> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
+        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
         {
             if (keyElementIndex < featureVector.Count)
             {
@@ -370,11 +362,13 @@ public class FeatureVectorIndex<TFeature, TValue>
             }
         }
 
-        IEnumerable<KeyValuePair<CNFClause, TValue>> GetAllDescendentValues(IFeatureVectorIndexNode<TFeature, TValue> node)
+        IEnumerable<TValue> GetAllDescendentValues(IFeatureVectorIndexNode<TFeature, TValue> node)
         {
-            foreach (var kvp in node.Values)
+            // NB: note that we need to filter the values to those keyed by clauses that are
+            // actually subsumed by the query clause. The values of the node are the candidate set.
+            foreach (var value in node.GetSubsumedValues(clause))
             {
-                yield return kvp;
+                yield return value;
             }
 
             foreach (var childNode in node.Children.Values)

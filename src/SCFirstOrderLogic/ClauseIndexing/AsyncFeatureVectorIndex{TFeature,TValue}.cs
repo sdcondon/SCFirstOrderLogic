@@ -122,8 +122,6 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        // TODO: getting there, but need ordinalisation here and in queries.
-        // and gotcha is around ordering of clauses.. is there a better way?
         var currentNode = root;
         foreach (var element in MakeOrderedFeatureVector(key))
         {
@@ -158,7 +156,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
                     return false;
                 }
 
-                if (!await childNode.GetChildren().GetAsyncEnumerator().MoveNextAsync() && !await childNode.GetValues().AnyAsync())
+                if (!await childNode.GetChildren().GetAsyncEnumerator().MoveNextAsync() && !await childNode.GetHasValues())
                 {
                     await node.DeleteChildAsync(element);
                 }
@@ -209,13 +207,9 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
         var featureVector = MakeOrderedFeatureVector(clause);
 
-        // NB: note that we need to filter to the clauses that actually subsume the query clause.
-        // Expanding the root node returns a candidate set.
-        return ExpandNode(root, 0)
-            .Where(kvp => kvp.Key.Subsumes(clause))
-            .Select(kvp => kvp.Value);
+        return ExpandNode(root, 0);
 
-        async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
+        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
         {
             if (elementIndex < featureVector.Count)
             {
@@ -241,9 +235,11 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
             }
             else
             {
-                await foreach (var kvp in node.GetValues())
+                // NB: note that we need to filter the values to those keyed by clauses that actually
+                // subsume the query clause. The node values are the candidate set.
+                await foreach (var value in node.GetSubsumingValues(clause))
                 {
-                    yield return kvp;
+                    yield return value;
                 }
             }
         }
@@ -260,13 +256,9 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
         var featureVector = MakeOrderedFeatureVector(clause);
 
-        // NB: note that we need to filter to the clauses that are actually subsumed by the query clause.
-        // Expanding the root node returns a candidate set.
-        return ExpandNode(root, 0)
-            .Where(kvp => clause.Subsumes(kvp.Key))
-            .Select(kvp => kvp.Value);
+        return ExpandNode(root, 0);
 
-        async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
+        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
         {
             if (elementIndex < featureVector.Count)
             {
@@ -298,11 +290,13 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
             }
         }
 
-        async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetAllDescendentValues(IAsyncFeatureVectorIndexNode<TFeature, TValue> node)
+        async IAsyncEnumerable<TValue> GetAllDescendentValues(IAsyncFeatureVectorIndexNode<TFeature, TValue> node)
         {
-            await foreach (var kvp in node.GetValues())
+            // NB: note that we need to filter the values to those keyed by clauses that are
+            // actually subsumed by the query clause. The node values are the candidate set.
+            await foreach (var value in node.GetSubsumedValues(clause))
             {
-                yield return kvp;
+                yield return value;
             }
 
             await foreach (var (_, childNode) in node.GetChildren())

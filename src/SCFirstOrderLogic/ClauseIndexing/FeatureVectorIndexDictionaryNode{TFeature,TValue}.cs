@@ -1,7 +1,9 @@
 // Copyright © 2023-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
 
@@ -45,9 +47,7 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     public IReadOnlyDictionary<KeyValuePair<TFeature, int>, IFeatureVectorIndexNode<TFeature, TValue>> Children => children;
 
     /// <inheritdoc/>
-    // NB: we don't bother wrapping values in a read-only class to stop unscrupulous
-    // users from casting. Would be more mem for a real edge case.
-    public IReadOnlyDictionary<CNFClause, TValue> Values => values;
+    public bool HasValues => values.Count > 0;
 
     /// <inheritdoc/>
     public IFeatureVectorIndexNode<TFeature, TValue> GetOrAddChild(KeyValuePair<TFeature, int> vectorElement)
@@ -70,7 +70,7 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// <inheritdoc/>
     public void AddValue(CNFClause clause, TValue value)
     {
-        // todo: unify, or expect ordinalisation? tricky bit in ordinalisation will be ensuring consistent ordering of literals in clause..
+        // todo: unify - might not match exactly
         if (!values.TryAdd(clause, value))
         {
             throw new ArgumentException("Key already present", nameof(clause));
@@ -80,7 +80,26 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// <inheritdoc/>
     public bool RemoveValue(CNFClause clause)
     {
-        // todo: unify, or expect ordinalisation? tricky bit in ordinalisation will be ensuring consistent ordering of literals in clause..
+        // todo: unify - might not match exactly
         return values.Remove(clause);
+    }
+
+    /// <inheritdoc/>
+    public IEnumerable<TValue> GetSubsumedValues(CNFClause clause)
+    {
+        return values.Where(kvp => clause.Subsumes(kvp.Key)).Select(kvp => kvp.Value);
+    }
+
+    /// <inheritdoc/>
+    public IEnumerable<TValue> GetSubsumingValues(CNFClause clause)
+    {
+        return values.Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value);
+    }
+
+    /// <inheritdoc/>
+    public bool TryGetValue(CNFClause clause, out TValue value)
+    {
+        // todo: unify - might not match exactly
+        return values.TryGetValue(clause, out value);
     }
 }

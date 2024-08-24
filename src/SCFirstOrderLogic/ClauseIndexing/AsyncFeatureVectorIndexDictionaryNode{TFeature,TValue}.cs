@@ -1,8 +1,10 @@
 // Copyright © 2023-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -85,25 +87,9 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     }
 
     /// <inheritdoc/>
-    public async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetValues()
-    {
-        foreach (var value in values)
-        {
-            yield return value;
-        }
-    }
-
-    /// <inheritdoc/>
-    public ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause)
-    {
-        var isSucceeded = values.TryGetValue(clause, out var value);
-        return ValueTask.FromResult((isSucceeded, value));
-    }
-
-    /// <inheritdoc/>
     public ValueTask AddValueAsync(CNFClause clause, TValue value)
     {
-        // todo: unify, or expect ordinalisation? tricky bit in ordinalisation will be ensuring consistent ordering of literals in clause..
+        // todo: unify - might not match exactly
         if (!values.TryAdd(clause, value))
         {
             throw new ArgumentException("Key already present", nameof(clause));
@@ -115,7 +101,39 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// <inheritdoc/>
     public ValueTask<bool> RemoveValueAsync(CNFClause clause)
     {
-        // todo: unify, or expect ordinalisation? tricky bit in ordinalisation will be ensuring consistent ordering of literals in clause..
+        // todo: unify - might not match exactly
         return ValueTask.FromResult(values.Remove(clause));
+    }
+
+    /// <inheritdoc/>
+    public ValueTask<bool> GetHasValues()
+    {
+        return ValueTask.FromResult(values.Count > 0);
+    }
+
+    /// <inheritdoc/>
+    public async IAsyncEnumerable<TValue> GetSubsumedValues(CNFClause clause)
+    {
+        foreach (var value in values.Where(kvp => clause.Subsumes(kvp.Key)).Select(kvp => kvp.Value))
+        {
+            yield return value;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async IAsyncEnumerable<TValue> GetSubsumingValues(CNFClause clause)
+    {
+        foreach (var value in values.Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value))
+        {
+            yield return value;
+        }
+    }
+
+    /// <inheritdoc/>
+    public ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause)
+    {
+        // todo: unify - might not match exactly
+        var isSucceeded = values.TryGetValue(clause, out var value);
+        return ValueTask.FromResult((isSucceeded, value));
     }
 }
