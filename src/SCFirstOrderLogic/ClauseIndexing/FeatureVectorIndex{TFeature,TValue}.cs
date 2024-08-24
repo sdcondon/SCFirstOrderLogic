@@ -189,9 +189,9 @@ public class FeatureVectorIndex<TFeature, TValue>
         ArgumentNullException.ThrowIfNull(key);
 
         var currentNode = root;
-        foreach (var element in MakeOrderedFeatureVector(key))
+        foreach (var component in MakeOrderedFeatureVector(key))
         {
-            currentNode = currentNode.GetOrAddChild(element);
+            currentNode = currentNode.GetOrAddChild(component);
         }
 
         currentNode.AddValue(key, value);
@@ -210,13 +210,13 @@ public class FeatureVectorIndex<TFeature, TValue>
 
         return ExpandNode(root, 0);
 
-        bool ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
+        bool ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int vectorComponentIndex)
         {
-            if (keyElementIndex < featureVector.Count)
+            if (vectorComponentIndex < featureVector.Count)
             {
-                var element = featureVector[keyElementIndex];
+                var element = featureVector[vectorComponentIndex];
 
-                if (!node.Children.TryGetValue(element, out var childNode) || !ExpandNode(childNode, keyElementIndex + 1))
+                if (!node.Children.TryGetValue(element, out var childNode) || !ExpandNode(childNode, vectorComponentIndex + 1))
                 {
                     return false;
                 }
@@ -246,9 +246,9 @@ public class FeatureVectorIndex<TFeature, TValue>
         ArgumentNullException.ThrowIfNull(key);
 
         var currentNode = root;
-        foreach (var keyElement in MakeOrderedFeatureVector(key))
+        foreach (var vectorComponent in MakeOrderedFeatureVector(key))
         {
-            if (currentNode.Children.TryGetValue(keyElement, out var childNode))
+            if (currentNode.Children.TryGetValue(vectorComponent, out var childNode))
             {
                 currentNode = childNode;
             }
@@ -278,17 +278,17 @@ public class FeatureVectorIndex<TFeature, TValue>
         // NB: subsumed clauses will have equal or higher vector elements. So subsuming clauses will have equal or lower vector elements.
         // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what identifiers are possible ahead of time).
         // This makes the logic here a little similar to what you'd find in a set trie when querying for subsets.
-        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
+        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int vectorComponentIndex)
         {
-            if (keyElementIndex < featureVector.Count)
+            if (vectorComponentIndex < featureVector.Count)
             {
                 // If matching feature with lower value, then recurse
                 // TODO: can be made more efficient once node children are ordered
                 foreach (var ((childFeature, childMagnitude), childNode) in node.Children)
                 {
-                    if (childFeature.Equals(featureVector[keyElementIndex].Key) && childMagnitude <= featureVector[keyElementIndex].Value)
+                    if (childFeature.Equals(featureVector[vectorComponentIndex].Key) && childMagnitude <= featureVector[vectorComponentIndex].Value)
                     {
-                        foreach (var value in ExpandNode(childNode, keyElementIndex + 1))
+                        foreach (var value in ExpandNode(childNode, vectorComponentIndex + 1))
                         {
                             yield return value;
                         }
@@ -297,7 +297,7 @@ public class FeatureVectorIndex<TFeature, TValue>
 
                 // Matching feature might not be there at all in stored clauses, which means
                 // it has a value of zero (so can't preclude subsumption) - so also just skip the current key element.
-                foreach (var value in ExpandNode(node, keyElementIndex + 1))
+                foreach (var value in ExpandNode(node, vectorComponentIndex + 1))
                 {
                     yield return value;
                 }
@@ -330,22 +330,22 @@ public class FeatureVectorIndex<TFeature, TValue>
         // NB: subsumed clauses will have equal or higher vector elements.
         // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what identifiers are possible ahead of time).
         // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
-        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int keyElementIndex)
+        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int vectorComponentIndex)
         {
-            if (keyElementIndex < featureVector.Count)
+            if (vectorComponentIndex < featureVector.Count)
             {
                 foreach (var ((childFeature, childMagnitude), childNode) in node.Children)
                 {
                     // todo: is this right? or do we need by feature AND magnitude here?
-                    if (keyElementIndex == 0 || featureComparer.Compare(childFeature, featureVector[keyElementIndex - 1].Key) > 0)
+                    if (vectorComponentIndex == 0 || featureComparer.Compare(childFeature, featureVector[vectorComponentIndex - 1].Key) > 0)
                     {
-                        var childComparedToCurrent = featureComparer.Compare(childFeature, featureVector[keyElementIndex].Key);
+                        var childComparedToCurrent = featureComparer.Compare(childFeature, featureVector[vectorComponentIndex].Key);
 
                         if (childComparedToCurrent <= 0)
                         {
-                            var keyElementIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[keyElementIndex].Value ? 1 : 0;
+                            var queryComponentIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[vectorComponentIndex].Value ? 1 : 0;
 
-                            foreach (var value in ExpandNode(childNode, keyElementIndex + keyElementIndexOffset))
+                            foreach (var value in ExpandNode(childNode, vectorComponentIndex + queryComponentIndexOffset))
                             {
                                 yield return value;
                             }

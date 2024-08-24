@@ -13,29 +13,29 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public interface IAsyncFeatureVectorIndexNode<TFeature, TValue>
 {
     /// <summary>
-    /// Get the child nodes of this node, keyed by the element represented by the child.
+    /// Get the child nodes of this node, keyed by the vector component represented by the child.
     /// </summary>
     IAsyncEnumerable<KeyValuePair<KeyValuePair<TFeature, int>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> GetChildren();
 
     /// <summary>
-    /// Attempts to retrieve a child node by the element it represents.
+    /// Attempts to retrieve a child node by the vector component it represents.
     /// </summary>
-    /// <param name="vectorElement">The element represented by the child node to retrieve.</param>
+    /// <param name="vectorComponent">The vector component represented by the child node to retrieve.</param>
     /// <returns>The child node, or <see langword="null"/> if no matching node was found.</returns>
-    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(KeyValuePair<TFeature, int> vectorElement);
+    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(KeyValuePair<TFeature, int> vectorComponent);
 
     /// <summary>
     /// Gets or adds a child of this node.
     /// </summary>
-    /// <param name="vectorElement">The element represented by the retrieved or added node.</param>
+    /// <param name="vectorComponent">The vector component represented by the retrieved or added node.</param>
     /// <returns>The retrieved or added node.</returns>
-    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(KeyValuePair<TFeature, int> vectorElement);
+    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(KeyValuePair<TFeature, int> vectorComponent);
 
     /// <summary>
     /// Deletes a child of this node.
     /// </summary>
-    /// <param name="vectorElement">The element represented by the node to be removed.</param>
-    ValueTask DeleteChildAsync(KeyValuePair<TFeature, int> vectorElement);
+    /// <param name="vectorComponent">The vector component represented by the node to be removed.</param>
+    ValueTask DeleteChildAsync(KeyValuePair<TFeature, int> vectorComponent);
 
     /// <summary>
     /// Adds a value to this node, in so doing specifying that this node represents the "last" element of a stored set.

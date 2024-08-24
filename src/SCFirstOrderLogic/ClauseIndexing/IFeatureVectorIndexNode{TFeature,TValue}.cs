@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public interface IFeatureVectorIndexNode<TFeature, TValue>
 {
     /// <summary>
-    /// Gets the child nodes of this node, keyed by the element represented by the child.
+    /// Gets the child nodes of this node, keyed by the vector component represented by the child.
     /// </summary>
     IReadOnlyDictionary<KeyValuePair<TFeature, int>, IFeatureVectorIndexNode<TFeature, TValue>> Children { get; }
 
@@ -24,15 +24,15 @@ public interface IFeatureVectorIndexNode<TFeature, TValue>
     /// <summary>
     /// Gets or adds a child of this node.
     /// </summary>
-    /// <param name="vectorElement">The vector element represented by the node to be retrieved or added.</param>
+    /// <param name="vectorComponent">The vector component represented by the node to be retrieved or added.</param>
     /// <returns>The retrieved or added node.</returns>
-    IFeatureVectorIndexNode<TFeature, TValue> GetOrAddChild(KeyValuePair<TFeature, int> vectorElement);
+    IFeatureVectorIndexNode<TFeature, TValue> GetOrAddChild(KeyValuePair<TFeature, int> vectorComponent);
 
     /// <summary>
     /// Deletes a child of this node.
     /// </summary>
-    /// <param name="vectorElement">The vector element represented by the node to be removed.</param>
-    void DeleteChild(KeyValuePair<TFeature, int> vectorElement);
+    /// <param name="vectorComponent">The vector component represented by the node to be removed.</param>
+    void DeleteChild(KeyValuePair<TFeature, int> vectorComponent);
 
     /// <summary>
     /// Adds a value to this node.

@@ -50,27 +50,27 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     public bool HasValues => values.Count > 0;
 
     /// <inheritdoc/>
-    public IFeatureVectorIndexNode<TFeature, TValue> GetOrAddChild(KeyValuePair<TFeature, int> vectorElement)
+    public IFeatureVectorIndexNode<TFeature, TValue> GetOrAddChild(KeyValuePair<TFeature, int> vectorComponent)
     {
-        if (!children.TryGetValue(vectorElement, out var node))
+        if (!children.TryGetValue(vectorComponent, out var node))
         {
             node = new FeatureVectorIndexDictionaryNode<TFeature, TValue>();
-            children.Add(vectorElement, node);
+            children.Add(vectorComponent, node);
         }
 
         return node;
     }
 
     /// <inheritdoc/>
-    public void DeleteChild(KeyValuePair<TFeature, int> vectorElement)
+    public void DeleteChild(KeyValuePair<TFeature, int> vectorComponent)
     {
-        children.Remove(vectorElement);
+        children.Remove(vectorComponent);
     }
 
     /// <inheritdoc/>
     public void AddValue(CNFClause clause, TValue value)
     {
-        // todo: unify - might not match exactly
+        // todo: unify (vars only) - might not match exactly
         if (!values.TryAdd(clause, value))
         {
             throw new ArgumentException("Key already present", nameof(clause));
@@ -80,7 +80,7 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// <inheritdoc/>
     public bool RemoveValue(CNFClause clause)
     {
-        // todo: unify - might not match exactly
+        // todo: unify (vars only) - might not match exactly
         return values.Remove(clause);
     }
 
@@ -99,7 +99,7 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// <inheritdoc/>
     public bool TryGetValue(CNFClause clause, out TValue value)
     {
-        // todo: unify - might not match exactly
+        // todo: unify (vars only) - might not match exactly
         return values.TryGetValue(clause, out value);
     }
 }

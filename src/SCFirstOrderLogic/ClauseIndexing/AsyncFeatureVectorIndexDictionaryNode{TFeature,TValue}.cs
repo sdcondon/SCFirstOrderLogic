@@ -61,35 +61,35 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(KeyValuePair<TFeature, int> vectorElement)
+    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(KeyValuePair<TFeature, int> vectorComponent)
     {
-        children.TryGetValue(vectorElement, out var child);
+        children.TryGetValue(vectorComponent, out var child);
         return ValueTask.FromResult(child);
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(KeyValuePair<TFeature, int> vectorElement)
+    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(KeyValuePair<TFeature, int> vectorComponent)
     {
         IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue>();
-        if (!children.TryAdd(vectorElement, node))
+        if (!children.TryAdd(vectorComponent, node))
         {
-            node = children[vectorElement];
+            node = children[vectorComponent];
         }
 
         return ValueTask.FromResult(node);
     }
 
     /// <inheritdoc/>
-    public ValueTask DeleteChildAsync(KeyValuePair<TFeature, int> vectorElement)
+    public ValueTask DeleteChildAsync(KeyValuePair<TFeature, int> vectorComponent)
     {
-        children.Remove(vectorElement, out _);
+        children.Remove(vectorComponent, out _);
         return ValueTask.CompletedTask;
     }
 
     /// <inheritdoc/>
     public ValueTask AddValueAsync(CNFClause clause, TValue value)
     {
-        // todo: unify - might not match exactly
+        // todo: unify (vars only) - might not match exactly
         if (!values.TryAdd(clause, value))
         {
             throw new ArgumentException("Key already present", nameof(clause));
@@ -101,7 +101,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// <inheritdoc/>
     public ValueTask<bool> RemoveValueAsync(CNFClause clause)
     {
-        // todo: unify - might not match exactly
+        // todo: unify (vars only) - might not match exactly
         return ValueTask.FromResult(values.Remove(clause));
     }
 
@@ -132,7 +132,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// <inheritdoc/>
     public ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause)
     {
-        // todo: unify - might not match exactly
+        // todo: unify (vars only) - might not match exactly
         var isSucceeded = values.TryGetValue(clause, out var value);
         return ValueTask.FromResult((isSucceeded, value));
     }
