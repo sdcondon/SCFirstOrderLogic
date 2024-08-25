@@ -7,7 +7,8 @@ namespace SCFirstOrderLogic.SentenceManipulation;
 /// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state.
 /// </para>
 /// <para>
-/// That is, a base class in which the default implementation for any given non-terminal sentence/term element simply visits the element's children - and does nothing for terminal elements.
+/// That is, a base class for visitors in which the default implementation for any given non-terminal
+/// sentence/term element simply visits the element's children - and does nothing for terminal elements.
 /// </para>
 /// </summary>
 public abstract class RecursiveSentenceVisitor<TState> : ISentenceVisitor<TState>, ITermVisitor<TState>
