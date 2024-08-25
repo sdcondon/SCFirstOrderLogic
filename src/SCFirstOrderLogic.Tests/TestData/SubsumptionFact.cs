@@ -6,11 +6,11 @@ namespace SCFirstOrderLogic.TestData;
 public record SubsumptionFact(CNFClause X, CNFClause Y, bool IsXSubsumedByY, bool IsYSubsumedByX)
 {
     public SubsumptionFact(Sentence X, Sentence Y, bool IsXSubsumedByY, bool IsYSubsumedByX)
-        : this(X.ToCNF().Clauses.Single(), Y.ToCNF().Clauses.Single(), IsXSubsumedByY, IsYSubsumedByX) { }
+        : this(new CNFClause(X), new CNFClause(Y), IsXSubsumedByY, IsYSubsumedByX) { }
 
     public SubsumptionFact(CNFClause X, Sentence Y, bool IsXSubsumedByY, bool IsYSubsumedByX)
-        : this(X, Y.ToCNF().Clauses.Single(), IsXSubsumedByY, IsYSubsumedByX) { }
+        : this(X, new CNFClause(Y), IsXSubsumedByY, IsYSubsumedByX) { }
 
     public SubsumptionFact(Sentence X, CNFClause Y, bool IsXSubsumedByY, bool IsYSubsumedByX)
-        : this(X.ToCNF().Clauses.Single(), Y, IsXSubsumedByY, IsYSubsumedByX) { }
+        : this(new CNFClause(X), Y, IsXSubsumedByY, IsYSubsumedByX) { }
 }
