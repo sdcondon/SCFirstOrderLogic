@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.ClauseIndexing.Features;
 
 /// <summary>
-/// Identifying record for a feature that is the (1-based) max depth of a particular identifier within positive or negative literals.
+/// Identifying record for a clause indexing feature that is the (1-based) max depth of a particular identifier within positive or negative literals.
 /// </summary>
 /// <param name="Identifier">The identifier to which this feature relates.</param>
 /// <param name="IsInPositiveLiteral">A value indicating whether this feature relates to max depths in positive literals, or negative.</param>

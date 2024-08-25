@@ -65,6 +65,8 @@ public static class VariableManipulationExtensions
     /// <param name="thisClause">"This" clause.</param>
     /// <param name="clauses">The clauses to check for unification with.</param>
     /// <returns>True if this clause unifies with any of the provided clauses; otherwise false.</returns>
+    // TODO: probably remove (/replace with SubsumesAnyOf/IsSubsumedByAnyOf?) - created prior to subsumption methods,
+    // and its usage looks plain wrong now that I've a bit more FoL experience under my belt..
     public static bool UnifiesWithAnyOf(this CNFClause thisClause, IEnumerable<CNFClause> clauses)
     {
         return clauses.Any(c => thisClause.TryUnifyWith(c));
