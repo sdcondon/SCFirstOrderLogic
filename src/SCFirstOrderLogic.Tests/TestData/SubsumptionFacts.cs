@@ -8,6 +8,7 @@ public static class SubsumptionFacts
     public static readonly IReadOnlyList<SubsumptionFact> All =
     [
         new (X: P(),             Y: P(),         IsXSubsumedByY: true,  IsYSubsumedByX: true),
+        new (X: P(U),            Y: P(U),        IsXSubsumedByY: true,  IsYSubsumedByX: true),
         new (X: P(U),            Y: P(C),        IsXSubsumedByY: false, IsYSubsumedByX: true),
         new (X: P(U),            Y: P(C) | P(D), IsXSubsumedByY: false, IsYSubsumedByX: true),
         new (X: P(U),            Y: P(C) | Q(U), IsXSubsumedByY: false, IsYSubsumedByX: true),
