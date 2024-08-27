@@ -58,7 +58,7 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
                 else
                 {
                     // NB: this an arbitrary decision. We just need a consistent comparison - there's no
-                    // reason to think that positive literals are more or less informative tha negative ones.
+                    // reason to think that positive literals are more or less informative than negative ones.
                     return x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral);
                 }
             }
