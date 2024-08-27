@@ -2,8 +2,10 @@
 using FlUnit;
 using SCFirstOrderLogic.ClauseIndexing.Features;
 using SCFirstOrderLogic.TestData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
 
@@ -11,7 +13,23 @@ public static class FeatureVectorIndexTests
 {
     private record GetTestCase(CNFClause Query, CNFClause[] Expected, CNFClause[] NotExpected);
 
-    // TODO: shouldn't be allowed to add empty clause
+    private record AddTestCase(CNFClause[] PriorContent, CNFClause Add);
+
+    public static Test NegativeAddBehaviour => TestThat
+        .GivenEachOf<AddTestCase>(() =>
+        [
+            new([], CNFClause.Empty),
+            ////new([new(P(U))], new(P(V)))
+        ])
+        .When(tc =>
+        {
+            var index = new FeatureVectorIndex<OccurenceCountFeature>(
+                OccurenceCountFeature.MakeFeatureVector,
+                OccurenceCountFeature.MakeFeatureComparer(Comparer<object>.Default),
+                tc.PriorContent);
+            index.Add(tc.Add);
+        })
+        .ThenThrows((_, ex) => ex.Should().BeOfType<ArgumentException>());
 
     public static Test GetSubsumedBehaviour => TestThat
         .GivenEachOf(() =>
@@ -114,4 +132,6 @@ public static class FeatureVectorIndexTests
 
         return xClauses.Concat(yClauses).Except([CNFClause.Empty]).Distinct().ToArray();
     }
+
+    private static OperablePredicate P(params OperableTerm[] arguments) => new(nameof(P), arguments);
 }

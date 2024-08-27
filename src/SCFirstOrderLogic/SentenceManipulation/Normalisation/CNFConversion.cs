@@ -46,7 +46,7 @@ internal static class CNFConversion
 
         // It might be possible to do some of these conversions at the same time, but for now
         // at least we do them sequentially - and in so doing favour maintainability over performance.
-        // Perhaps revisit this later (but given that the main purpose of this library is learning, probably not).
+        // Perhaps revisit this later.
         sentence = implicationElimination.ApplyTo(sentence);
         sentence = nnfConversion.ApplyTo(sentence);
         sentence = new Skolemisation(standardisedSentence).ApplyTo(sentence);

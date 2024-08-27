@@ -187,6 +187,11 @@ public class FeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
+        if (key == CNFClause.Empty)
+        {
+            throw new ArgumentException("The empty clause is not a valid key", nameof(key));
+        }
+
         var currentNode = root;
         foreach (var component in MakeOrderedFeatureVector(key))
         {

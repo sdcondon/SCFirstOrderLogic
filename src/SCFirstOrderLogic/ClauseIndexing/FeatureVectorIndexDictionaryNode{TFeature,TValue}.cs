@@ -13,7 +13,8 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// </summary>
 /// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
-// todo: ordered lists make way more sense than dictionaries here..
+// todo-breaking-v7: ordered lists for children make way more sense than dictionaries here, but this does of course
+// raise questions about what should be responsible for the feature comparison logic
 public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVectorIndexNode<TFeature, TValue>
     where TFeature : notnull
 {
