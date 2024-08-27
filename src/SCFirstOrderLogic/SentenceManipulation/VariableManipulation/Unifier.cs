@@ -53,6 +53,72 @@ public static class Unifier
     }
 
     /// <summary>
+    /// Attempts to create the most general unifier for two predicates.
+    /// </summary>
+    /// <param name="x">One of the two predicates to attempt to create a unifier for.</param>
+    /// <param name="y">One of the two predicates to attempt to create a unifier for.</param>
+    /// <param name="unifier">If the predicates can be unified, this out parameter will be the unifier.</param>
+    /// <returns>True if the two predicates can be unified, otherwise false.</returns>
+    public static bool TryCreate(Predicate x, Predicate y, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
+    {
+        var unifierAttempt = new MutableVariableSubstitution();
+
+        if (TryUpdateInPlace(x, y, unifierAttempt))
+        {
+            unifier = unifierAttempt.CopyAsReadOnly();
+            return true;
+        }
+
+        unifier = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Attempts to create the most general unifier for two predicates.
+    /// </summary>
+    /// <param name="x">One of the two predicates to attempt to create a unifier for.</param>
+    /// <param name="y">One of the two predicates to attempt to create a unifier for.</param>
+    /// <returns>The unifier if the predicates can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryCreate(Predicate x, Predicate y)
+    {
+        var unifierAttempt = new MutableVariableSubstitution();
+        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+    }
+
+    /// <summary>
+    /// Attempts to create the most general unifier for two terms.
+    /// </summary>
+    /// <param name="x">One of the two terms to attempt to create a unifier for.</param>
+    /// <param name="y">One of the two terms to attempt to create a unifier for.</param>
+    /// <param name="unifier">If the terms can be unified, this out parameter will be the unifier.</param>
+    /// <returns>True if the two terms can be unified, otherwise false.</returns>
+    public static bool TryCreate(Term x, Term y, [MaybeNullWhen(false)] out VariableSubstitution unifier)
+    {
+        var unifierAttempt = new MutableVariableSubstitution();
+
+        if (TryUpdateInPlace(x, y, unifierAttempt))
+        {
+            unifier = unifierAttempt.CopyAsReadOnly();
+            return true;
+        }
+
+        unifier = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Attempts to create the most general unifier for two terms.
+    /// </summary>
+    /// <param name="x">One of the two terms to attempt to create a unifier for.</param>
+    /// <param name="y">One of the two terms to attempt to create a unifier for.</param>
+    /// <returns>The unifier if the terms can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryCreate(Term x, Term y)
+    {
+        var unifierAttempt = new MutableVariableSubstitution();
+        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+    }
+
+    /// <summary>
     /// Attempts to update a unifier so that it (also) unifies two given literals.
     /// </summary>
     /// <param name="x">One of the two literals to attempt to unify.</param>
@@ -108,29 +174,6 @@ public static class Unifier
     }
 
     /// <summary>
-    /// Attempts to create the most general unifier for two predicates.
-    /// </summary>
-    /// <param name="x">One of the two predicates to attempt to create a unifier for.</param>
-    /// <param name="y">One of the two predicates to attempt to create a unifier for.</param>
-    /// <param name="unifier">If the predicates can be unified, this out parameter will be the unifier.</param>
-    /// <returns>True if the two predicates can be unified, otherwise false.</returns>
-    public static bool TryCreate(Predicate x, Predicate y, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
-    {
-        return TryCreate((Literal)x, (Literal)y, out unifier);
-    }
-
-    /// <summary>
-    /// Attempts to create the most general unifier for two predicates.
-    /// </summary>
-    /// <param name="x">One of the two predicates to attempt to create a unifier for.</param>
-    /// <param name="y">One of the two predicates to attempt to create a unifier for.</param>
-    /// <returns>The unifier if the predicates can be unified, otherwise null.</returns>
-    public static VariableSubstitution? TryCreate(Predicate x, Predicate y)
-    {
-        return TryCreate((Literal)x, (Literal)y);
-    }
-
-    /// <summary>
     /// Attempts to update a unifier so that it (also) unifies two given predicates.
     /// </summary>
     /// <param name="x">One of the two predicates to attempt to unify.</param>
@@ -140,7 +183,16 @@ public static class Unifier
     /// <returns>True if the two predicates can be unified, otherwise false.</returns>
     public static bool TryUpdate(Predicate x, Predicate y, VariableSubstitution unifier, [MaybeNullWhen(false)] out VariableSubstitution updatedUnifier)
     {
-        return TryUpdate((Literal)x, (Literal)y, unifier, out updatedUnifier);
+        var potentialUpdatedUnifier = unifier.CopyAsMutable();
+
+        if (TryUpdateInPlace(x, y, potentialUpdatedUnifier))
+        {
+            updatedUnifier = potentialUpdatedUnifier.CopyAsReadOnly();
+            return true;
+        }
+
+        updatedUnifier = null;
+        return false;
     }
 
     /// <summary>
@@ -152,7 +204,15 @@ public static class Unifier
     /// <returns>True if the two predicates can be unified, otherwise false.</returns>
     public static bool TryUpdate(Predicate x, Predicate y, ref VariableSubstitution unifier)
     {
-        return TryUpdate((Literal)x, (Literal)y, ref unifier);
+        var updatedUnifier = unifier.CopyAsMutable();
+
+        if (TryUpdateInPlace(x, y, updatedUnifier))
+        {
+            unifier = updatedUnifier.CopyAsReadOnly();
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -164,39 +224,7 @@ public static class Unifier
     /// <returns>The unifier if the predicates can be unified, otherwise null.</returns>
     public static VariableSubstitution? TryUpdate(Predicate x, Predicate y, VariableSubstitution unifier)
     {
-        return TryUpdate((Literal)x, (Literal)y, unifier);
-    }
-
-    /// <summary>
-    /// Attempts to create the most general unifier for two terms.
-    /// </summary>
-    /// <param name="x">One of the two terms to attempt to create a unifier for.</param>
-    /// <param name="y">One of the two terms to attempt to create a unifier for.</param>
-    /// <param name="unifier">If the terms can be unified, this out parameter will be the unifier.</param>
-    /// <returns>True if the two terms can be unified, otherwise false.</returns>
-    public static bool TryCreate(Term x, Term y, [MaybeNullWhen(false)] out VariableSubstitution unifier)
-    {
-        var unifierAttempt = new MutableVariableSubstitution();
-
-        if (TryUpdateInPlace(x, y, unifierAttempt))
-        {
-            unifier = unifierAttempt.CopyAsReadOnly();
-            return true;
-        }
-
-        unifier = null;
-        return false;
-    }
-
-    /// <summary>
-    /// Attempts to create the most general unifier for two terms.
-    /// </summary>
-    /// <param name="x">One of the two terms to attempt to create a unifier for.</param>
-    /// <param name="y">One of the two terms to attempt to create a unifier for.</param>
-    /// <returns>The unifier if the terms can be unified, otherwise null.</returns>
-    public static VariableSubstitution? TryCreate(Term x, Term y)
-    {
-        var unifierAttempt = new MutableVariableSubstitution();
+        var unifierAttempt = unifier.CopyAsMutable();
         return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
     }
 
@@ -255,16 +283,27 @@ public static class Unifier
         return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
     }
 
+    // NB: not public because it can partially update the unifier on failure
     private static bool TryUpdateInPlace(Literal x, Literal y, MutableVariableSubstitution unifier)
     {
-        if (x.IsNegated != y.IsNegated 
-            || !x.Predicate.Identifier.Equals(y.Predicate.Identifier)
-            || x.Predicate.Arguments.Count != y.Predicate.Arguments.Count)
+        if (x.IsNegated != y.IsNegated)
         {
             return false;
         }
 
-        foreach (var args in x.Predicate.Arguments.Zip(y.Predicate.Arguments, (x, y) => (x, y)))
+        return TryUpdateInPlace(x.Predicate, y.Predicate, unifier);
+    }
+
+    // NB: not public because it can partially update the unifier on failure
+    private static bool TryUpdateInPlace(Predicate x, Predicate y, MutableVariableSubstitution unifier)
+    {
+        if (!x.Identifier.Equals(y.Identifier)
+            || x.Arguments.Count != y.Arguments.Count)
+        {
+            return false;
+        }
+
+        foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
         {
             if (!TryUpdateInPlace(args.x, args.y, unifier))
             {
@@ -275,6 +314,7 @@ public static class Unifier
         return true;
     }
 
+    // NB: not public because it can partially update the unifier on failure
     private static bool TryUpdateInPlace(Term x, Term y, MutableVariableSubstitution unifier)
     {
         return (x, y) switch
