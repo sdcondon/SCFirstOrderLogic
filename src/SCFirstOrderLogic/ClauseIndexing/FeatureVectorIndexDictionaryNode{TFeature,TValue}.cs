@@ -1,9 +1,8 @@
 // Copyright © 2023-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
 
@@ -18,8 +17,8 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVectorIndexNode<TFeature, TValue>
     where TFeature : notnull
 {
-    private readonly Dictionary<KeyValuePair<TFeature, int>, IFeatureVectorIndexNode<TFeature, TValue>> children;
-    private readonly Dictionary<CNFClause, TValue> values = new();
+    private readonly Dictionary<KeyValuePair<TFeature, int>, IFeatureVectorIndexNode<TFeature, TValue>> childrenByVectorComponent;
+    private readonly Dictionary<CNFClause, TValue> valuesByKey = new();
 
     /// <summary>
     /// Initialises a new instance of the <see cref="FeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
@@ -39,24 +38,24 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// </param>
     public FeatureVectorIndexDictionaryNode(IEqualityComparer<KeyValuePair<TFeature, int>> equalityComparer)
     {
-        children = new(equalityComparer);
+        childrenByVectorComponent = new(equalityComparer);
     }
 
     /// <inheritdoc/>
     // NB: we don't bother wrapping children in a ReadOnlyDict to stop unscrupulous
     // users from casting. Would be more memory for a real edge case.
-    public IReadOnlyDictionary<KeyValuePair<TFeature, int>, IFeatureVectorIndexNode<TFeature, TValue>> Children => children;
+    public IReadOnlyDictionary<KeyValuePair<TFeature, int>, IFeatureVectorIndexNode<TFeature, TValue>> Children => childrenByVectorComponent;
 
     /// <inheritdoc/>
-    public bool HasValues => values.Count > 0;
+    public IEnumerable<KeyValuePair<CNFClause, TValue>> KeyValuePairs => valuesByKey;
 
     /// <inheritdoc/>
     public IFeatureVectorIndexNode<TFeature, TValue> GetOrAddChild(KeyValuePair<TFeature, int> vectorComponent)
     {
-        if (!children.TryGetValue(vectorComponent, out var node))
+        if (!childrenByVectorComponent.TryGetValue(vectorComponent, out var node))
         {
             node = new FeatureVectorIndexDictionaryNode<TFeature, TValue>();
-            children.Add(vectorComponent, node);
+            childrenByVectorComponent.Add(vectorComponent, node);
         }
 
         return node;
@@ -65,14 +64,14 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// <inheritdoc/>
     public void DeleteChild(KeyValuePair<TFeature, int> vectorComponent)
     {
-        children.Remove(vectorComponent);
+        childrenByVectorComponent.Remove(vectorComponent);
     }
 
     /// <inheritdoc/>
     public void AddValue(CNFClause clause, TValue value)
     {
         // todo: unify (vars only) - might not match exactly
-        if (!values.TryAdd(clause, value))
+        if (!valuesByKey.TryAdd(clause, value))
         {
             throw new ArgumentException("Key already present", nameof(clause));
         }
@@ -82,25 +81,13 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     public bool RemoveValue(CNFClause clause)
     {
         // todo: unify (vars only) - might not match exactly
-        return values.Remove(clause);
+        return valuesByKey.Remove(clause);
     }
 
     /// <inheritdoc/>
-    public IEnumerable<TValue> GetSubsumedValues(CNFClause clause)
-    {
-        return values.Where(kvp => clause.Subsumes(kvp.Key)).Select(kvp => kvp.Value);
-    }
-
-    /// <inheritdoc/>
-    public IEnumerable<TValue> GetSubsumingValues(CNFClause clause)
-    {
-        return values.Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value);
-    }
-
-    /// <inheritdoc/>
-    public bool TryGetValue(CNFClause clause, out TValue value)
+    public bool TryGetValue(CNFClause clause, [MaybeNullWhen(false)] out TValue value)
     {
         // todo: unify (vars only) - might not match exactly
-        return values.TryGetValue(clause, out value);
+        return valuesByKey.TryGetValue(clause, out value);
     }
 }

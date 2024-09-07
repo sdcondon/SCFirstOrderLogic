@@ -1,5 +1,7 @@
 ﻿// Copyright © 2023-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using SCFirstOrderLogic.InternalUtilities;
+using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +14,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// An implementation of a feature vector index for <see cref="CNFClause"/>s.
 /// </para>
 /// <para>
-/// Feature vector indexing (in this context, at least) is an non-perfect indexing method for clause subsumption.
+/// Feature vector indexing (in this context, at least) is an indexing method for clause subsumption.
 /// That is, feature vector indices can be used to store clauses in such a way that we can quickly look up the stored clauses that subsume or are subsumed by a query clause.
 /// </para>
 /// </summary>
@@ -159,7 +161,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
                     return false;
                 }
 
-                if (!await childNode.GetChildren().GetAsyncEnumerator().MoveNextAsync() && !await childNode.GetHasValues())
+                if (!await childNode.GetChildren().GetAsyncEnumerator().MoveNextAsync() && !await childNode.GetKeyValuePairs().AnyAsync())
                 {
                     await node.DeleteChildAsync(element);
                 }
@@ -240,7 +242,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
             {
                 // NB: note that we need to filter the values to those keyed by clauses that actually
                 // subsume the query clause. The node values are the candidate set.
-                await foreach (var value in node.GetSubsumingValues(clause))
+                await foreach (var value in node.GetKeyValuePairs().Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value))
                 {
                     yield return value;
                 }
@@ -297,7 +299,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         {
             // NB: note that we need to filter the values to those keyed by clauses that are
             // actually subsumed by the query clause. The node values are the candidate set.
-            await foreach (var value in node.GetSubsumedValues(clause))
+            await foreach (var value in node.GetKeyValuePairs().Where(kvp => clause.Subsumes(kvp.Key)).Select(kvp => kvp.Value))
             {
                 yield return value;
             }

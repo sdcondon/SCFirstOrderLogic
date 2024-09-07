@@ -1,10 +1,8 @@
 // Copyright © 2023-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -28,8 +26,8 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFeatureVectorIndexNode<TFeature, TValue>
     where TFeature : notnull
 {
-    private readonly ConcurrentDictionary<KeyValuePair<TFeature, int>, IAsyncFeatureVectorIndexNode<TFeature, TValue>> children;
-    private readonly Dictionary<CNFClause, TValue> values = new();
+    private readonly ConcurrentDictionary<KeyValuePair<TFeature, int>, IAsyncFeatureVectorIndexNode<TFeature, TValue>> childrenByVectorComponent;
+    private readonly Dictionary<CNFClause, TValue> valuesByKey = new();
 
     /// <summary>
     /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
@@ -49,13 +47,13 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// </param>
     public AsyncFeatureVectorIndexDictionaryNode(IEqualityComparer<KeyValuePair<TFeature, int>> equalityComparer)
     {
-        children = new(equalityComparer);
+        childrenByVectorComponent = new(equalityComparer);
     }
 
     /// <inheritdoc/>
     public async IAsyncEnumerable<KeyValuePair<KeyValuePair<TFeature, int>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> GetChildren()
     {
-        foreach (var kvp in children)
+        foreach (var kvp in childrenByVectorComponent)
         {
             yield return kvp;
         }
@@ -64,7 +62,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// <inheritdoc/>
     public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(KeyValuePair<TFeature, int> vectorComponent)
     {
-        children.TryGetValue(vectorComponent, out var child);
+        childrenByVectorComponent.TryGetValue(vectorComponent, out var child);
         return ValueTask.FromResult(child);
     }
 
@@ -72,9 +70,9 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(KeyValuePair<TFeature, int> vectorComponent)
     {
         IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue>();
-        if (!children.TryAdd(vectorComponent, node))
+        if (!childrenByVectorComponent.TryAdd(vectorComponent, node))
         {
-            node = children[vectorComponent];
+            node = childrenByVectorComponent[vectorComponent];
         }
 
         return ValueTask.FromResult(node);
@@ -83,7 +81,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// <inheritdoc/>
     public ValueTask DeleteChildAsync(KeyValuePair<TFeature, int> vectorComponent)
     {
-        children.Remove(vectorComponent, out _);
+        childrenByVectorComponent.Remove(vectorComponent, out _);
         return ValueTask.CompletedTask;
     }
 
@@ -91,7 +89,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     public ValueTask AddValueAsync(CNFClause clause, TValue value)
     {
         // todo: unify (vars only) - might not match exactly
-        if (!values.TryAdd(clause, value))
+        if (!valuesByKey.TryAdd(clause, value))
         {
             throw new ArgumentException("Key already present", nameof(clause));
         }
@@ -103,30 +101,15 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     public ValueTask<bool> RemoveValueAsync(CNFClause clause)
     {
         // todo: unify (vars only) - might not match exactly
-        return ValueTask.FromResult(values.Remove(clause));
+        return ValueTask.FromResult(valuesByKey.Remove(clause));
     }
 
     /// <inheritdoc/>
-    public ValueTask<bool> GetHasValues()
+    public async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetKeyValuePairs()
     {
-        return ValueTask.FromResult(values.Count > 0);
-    }
-
-    /// <inheritdoc/>
-    public async IAsyncEnumerable<TValue> GetSubsumedValues(CNFClause clause)
-    {
-        foreach (var value in values.Where(kvp => clause.Subsumes(kvp.Key)).Select(kvp => kvp.Value))
+        foreach (var kvp in valuesByKey)
         {
-            yield return value;
-        }
-    }
-
-    /// <inheritdoc/>
-    public async IAsyncEnumerable<TValue> GetSubsumingValues(CNFClause clause)
-    {
-        foreach (var value in values.Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value))
-        {
-            yield return value;
+            yield return kvp;
         }
     }
 
@@ -134,7 +117,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     public ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause)
     {
         // todo: unify (vars only) - might not match exactly
-        var isSucceeded = values.TryGetValue(clause, out var value);
+        var isSucceeded = valuesByKey.TryGetValue(clause, out var value);
         return ValueTask.FromResult((isSucceeded, value));
     }
 }

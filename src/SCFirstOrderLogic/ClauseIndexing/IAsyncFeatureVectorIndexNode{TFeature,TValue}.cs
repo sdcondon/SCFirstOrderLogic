@@ -50,23 +50,9 @@ public interface IAsyncFeatureVectorIndexNode<TFeature, TValue>
     ValueTask<bool> RemoveValueAsync(CNFClause clause);
 
     /// <summary>
-    /// Gets a value indicating whether any values are stored against the node.
+    /// Gets the values attached to this node.
     /// </summary>
-    ValueTask<bool> GetHasValues();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="clause"></param>
-    /// <returns></returns>
-    IAsyncEnumerable<TValue> GetSubsumedValues(CNFClause clause);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="clause"></param>
-    /// <returns></returns>
-    IAsyncEnumerable<TValue> GetSubsumingValues(CNFClause clause);
+    IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetKeyValuePairs();
 
     /// <summary>
     /// 

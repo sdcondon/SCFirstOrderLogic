@@ -1,6 +1,7 @@
 // Copyright © 2023-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
 
@@ -17,9 +18,9 @@ public interface IFeatureVectorIndexNode<TFeature, TValue>
     IReadOnlyDictionary<KeyValuePair<TFeature, int>, IFeatureVectorIndexNode<TFeature, TValue>> Children { get; }
 
     /// <summary>
-    /// 
+    /// Gets the values attached to this node.
     /// </summary>
-    bool HasValues { get; }
+    IEnumerable<KeyValuePair<CNFClause, TValue>> KeyValuePairs { get; }
 
     /// <summary>
     /// Gets or adds a child of this node.
@@ -51,21 +52,7 @@ public interface IFeatureVectorIndexNode<TFeature, TValue>
     /// 
     /// </summary>
     /// <param name="clause"></param>
-    /// <returns></returns>
-    public IEnumerable<TValue> GetSubsumedValues(CNFClause clause);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="clause"></param>
-    /// <returns></returns>
-    public IEnumerable<TValue> GetSubsumingValues(CNFClause clause);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="clause"></param>
     /// <param name="value"></param>
     /// <returns></returns>
-    bool TryGetValue(CNFClause clause, out TValue value);
+    bool TryGetValue(CNFClause clause, [MaybeNullWhen(false)] out TValue value);
 }
