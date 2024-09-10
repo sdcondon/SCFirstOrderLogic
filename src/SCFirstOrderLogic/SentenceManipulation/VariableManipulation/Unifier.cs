@@ -30,7 +30,7 @@ public static class Unifier
     {
         var unifierAttempt = new MutableVariableSubstitution();
 
-        if (TryUpdateInPlace(x, y, unifierAttempt))
+        if (TryUpdateUnsafe(x, y, unifierAttempt))
         {
             unifier = unifierAttempt.CopyAsReadOnly();
             return true;
@@ -49,7 +49,7 @@ public static class Unifier
     public static VariableSubstitution? TryCreate(Literal x, Literal y)
     {
         var unifierAttempt = new MutableVariableSubstitution();
-        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+        return TryUpdateUnsafe(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ public static class Unifier
     {
         var unifierAttempt = new MutableVariableSubstitution();
 
-        if (TryUpdateInPlace(x, y, unifierAttempt))
+        if (TryUpdateUnsafe(x, y, unifierAttempt))
         {
             unifier = unifierAttempt.CopyAsReadOnly();
             return true;
@@ -82,7 +82,7 @@ public static class Unifier
     public static VariableSubstitution? TryCreate(Predicate x, Predicate y)
     {
         var unifierAttempt = new MutableVariableSubstitution();
-        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+        return TryUpdateUnsafe(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ public static class Unifier
     {
         var unifierAttempt = new MutableVariableSubstitution();
 
-        if (TryUpdateInPlace(x, y, unifierAttempt))
+        if (TryUpdateUnsafe(x, y, unifierAttempt))
         {
             unifier = unifierAttempt.CopyAsReadOnly();
             return true;
@@ -115,7 +115,7 @@ public static class Unifier
     public static VariableSubstitution? TryCreate(Term x, Term y)
     {
         var unifierAttempt = new MutableVariableSubstitution();
-        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+        return TryUpdateUnsafe(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
     }
 
     /// <summary>
@@ -130,7 +130,7 @@ public static class Unifier
     {
         var potentialUpdatedUnifier = unifier.CopyAsMutable();
 
-        if (TryUpdateInPlace(x, y, potentialUpdatedUnifier))
+        if (TryUpdateUnsafe(x, y, potentialUpdatedUnifier))
         {
             updatedUnifier = potentialUpdatedUnifier.CopyAsReadOnly();
             return true;
@@ -151,7 +151,7 @@ public static class Unifier
     {
         var updatedUnifier = unifier.CopyAsMutable();
 
-        if (TryUpdateInPlace(x, y, updatedUnifier))
+        if (TryUpdateUnsafe(x, y, updatedUnifier))
         {
             unifier = updatedUnifier.CopyAsReadOnly();
             return true;
@@ -170,7 +170,7 @@ public static class Unifier
     public static VariableSubstitution? TryUpdate(Literal x, Literal y, VariableSubstitution unifier)
     {
         var unifierAttempt = unifier.CopyAsMutable();
-        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+        return TryUpdateUnsafe(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
     }
 
     /// <summary>
@@ -185,7 +185,7 @@ public static class Unifier
     {
         var potentialUpdatedUnifier = unifier.CopyAsMutable();
 
-        if (TryUpdateInPlace(x, y, potentialUpdatedUnifier))
+        if (TryUpdateUnsafe(x, y, potentialUpdatedUnifier))
         {
             updatedUnifier = potentialUpdatedUnifier.CopyAsReadOnly();
             return true;
@@ -206,7 +206,7 @@ public static class Unifier
     {
         var updatedUnifier = unifier.CopyAsMutable();
 
-        if (TryUpdateInPlace(x, y, updatedUnifier))
+        if (TryUpdateUnsafe(x, y, updatedUnifier))
         {
             unifier = updatedUnifier.CopyAsReadOnly();
             return true;
@@ -225,7 +225,7 @@ public static class Unifier
     public static VariableSubstitution? TryUpdate(Predicate x, Predicate y, VariableSubstitution unifier)
     {
         var unifierAttempt = unifier.CopyAsMutable();
-        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+        return TryUpdateUnsafe(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
     }
 
     /// <summary>
@@ -240,7 +240,7 @@ public static class Unifier
     {
         var potentialUpdatedUnifier = unifier.CopyAsMutable();
 
-        if (TryUpdateInPlace(x, y, potentialUpdatedUnifier))
+        if (TryUpdateUnsafe(x, y, potentialUpdatedUnifier))
         {
             updatedUnifier = potentialUpdatedUnifier.CopyAsReadOnly();
             return true;
@@ -261,7 +261,7 @@ public static class Unifier
     {
         var updatedUnifier = unifier.CopyAsMutable();
 
-        if (TryUpdateInPlace(x, y, updatedUnifier))
+        if (TryUpdateUnsafe(x, y, updatedUnifier))
         {
             unifier = updatedUnifier.CopyAsReadOnly();
             return true;
@@ -280,22 +280,22 @@ public static class Unifier
     public static VariableSubstitution? TryUpdate(Term x, Term y, VariableSubstitution unifier)
     {
         var unifierAttempt = unifier.CopyAsMutable();
-        return TryUpdateInPlace(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+        return TryUpdateUnsafe(x, y, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
     }
-
-    // NB: not public because it can partially update the unifier on failure
-    private static bool TryUpdateInPlace(Literal x, Literal y, MutableVariableSubstitution unifier)
+    
+    // NB: 'unsafe' in that it can partially update the unifier on failure
+    private static bool TryUpdateUnsafe(Literal x, Literal y, MutableVariableSubstitution unifier)
     {
         if (x.IsNegated != y.IsNegated)
         {
             return false;
         }
 
-        return TryUpdateInPlace(x.Predicate, y.Predicate, unifier);
+        return TryUpdateUnsafe(x.Predicate, y.Predicate, unifier);
     }
 
-    // NB: not public because it can partially update the unifier on failure
-    private static bool TryUpdateInPlace(Predicate x, Predicate y, MutableVariableSubstitution unifier)
+    // NB: 'unsafe' in that it can partially update the unifier on failure
+    private static bool TryUpdateUnsafe(Predicate x, Predicate y, MutableVariableSubstitution unifier)
     {
         if (!x.Identifier.Equals(y.Identifier)
             || x.Arguments.Count != y.Arguments.Count)
@@ -305,7 +305,7 @@ public static class Unifier
 
         foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
         {
-            if (!TryUpdateInPlace(args.x, args.y, unifier))
+            if (!TryUpdateUnsafe(args.x, args.y, unifier))
             {
                 return false;
             }
@@ -314,19 +314,19 @@ public static class Unifier
         return true;
     }
 
-    // NB: not public because it can partially update the unifier on failure
-    private static bool TryUpdateInPlace(Term x, Term y, MutableVariableSubstitution unifier)
+    // NB: 'unsafe' in that it can partially update the unifier on failure
+    private static bool TryUpdateUnsafe(Term x, Term y, MutableVariableSubstitution unifier)
     {
         return (x, y) switch
         {
-            (VariableReference variable, _) => TryUpdateInPlace(variable, y, unifier),
-            (_, VariableReference variable) => TryUpdateInPlace(variable, x, unifier),
-            (Function functionX, Function functionY) => TryUpdateInPlace(functionX, functionY, unifier),
+            (VariableReference variable, _) => TryUpdateUnsafe(variable, y, unifier),
+            (_, VariableReference variable) => TryUpdateUnsafe(variable, x, unifier),
+            (Function functionX, Function functionY) => TryUpdateUnsafe(functionX, functionY, unifier),
             _ => throw new ArgumentException("Null or unsupported type of Term encountered - cannot be unified"),
         };
     }
 
-    private static bool TryUpdateInPlace(VariableReference variable, Term other, MutableVariableSubstitution unifier)
+    private static bool TryUpdateUnsafe(VariableReference variable, Term other, MutableVariableSubstitution unifier)
     {
         if (variable.Equals(other))
         {
@@ -336,13 +336,13 @@ public static class Unifier
         {
             // The variable is already mapped to something - we need to make sure that the
             // mapping is consistent with the "other" value.
-            return TryUpdateInPlace(variableValue, other, unifier);
+            return TryUpdateUnsafe(variableValue, other, unifier);
         }
         else if (other is VariableReference otherVariable && unifier.Bindings.TryGetValue(otherVariable, out var otherVariableValue))
         {
             // The other value is also a variable that is already mapped to something - we need to make sure that the
             // mapping is consistent with the "other" value.
-            return TryUpdateInPlace(variable, otherVariableValue, unifier);
+            return TryUpdateUnsafe(variable, otherVariableValue, unifier);
         }
         else if (Occurs(variable, unifier.ApplyTo(other)))
         {
@@ -356,7 +356,7 @@ public static class Unifier
         }
     }
 
-    private static bool TryUpdateInPlace(Function x, Function y, MutableVariableSubstitution unifier)
+    private static bool TryUpdateUnsafe(Function x, Function y, MutableVariableSubstitution unifier)
     {
         if (!x.Identifier.Equals(y.Identifier) || x.Arguments.Count != y.Arguments.Count)
         {
@@ -365,7 +365,7 @@ public static class Unifier
 
         for (int i = 0; i < x.Arguments.Count; i++)
         {
-            if (!TryUpdateInPlace(x.Arguments[i], y.Arguments[i], unifier))
+            if (!TryUpdateUnsafe(x.Arguments[i], y.Arguments[i], unifier))
             {
                 return false;
             }

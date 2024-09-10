@@ -234,7 +234,7 @@ public class DiscriminationTree<TValue>
             else
             {
                 // We can safely grab Value here because node MUST be a leaf node at this point - ultimately because of how
-                // ElementInfoTransformation works (which controls both the structure of the tree and queryElements here).
+                // DiscriminationTreeNodeKeyTransformation works (which controls both the structure of the tree and queryElements here).
                 yield return node.Value;
             }
         }

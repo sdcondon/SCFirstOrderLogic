@@ -21,7 +21,7 @@ internal static class InstanceUnifier
     {
         var updatedUnifier = unifier.CopyAsMutable();
 
-        if (TryUpdateInPlace(generalisation, instance, updatedUnifier))
+        if (TryUpdateUnsafe(generalisation, instance, updatedUnifier))
         {
             unifier = updatedUnifier.CopyAsReadOnly();
             return true;
@@ -34,7 +34,7 @@ internal static class InstanceUnifier
     {
         var unifierAttempt = new MutableVariableSubstitution();
 
-        if (TryUpdateInPlace(generalisation, instance, unifierAttempt))
+        if (TryUpdateUnsafe(generalisation, instance, unifierAttempt))
         {
             unifier = unifierAttempt.CopyAsReadOnly();
             return true;
@@ -44,7 +44,8 @@ internal static class InstanceUnifier
         return false;
     }
 
-    private static bool TryUpdateInPlace(Literal generalisation, Literal instance, MutableVariableSubstitution unifier)
+    // NB: 'unsafe' in that it can partially update the unifier on failure
+    private static bool TryUpdateUnsafe(Literal generalisation, Literal instance, MutableVariableSubstitution unifier)
     {
         if (generalisation.IsNegated != instance.IsNegated
             || !generalisation.Predicate.Identifier.Equals(instance.Predicate.Identifier)
@@ -55,7 +56,7 @@ internal static class InstanceUnifier
 
         foreach (var args in generalisation.Predicate.Arguments.Zip(instance.Predicate.Arguments, (x, y) => (x, y)))
         {
-            if (!TryUpdateInPlace(args.x, args.y, unifier))
+            if (!TryUpdateUnsafe(args.x, args.y, unifier))
             {
                 return false;
             }
@@ -64,18 +65,19 @@ internal static class InstanceUnifier
         return true;
     }
 
-    private static bool TryUpdateInPlace(Term generalisation, Term instance, MutableVariableSubstitution unifier)
+    // NB: 'unsafe' in that it can partially update the unifier on failure
+    private static bool TryUpdateUnsafe(Term generalisation, Term instance, MutableVariableSubstitution unifier)
     {
         return (generalisation, instance) switch
         {
-            (VariableReference variable, _) => TryUpdateInPlace(variable, instance, unifier),
-            (Function functionX, Function functionY) => TryUpdateInPlace(functionX, functionY, unifier),
+            (VariableReference variable, _) => TryUpdateUnsafe(variable, instance, unifier),
+            (Function functionX, Function functionY) => TryUpdateUnsafe(functionX, functionY, unifier),
             // Otherwise we must have (Function, Variable) which can't be unified in this case
             _ => false,
         };
     }
 
-    private static bool TryUpdateInPlace(VariableReference generalisationVariable, Term instanceTerm, MutableVariableSubstitution unifier)
+    private static bool TryUpdateUnsafe(VariableReference generalisationVariable, Term instanceTerm, MutableVariableSubstitution unifier)
     {
         if (generalisationVariable.Equals(instanceTerm))
         {
@@ -85,7 +87,7 @@ internal static class InstanceUnifier
         {
             // The variable is already mapped to something - we need to make sure that the
             // mapping is consistent with the "other" value.
-            return TryUpdateInPlace(variableValue, instanceTerm, unifier);
+            return TryUpdateUnsafe(variableValue, instanceTerm, unifier);
         }
         else
         {
@@ -94,7 +96,7 @@ internal static class InstanceUnifier
         }
     }
 
-    private static bool TryUpdateInPlace(Function generalisation, Function instance, MutableVariableSubstitution unifier)
+    private static bool TryUpdateUnsafe(Function generalisation, Function instance, MutableVariableSubstitution unifier)
     {
         if (!generalisation.Identifier.Equals(instance.Identifier) || generalisation.Arguments.Count != instance.Arguments.Count)
         {
@@ -103,7 +105,7 @@ internal static class InstanceUnifier
 
         for (int i = 0; i < generalisation.Arguments.Count; i++)
         {
-            if (!TryUpdateInPlace(generalisation.Arguments[i], instance.Arguments[i], unifier))
+            if (!TryUpdateUnsafe(generalisation.Arguments[i], instance.Arguments[i], unifier))
             {
                 return false;
             }
