@@ -1,35 +1,31 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using System.Collections.Generic;
+using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.TermIndexing;
 
 public static class AsyncPathTreeOfTTests
 {
-    private static readonly Function C1 = new("C1");
-    private static readonly Function C2 = new("C2");
-
-    private static Function F(params Term[] a) => new(nameof(F), a);
-
     public static Test ContainsAsyncBehaviour => TestThat
         .GivenEachOf<TryGetExactAsyncTestCase<int>>(() =>
         [
             new(
                 Contents: new()
                 {
-                    [F(C1, C1)] = 1,
-                    [F(C2, C2)] = 1
+                    [F(C, C)] = 1,
+                    [F(D, D)] = 1
                 },
-                QueryTerm: F(C1, C1),
+                QueryTerm: F(C, C),
                 ExpectedReturnValue: true),
 
             new(
                 Contents: new()
                 {
-                    [F(C1, C1)] = 1,
-                    [F(C2, C2)] = 1
+                    [F(C, C)] = 1,
+                    [F(D, D)] = 1
                 },
-                QueryTerm: F(C1, C2),
+                QueryTerm: F(C, D),
                 ExpectedReturnValue: false),
         ])
         .WhenAsync(async tc =>

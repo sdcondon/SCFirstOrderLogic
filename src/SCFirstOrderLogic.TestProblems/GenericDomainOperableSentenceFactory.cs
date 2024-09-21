@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.TestProblems;
 /// </para>
 /// <list type="bullet">
 /// <item>Properties 'A', 'B', 'C' &amp; 'D': zero-arity functions (i.e. constants).</item>
-/// <item>Properties 'X', 'Y' &amp; 'Z': variable declarations</item>
+/// <item>Properties 'U', 'V', 'W', 'X', 'Y' &amp; 'Z': variable declarations</item>
 /// <item>Methods 'F', 'G' &amp; 'H': functions (with an arbitrary number of args, via a Term[]-valued params parameter)</item>
 /// <item>Methods 'P', 'Q' &amp; 'R': predicates (with an arbitrary number of args, via a Term[]-valued params parameter)</item>
 /// </list>
@@ -50,6 +50,9 @@ public static class GenericDomainOperableSentenceFactory
     public static OperableFunction C { get; } = new Function(nameof(C));
     public static OperableFunction D { get; } = new Function(nameof(D));
 
+    public static OperableVariableDeclaration U { get; } = new VariableDeclaration(nameof(U));
+    public static OperableVariableDeclaration V { get; } = new VariableDeclaration(nameof(V));
+    public static OperableVariableDeclaration W { get; } = new VariableDeclaration(nameof(W));
     public static OperableVariableDeclaration X { get; } = new VariableDeclaration(nameof(X));
     public static OperableVariableDeclaration Y { get; } = new VariableDeclaration(nameof(Y));
     public static OperableVariableDeclaration Z { get; } = new VariableDeclaration(nameof(Z));

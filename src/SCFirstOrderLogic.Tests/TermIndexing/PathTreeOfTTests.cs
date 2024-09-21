@@ -1,44 +1,40 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using System.Collections.Generic;
+using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.TermIndexing;
 
 public static class PathTreeOfTTests
 {
-    private static readonly Function C1 = new("C1");
-    private static readonly Function C2 = new("C2");
-
-    private static Term F(params Term[] a) => new Function(nameof(F), a);
-
     public static Test ContainsBehaviour => TestThat
         .GivenEachOf<TryGetExactTestCase<int>>(() =>
         [
             new(
                 Contents:
                 [
-                    KeyValuePair.Create(F(C1, C1), 1),
-                    KeyValuePair.Create(F(C2, C2), 1)
+                    KeyValuePair.Create<Term, int>(F(C, C), 1),
+                    KeyValuePair.Create<Term, int>(F(D, D), 1)
                 ],
-                QueryTerm: F(C1, C1),
+                QueryTerm: F(C, C),
                 ExpectedReturnValue: true),
 
             new(
                 Contents:
                 [
-                    KeyValuePair.Create(F(C1, C1), 1),
-                    KeyValuePair.Create(F(C2, C2), 1)
+                    KeyValuePair.Create<Term, int>(F(C, C), 1),
+                    KeyValuePair.Create<Term, int>(F(D, D), 1)
                 ],
-                QueryTerm: F(C2, C2),
+                QueryTerm: F(D, D),
                 ExpectedReturnValue: true),
 
             new(
                 Contents:
                 [
-                    KeyValuePair.Create(F(C1, C1), 1),
-                    KeyValuePair.Create(F(C2, C2), 1)
+                    KeyValuePair.Create<Term, int>(F(C, C), 1),
+                    KeyValuePair.Create<Term, int>(F(D, D), 1)
                 ],
-                QueryTerm: F(C1, C2),
+                QueryTerm: F(C, D),
                 ExpectedReturnValue: false),
         ])
         .When(tc =>

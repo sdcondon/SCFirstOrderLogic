@@ -1,69 +1,63 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
 using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 public class UnifierTests
 {
-    private static Function John => new(nameof(John));
-    private static Function Jane => new(nameof(Jane));
-    private static Function Mother(Term child) => new(nameof(Mother), child);
-    private static Function Father(Term child) => new(nameof(Father), child);
-    private static Predicate Knows(Term knower, Term known) => new(nameof(Knows), knower, known);
-
     public static Test TryCreatePositive => TestThat
         .GivenEachOf<TryCreatePositiveTestCase<Predicate>>(() =>
         [
             new (
-                Input1: Knows(John, X),
-                Input2: Knows(John, Jane),
+                Input1: P(C, X),
+                Input2: P(C, D),
                 ExpectedSubstitutions: new()
                 {
-                    [X] = Jane,
+                    [X] = D,
                 },
-                ExpectedUnified: Knows(John, Jane)),
+                ExpectedUnified: P(C, D)),
 
             new (
-                Input1: Knows(John, X),
-                Input2: Knows(Y, Jane),
+                Input1: P(C, X),
+                Input2: P(Y, D),
                 ExpectedSubstitutions: new()
                 {
-                    [X] = Jane,
-                    [Y] = John,
+                    [X] = D,
+                    [Y] = C,
                 },
-                ExpectedUnified: Knows(John, Jane)),
+                ExpectedUnified: P(C, D)),
 
             new (
-                Input1: Knows(John, X),
-                Input2: Knows(Y, Mother(Y)),
+                Input1: P(C, X),
+                Input2: P(Y, F(Y)),
                 ExpectedSubstitutions: new()
                 {
-                    [X] = Mother(Y),
-                    [Y] = John,
+                    [X] = F(Y),
+                    [Y] = C,
                 },
-                ExpectedUnified: Knows(John, Mother(John))),
+                ExpectedUnified: P(C, F(C))),
 
             new ( // vars matched to vars
-                Input1: Knows(X, X),
-                Input2: Knows(Y, John),
+                Input1: P(X, X),
+                Input2: P(Y, C),
                 ExpectedSubstitutions: new()
                 {
                     [X] = Y,
-                    [Y] = John,
+                    [Y] = C,
                 },
-                ExpectedUnified: Knows(John, John)),
+                ExpectedUnified: P(C, C)),
 
             new ( // vars matched to vars
-                Input1: Knows(Y, John),
-                Input2: Knows(X, X),
+                Input1: P(Y, C),
+                Input2: P(X, X),
                 ExpectedSubstitutions: new()
                 {
-                    [X] = John,
+                    [X] = C,
                     [Y] = X,
                 },
-                ExpectedUnified: Knows(John, John)),
+                ExpectedUnified: P(C, C)),
         ])
         .When(tc =>
         {
@@ -80,16 +74,16 @@ public class UnifierTests
         .GivenEachOf<TryCreateNegativeTestCase<Predicate>>(() =>
         [
             new (
-                Input1: Knows(John, X),
-                Input2: Knows(X, Jane)),
+                Input1: P(C, X),
+                Input2: P(X, D)),
 
             new ( // trivial occurs check faiure
-                Input1: Knows(John, X),
-                Input2: Knows(John, Mother(X))),
+                Input1: P(C, X),
+                Input2: P(C, F(X))),
 
             new ( // non-trivial occurs check failure
-                Input1: Knows(X, Mother(X)),
-                Input2: Knows(Father(Y), Y)),
+                Input1: P(X, F(X)),
+                Input2: P(G(Y), Y)),
         ])
         .When(tc =>
         {
@@ -104,36 +98,36 @@ public class UnifierTests
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
         [
             new (
-                Input1: Knows(X, Y),
-                Input2: Knows(John, Jane),
+                Input1: P(X, Y),
+                Input2: P(C, D),
                 InitialSubstitutions: new()
                 {
-                    [X] = John,
+                    [X] = C,
                 },
                 ExpectedSubstitutions: new()
                 {
-                    [X] = John,
-                    [Y] = Jane,
+                    [X] = C,
+                    [Y] = D,
                 },
-                ExpectedUnified: Knows(John, Jane)),
+                ExpectedUnified: P(C, D)),
 
             new (
-                Input1: Knows(X, Y),
-                Input2: Knows(John, Jane),
+                Input1: P(X, Y),
+                Input2: P(C, D),
                 InitialSubstitutions: new()
                 {
-                    [Y] = Jane,
+                    [Y] = D,
                 },
                 ExpectedSubstitutions: new()
                 {
-                    [X] = John,
-                    [Y] = Jane,
+                    [X] = C,
+                    [Y] = D,
                 },
-                ExpectedUnified: Knows(John, Jane)),
+                ExpectedUnified: P(C, D)),
 
             new (
-                Input1: Knows(X, Y),
-                Input2: Knows(A, B),
+                Input1: P(X, Y),
+                Input2: P(A, B),
                 InitialSubstitutions: new()
                 {
                     [X] = A,
@@ -144,7 +138,7 @@ public class UnifierTests
                     [X] = A,
                     [Y] = B,
                 },
-                ExpectedUnified: Knows(A, B)),
+                ExpectedUnified: P(A, B)),
         ])
         .When(tc =>
         {
@@ -163,36 +157,36 @@ public class UnifierTests
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
         [
             new (
-                Input1: Knows(X, Y),
-                Input2: Knows(John, Jane),
+                Input1: P(X, Y),
+                Input2: P(C, D),
                 InitialSubstitutions: new()
                 {
-                    [X] = John,
+                    [X] = C,
                 },
                 ExpectedSubstitutions: new()
                 {
-                    [X] = John,
-                    [Y] = Jane,
+                    [X] = C,
+                    [Y] = D,
                 },
-                ExpectedUnified: Knows(John, Jane)),
+                ExpectedUnified: P(C, D)),
 
             new (
-                Input1: Knows(X, Y),
-                Input2: Knows(John, Jane),
+                Input1: P(X, Y),
+                Input2: P(C, D),
                 InitialSubstitutions: new()
                 {
-                    [Y] = Jane,
+                    [Y] = D,
                 },
                 ExpectedSubstitutions: new()
                 {
-                    [X] = John,
-                    [Y] = Jane,
+                    [X] = C,
+                    [Y] = D,
                 },
-                ExpectedUnified: Knows(John, Jane)),
+                ExpectedUnified: P(C, D)),
 
             new (
-                Input1: Knows(X, Y),
-                Input2: Knows(A, B),
+                Input1: P(X, Y),
+                Input2: P(A, B),
                 InitialSubstitutions: new()
                 {
                     [X] = A,
@@ -203,7 +197,7 @@ public class UnifierTests
                     [X] = A,
                     [Y] = B,
                 },
-                ExpectedUnified: Knows(A, B)),
+                ExpectedUnified: P(A, B)),
         ])
         .When(tc =>
         {
@@ -221,19 +215,19 @@ public class UnifierTests
         .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
         [
             new (
-                Input1: Knows(X, Y),
-                Input2: Knows(John, Jane),
+                Input1: P(X, Y),
+                Input2: P(C, D),
                 InitialSubstitutions: new()
                 {
-                    [Y] = John,
+                    [Y] = C,
                 }),
 
             new (
-                Input1: Knows(X, Y),
-                Input2: Knows(John, Jane),
+                Input1: P(X, Y),
+                Input2: P(C, D),
                 InitialSubstitutions: new()
                 {
-                    [X] = Jane,
+                    [X] = D,
                 }),
         ])
         .When(tc =>
@@ -251,19 +245,19 @@ public class UnifierTests
         .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
         [
             new (
-                Input1: Knows(X, Y),
-                Input2: Knows(John, Jane),
+                Input1: P(X, Y),
+                Input2: P(C, D),
                 InitialSubstitutions: new()
                 {
-                    [Y] = John,
+                    [Y] = C,
                 }),
 
             new (
-                Input1: Knows(X, Y),
-                Input2: Knows(John, Jane),
+                Input1: P(X, Y),
+                Input2: P(C, D),
                 InitialSubstitutions: new()
                 {
-                    [X] = Jane,
+                    [X] = D,
                 }),
         ])
         .When(tc =>
@@ -282,12 +276,12 @@ public class UnifierTests
         [
             new (
                 Input1: X,
-                Input2: Mother(John),
+                Input2: F(C),
                 ExpectedSubstitutions: new()
                 {
-                    [X] = Mother(John),
+                    [X] = F(C),
                 },
-                ExpectedUnified: Mother(John)),
+                ExpectedUnified: F(C)),
         ])
         .When(tc =>
         {

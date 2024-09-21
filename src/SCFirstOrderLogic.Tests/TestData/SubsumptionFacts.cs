@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.TestData;
 
@@ -22,11 +22,4 @@ public static class SubsumptionFacts
         new (X: P(U) | Q(V),     Y: P(C),        IsXSubsumedByY: false, IsYSubsumedByX: false),
         new (X: CNFClause.Empty, Y: P(),         IsXSubsumedByY: false, IsYSubsumedByX: false),
     ];
-
-    private static Function C => new(nameof(C));
-    private static Function D => new(nameof(D));
-    private static Function F(params OperableTerm[] arguments) => new OperableFunction(nameof(F), arguments);
-    private static Function G(params OperableTerm[] arguments) => new OperableFunction(nameof(G), arguments);
-    private static OperablePredicate P(params OperableTerm[] arguments) => new(nameof(P), arguments);
-    private static OperablePredicate Q(params OperableTerm[] arguments) => new(nameof(Q), arguments);
 }
