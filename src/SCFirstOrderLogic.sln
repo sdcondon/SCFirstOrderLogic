@@ -3,25 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EDACED5D-9DEE-46A6-AA09-6C61573D8492}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		Directory.Build.props = Directory.Build.props
-		SCFirstOrderLogic-128.png = SCFirstOrderLogic-128.png
-		SCFirstOrderLogic-32.png = SCFirstOrderLogic-32.png
-		SCFirstOrderLogic.pdn = SCFirstOrderLogic.pdn
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic", "SCFirstOrderLogic\SCFirstOrderLogic.csproj", "{1914F51D-34D3-492F-852E-4BBD5778A05F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.Benchmarks", "SCFirstOrderLogic.Benchmarks\SCFirstOrderLogic.Benchmarks.csproj", "{DD13863D-E82F-412A-BD99-4C193DC1187A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.Tests", "SCFirstOrderLogic.Tests\SCFirstOrderLogic.Tests.csproj", "{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.Alternatives", "SCFirstOrderLogic.Alternatives\SCFirstOrderLogic.Alternatives.csproj", "{DB058ED1-32D1-493C-AEB4-FD0156FB8197}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.Documentation", "SCFirstOrderLogic.Documentation\SCFirstOrderLogic.Documentation.csproj", "{6A62E349-C68B-48C5-8F0E-538C9E01947F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repo Items", "Repo Items", "{C2710606-58BA-447E-AECF-60035688EC02}"
 	ProjectSection(SolutionItems) = preProject
 		..\.gitattributes = ..\.gitattributes
@@ -33,7 +14,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repo Items", "Repo Items", 
 		..\.github\workflows\ValidationBuild.yml = ..\.github\workflows\ValidationBuild.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.TestProblems", "SCFirstOrderLogic.ExampleDomains\SCFirstOrderLogic.TestProblems.csproj", "{17D45BFF-8827-4916-9A99-48B6D168191F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EDACED5D-9DEE-46A6-AA09-6C61573D8492}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		SCFirstOrderLogic-128.png = SCFirstOrderLogic-128.png
+		SCFirstOrderLogic-32.png = SCFirstOrderLogic-32.png
+		SCFirstOrderLogic.pdn = SCFirstOrderLogic.pdn
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic", "SCFirstOrderLogic\SCFirstOrderLogic.csproj", "{1914F51D-34D3-492F-852E-4BBD5778A05F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.Alternatives", "SCFirstOrderLogic.Alternatives\SCFirstOrderLogic.Alternatives.csproj", "{DB058ED1-32D1-493C-AEB4-FD0156FB8197}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.Benchmarks", "SCFirstOrderLogic.Benchmarks\SCFirstOrderLogic.Benchmarks.csproj", "{DD13863D-E82F-412A-BD99-4C193DC1187A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.Documentation", "SCFirstOrderLogic.Documentation\SCFirstOrderLogic.Documentation.csproj", "{6A62E349-C68B-48C5-8F0E-538C9E01947F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.Tests", "SCFirstOrderLogic.Tests\SCFirstOrderLogic.Tests.csproj", "{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SCFirstOrderLogic.TestProblems", "SCFirstOrderLogic.TestProblems\SCFirstOrderLogic.TestProblems.csproj", "{17D45BFF-8827-4916-9A99-48B6D168191F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,22 +45,22 @@ Global
 		{1914F51D-34D3-492F-852E-4BBD5778A05F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1914F51D-34D3-492F-852E-4BBD5778A05F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1914F51D-34D3-492F-852E-4BBD5778A05F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB058ED1-32D1-493C-AEB4-FD0156FB8197}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DB058ED1-32D1-493C-AEB4-FD0156FB8197}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB058ED1-32D1-493C-AEB4-FD0156FB8197}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB058ED1-32D1-493C-AEB4-FD0156FB8197}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD13863D-E82F-412A-BD99-4C193DC1187A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6A62E349-C68B-48C5-8F0E-538C9E01947F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6A62E349-C68B-48C5-8F0E-538C9E01947F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A62E349-C68B-48C5-8F0E-538C9E01947F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A62E349-C68B-48C5-8F0E-538C9E01947F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5163EA6D-4565-4CDD-8BF9-979CFF8057B5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{17D45BFF-8827-4916-9A99-48B6D168191F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{17D45BFF-8827-4916-9A99-48B6D168191F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17D45BFF-8827-4916-9A99-48B6D168191F}.Release|Any CPU.ActiveCfg = Release|Any CPU

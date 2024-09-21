@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SCFirstOrderLogic.Alternatives\SCFirstOrderLogic.Alternatives.csproj" />
+    <ProjectReference Include="..\SCFirstOrderLogic.TestProblems\SCFirstOrderLogic.TestProblems.csproj" />
     <ProjectReference Include="..\SCFirstOrderLogic\SCFirstOrderLogic.csproj" />
   </ItemGroup>
 

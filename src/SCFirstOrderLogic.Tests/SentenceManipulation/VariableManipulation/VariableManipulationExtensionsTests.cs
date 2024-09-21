@@ -3,7 +3,7 @@ using FlUnit;
 using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
@@ -107,15 +107,6 @@ public static class VariableManipulationExtensionsTests
         ])
         .When(tc => tc.Clause.ToCNF().Clauses.Single().UnifiesWithAnyOf(tc.Clauses.Select(s => s.ToCNF().Clauses.Single())))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.ExpectedResult));
-
-    private static OperableFunction A => new Function(nameof(A));
-    private static OperableFunction B => new Function(nameof(B));
-    private static Function C => new(nameof(C));
-    private static Function D => new(nameof(D));
-    private static OperableFunction F(params Term[] arguments) => new Function(nameof(F), arguments);
-    private static OperableFunction G(params Term[] arguments) => new Function(nameof(G), arguments);
-    private static OperablePredicate P(params OperableTerm[] arguments) => new(nameof(P), arguments);
-    private static OperablePredicate Q(params OperableTerm[] arguments) => new(nameof(Q), arguments);
 
     private record UnifiesWithAnyOfTestCase(Sentence Clause, IEnumerable<Sentence> Clauses, bool ExpectedResult);
 

@@ -5,16 +5,11 @@ using SCFirstOrderLogic.TestData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
 
 public static class FeatureVectorIndexTests
 {
-    private record GetTestCase(CNFClause Query, CNFClause[] Expected, CNFClause[] NotExpected);
-
-    private record AddTestCase(CNFClause[] PriorContent, CNFClause Add);
-
     public static Test NegativeAddBehaviour => TestThat
         .GivenEachOf<AddTestCase>(() =>
         [
@@ -133,5 +128,7 @@ public static class FeatureVectorIndexTests
         return xClauses.Concat(yClauses).Except([CNFClause.Empty]).Distinct().ToArray();
     }
 
-    private static OperablePredicate P(params OperableTerm[] arguments) => new(nameof(P), arguments);
+    private record GetTestCase(CNFClause Query, CNFClause[] Expected, CNFClause[] NotExpected);
+
+    private record AddTestCase(CNFClause[] PriorContent, CNFClause Add);
 }
