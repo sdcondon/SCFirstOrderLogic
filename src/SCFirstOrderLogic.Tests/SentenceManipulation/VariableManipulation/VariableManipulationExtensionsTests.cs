@@ -24,10 +24,10 @@ public static class VariableManipulationExtensionsTests
         .GivenEachOf<BinaryTestCase>(() =>
         [
             new(X: F(), Y: F(), Expected: true),
-            new(X: F(A), Y: F(X), Expected: true),
-            new(X: F(G(Y, A)), Y: F(X), Expected: true),
-            new(X: F(X), Y: F(A), Expected: false),
-            new(X: F(X, A), Y: F(A, X), Expected: false),
+            new(X: F(C), Y: F(X), Expected: true),
+            new(X: F(G(Y, C)), Y: F(X), Expected: true),
+            new(X: F(X), Y: F(C), Expected: false),
+            new(X: F(X, C), Y: F(C, X), Expected: false),
         ])
         .When(tc => tc.X.IsInstanceOf(tc.Y))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.Expected));
@@ -36,10 +36,10 @@ public static class VariableManipulationExtensionsTests
         .GivenEachOf<BinaryTestCase>(() =>
         [
             new(X: F(), Y: F(), Expected: true),
-            new(X: F(X), Y: F(A), Expected: true),
-            new(X: F(X), Y: F(G(Y, A)), Expected: true),
-            new(X: F(A), Y: F(X), Expected: false),
-            new(X: F(X, A), Y: F(A, X), Expected: false),
+            new(X: F(X), Y: F(C), Expected: true),
+            new(X: F(X), Y: F(G(Y, C)), Expected: true),
+            new(X: F(C), Y: F(X), Expected: false),
+            new(X: F(X, C), Y: F(C, X), Expected: false),
         ])
         .When(tc => tc.X.IsGeneralisationOf(tc.Y))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.Expected));

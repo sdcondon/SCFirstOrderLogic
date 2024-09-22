@@ -326,6 +326,7 @@ public static class Unifier
         };
     }
 
+    // NB: 'unsafe' in that it can partially update the unifier on failure
     private static bool TryUpdateUnsafe(VariableReference variable, Term other, MutableVariableSubstitution unifier)
     {
         if (variable.Equals(other))
@@ -356,6 +357,7 @@ public static class Unifier
         }
     }
 
+    // NB: 'unsafe' in that it can partially update the unifier on failure
     private static bool TryUpdateUnsafe(Function x, Function y, MutableVariableSubstitution unifier)
     {
         if (!x.Identifier.Equals(y.Identifier) || x.Arguments.Count != y.Arguments.Count)

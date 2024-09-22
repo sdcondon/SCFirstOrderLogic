@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 public class UnifierTests
 {
-    public static Test TryCreatePositive => TestThat
+    public static Test TryCreateFromPredicates_Positive => TestThat
         .GivenEachOf<TryCreatePositiveTestCase<Predicate>>(() =>
         [
             new (
@@ -70,7 +70,7 @@ public class UnifierTests
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
-    public static Test TryCreateNegative => TestThat
+    public static Test TryCreateFromPredicates_Negative => TestThat
         .GivenEachOf<TryCreateNegativeTestCase<Predicate>>(() =>
         [
             new (
@@ -94,7 +94,7 @@ public class UnifierTests
         .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())
         .And((tc, r) => r.unifier.Should().BeNull());
 
-    public static Test TryUpdatePositive => TestThat
+    public static Test TryUpdateFromPredicates_Positive => TestThat
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
         [
             new (
@@ -153,10 +153,40 @@ public class UnifierTests
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
-    public static Test TryUpdateRefPositive => TestThat
-        .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
+    public static Test TryUpdateFromPredicates_Negative => TestThat
+        .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
         [
             new (
+                Input1: P(X, Y),
+                Input2: P(C, D),
+                InitialSubstitutions: new()
+                {
+                    [Y] = C,
+                }),
+
+            new (
+                Input1: P(X, Y),
+                Input2: P(C, D),
+                InitialSubstitutions: new()
+                {
+                    [X] = D,
+                }),
+        ])
+        .When(tc =>
+        {
+            (bool returnValue, VariableSubstitution? unifier) result;
+            result.unifier = new(tc.InitialSubstitutions);
+            result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, new(tc.InitialSubstitutions), out result.unifier);
+            return result;
+        })
+        .ThenReturns()
+        .And((tc, r) => r.returnValue.Should().BeFalse())
+        .And((tc, r) => r.unifier.Should().BeNull());
+
+    public static Test TryUpdateRefFromPredicates_Positive => TestThat
+    .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
+    [
+        new (
                 Input1: P(X, Y),
                 Input2: P(C, D),
                 InitialSubstitutions: new()
@@ -198,50 +228,20 @@ public class UnifierTests
                     [Y] = B,
                 },
                 ExpectedUnified: P(A, B)),
-        ])
-        .When(tc =>
-        {
-            (bool returnValue, VariableSubstitution unifier) result;
-            result.unifier = new(tc.InitialSubstitutions);
-            result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, ref result.unifier);
-            return result;
-        })
-        .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedSubstitutions))
-        .And((tc, r) => r.unifier.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
-        .And((tc, r) => r.unifier.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
+    ])
+    .When(tc =>
+    {
+        (bool returnValue, VariableSubstitution unifier) result;
+        result.unifier = new(tc.InitialSubstitutions);
+        result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, ref result.unifier);
+        return result;
+    })
+    .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
+    .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+    .And((tc, r) => r.unifier.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
+    .And((tc, r) => r.unifier.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
-    public static Test TryUpdateNegative => TestThat
-        .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
-        [
-            new (
-                Input1: P(X, Y),
-                Input2: P(C, D),
-                InitialSubstitutions: new()
-                {
-                    [Y] = C,
-                }),
-
-            new (
-                Input1: P(X, Y),
-                Input2: P(C, D),
-                InitialSubstitutions: new()
-                {
-                    [X] = D,
-                }),
-        ])
-        .When(tc =>
-        {
-            (bool returnValue, VariableSubstitution? unifier) result;
-            result.unifier = new(tc.InitialSubstitutions);
-            result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, new(tc.InitialSubstitutions), out result.unifier);
-            return result;
-        })
-        .ThenReturns()
-        .And((tc, r) => r.returnValue.Should().BeFalse())
-        .And((tc, r) => r.unifier.Should().BeNull());
-
-    public static Test TryUpdateRefNegative => TestThat
+    public static Test TryUpdateRefFromPredicates_Negative => TestThat
         .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
         [
             new (
@@ -271,7 +271,7 @@ public class UnifierTests
         .And((tc, r) => r.returnValue.Should().BeFalse())
         .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialSubstitutions));
 
-    public static Test TryCreatePositive_Terms => TestThat
+    public static Test TryCreateFromTerms_Positive => TestThat
         .GivenEachOf<TryCreatePositiveTestCase<Term>>(() =>
         [
             new (
