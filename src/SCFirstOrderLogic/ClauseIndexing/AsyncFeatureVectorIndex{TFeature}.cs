@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// An implementation of a feature vector index for <see cref="CNFClause"/>s. Specifically, one for which the associated values are the clauses themselves.
 /// </para>
 /// <para>
-/// Feature vector indexing (in this context, at least) is an non-perfect indexing method for clause subsumption.
+/// Feature vector indexing (in this context, at least) is an indexing method for clause subsumption.
 /// That is, feature vector indices can be used to store clauses in such a way that we can quickly look up the stored clauses that subsume or are subsumed by a query clause.
 /// </para>
 /// </summary>

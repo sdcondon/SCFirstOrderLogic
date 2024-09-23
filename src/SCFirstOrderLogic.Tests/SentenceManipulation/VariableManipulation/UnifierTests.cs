@@ -13,7 +13,7 @@ public class UnifierTests
             new (
                 Input1: P(C, X),
                 Input2: P(C, D),
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = D,
                 },
@@ -22,7 +22,7 @@ public class UnifierTests
             new (
                 Input1: P(C, X),
                 Input2: P(Y, D),
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = D,
                     [Y] = C,
@@ -32,7 +32,7 @@ public class UnifierTests
             new (
                 Input1: P(C, X),
                 Input2: P(Y, F(Y)),
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = F(Y),
                     [Y] = C,
@@ -42,7 +42,7 @@ public class UnifierTests
             new ( // vars matched to vars
                 Input1: P(X, X),
                 Input2: P(Y, C),
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = Y,
                     [Y] = C,
@@ -52,7 +52,7 @@ public class UnifierTests
             new ( // vars matched to vars
                 Input1: P(Y, C),
                 Input2: P(X, X),
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = C,
                     [Y] = X,
@@ -66,7 +66,7 @@ public class UnifierTests
             return result;
         })
         .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
@@ -100,11 +100,11 @@ public class UnifierTests
             new (
                 Input1: P(X, Y),
                 Input2: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [X] = C,
                 },
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = C,
                     [Y] = D,
@@ -114,11 +114,11 @@ public class UnifierTests
             new (
                 Input1: P(X, Y),
                 Input2: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [Y] = D,
                 },
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = C,
                     [Y] = D,
@@ -128,12 +128,12 @@ public class UnifierTests
             new (
                 Input1: P(X, Y),
                 Input2: P(A, B),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [X] = A,
                     [Y] = B,
                 },
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = A,
                     [Y] = B,
@@ -143,13 +143,13 @@ public class UnifierTests
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
-            result.unifier = new(tc.InitialSubstitutions);
-            result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, new(tc.InitialSubstitutions), out result.unifier);
+            result.unifier = new(tc.InitialBindings);
+            result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, new(tc.InitialBindings), out result.unifier);
             return result;
         })
         .ThenReturns()
         .And((tc, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
@@ -159,7 +159,7 @@ public class UnifierTests
             new (
                 Input1: P(X, Y),
                 Input2: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [Y] = C,
                 }),
@@ -167,7 +167,7 @@ public class UnifierTests
             new (
                 Input1: P(X, Y),
                 Input2: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [X] = D,
                 }),
@@ -175,8 +175,8 @@ public class UnifierTests
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
-            result.unifier = new(tc.InitialSubstitutions);
-            result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, new(tc.InitialSubstitutions), out result.unifier);
+            result.unifier = new(tc.InitialBindings);
+            result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, new(tc.InitialBindings), out result.unifier);
             return result;
         })
         .ThenReturns()
@@ -189,11 +189,11 @@ public class UnifierTests
         new (
                 Input1: P(X, Y),
                 Input2: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [X] = C,
                 },
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = C,
                     [Y] = D,
@@ -203,11 +203,11 @@ public class UnifierTests
             new (
                 Input1: P(X, Y),
                 Input2: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [Y] = D,
                 },
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = C,
                     [Y] = D,
@@ -217,12 +217,12 @@ public class UnifierTests
             new (
                 Input1: P(X, Y),
                 Input2: P(A, B),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [X] = A,
                     [Y] = B,
                 },
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = A,
                     [Y] = B,
@@ -232,12 +232,12 @@ public class UnifierTests
     .When(tc =>
     {
         (bool returnValue, VariableSubstitution unifier) result;
-        result.unifier = new(tc.InitialSubstitutions);
+        result.unifier = new(tc.InitialBindings);
         result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, ref result.unifier);
         return result;
     })
     .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-    .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+    .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedBindings))
     .And((tc, r) => r.unifier.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
     .And((tc, r) => r.unifier.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
@@ -247,7 +247,7 @@ public class UnifierTests
             new (
                 Input1: P(X, Y),
                 Input2: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [Y] = C,
                 }),
@@ -255,7 +255,7 @@ public class UnifierTests
             new (
                 Input1: P(X, Y),
                 Input2: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [X] = D,
                 }),
@@ -263,13 +263,13 @@ public class UnifierTests
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution unifier) result;
-            result.unifier = new(tc.InitialSubstitutions);
+            result.unifier = new(tc.InitialBindings);
             result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, ref result.unifier);
             return result;
         })
         .ThenReturns()
         .And((tc, r) => r.returnValue.Should().BeFalse())
-        .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialSubstitutions));
+        .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialBindings));
 
     public static Test TryCreateFromTerms_Positive => TestThat
         .GivenEachOf<TryCreatePositiveTestCase<Term>>(() =>
@@ -277,7 +277,7 @@ public class UnifierTests
             new (
                 Input1: X,
                 Input2: F(C),
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = F(C),
                 },
@@ -290,14 +290,14 @@ public class UnifierTests
             return result;
         })
         .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
 
     private record TryCreatePositiveTestCase<T>(
         T Input1,
         T Input2,
-        Dictionary<VariableReference, Term> ExpectedSubstitutions,
+        Dictionary<VariableReference, Term> ExpectedBindings,
         T ExpectedUnified);
 
     private record TryCreateNegativeTestCase<T>(
@@ -307,12 +307,12 @@ public class UnifierTests
     private record TryUpdatePositiveTestCase<T>(
         T Input1,
         T Input2,
-        Dictionary<VariableReference, Term> InitialSubstitutions,
-        Dictionary<VariableReference, Term> ExpectedSubstitutions,
+        Dictionary<VariableReference, Term> InitialBindings,
+        Dictionary<VariableReference, Term> ExpectedBindings,
         T? ExpectedUnified);
 
     private record TryUpdateNegativeTestCase<T>(
         T Input1,
         T Input2,
-        Dictionary<VariableReference, Term> InitialSubstitutions);
+        Dictionary<VariableReference, Term> InitialBindings);
 }

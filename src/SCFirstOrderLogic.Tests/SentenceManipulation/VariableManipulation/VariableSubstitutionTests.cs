@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 public static class VariableSubstitutionTests
 {
-    // NB: Application of substitution tested via Unifier tests - probably shouldn't be
+    // TODO: Application of substitution tested via Unifier tests - shouldn't be
 
     private record EqualityTestCase(VariableSubstitution X, VariableSubstitution Y, bool ExpectedEquality);
 

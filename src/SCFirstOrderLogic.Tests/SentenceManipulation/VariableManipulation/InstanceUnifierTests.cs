@@ -13,7 +13,7 @@ public class InstanceUnifierTests
             new (
                 Generalisation: P(C, X),
                 Instance: P(C, D),
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = D,
                 },
@@ -22,7 +22,7 @@ public class InstanceUnifierTests
             new (
                 Generalisation: P(C, X),
                 Instance: P(C, F(Y)),
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = F(Y),
                 },
@@ -31,7 +31,7 @@ public class InstanceUnifierTests
             new ( // vars matched to vars
                 Generalisation: P(X, X),
                 Instance: P(Y, C),
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = Y,
                     [Y] = C,
@@ -58,7 +58,7 @@ public class InstanceUnifierTests
             return result;
         })
         .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
 
@@ -96,15 +96,15 @@ public class InstanceUnifierTests
 
     public static Test TryUpdateFromPredicates_Positive => TestThat
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
-        [
+        ([
             new (
                 Generalisation: P(X, Y),
                 Instance: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [X] = C,
                 },
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = C,
                     [Y] = D,
@@ -114,11 +114,11 @@ public class InstanceUnifierTests
             new (
                 Generalisation: P(X, Y),
                 Instance: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [Y] = D,
                 },
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = C,
                     [Y] = D,
@@ -128,28 +128,28 @@ public class InstanceUnifierTests
             new (
                 Generalisation: P(X, Y),
                 Instance: P(A, B),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [X] = A,
                     [Y] = B,
                 },
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = A,
                     [Y] = B,
                 },
                 ExpectedUnified: P(A, B)),
-        ])
+        ]))
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
-            result.unifier = new(tc.InitialSubstitutions);
-            result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, new(tc.InitialSubstitutions), out result.unifier);
+            result.unifier = new(tc.InitialBindings);
+            result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, new(tc.InitialBindings), out result.unifier);
             return result;
         })
         .ThenReturns()
         .And((tc, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
 
@@ -159,7 +159,7 @@ public class InstanceUnifierTests
             new (
                 Generalisation: P(X, Y),
                 Instance: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [Y] = C,
                 }),
@@ -167,7 +167,7 @@ public class InstanceUnifierTests
             new (
                 Generalisation: P(X, Y),
                 Instance: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [X] = D,
                 }),
@@ -175,8 +175,8 @@ public class InstanceUnifierTests
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
-            result.unifier = new(tc.InitialSubstitutions);
-            result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, new(tc.InitialSubstitutions), out result.unifier);
+            result.unifier = new(tc.InitialBindings);
+            result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, new(tc.InitialBindings), out result.unifier);
             return result;
         })
         .ThenReturns()
@@ -185,59 +185,59 @@ public class InstanceUnifierTests
 
     public static Test TryUpdateRefFromPredicates_Positive => TestThat
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
-        [
+        ([
             new (
-                    Generalisation: P(X, Y),
-                    Instance: P(C, D),
-                    InitialSubstitutions: new()
-                    {
-                        [X] = C,
-                    },
-                    ExpectedSubstitutions: new()
-                    {
-                        [X] = C,
-                        [Y] = D,
-                    },
-                    ExpectedUnified: P(C, D)),
+                Generalisation: P(X, Y),
+                Instance: P(C, D),
+                InitialBindings: new()
+                {
+                    [X] = C,
+                },
+                ExpectedBindings: new()
+                {
+                    [X] = C,
+                    [Y] = D,
+                },
+                ExpectedUnified: P(C, D)),
 
-                new (
-                    Generalisation: P(X, Y),
-                    Instance: P(C, D),
-                    InitialSubstitutions: new()
-                    {
-                        [Y] = D,
-                    },
-                    ExpectedSubstitutions: new()
-                    {
-                        [X] = C,
-                        [Y] = D,
-                    },
-                    ExpectedUnified: P(C, D)),
+            new (
+                Generalisation: P(X, Y),
+                Instance: P(C, D),
+                InitialBindings: new()
+                {
+                    [Y] = D,
+                },
+                ExpectedBindings: new()
+                {
+                    [X] = C,
+                    [Y] = D,
+                },
+                ExpectedUnified: P(C, D)),
 
-                new (
-                    Generalisation: P(X, Y),
-                    Instance: P(A, B),
-                    InitialSubstitutions: new()
-                    {
-                        [X] = A,
-                        [Y] = B,
-                    },
-                    ExpectedSubstitutions: new()
-                    {
-                        [X] = A,
-                        [Y] = B,
-                    },
-                    ExpectedUnified: P(A, B)),
-        ])
+            new (
+                Generalisation: P(X, Y),
+                Instance: P(A, B),
+                InitialBindings: new()
+                {
+                    [X] = A,
+                    [Y] = B,
+                },
+                ExpectedBindings: new()
+                {
+                    [X] = A,
+                    [Y] = B,
+                },
+                ExpectedUnified: P(A, B)),
+        ]))
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution unifier) result;
-            result.unifier = new(tc.InitialSubstitutions);
+            result.unifier = new(tc.InitialBindings);
             result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, ref result.unifier);
             return result;
         })
         .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+        .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
 
@@ -247,7 +247,7 @@ public class InstanceUnifierTests
             new (
                 Generalisation: P(X, Y),
                 Instance: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [Y] = C,
                 }),
@@ -255,7 +255,7 @@ public class InstanceUnifierTests
             new (
                 Generalisation: P(X, Y),
                 Instance: P(C, D),
-                InitialSubstitutions: new()
+                InitialBindings: new()
                 {
                     [X] = D,
                 }),
@@ -263,13 +263,13 @@ public class InstanceUnifierTests
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution unifier) result;
-            result.unifier = new(tc.InitialSubstitutions);
+            result.unifier = new(tc.InitialBindings);
             result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, ref result.unifier);
             return result;
         })
         .ThenReturns()
         .And((tc, r) => r.returnValue.Should().BeFalse())
-        .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialSubstitutions));
+        .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialBindings));
 
     public static Test TryCreateFromTerms_Positive => TestThat
         .GivenEachOf<TryCreatePositiveTestCase<Term>>(() =>
@@ -277,7 +277,7 @@ public class InstanceUnifierTests
             new (
                 Generalisation: X,
                 Instance: F(C),
-                ExpectedSubstitutions: new()
+                ExpectedBindings: new()
                 {
                     [X] = F(C),
                 },
@@ -290,14 +290,14 @@ public class InstanceUnifierTests
             return result;
         })
         .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedSubstitutions))
+        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
 
     private record TryCreatePositiveTestCase<T>(
         T Generalisation,
         T Instance,
-        Dictionary<VariableReference, Term> ExpectedSubstitutions,
+        Dictionary<VariableReference, Term> ExpectedBindings,
         T ExpectedUnified);
 
     private record TryCreateNegativeTestCase<T>(
@@ -307,12 +307,12 @@ public class InstanceUnifierTests
     private record TryUpdatePositiveTestCase<T>(
         T Generalisation,
         T Instance,
-        Dictionary<VariableReference, Term> InitialSubstitutions,
-        Dictionary<VariableReference, Term> ExpectedSubstitutions,
+        Dictionary<VariableReference, Term> InitialBindings,
+        Dictionary<VariableReference, Term> ExpectedBindings,
         T? ExpectedUnified);
 
     private record TryUpdateNegativeTestCase<T>(
         T Generalisation,
         T Instance,
-        Dictionary<VariableReference, Term> InitialSubstitutions);
+        Dictionary<VariableReference, Term> InitialBindings);
 }
