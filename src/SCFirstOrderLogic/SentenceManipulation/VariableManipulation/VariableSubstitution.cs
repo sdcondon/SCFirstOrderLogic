@@ -180,11 +180,10 @@ public class VariableSubstitution : RecursiveSentenceTransformation
         {
             // We need to call base.ApplyTo because we might be switching in a term
             // that itself is or contains variables that also need substituting.
-            // TODO-ROBUSTNESS: In theory makes it possible to get us stuck in a loop, but that will
-            // only happen as a result of bad consumer behaviour, not with e.g. unification
-            // output. Don't want to add the performance burden of checking for this
-            // every time, but could add a separate validation method to allow consumers
-            // to opt-in to it.
+            // TODO-ROBUSTNESS: In theory makes it possible to get us stuck in a loop,
+            // but (doesn't happen as a result of anything internal with an occurs check, and)
+            // don't want to add the performance burden of checking for this every time.
+            // Could add a separate validation method to allow consumers to opt-in to it?
             return base.ApplyTo(substitutedTerm);
         }
 

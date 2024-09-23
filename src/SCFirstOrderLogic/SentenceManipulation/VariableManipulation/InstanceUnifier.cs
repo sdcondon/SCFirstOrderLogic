@@ -11,10 +11,131 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 internal static class InstanceUnifier
 {
     /// <summary>
-    /// Attempts to update a unifier so that it (also) unifies two given literals.
+    /// Attempts to create a unifier for a literal and an instance of that literal.
     /// </summary>
-    /// <param name="generalisation">One of the two literals to attempt to unify.</param>
-    /// <param name="instance">One of the two literals to attempt to unify.</param>
+    /// <param name="generalisation">The generalisation to attempt to create a unifier for.</param>
+    /// <param name="instance">The instance to attempt to create a unifier for.</param>
+    /// <param name="unifier">If the literals can be unified, this out parameter will be the unifier.</param>
+    /// <returns>True if the two literals can be unified, otherwise false.</returns>
+    public static bool TryCreate(Literal generalisation, Literal instance, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
+    {
+        var unifierAttempt = new MutableVariableSubstitution();
+
+        if (TryUpdateUnsafe(generalisation, instance, unifierAttempt))
+        {
+            unifier = unifierAttempt.CopyAsReadOnly();
+            return true;
+        }
+
+        unifier = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Attempts to create a unifier for a literal and an instance of that literal.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to create a unifier for.</param>
+    /// <param name="instance">The instance to attempt to create a unifier for.</param>
+    /// <returns>The unifier if the literals can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryCreate(Literal generalisation, Literal instance)
+    {
+        var unifierAttempt = new MutableVariableSubstitution();
+        return TryUpdateUnsafe(generalisation, instance, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+    }
+
+    /// <summary>
+    /// Attempts to create a unifier for a predicate and an instance of that predicate.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to create a unifier for.</param>
+    /// <param name="instance">The instance to attempt to create a unifier for.</param>
+    /// <param name="unifier">If the predicates can be unified, this out parameter will be the unifier.</param>
+    /// <returns>True if the two predicates can be unified, otherwise false.</returns>
+    public static bool TryCreate(Predicate generalisation, Predicate instance, [MaybeNullWhen(returnValue: false)] out VariableSubstitution unifier)
+    {
+        var unifierAttempt = new MutableVariableSubstitution();
+
+        if (TryUpdateUnsafe(generalisation, instance, unifierAttempt))
+        {
+            unifier = unifierAttempt.CopyAsReadOnly();
+            return true;
+        }
+
+        unifier = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Attempts to create a unifier for a predicate and an instance of that predicate.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to create a unifier for.</param>
+    /// <param name="instance">The instance to attempt to create a unifier for.</param>
+    /// <returns>The unifier if the predicates can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryCreate(Predicate generalisation, Predicate instance)
+    {
+        var unifierAttempt = new MutableVariableSubstitution();
+        return TryUpdateUnsafe(generalisation, instance, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+    }
+
+    /// <summary>
+    /// Attempts to create a unifier for a term and an instance of that term.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to create a unifier for.</param>
+    /// <param name="instance">The instance to attempt to create a unifier for.</param>
+    /// <param name="unifier">If the terms can be unified, this out parameter will be the unifier.</param>
+    /// <returns>True if the two terms can be unified, otherwise false.</returns>
+    public static bool TryCreate(Term generalisation, Term instance, [MaybeNullWhen(false)] out VariableSubstitution unifier)
+    {
+        var unifierAttempt = new MutableVariableSubstitution();
+
+        if (TryUpdateUnsafe(generalisation, instance, unifierAttempt))
+        {
+            unifier = unifierAttempt.CopyAsReadOnly();
+            return true;
+        }
+
+        unifier = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Attempts to create a unifier for a term and an instance of that term.
+    /// </summary>
+    /// <param name="generalisation">One of the two terms to attempt to create a unifier for.</param>
+    /// <param name="instance">One of the two terms to attempt to create a unifier for.</param>
+    /// <returns>The unifier if the terms can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryCreate(Term generalisation, Term instance)
+    {
+        var unifierAttempt = new MutableVariableSubstitution();
+        return TryUpdateUnsafe(generalisation, instance, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies a given literal and instance of that literal.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to unify.</param>
+    /// <param name="instance">The instance to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update.</param>
+    /// <param name="updatedUnifier">Will be populated with the updated unifier on success, or be null on failure.</param>
+    /// <returns>True if the two literals can be unified, otherwise false.</returns>
+    public static bool TryUpdate(Literal generalisation, Literal instance, VariableSubstitution unifier, [MaybeNullWhen(false)] out VariableSubstitution updatedUnifier)
+    {
+        var potentialUpdatedUnifier = unifier.CopyAsMutable();
+
+        if (TryUpdateUnsafe(generalisation, instance, potentialUpdatedUnifier))
+        {
+            updatedUnifier = potentialUpdatedUnifier.CopyAsReadOnly();
+            return true;
+        }
+
+        updatedUnifier = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies a given literal and instance of that literal.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to unify.</param>
+    /// <param name="instance">The instance to attempt to unify.</param>
     /// <param name="unifier">The unifier to update. Will be updated to refer to a new unifier on success, or be unchanged on failure.</param>
     /// <returns>True if the two literals can be unified, otherwise false.</returns>
     public static bool TryUpdate(Literal generalisation, Literal instance, ref VariableSubstitution unifier)
@@ -30,31 +151,150 @@ internal static class InstanceUnifier
         return false;
     }
 
-    public static bool TryCreate(Term generalisation, Term instance, [MaybeNullWhen(false)] out VariableSubstitution unifier)
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies a given literal and instance of that literal.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to unify.</param>
+    /// <param name="instance">The instance to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update.</param>
+    /// <returns>The unifier if the literals can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryUpdate(Literal generalisation, Literal instance, VariableSubstitution unifier)
     {
-        var unifierAttempt = new MutableVariableSubstitution();
+        var unifierAttempt = unifier.CopyAsMutable();
+        return TryUpdateUnsafe(generalisation, instance, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+    }
 
-        if (TryUpdateUnsafe(generalisation, instance, unifierAttempt))
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies a given predicate and instance of that predicate.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to unify.</param>
+    /// <param name="instance">The instance to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update.</param>
+    /// <param name="updatedUnifier">Will be populated with the updated unifier on success, or be null on failure.</param>
+    /// <returns>True if the two predicates can be unified, otherwise false.</returns>
+    public static bool TryUpdate(Predicate generalisation, Predicate instance, VariableSubstitution unifier, [MaybeNullWhen(false)] out VariableSubstitution updatedUnifier)
+    {
+        var potentialUpdatedUnifier = unifier.CopyAsMutable();
+
+        if (TryUpdateUnsafe(generalisation, instance, potentialUpdatedUnifier))
         {
-            unifier = unifierAttempt.CopyAsReadOnly();
+            updatedUnifier = potentialUpdatedUnifier.CopyAsReadOnly();
             return true;
         }
 
-        unifier = null;
+        updatedUnifier = null;
         return false;
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies a given predicate and instance of that predicate.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to unify.</param>
+    /// <param name="instance">The instance to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update. Will be updated to refer to a new unifier on success, or be unchanged on failure.</param>
+    /// <returns>True if the two predicates can be unified, otherwise false.</returns>
+    public static bool TryUpdate(Predicate generalisation, Predicate instance, ref VariableSubstitution unifier)
+    {
+        var updatedUnifier = unifier.CopyAsMutable();
+
+        if (TryUpdateUnsafe(generalisation, instance, updatedUnifier))
+        {
+            unifier = updatedUnifier.CopyAsReadOnly();
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies a given predicate and instance of that predicate.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to unify.</param>
+    /// <param name="instance">The instance to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update.</param>
+    /// <returns>The unifier if the predicates can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryUpdate(Predicate generalisation, Predicate instance, VariableSubstitution unifier)
+    {
+        var unifierAttempt = unifier.CopyAsMutable();
+        return TryUpdateUnsafe(generalisation, instance, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies a given term and instance of that term.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to unify.</param>
+    /// <param name="instance">The instance to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update.</param>
+    /// <param name="updatedUnifier">Will be populated with the updated unifier on success, or be null on failure.</param>
+    /// <returns>True if the two terms can be unified, otherwise false.</returns>
+    public static bool TryUpdate(Term generalisation, Term instance, VariableSubstitution unifier, [MaybeNullWhen(false)] out VariableSubstitution updatedUnifier)
+    {
+        var potentialUpdatedUnifier = unifier.CopyAsMutable();
+
+        if (TryUpdateUnsafe(generalisation, instance, potentialUpdatedUnifier))
+        {
+            updatedUnifier = potentialUpdatedUnifier.CopyAsReadOnly();
+            return true;
+        }
+
+        updatedUnifier = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies a given term and instance of that term.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to unify.</param>
+    /// <param name="instance">The instance to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update. Will be updated to refer to a new unifier on success, or be unchanged on failure.</param>
+    /// <returns>True if the two terms can be unified, otherwise false.</returns>
+    public static bool TryUpdate(Term generalisation, Term instance, ref VariableSubstitution unifier)
+    {
+        var updatedUnifier = unifier.CopyAsMutable();
+
+        if (TryUpdateUnsafe(generalisation, instance, updatedUnifier))
+        {
+            unifier = updatedUnifier.CopyAsReadOnly();
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Attempts to update a unifier so that it (also) unifies a given term and instance of that term.
+    /// </summary>
+    /// <param name="generalisation">The generalisation to attempt to unify.</param>
+    /// <param name="instance">The instance to attempt to unify.</param>
+    /// <param name="unifier">The unifier to update.</param>
+    /// <returns>The unifier if the literals can be unified, otherwise null.</returns>
+    public static VariableSubstitution? TryUpdate(Term generalisation, Term instance, VariableSubstitution unifier)
+    {
+        var unifierAttempt = unifier.CopyAsMutable();
+        return TryUpdateUnsafe(generalisation, instance, unifierAttempt) ? unifierAttempt.CopyAsReadOnly() : null;
     }
 
     // NB: 'unsafe' in that it can partially update the unifier on failure
     private static bool TryUpdateUnsafe(Literal generalisation, Literal instance, MutableVariableSubstitution unifier)
     {
-        if (generalisation.IsNegated != instance.IsNegated
-            || !generalisation.Predicate.Identifier.Equals(instance.Predicate.Identifier)
-            || generalisation.Predicate.Arguments.Count != instance.Predicate.Arguments.Count)
+        if (generalisation.IsNegated != instance.IsNegated)
         {
             return false;
         }
 
-        foreach (var args in generalisation.Predicate.Arguments.Zip(instance.Predicate.Arguments, (x, y) => (x, y)))
+        return TryUpdateUnsafe(generalisation.Predicate, instance.Predicate, unifier);
+    }
+
+    // NB: 'unsafe' in that it can partially update the unifier on failure
+    private static bool TryUpdateUnsafe(Predicate generalisation, Predicate instance, MutableVariableSubstitution unifier)
+    {
+        if (!generalisation.Identifier.Equals(instance.Identifier)
+            || generalisation.Arguments.Count != instance.Arguments.Count)
+        {
+            return false;
+        }
+
+        foreach (var args in generalisation.Arguments.Zip(instance.Arguments, (x, y) => (x, y)))
         {
             if (!TryUpdateUnsafe(args.x, args.y, unifier))
             {
@@ -77,6 +317,7 @@ internal static class InstanceUnifier
         };
     }
 
+    // NB: 'unsafe' in that it can partially update the unifier on failure
     private static bool TryUpdateUnsafe(VariableReference generalisationVariable, Term instanceTerm, MutableVariableSubstitution unifier)
     {
         if (generalisationVariable.Equals(instanceTerm))
@@ -96,6 +337,7 @@ internal static class InstanceUnifier
         }
     }
 
+    // NB: 'unsafe' in that it can partially update the unifier on failure
     private static bool TryUpdateUnsafe(Function generalisation, Function instance, MutableVariableSubstitution unifier)
     {
         if (!generalisation.Identifier.Equals(instance.Identifier) || generalisation.Arguments.Count != instance.Arguments.Count)
