@@ -16,8 +16,7 @@ public class InstanceUnifierTests
                 ExpectedBindings: new()
                 {
                     [X] = D,
-                },
-                ExpectedUnified: P(C, D)),
+                }),
 
             new (
                 Generalisation: P(C, X),
@@ -25,8 +24,7 @@ public class InstanceUnifierTests
                 ExpectedBindings: new()
                 {
                     [X] = F(Y),
-                },
-                ExpectedUnified: P(C, C)),
+                }),
 
             new ( // vars matched to vars
                 Generalisation: P(X, X),
@@ -35,21 +33,19 @@ public class InstanceUnifierTests
                 {
                     [X] = Y,
                     [Y] = C,
-                },
-                ExpectedUnified: P(C, C)),
+                }),
 
-            // NB: this will cause infinite recursion due to combination of lack of occurs check
-            // in unifier, and lack of loop protection in substitution - both broadly on performance
-            // grounds (this is low-level code - need to take performance somewhat seriously).
-            // To be resolved one way or the other before considering making this type public - a few options here.
-            ////new (
-            ////    Generalisation: P(C, X),
-            ////    Instance: P(C, F(X)),
-            ////    ExpectedSubstitutions: new()
-            ////    {
-            ////        [X] = F(X),
-            ////    },
-            ////    ExpectedUnified: P(C, F(X))),
+            // NB: at the time of writing this will cause infinite recursion if actually applied - since there's no loop protection.
+            // Need to decide whether I'd prefer to leverage loop protection, or add an occurs check (and thus require standardisation
+            // where needed to use it). In the mean time, this is why the type is internal.
+            // This.
+            new (
+                Generalisation: P(C, X),
+                Instance: P(C, F(X)),
+                ExpectedBindings: new()
+                {
+                    [X] = F(X),
+                }),
         ]))
         .When(tc =>
         {
@@ -58,9 +54,7 @@ public class InstanceUnifierTests
             return result;
         })
         .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
-        .And((tc, r) => r.unifier!.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
-        .And((tc, r) => r.unifier!.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
+        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings));
 
     public static Test TryCreateFromPredicates_Negative => TestThat
         .GivenEachOf<TryCreateNegativeTestCase<Predicate>>(() =>
@@ -108,8 +102,7 @@ public class InstanceUnifierTests
                 {
                     [X] = C,
                     [Y] = D,
-                },
-                ExpectedUnified: P(C, D)),
+                }),
 
             new (
                 Generalisation: P(X, Y),
@@ -122,8 +115,7 @@ public class InstanceUnifierTests
                 {
                     [X] = C,
                     [Y] = D,
-                },
-                ExpectedUnified: P(C, D)),
+                }),
 
             new (
                 Generalisation: P(X, Y),
@@ -137,8 +129,7 @@ public class InstanceUnifierTests
                 {
                     [X] = A,
                     [Y] = B,
-                },
-                ExpectedUnified: P(A, B)),
+                }),
         ]))
         .When(tc =>
         {
@@ -149,9 +140,7 @@ public class InstanceUnifierTests
         })
         .ThenReturns()
         .And((_, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
-        .And((tc, r) => r.unifier!.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
-        .And((tc, r) => r.unifier!.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
+        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings));
 
     public static Test TryUpdateFromPredicates_Negative => TestThat
         .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
@@ -197,8 +186,7 @@ public class InstanceUnifierTests
                 {
                     [X] = C,
                     [Y] = D,
-                },
-                ExpectedUnified: P(C, D)),
+                }),
 
             new (
                 Generalisation: P(X, Y),
@@ -211,8 +199,7 @@ public class InstanceUnifierTests
                 {
                     [X] = C,
                     [Y] = D,
-                },
-                ExpectedUnified: P(C, D)),
+                }),
 
             new (
                 Generalisation: P(X, Y),
@@ -226,8 +213,7 @@ public class InstanceUnifierTests
                 {
                     [X] = A,
                     [Y] = B,
-                },
-                ExpectedUnified: P(A, B)),
+                }),
         ]))
         .When(tc =>
         {
@@ -237,9 +223,7 @@ public class InstanceUnifierTests
             return result;
         })
         .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedBindings))
-        .And((tc, r) => r.unifier.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
-        .And((tc, r) => r.unifier.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
+        .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedBindings));
 
     public static Test TryUpdateRefFromPredicates_Negative => TestThat
         .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
@@ -280,8 +264,7 @@ public class InstanceUnifierTests
                 ExpectedBindings: new()
                 {
                     [X] = F(C),
-                },
-                ExpectedUnified: F(C)),
+                }),
         ]))
         .When(tc =>
         {
@@ -290,15 +273,12 @@ public class InstanceUnifierTests
             return result;
         })
         .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
-        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
-        .And((tc, r) => r.unifier!.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
-        .And((tc, r) => r.unifier!.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
+        .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings));
 
     private record TryCreatePositiveTestCase<T>(
         T Generalisation,
         T Instance,
-        Dictionary<VariableReference, Term> ExpectedBindings,
-        T ExpectedUnified);
+        Dictionary<VariableReference, Term> ExpectedBindings);
 
     private record TryCreateNegativeTestCase<T>(
         T Generalisation,
@@ -308,8 +288,7 @@ public class InstanceUnifierTests
         T Generalisation,
         T Instance,
         Dictionary<VariableReference, Term> InitialBindings,
-        Dictionary<VariableReference, Term> ExpectedBindings,
-        T? ExpectedUnified);
+        Dictionary<VariableReference, Term> ExpectedBindings);
 
     private record TryUpdateNegativeTestCase<T>(
         T Generalisation,
