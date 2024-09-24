@@ -65,7 +65,7 @@ public class UnifierTests
             result.returnValue = Unifier.TryCreate(tc.Input1, tc.Input2, out result.unifier);
             return result;
         })
-        .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
+        .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
         .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
@@ -91,8 +91,8 @@ public class UnifierTests
             result.returnValue = Unifier.TryCreate(tc.Input1, tc.Input2, out result.unifier);
             return result;
         })
-        .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())
-        .And((tc, r) => r.unifier.Should().BeNull());
+        .ThenReturns((_, r) => r.returnValue.Should().BeFalse())
+        .And((_, r) => r.unifier.Should().BeNull());
 
     public static Test TryUpdateFromPredicates_Positive => TestThat
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
@@ -148,7 +148,7 @@ public class UnifierTests
             return result;
         })
         .ThenReturns()
-        .And((tc, r) => r.returnValue.Should().BeTrue())
+        .And((_, r) => r.returnValue.Should().BeTrue())
         .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
@@ -180,54 +180,54 @@ public class UnifierTests
             return result;
         })
         .ThenReturns()
-        .And((tc, r) => r.returnValue.Should().BeFalse())
-        .And((tc, r) => r.unifier.Should().BeNull());
+        .And((_, r) => r.returnValue.Should().BeFalse())
+        .And((_, r) => r.unifier.Should().BeNull());
 
     public static Test TryUpdateRefFromPredicates_Positive => TestThat
     .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
     [
         new (
-                Input1: P(X, Y),
-                Input2: P(C, D),
-                InitialBindings: new()
-                {
-                    [X] = C,
-                },
-                ExpectedBindings: new()
-                {
-                    [X] = C,
-                    [Y] = D,
-                },
-                ExpectedUnified: P(C, D)),
+            Input1: P(X, Y),
+            Input2: P(C, D),
+            InitialBindings: new()
+            {
+                [X] = C,
+            },
+            ExpectedBindings: new()
+            {
+                [X] = C,
+                [Y] = D,
+            },
+            ExpectedUnified: P(C, D)),
 
-            new (
-                Input1: P(X, Y),
-                Input2: P(C, D),
-                InitialBindings: new()
-                {
-                    [Y] = D,
-                },
-                ExpectedBindings: new()
-                {
-                    [X] = C,
-                    [Y] = D,
-                },
-                ExpectedUnified: P(C, D)),
+        new (
+            Input1: P(X, Y),
+            Input2: P(C, D),
+            InitialBindings: new()
+            {
+                [Y] = D,
+            },
+            ExpectedBindings: new()
+            {
+                [X] = C,
+                [Y] = D,
+            },
+            ExpectedUnified: P(C, D)),
 
-            new (
-                Input1: P(X, Y),
-                Input2: P(A, B),
-                InitialBindings: new()
-                {
-                    [X] = A,
-                    [Y] = B,
-                },
-                ExpectedBindings: new()
-                {
-                    [X] = A,
-                    [Y] = B,
-                },
-                ExpectedUnified: P(A, B)),
+        new (
+            Input1: P(X, Y),
+            Input2: P(A, B),
+            InitialBindings: new()
+            {
+                [X] = A,
+                [Y] = B,
+            },
+            ExpectedBindings: new()
+            {
+                [X] = A,
+                [Y] = B,
+            },
+            ExpectedUnified: P(A, B)),
     ])
     .When(tc =>
     {
@@ -236,7 +236,7 @@ public class UnifierTests
         result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, ref result.unifier);
         return result;
     })
-    .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
+    .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
     .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedBindings))
     .And((tc, r) => r.unifier.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
     .And((tc, r) => r.unifier.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));
@@ -268,7 +268,7 @@ public class UnifierTests
             return result;
         })
         .ThenReturns()
-        .And((tc, r) => r.returnValue.Should().BeFalse())
+        .And((_, r) => r.returnValue.Should().BeFalse())
         .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialBindings));
 
     public static Test TryCreateFromTerms_Positive => TestThat
@@ -289,7 +289,7 @@ public class UnifierTests
             result.returnValue = Unifier.TryCreate(tc.Input1, tc.Input2, out result.unifier);
             return result;
         })
-        .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
+        .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
         .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input1).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Input2).Should().Be(tc.ExpectedUnified));

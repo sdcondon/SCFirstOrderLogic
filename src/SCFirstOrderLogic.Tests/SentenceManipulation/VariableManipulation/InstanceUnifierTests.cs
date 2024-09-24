@@ -57,7 +57,7 @@ public class InstanceUnifierTests
             result.returnValue = InstanceUnifier.TryCreate(tc.Generalisation, tc.Instance, out result.unifier);
             return result;
         })
-        .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
+        .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
         .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
@@ -91,8 +91,8 @@ public class InstanceUnifierTests
             result.returnValue = InstanceUnifier.TryCreate(tc.Generalisation, tc.Instance, out result.unifier);
             return result;
         })
-        .ThenReturns((tc, r) => r.returnValue.Should().BeFalse())
-        .And((tc, r) => r.unifier.Should().BeNull());
+        .ThenReturns((_, r) => r.returnValue.Should().BeFalse())
+        .And((_, r) => r.unifier.Should().BeNull());
 
     public static Test TryUpdateFromPredicates_Positive => TestThat
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
@@ -148,7 +148,7 @@ public class InstanceUnifierTests
             return result;
         })
         .ThenReturns()
-        .And((tc, r) => r.returnValue.Should().BeTrue())
+        .And((_, r) => r.returnValue.Should().BeTrue())
         .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
@@ -180,8 +180,8 @@ public class InstanceUnifierTests
             return result;
         })
         .ThenReturns()
-        .And((tc, r) => r.returnValue.Should().BeFalse())
-        .And((tc, r) => r.unifier.Should().BeNull());
+        .And((_, r) => r.returnValue.Should().BeFalse())
+        .And((_, r) => r.unifier.Should().BeNull());
 
     public static Test TryUpdateRefFromPredicates_Positive => TestThat
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
@@ -236,7 +236,7 @@ public class InstanceUnifierTests
             result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, ref result.unifier);
             return result;
         })
-        .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
+        .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
         .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));
@@ -268,7 +268,7 @@ public class InstanceUnifierTests
             return result;
         })
         .ThenReturns()
-        .And((tc, r) => r.returnValue.Should().BeFalse())
+        .And((_, r) => r.returnValue.Should().BeFalse())
         .And((tc, r) => r.unifier.Bindings.Should().BeEquivalentTo(tc.InitialBindings));
 
     public static Test TryCreateFromTerms_Positive => TestThat
@@ -289,7 +289,7 @@ public class InstanceUnifierTests
             result.returnValue = Unifier.TryCreate(tc.Generalisation, tc.Instance, out result.unifier);
             return result;
         })
-        .ThenReturns((tc, r) => r.returnValue.Should().BeTrue())
+        .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
         .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Generalisation).Should().Be(tc.ExpectedUnified))
         .And((tc, r) => r.unifier!.ApplyTo(tc.Instance).Should().Be(tc.ExpectedUnified));

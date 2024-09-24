@@ -59,7 +59,7 @@ public static class SentenceParserTests
         ])
         .When(tc => SentenceParser.BasicParser.Parse(tc.Sentence))
         .ThenReturns()
-        .And((ParseTestCase tc, Sentence rv) => rv.Should().Be(tc.ExpectedResult));
+        .And((tc, rv) => rv.Should().Be(tc.ExpectedResult));
 
     public static Test Parse_NegativeTestCases => TestThat
         .GivenTestContext()
@@ -87,35 +87,35 @@ public static class SentenceParserTests
         [
             new(
                 Sentences: string.Empty,
-                Expectation: Array.Empty<Sentence>()),
+                Expectation: []),
 
             new(
                 Sentences: "   ",
-                Expectation: Array.Empty<Sentence>()),
+                Expectation: []),
 
             new(
                 Sentences: "P()",
-                Expectation: new[] { new Predicate("P") }),
+                Expectation: [new Predicate("P")]),
 
             new(
                 Sentences: "P()Q()",
-                Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
+                Expectation: [new Predicate("P"), new Predicate("Q")]),
 
             new(
                 Sentences: "P() Q()",
-                Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
+                Expectation: [new Predicate("P"), new Predicate("Q")]),
 
             new(
                 Sentences: "P()\r\nQ()\n",
-                Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
+                Expectation: [new Predicate("P"), new Predicate("Q")]),
 
             new(
                 Sentences: "P(); Q()",
-                Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
+                Expectation: [new Predicate("P"), new Predicate("Q")]),
 
             new(
                 Sentences: " P() ; Q() ; ",
-                Expectation: new[] { new Predicate("P"), new Predicate("Q") }),
+                Expectation: [new Predicate("P"), new Predicate("Q")]),
         ])
         .When(tc => SentenceParser.BasicParser.ParseList(tc.Sentences))
         .ThenReturns()
