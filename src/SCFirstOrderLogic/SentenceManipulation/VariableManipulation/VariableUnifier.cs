@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 /// Useful when e.g. ordinalisation cannot be used due to the inability to establish an ordering of literals.
 /// </para>
 /// </summary>
-public static class VariableUnifier
+internal static class VariableUnifier
 {
     /// <summary>
     /// Attempts to create the most general unifier for two literals.
