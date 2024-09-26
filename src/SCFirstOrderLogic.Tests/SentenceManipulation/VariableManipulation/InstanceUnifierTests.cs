@@ -9,7 +9,7 @@ public class InstanceUnifierTests
 {
     public static Test TryCreateFromPredicates_Positive => TestThat
         .GivenEachOf<TryCreatePositiveTestCase<Predicate>>(() =>
-        ([
+        [
             new (
                 Generalisation: P(C, X),
                 Instance: P(C, D),
@@ -37,8 +37,7 @@ public class InstanceUnifierTests
 
             // NB: at the time of writing this will cause infinite recursion if actually applied - since there's no loop protection.
             // Need to decide whether I'd prefer to leverage loop protection, or add an occurs check (and thus require standardisation
-            // where needed to use it). In the mean time, this is why the type is internal.
-            // This.
+            // where needed to use it). In the meantime, this is why the type is internal.
             new (
                 Generalisation: P(C, X),
                 Instance: P(C, F(X)),
@@ -46,7 +45,7 @@ public class InstanceUnifierTests
                 {
                     [X] = F(X),
                 }),
-        ]))
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
@@ -90,7 +89,7 @@ public class InstanceUnifierTests
 
     public static Test TryUpdateFromPredicates_Positive => TestThat
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
-        ([
+        [
             new (
                 Generalisation: P(X, Y),
                 Instance: P(C, D),
@@ -130,7 +129,7 @@ public class InstanceUnifierTests
                     [X] = A,
                     [Y] = B,
                 }),
-        ]))
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
@@ -174,7 +173,7 @@ public class InstanceUnifierTests
 
     public static Test TryUpdateRefFromPredicates_Positive => TestThat
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
-        ([
+        [
             new (
                 Generalisation: P(X, Y),
                 Instance: P(C, D),
@@ -214,7 +213,7 @@ public class InstanceUnifierTests
                     [X] = A,
                     [Y] = B,
                 }),
-        ]))
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution unifier) result;
@@ -257,7 +256,7 @@ public class InstanceUnifierTests
 
     public static Test TryCreateFromTerms_Positive => TestThat
         .GivenEachOf<TryCreatePositiveTestCase<Term>>(() =>
-        ([
+        [
             new (
                 Generalisation: X,
                 Instance: F(C),
@@ -265,7 +264,7 @@ public class InstanceUnifierTests
                 {
                     [X] = F(C),
                 }),
-        ]))
+        ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;

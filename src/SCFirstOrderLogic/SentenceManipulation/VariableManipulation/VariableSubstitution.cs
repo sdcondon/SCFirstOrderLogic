@@ -38,8 +38,8 @@ public class VariableSubstitution : RecursiveSentenceTransformation
     }
 
     /// <summary>
-    /// Gets the individuals substitutions applied by this substitution.
-    /// Gets a mapping from replaced variable reference to the term that replaces it.
+    /// Gets the individual bindings of this substitution -
+    /// a mapping from each replaced variable reference to the term that replaces it.
     /// </summary>
     public IReadOnlyDictionary<VariableReference, Term> Bindings { get; }
 
