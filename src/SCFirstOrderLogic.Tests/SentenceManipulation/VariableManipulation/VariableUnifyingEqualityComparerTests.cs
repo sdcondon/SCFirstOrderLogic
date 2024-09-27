@@ -23,7 +23,7 @@ public class VariableUnifyingEqualityComparerTests
                 X: P(F(X), F(Y)),
                 Y: P(F(Y), F(X))),
 
-            new( // todo: this shouldn't pass with current implementation..?! meh, tired. tomo..
+            new( // todo: passes only because the tests standardise the vars as part of tocnf.
                 X: P(X, Y, Z),
                 Y: P(Y, Z, X)),
         ])
