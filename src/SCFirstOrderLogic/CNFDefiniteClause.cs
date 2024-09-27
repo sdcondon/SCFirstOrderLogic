@@ -20,7 +20,7 @@ public class CNFDefiniteClause : CNFClause
     {
         if (!definiteClause.IsDefiniteClause)
         {
-            throw new ArgumentException("Provided clause must be a definite clause", nameof(definiteClause));
+            throw new ArgumentException($"Provided clause must be a definite clause. {definiteClause} is not.", nameof(definiteClause));
         }
     }
 

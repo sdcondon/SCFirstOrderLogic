@@ -11,6 +11,11 @@ namespace SCFirstOrderLogic;
 public abstract class Term
 {
     /// <summary>
+    /// Gets a value indicating whether the term is a ground term - that is, that it contains no variables.
+    /// </summary>
+    public abstract bool IsGroundTerm { get; }
+
+    /// <summary>
     /// Accepts a <see cref="ITermVisitor"/> instance.
     /// </summary>
     /// <param name="visitor">The visitor to be visited by.</param>
@@ -48,11 +53,6 @@ public abstract class Term
     /// <param name="transformation">The transformation to apply.</param>
     /// <param name="state">The state that the transformation is to work with.</param>
     public abstract TOut Accept<TOut, TState>(ITermTransformation<TOut, TState> transformation, TState state);
-
-    /// <summary>
-    /// Gets a value indicating whether the term is a ground term - that is, that it contains no variables.
-    /// </summary>
-    public abstract bool IsGroundTerm { get; }
 
     /// <summary>
     /// <para>

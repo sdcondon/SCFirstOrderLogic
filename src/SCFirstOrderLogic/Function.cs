@@ -54,14 +54,6 @@ public sealed class Function : Term
     }
 
     /// <summary>
-    /// Gets the arguments of this function.
-    /// </summary>
-    public ReadOnlyCollection<Term> Arguments { get; }
-
-    /// <inheritdoc />
-    public override bool IsGroundTerm => Arguments.All(a => a.IsGroundTerm);
-
-    /// <summary>
     /// <para>
     /// Gets an object that serves as the unique identifier of the function.
     /// </para>
@@ -71,6 +63,14 @@ public sealed class Function : Term
     /// </para>
     /// </summary>
     public object Identifier { get; }
+
+    /// <summary>
+    /// Gets the arguments of this function.
+    /// </summary>
+    public ReadOnlyCollection<Term> Arguments { get; }
+
+    /// <inheritdoc />
+    public override bool IsGroundTerm => Arguments.All(a => a.IsGroundTerm);
 
     /// <inheritdoc />
     public override void Accept(ITermVisitor visitor) => visitor.Visit(this);

@@ -52,11 +52,6 @@ public sealed class Predicate : Sentence
     }
 
     /// <summary>
-    /// Gets the arguments of this predicate.
-    /// </summary>
-    public ReadOnlyCollection<Term> Arguments { get; }
-
-    /// <summary>
     /// <para>
     /// Gets an object that serves as the unique identifier of the predicate.
     /// </para>
@@ -66,6 +61,11 @@ public sealed class Predicate : Sentence
     /// </para>
     /// </summary>
     public object Identifier { get; }
+
+    /// <summary>
+    /// Gets the arguments of this predicate.
+    /// </summary>
+    public ReadOnlyCollection<Term> Arguments { get; }
 
     /// <inheritdoc />
     public override void Accept(ISentenceVisitor visitor) => visitor.Visit(this);

@@ -35,7 +35,7 @@ public sealed class Literal : IEquatable<Literal>
         }
         else
         {
-            throw new ArgumentException($"Provided sentence must be either a predicate or a negated predicate. {sentence} is neither.", nameof(sentence));
+            throw new ArgumentException($"Provided sentence must be a predicate or a negated predicate. {sentence} is neither.", nameof(sentence));
         }
     }
 

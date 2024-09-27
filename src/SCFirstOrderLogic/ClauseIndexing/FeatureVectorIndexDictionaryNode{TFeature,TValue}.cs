@@ -31,14 +31,14 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// <summary>
     /// Initialises a new instance of the <see cref="FeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
     /// </summary>
-    /// <param name="equalityComparer">
+    /// <param name="vectorComponentEqualityComparer">
     /// The equality comparer that should be used by the child dictionary.
     /// For correct behaviour, index instances accessing this node should be using an <see cref="IComparer{T}"/> that is consistent with it. 
     /// That is, one that only returns zero for features considered equal by the equality comparer used by this instance.
     /// </param>
-    public FeatureVectorIndexDictionaryNode(IEqualityComparer<KeyValuePair<TFeature, int>> equalityComparer)
+    public FeatureVectorIndexDictionaryNode(IEqualityComparer<KeyValuePair<TFeature, int>> vectorComponentEqualityComparer)
     {
-        childrenByVectorComponent = new(equalityComparer);
+        childrenByVectorComponent = new(vectorComponentEqualityComparer);
     }
 
     /// <inheritdoc/>
