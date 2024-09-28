@@ -1,5 +1,6 @@
 // Copyright © 2023-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -18,7 +19,7 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     where TFeature : notnull
 {
     private readonly Dictionary<KeyValuePair<TFeature, int>, IFeatureVectorIndexNode<TFeature, TValue>> childrenByVectorComponent;
-    private readonly Dictionary<CNFClause, TValue> valuesByKey = new();
+    private readonly Dictionary<CNFClause, TValue> valuesByKey = new(new VariableIdIgnorantEqualityComparer());
 
     /// <summary>
     /// Initialises a new instance of the <see cref="FeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
@@ -70,7 +71,6 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// <inheritdoc/>
     public void AddValue(CNFClause clause, TValue value)
     {
-        // todo: unify (vars only) - might not match exactly
         if (!valuesByKey.TryAdd(clause, value))
         {
             throw new ArgumentException("Key already present", nameof(clause));
@@ -80,14 +80,12 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// <inheritdoc/>
     public bool RemoveValue(CNFClause clause)
     {
-        // todo: unify (vars only) - might not match exactly
         return valuesByKey.Remove(clause);
     }
 
     /// <inheritdoc/>
     public bool TryGetValue(CNFClause clause, [MaybeNullWhen(false)] out TValue value)
     {
-        // todo: unify (vars only) - might not match exactly
         return valuesByKey.TryGetValue(clause, out value);
     }
 }

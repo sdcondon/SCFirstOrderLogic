@@ -1,5 +1,6 @@
 // Copyright © 2023-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     where TFeature : notnull
 {
     private readonly ConcurrentDictionary<KeyValuePair<TFeature, int>, IAsyncFeatureVectorIndexNode<TFeature, TValue>> childrenByVectorComponent;
-    private readonly Dictionary<CNFClause, TValue> valuesByKey = new();
+    private readonly Dictionary<CNFClause, TValue> valuesByKey = new(new VariableIdIgnorantEqualityComparer());
 
     /// <summary>
     /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
@@ -88,7 +89,6 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// <inheritdoc/>
     public ValueTask AddValueAsync(CNFClause clause, TValue value)
     {
-        // todo: unify (vars only) - might not match exactly
         if (!valuesByKey.TryAdd(clause, value))
         {
             throw new ArgumentException("Key already present", nameof(clause));
@@ -100,7 +100,6 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// <inheritdoc/>
     public ValueTask<bool> RemoveValueAsync(CNFClause clause)
     {
-        // todo: unify (vars only) - might not match exactly
         return ValueTask.FromResult(valuesByKey.Remove(clause));
     }
 
@@ -116,7 +115,6 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// <inheritdoc/>
     public ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause)
     {
-        // todo: unify (vars only) - might not match exactly
         var isSucceeded = valuesByKey.TryGetValue(clause, out var value);
         return ValueTask.FromResult((isSucceeded, value));
     }

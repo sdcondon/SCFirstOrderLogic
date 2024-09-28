@@ -1,10 +1,12 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using SCFirstOrderLogic.ClauseIndexing.Features;
+using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using SCFirstOrderLogic.TestData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
 
@@ -14,7 +16,7 @@ public static class FeatureVectorIndexTests
         .GivenEachOf<AddTestCase>(() =>
         [
             new([], CNFClause.Empty),
-            ////new([new(P(U))], new(P(V)))
+            new([new(P(U))], new(P(V)))
         ])
         .When(tc =>
         {
@@ -66,7 +68,7 @@ public static class FeatureVectorIndexTests
         .All
         .SelectMany(f => new[] { f.X, f.Y })
         .Except([CNFClause.Empty])
-        .Distinct();
+        .Distinct(new VariableIdIgnorantEqualityComparer());
 
     private static CNFClause[] GetSubsumedClausesFromSubsumptionFacts(CNFClause subsumingClause)
     {
@@ -80,7 +82,11 @@ public static class FeatureVectorIndexTests
             .Where(f => f.Y.Equals(subsumingClause) && f.IsXSubsumedByY)
             .Select(f => f.X);
 
-        return xClauses.Concat(yClauses).Except([CNFClause.Empty]).Distinct().ToArray();
+        return xClauses
+            .Concat(yClauses)
+            .Except([CNFClause.Empty])
+            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .ToArray();
     }
 
     private static CNFClause[] GetNonSubsumedClausesFromSubsumptionFacts(CNFClause subsumingClause)
@@ -95,7 +101,11 @@ public static class FeatureVectorIndexTests
             .Where(f => f.Y.Equals(subsumingClause) && !f.IsXSubsumedByY)
             .Select(f => f.X);
 
-        return xClauses.Concat(yClauses).Except([CNFClause.Empty]).Distinct().ToArray();
+        return xClauses
+            .Concat(yClauses)
+            .Except([CNFClause.Empty])
+            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .ToArray();
     }
 
     private static CNFClause[] GetSubsumingClausesFromSubsumptionFacts(CNFClause subsumedClause)
@@ -110,7 +120,11 @@ public static class FeatureVectorIndexTests
             .Where(f => f.Y.Equals(subsumedClause) && f.IsYSubsumedByX)
             .Select(f => f.X);
 
-        return xClauses.Concat(yClauses).Except([CNFClause.Empty]).Distinct().ToArray();
+        return xClauses
+            .Concat(yClauses)
+            .Except([CNFClause.Empty])
+            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .ToArray();
     }
 
     private static CNFClause[] GetNonSubsumingClausesFromSubsumptionFacts(CNFClause subsumedClause)
@@ -125,7 +139,11 @@ public static class FeatureVectorIndexTests
             .Where(f => f.Y.Equals(subsumedClause) && !f.IsYSubsumedByX)
             .Select(f => f.X);
 
-        return xClauses.Concat(yClauses).Except([CNFClause.Empty]).Distinct().ToArray();
+        return xClauses
+            .Concat(yClauses)
+            .Except([CNFClause.Empty])
+            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .ToArray();
     }
 
     private record GetTestCase(CNFClause Query, CNFClause[] Expected, CNFClause[] NotExpected);

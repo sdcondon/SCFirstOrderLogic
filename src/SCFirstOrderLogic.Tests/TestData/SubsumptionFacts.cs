@@ -15,7 +15,7 @@ public static class SubsumptionFacts
         new (X: P(C),            Y: P(C),        IsXSubsumedByY: true,  IsYSubsumedByX: true),
         new (X: P(C),            Y: P(C) | P(D), IsXSubsumedByY: false, IsYSubsumedByX: true),
         new (X: P(U) | Q(V),     Y: P(C) | Q(D), IsXSubsumedByY: false, IsYSubsumedByX: true),
-        new (X: P(U) | Q(V),     Y: P(C) | Q(Z), IsXSubsumedByY: false, IsYSubsumedByX: true),
+        new (X: P(U) | Q(V),     Y: P(C) | Q(U), IsXSubsumedByY: false, IsYSubsumedByX: true),
         new (X: P(U) | Q(U),     Y: P(C) | Q(C), IsXSubsumedByY: false, IsYSubsumedByX: true),
         new (X: P(U) | Q(U),     Y: P(C) | Q(D), IsXSubsumedByY: false, IsYSubsumedByX: false),
         new (X: P(U),            Y: Q(C),        IsXSubsumedByY: false, IsYSubsumedByX: false),
