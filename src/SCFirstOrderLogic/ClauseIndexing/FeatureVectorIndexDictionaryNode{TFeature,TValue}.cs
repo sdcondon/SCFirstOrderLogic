@@ -55,7 +55,7 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     {
         if (!childrenByVectorComponent.TryGetValue(vectorComponent, out var node))
         {
-            node = new FeatureVectorIndexDictionaryNode<TFeature, TValue>();
+            node = new FeatureVectorIndexDictionaryNode<TFeature, TValue>(childrenByVectorComponent.Comparer);
             childrenByVectorComponent.Add(vectorComponent, node);
         }
 

@@ -70,7 +70,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// <inheritdoc/>
     public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(KeyValuePair<TFeature, int> vectorComponent)
     {
-        IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue>();
+        IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue>(childrenByVectorComponent.Comparer);
         if (!childrenByVectorComponent.TryAdd(vectorComponent, node))
         {
             node = childrenByVectorComponent[vectorComponent];
