@@ -117,12 +117,12 @@ public static class VariableManipulationExtensionsTests
     private record SubsumptionTestCase(CNFClause X, CNFClause Y, bool Expected)
     {
         public SubsumptionTestCase(Sentence X, Sentence Y, bool Expected)
-            : this(X.ToCNF().Clauses.Single(), Y.ToCNF().Clauses.Single(), Expected) { }
+            : this(new CNFClause(X), new CNFClause(Y), Expected) { }
 
         public SubsumptionTestCase(CNFClause X, Sentence Y, bool Expected)
-            : this(X, Y.ToCNF().Clauses.Single(), Expected) { }
+            : this(X, new CNFClause(Y), Expected) { }
 
         public SubsumptionTestCase(Sentence X, CNFClause Y, bool Expected)
-            : this(X.ToCNF().Clauses.Single(), Y, Expected) { }
+            : this(new CNFClause(X), Y, Expected) { }
     }
 }

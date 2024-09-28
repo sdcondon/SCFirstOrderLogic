@@ -21,7 +21,7 @@ public abstract class RecursiveSentenceTransformation : ISentenceTransformation<
     /// Applies this transformation to a <see cref="Sentence"/> instance.
     /// </para>
     /// <para>
-    /// The default implementation uses a pattern-matching switch expression to invoke the ApplyTo method appropriate to the actual type of the sentence.
+    /// The default implementation uses a pattern-matching switch expression to directly invoke the ApplyTo method appropriate to the actual type of the sentence.
     /// This is evidentally faster than calling <see cref="Sentence.Accept{TOut}(ISentenceTransformation{TOut})"/>.
     /// Whatever lookup-creating shenannigans the compiler gets up to are apparently quicker than a virtual method call.
     /// </para>

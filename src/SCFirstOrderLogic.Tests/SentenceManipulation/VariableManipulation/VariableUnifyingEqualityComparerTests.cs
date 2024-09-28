@@ -29,7 +29,7 @@ public class VariableUnifyingEqualityComparerTests
         ])
         .When(tc =>
         {
-            var comparer = new VariableUnifyingEqualityComparer();
+            var comparer = new VariableIdIgnorantEqualityComparer();
             return (XEqualsY: comparer.Equals(tc.X, tc.Y), YEqualsX: comparer.Equals(tc.Y, tc.X), HashCodeEquality: comparer.GetHashCode(tc.X) == comparer.GetHashCode(tc.Y));
         })
         .ThenReturns()
@@ -82,7 +82,7 @@ public class VariableUnifyingEqualityComparerTests
         ])
         .When(tc =>
         {
-            var comparer = new VariableUnifyingEqualityComparer();
+            var comparer = new VariableIdIgnorantEqualityComparer();
             return (XEqualsY: comparer.Equals(tc.X, tc.Y), YEqualsX: comparer.Equals(tc.Y, tc.X));
         })
         .ThenReturns()
@@ -92,12 +92,12 @@ public class VariableUnifyingEqualityComparerTests
     private record EqualityTestCase(CNFClause X, CNFClause Y)
     {
         public EqualityTestCase(Sentence X, Sentence Y)
-            : this(X.ToCNF().Clauses.Single(), Y.ToCNF().Clauses.Single()) { }
+            : this(new CNFClause(X), new CNFClause(Y)) { }
 
         public EqualityTestCase(CNFClause X, Sentence Y)
-            : this(X, Y.ToCNF().Clauses.Single()) { }
+            : this(X, new CNFClause(Y)) { }
 
         public EqualityTestCase(Sentence X, CNFClause Y)
-            : this(X.ToCNF().Clauses.Single(), Y) { }
+            : this(new CNFClause(X), Y) { }
     }
 }

@@ -16,7 +16,10 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 /// followed by equality comparison using plain old <see cref="object.Equals(object?)"/> instead.
 /// </para>
 /// </summary>
-public class VariableUnifyingEqualityComparer : IEqualityComparer<CNFClause>
+// TODO-PERFORMANCE: The doc above does make it clear that this is a last resort, but I should defo take some time to try
+// to optimise here. *Two* short-lived dictionaries in equality comparison? Could avoid one of 'em by effectively standardising
+// apart as we go (e.g. making x vs y part of the key in a singular dict)? Benchmark me.
+public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, IEqualityComparer<Literal>, IEqualityComparer<Predicate>, IEqualityComparer<Term>
 {
     private static readonly VariableReference VariableReferenceForHashCode = new(new {});
 
@@ -33,7 +36,7 @@ public class VariableUnifyingEqualityComparer : IEqualityComparer<CNFClause>
         }
         else
         {
-            return TryUpdateUnifier(x, y, new MutableVariableSubstitution());
+            return TryUpdateUnifier(x, y, new(), new());
         }
     }
 
@@ -43,7 +46,80 @@ public class VariableUnifyingEqualityComparer : IEqualityComparer<CNFClause>
         return TransformForHashCode(obj).GetHashCode();
     }
 
-    private static bool TryUpdateUnifier(CNFClause x, CNFClause y, MutableVariableSubstitution unifier)
+    /// <inheritdoc/>
+    public bool Equals(Literal? x, Literal? y)
+    {
+        if (x == null)
+        {
+            return y == null;
+        }
+        else if (y == null)
+        {
+            return false;
+        }
+        else
+        {
+            return TryUpdateUnifier(x, y, new(), new());
+        }
+    }
+
+    /// <inheritdoc/>
+    public int GetHashCode([DisallowNull] Literal obj)
+    {
+        return TransformForHashCode(obj).GetHashCode();
+    }
+
+    /// <inheritdoc/>
+    public bool Equals(Predicate? x, Predicate? y)
+    {
+        if (x == null)
+        {
+            return y == null;
+        }
+        else if (y == null)
+        {
+            return false;
+        }
+        else
+        {
+            return TryUpdateUnifier(x, y, new(), new());
+        }
+    }
+
+    /// <inheritdoc/>
+    public int GetHashCode([DisallowNull] Predicate obj)
+    {
+        return TransformForHashCode(obj).GetHashCode();
+    }
+
+    /// <inheritdoc/>
+    public bool Equals(Term? x, Term? y)
+    {
+        if (x == null)
+        {
+            return y == null;
+        }
+        else if (y == null)
+        {
+            return false;
+        }
+        else
+        {
+            return TryUpdateUnifier(x, y, new(), new());
+        }
+    }
+
+    /// <inheritdoc/>
+    public int GetHashCode([DisallowNull] Term obj)
+    {
+        return TransformForHashCode(obj).GetHashCode();
+    }
+
+    private static bool TryUpdateUnifier(
+        CNFClause x,
+        CNFClause y,
+        Dictionary<VariableReference, VariableReference> xToY,
+        Dictionary<VariableReference, VariableReference> yToX)
     {
         if (x.Literals.Count != y.Literals.Count)
         {
@@ -52,7 +128,7 @@ public class VariableUnifyingEqualityComparer : IEqualityComparer<CNFClause>
 
         foreach (var literals in x.Literals.Zip(y.Literals, (x, y) => (x, y)))
         {
-            if (!TryUpdateUnifier(literals.x, literals.y, unifier))
+            if (!TryUpdateUnifier(literals.x, literals.y, xToY, yToX))
             {
                 return false;
             }
@@ -61,17 +137,25 @@ public class VariableUnifyingEqualityComparer : IEqualityComparer<CNFClause>
         return true;
     }
 
-    private static bool TryUpdateUnifier(Literal x, Literal y, MutableVariableSubstitution unifier)
+    private static bool TryUpdateUnifier(
+        Literal x,
+        Literal y,
+        Dictionary<VariableReference, VariableReference> xToY,
+        Dictionary<VariableReference, VariableReference> yToX)
     {
         if (x.IsNegated != y.IsNegated)
         {
             return false;
         }
 
-        return TryUpdateUnifier(x.Predicate, y.Predicate, unifier);
+        return TryUpdateUnifier(x.Predicate, y.Predicate, xToY, yToX);
     }
 
-    private static bool TryUpdateUnifier(Predicate x, Predicate y, MutableVariableSubstitution unifier)
+    private static bool TryUpdateUnifier(
+        Predicate x,
+        Predicate y,
+        Dictionary<VariableReference, VariableReference> xToY,
+        Dictionary<VariableReference, VariableReference> yToX)
     {
         if (!x.Identifier.Equals(y.Identifier)
             || x.Arguments.Count != y.Arguments.Count)
@@ -81,7 +165,7 @@ public class VariableUnifyingEqualityComparer : IEqualityComparer<CNFClause>
 
         foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
         {
-            if (!TryUpdateUnifier(args.x, args.y, unifier))
+            if (!TryUpdateUnifier(args.x, args.y, xToY, yToX))
             {
                 return false;
             }
@@ -90,30 +174,38 @@ public class VariableUnifyingEqualityComparer : IEqualityComparer<CNFClause>
         return true;
     }
 
-    private static bool TryUpdateUnifier(Term x, Term y, MutableVariableSubstitution unifier)
+    private static bool TryUpdateUnifier(
+        Term x,
+        Term y,
+        Dictionary<VariableReference, VariableReference> xToY,
+        Dictionary<VariableReference, VariableReference> yToX)
     {
         return (x, y) switch
         {
-            (VariableReference variableX, VariableReference variableY) => TryUpdateUnifier(variableX, variableY, unifier),
-            (Function functionX, Function functionY) => TryUpdateUnifier(functionX, functionY, unifier),
+            (VariableReference variableX, VariableReference variableY) => TryUpdateUnifier(variableX, variableY, xToY, yToX),
+            (Function functionX, Function functionY) => TryUpdateUnifier(functionX, functionY, xToY, yToX),
             _ => false
         };
     }
 
-    private static bool TryUpdateUnifier(VariableReference x, VariableReference y, MutableVariableSubstitution unifier)
+    private static bool TryUpdateUnifier(
+        VariableReference x,
+        VariableReference y,
+        Dictionary<VariableReference, VariableReference> xToY,
+        Dictionary<VariableReference, VariableReference> yToX)
     {
-        if (!unifier.Bindings.TryGetValue(x, out var boundXValue))
+        if (!xToY.TryGetValue(x, out var boundXValue))
         {
-            unifier.AddBinding(x, y);
+            xToY.Add(x, y);
         }
         else if (!boundXValue.Equals(y))
         {
             return false;
         }
 
-        if (!unifier.Bindings.TryGetValue(y, out var boundYValue))
+        if (!yToX.TryGetValue(y, out var boundYValue))
         {
-            unifier.AddBinding(y, x);
+            yToX.Add(y, x);
         }
         else if (!boundYValue.Equals(x))
         {
@@ -123,7 +215,11 @@ public class VariableUnifyingEqualityComparer : IEqualityComparer<CNFClause>
         return true;
     }
 
-    private static bool TryUpdateUnifier(Function x, Function y, MutableVariableSubstitution unifier)
+    private static bool TryUpdateUnifier(
+        Function x,
+        Function y,
+        Dictionary<VariableReference, VariableReference> xToY,
+        Dictionary<VariableReference, VariableReference> yToX)
     {
         if (!x.Identifier.Equals(y.Identifier) || x.Arguments.Count != y.Arguments.Count)
         {
@@ -132,7 +228,7 @@ public class VariableUnifyingEqualityComparer : IEqualityComparer<CNFClause>
 
         for (int i = 0; i < x.Arguments.Count; i++)
         {
-            if (!TryUpdateUnifier(x.Arguments[i], y.Arguments[i], unifier))
+            if (!TryUpdateUnifier(x.Arguments[i], y.Arguments[i], xToY, yToX))
             {
                 return false;
             }
