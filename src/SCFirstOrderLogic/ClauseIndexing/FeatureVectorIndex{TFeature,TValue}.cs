@@ -333,7 +333,7 @@ public class FeatureVectorIndex<TFeature, TValue>
         return ExpandNode(root, 0);
 
         // NB: subsumed clauses will have equal or higher vector elements.
-        // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what identifiers are possible ahead of time).
+        // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
         // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
         IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int vectorComponentIndex)
         {

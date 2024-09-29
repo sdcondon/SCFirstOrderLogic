@@ -9,7 +9,6 @@ namespace SCFirstOrderLogic.TermIndexing;
 /// <summary>
 /// An implementation of a discrimination tree for <see cref="Term"/>s - specifically, one for which the attached values are the terms themselves.
 /// </summary>
-/// <seealso href="https://www.google.com/search?q=discrimination+tree"/>
 public class AsyncDiscriminationTree
 {
     private readonly AsyncDiscriminationTree<Term> actualTree;

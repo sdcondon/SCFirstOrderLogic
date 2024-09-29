@@ -12,8 +12,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 /// </para>
 /// <para>
 /// NB: of course, such comparison is non-trivial in terms of performance. When an unambiguous ordering of 
-/// literals can be established, consider transformation via <see cref="VariableManipulationExtensions.Ordinalise(Term)"/>
-/// followed by equality comparison using plain old <see cref="object.Equals(object?)"/> instead.
+/// literals can be established, instead consider prior transformation via <see cref="VariableManipulationExtensions.Ordinalise(Term)"/>,
+/// followed by equality comparison using plain old <see cref="object.Equals(object?)"/>.
 /// </para>
 /// </summary>
 // TODO-PERFORMANCE: The doc above does make it clear that this is a last resort, but I should defo take some time to try
@@ -36,7 +36,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
         }
         else
         {
-            return TryUpdateUnifier(x, y, new(), new());
+            return TryUpdateVariableMap(x, y, new(), new());
         }
     }
 
@@ -59,7 +59,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
         }
         else
         {
-            return TryUpdateUnifier(x, y, new(), new());
+            return TryUpdateVariableMap(x, y, new(), new());
         }
     }
 
@@ -82,7 +82,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
         }
         else
         {
-            return TryUpdateUnifier(x, y, new(), new());
+            return TryUpdateVariableMap(x, y, new(), new());
         }
     }
 
@@ -105,7 +105,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
         }
         else
         {
-            return TryUpdateUnifier(x, y, new(), new());
+            return TryUpdateVariableMap(x, y, new(), new());
         }
     }
 
@@ -115,7 +115,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
         return TransformForHashCode(obj).GetHashCode();
     }
 
-    private static bool TryUpdateUnifier(
+    private static bool TryUpdateVariableMap(
         CNFClause x,
         CNFClause y,
         Dictionary<VariableReference, VariableReference> xToY,
@@ -128,7 +128,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
 
         foreach (var literals in x.Literals.Zip(y.Literals, (x, y) => (x, y)))
         {
-            if (!TryUpdateUnifier(literals.x, literals.y, xToY, yToX))
+            if (!TryUpdateVariableMap(literals.x, literals.y, xToY, yToX))
             {
                 return false;
             }
@@ -137,7 +137,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
         return true;
     }
 
-    private static bool TryUpdateUnifier(
+    private static bool TryUpdateVariableMap(
         Literal x,
         Literal y,
         Dictionary<VariableReference, VariableReference> xToY,
@@ -148,10 +148,10 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
             return false;
         }
 
-        return TryUpdateUnifier(x.Predicate, y.Predicate, xToY, yToX);
+        return TryUpdateVariableMap(x.Predicate, y.Predicate, xToY, yToX);
     }
 
-    private static bool TryUpdateUnifier(
+    private static bool TryUpdateVariableMap(
         Predicate x,
         Predicate y,
         Dictionary<VariableReference, VariableReference> xToY,
@@ -165,7 +165,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
 
         foreach (var args in x.Arguments.Zip(y.Arguments, (x, y) => (x, y)))
         {
-            if (!TryUpdateUnifier(args.x, args.y, xToY, yToX))
+            if (!TryUpdateVariableMap(args.x, args.y, xToY, yToX))
             {
                 return false;
             }
@@ -174,7 +174,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
         return true;
     }
 
-    private static bool TryUpdateUnifier(
+    private static bool TryUpdateVariableMap(
         Term x,
         Term y,
         Dictionary<VariableReference, VariableReference> xToY,
@@ -182,13 +182,13 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
     {
         return (x, y) switch
         {
-            (VariableReference variableX, VariableReference variableY) => TryUpdateUnifier(variableX, variableY, xToY, yToX),
-            (Function functionX, Function functionY) => TryUpdateUnifier(functionX, functionY, xToY, yToX),
+            (VariableReference variableX, VariableReference variableY) => TryUpdateVariableMap(variableX, variableY, xToY, yToX),
+            (Function functionX, Function functionY) => TryUpdateVariableMap(functionX, functionY, xToY, yToX),
             _ => false
         };
     }
 
-    private static bool TryUpdateUnifier(
+    private static bool TryUpdateVariableMap(
         VariableReference x,
         VariableReference y,
         Dictionary<VariableReference, VariableReference> xToY,
@@ -215,7 +215,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
         return true;
     }
 
-    private static bool TryUpdateUnifier(
+    private static bool TryUpdateVariableMap(
         Function x,
         Function y,
         Dictionary<VariableReference, VariableReference> xToY,
@@ -228,7 +228,7 @@ public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, 
 
         for (int i = 0; i < x.Arguments.Count; i++)
         {
-            if (!TryUpdateUnifier(x.Arguments[i], y.Arguments[i], xToY, yToX))
+            if (!TryUpdateVariableMap(x.Arguments[i], y.Arguments[i], xToY, yToX))
             {
                 return false;
             }

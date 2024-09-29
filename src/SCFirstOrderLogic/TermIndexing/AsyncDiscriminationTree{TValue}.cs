@@ -11,7 +11,6 @@ namespace SCFirstOrderLogic.TermIndexing;
 /// An implementation of a discrimination tree for <see cref="Term"/>s.
 /// </summary>
 /// <typeparam name="TValue">The type of value attached for each term.</typeparam>
-/// <seealso href="https://www.google.com/search?q=discrimination+tree"/>
 // NB: not a TODO just yet, but - while it's not terrible - there are a few aspects of this
 // class that aren't great from a performance perspective. Notably, while the recursive iterator
 // approach used for the retrieval methods may be easy to understand, it will make a lot of heap

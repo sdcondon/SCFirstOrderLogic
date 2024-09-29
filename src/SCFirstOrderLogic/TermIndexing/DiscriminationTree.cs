@@ -14,7 +14,6 @@ namespace SCFirstOrderLogic.TermIndexing;
 /// Discrimination trees are particularly well-suited to (i.e. performant at) looking up generalisations of a query term.
 /// </para>
 /// </summary>
-/// <seealso href="https://www.google.com/search?q=discrimination+tree"/>
 public class DiscriminationTree
 {
     private readonly DiscriminationTree<Term> actualTree;
