@@ -28,9 +28,9 @@ public class CNFClause : IEquatable<CNFClause>
     /// <summary>
     /// Initialises a new instance of the <see cref="CNFClause"/> class from a sentence that is a disjunction of literals (a literal being a predicate or a negated predicate).
     /// </summary>
-    /// <param name="sentence">The clause, represented as a <see cref="Sentence"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a disjunction of literals.</param>
-    public CNFClause(Sentence sentence)
-        : this(ConstructionVisitor.GetLiterals(sentence))
+    /// <param name="cnfClause">The clause, represented as a <see cref="Sentence"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a disjunction of literals.</param>
+    public CNFClause(Sentence cnfClause)
+        : this(ConstructionVisitor.GetLiterals(cnfClause))
     {
     }
 

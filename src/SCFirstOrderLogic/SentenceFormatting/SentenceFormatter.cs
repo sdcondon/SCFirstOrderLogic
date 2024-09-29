@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.SentenceFormatting;
 // Will need precedence list in here - then presumably not too tough to include brackets or not based on the relative priority
 // of current op and child.
 // TODO-BREAKING-FEATURE: Allow for configuration of whether zero-arity functions (and predicates?) should have brackets or not.
-// Or roll into labeller (perhaps renamed - or separate interface - or perhaps some broader refactoring to do here) so can be by identifier? 
+// Or roll into labeller (perhaps renamed - or separate interface - some broader refactoring to do here, anyway) so can be by identifier? 
 public class SentenceFormatter
 {
     private const char PrecedenceBracketL = '[';

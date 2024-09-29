@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceFormatting;
+using SCFirstOrderLogic.SentenceManipulation;
 using System;
 using System.Collections.Generic;
 
@@ -20,6 +21,18 @@ public class CNFSentence : IEquatable<CNFSentence>
     /// <param name="clauses">The set of clauses to be included in the sentence.</param>
     public CNFSentence(IEnumerable<CNFClause> clauses)
         : this(new HashSet<CNFClause>(clauses))
+    {
+    }
+
+    /// <summary>
+    /// Initialises a new instance of the <see cref="CNFSentence"/> class from a <see cref="Sentence"/> that is a conjunction of disjunctions of literals (a literal being a predicate or a negated predicate).
+    /// </summary>
+    /// <param name="cnfSentence">
+    /// The sentence, in CNF but represented as a <see cref="Sentence"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a conjunction of disjunctions of literals.
+    /// In other words, conversion to CNF is NOT carried out by this constructor.
+    /// </param>
+    public CNFSentence(Sentence cnfSentence)
+        : this(ConstructionVisitor.GetClauses(cnfSentence))
     {
     }
 
@@ -65,5 +78,34 @@ public class CNFSentence : IEquatable<CNFSentence>
     public override int GetHashCode()
     {
         return ClausesEqualityComparer.GetHashCode(clauses);
+    }
+
+    private class ConstructionVisitor : RecursiveSentenceVisitor
+    {
+        private readonly HashSet<CNFClause> clauses = new();
+
+        public static HashSet<CNFClause> GetClauses(Sentence sentence)
+        {
+            var visitor = new ConstructionVisitor();
+            visitor.Visit(sentence);
+            return visitor.clauses;
+        }
+
+        /// <inheritdoc />
+        public override void Visit(Sentence sentence)
+        {
+            if (sentence is Conjunction conjunction)
+            {
+                // The sentence is already in CNF - so the root down until the individual clauses will all be Conjunctions - we just skip past those.
+                Visit(conjunction);
+            }
+            else
+            {
+                // We've hit a clause.
+                // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFClause ctor that
+                // we invoke here does so to figure out the details of the clause). So we can just return rather than invoking base.Visit.
+                clauses.Add(new CNFClause(sentence));
+            }
+        }
     }
 }
