@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © 2023-2024 Simon Condon.
+// You may use this file in accordance with the terms of the MIT license.
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -11,8 +13,8 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 /// That is, an equality comparer that considers P(x, y) equal to P(a, b) (but of course distinct from P(x, x)).
 /// </para>
 /// <para>
-/// NB: of course, such comparison is non-trivial in terms of performance. When an unambiguous ordering of 
-/// literals can be established, instead consider prior transformation via <see cref="VariableManipulationExtensions.Ordinalise(Term)"/>,
+/// NB: of course, such comparison is sub-optimal in terms of performance. When an unambiguous ordering of literals
+/// can be established, instead consider prior transformation via <see cref="VariableManipulationExtensions.Ordinalise(Literal)"/>,
 /// followed by equality comparison using plain old <see cref="object.Equals(object?)"/>.
 /// </para>
 /// </summary>

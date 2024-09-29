@@ -74,6 +74,42 @@ public static class VariableManipulationExtensions
 
     /// <summary>
     /// <para>
+    /// Ordinalises a sentence; replacing all variable identifiers with the (zero-based) ordinal of where they
+    /// first appear in a depth-first traversal of the sentence.
+    /// </para>
+    /// <para>
+    /// This is useful because it makes the original identifiers irrelevant but preserves distinctness, so that 
+    /// e.g. P(X, X) is transformed to a sentence that is identical to the transformation of P(Y, Y), but different
+    /// to the transformation of P(X, Y). Making the original identifier irrelevant is useful when e.g. indexing.
+    /// </para>
+    /// </summary>
+    /// <param name="sentence">The sentence to ordinalise.</param>
+    /// <returns>The ordinalised sentence.</returns>
+    public static Sentence Ordinalise(this Sentence sentence)
+    {
+        return sentence.Accept(new VariableOrdinalisation());
+    }
+
+    /// <summary>
+    /// <para>
+    /// Ordinalises a literal; replacing all variable identifiers with the (zero-based) ordinal of where they
+    /// first appear in a depth-first traversal of the literal.
+    /// </para>
+    /// <para>
+    /// This is useful because it makes the original identifiers irrelevant but preserves distinctness, so that 
+    /// e.g. P(X, X) is transformed to a literal that is identical to the transformation of P(Y, Y), but different
+    /// to the transformation of P(X, Y). Making the original identifier irrelevant is useful when e.g. indexing.
+    /// </para>
+    /// </summary>
+    /// <param name="literal">The literal to ordinalise.</param>
+    /// <returns>The ordinalised literal.</returns>
+    public static Literal Ordinalise(this Literal literal)
+    {
+        return new VariableOrdinalisation().ApplyTo(literal);
+    }
+
+    /// <summary>
+    /// <para>
     /// Ordinalises a term; replacing all variable identifiers with the (zero-based) ordinal of where they
     /// first appear in a depth-first traversal of the term.
     /// </para>
@@ -161,6 +197,11 @@ public static class VariableManipulationExtensions
     private class VariableOrdinalisation : RecursiveSentenceTransformation
     {
         private readonly Dictionary<object, VariableDeclaration> variableIdMap = new();
+
+        public Literal ApplyTo(Literal literal)
+        {
+            return new((Predicate)ApplyTo(literal.Predicate), literal.IsNegated);
+        }
 
         /// <inheritdoc/>
         public override VariableDeclaration ApplyTo(VariableDeclaration variable)
