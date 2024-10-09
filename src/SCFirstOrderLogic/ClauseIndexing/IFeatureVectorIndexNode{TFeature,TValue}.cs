@@ -13,27 +13,40 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public interface IFeatureVectorIndexNode<TFeature, TValue>
 {
     /// <summary>
-    /// Gets the child nodes of this node, keyed by the vector component represented by the child.
+    /// Gets the comparer that should be used to compare features when adding to or retrieving from this node.
     /// </summary>
-    IReadOnlyDictionary<KeyValuePair<TFeature, int>, IFeatureVectorIndexNode<TFeature, TValue>> Children { get; }
+    IComparer<TFeature> FeatureComparer { get; }
 
     /// <summary>
-    /// Gets the values attached to this node.
+    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in ascending feature order.
+    /// </summary>
+    IReadOnlyCollection<KeyValuePair<FeatureVectorComponent<TFeature>, IFeatureVectorIndexNode<TFeature, TValue>>> Children { get; }
+
+    /// <summary>
+    /// Gets the key-value pairs attached to this node.
     /// </summary>
     IEnumerable<KeyValuePair<CNFClause, TValue>> KeyValuePairs { get; }
+
+    /// <summary>
+    /// Attempts to retrieve a child node by the vector component it represents.
+    /// </summary>
+    /// <param name="vectorComponent">The vector component represented by the child node to retrieve.</param>
+    /// <param name="child"></param>
+    /// <returns>The child node, or <see langword="null"/> if no matching node was found.</returns>
+    bool TryGetChild(FeatureVectorComponent<TFeature> vectorComponent, [MaybeNullWhen(false)] out IFeatureVectorIndexNode<TFeature, TValue> child);
 
     /// <summary>
     /// Gets or adds a child of this node.
     /// </summary>
     /// <param name="vectorComponent">The vector component represented by the node to be retrieved or added.</param>
     /// <returns>The retrieved or added node.</returns>
-    IFeatureVectorIndexNode<TFeature, TValue> GetOrAddChild(KeyValuePair<TFeature, int> vectorComponent);
+    IFeatureVectorIndexNode<TFeature, TValue> GetOrAddChild(FeatureVectorComponent<TFeature> vectorComponent);
 
     /// <summary>
     /// Deletes a child of this node.
     /// </summary>
     /// <param name="vectorComponent">The vector component represented by the node to be removed.</param>
-    void DeleteChild(KeyValuePair<TFeature, int> vectorComponent);
+    void DeleteChild(FeatureVectorComponent<TFeature> vectorComponent);
 
     /// <summary>
     /// Adds a value to this node.

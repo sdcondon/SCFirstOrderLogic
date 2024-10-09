@@ -3,11 +3,12 @@
 using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SCFirstOrderLogic.ClauseIndexing.Features;
 
 /// <summary>
-/// Identifying record for a clause indexing feature that is the occurence count of a particular identifier within positive or negative literals.
+/// A clause indexing feature that is the occurence count of a particular identifier within positive or negative literals.
 /// </summary>
 /// <param name="Identifier">The identifier to which this feature relates, or null if it is for literal counts.</param>
 /// <param name="IsInPositiveLiteral">A value indicating whether this feature relates to occurence counts in (or of) positive literals, or negative.</param>
@@ -22,7 +23,7 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     /// </summary>
     /// <param name="clause">The clause to retrieve a feature vector for.</param>
     /// <returns>A feature vector.</returns>
-    public static IEnumerable<KeyValuePair<OccurenceCountFeature, int>> MakeFeatureVector(CNFClause clause)
+    public static IEnumerable<FeatureVectorComponent<OccurenceCountFeature>> MakeFeatureVector(CNFClause clause)
     {
         Dictionary<OccurenceCountFeature, int> featureVector = new();
 
@@ -35,7 +36,7 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
             literal.Predicate.Accept(new CreationVisitor(featureVector, literal.IsPositive));
         }
 
-        return featureVector;
+        return featureVector.Select(kvp => new FeatureVectorComponent<OccurenceCountFeature>(kvp.Key, kvp.Value));
     }
 
     /// <summary>

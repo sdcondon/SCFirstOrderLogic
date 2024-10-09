@@ -23,59 +23,19 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public class AsyncFeatureVectorIndex<TFeature, TValue>
     where TFeature : notnull
 {
-    private static readonly IEnumerable<KeyValuePair<CNFClause, TValue>> EmptyElements = Enumerable.Empty<KeyValuePair<CNFClause, TValue>>();
-
-    private readonly Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector;
+    private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector;
     private readonly IAsyncFeatureVectorIndexNode<TFeature, TValue> root;
-    private readonly IComparer<TFeature> featureComparer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature,TValue}"/> class with a specified
-    /// root node and no (additional) initial content, that uses the default comparer of the key element
-    /// type to determine the ordering of elements in the tree.
+    /// root node and no (additional) initial content.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the tree.</param>
     public AsyncFeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
+        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IAsyncFeatureVectorIndexNode<TFeature, TValue> root)
-        : this(featureVectorSelector, Comparer<TFeature>.Default, root, EmptyElements)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature,TValue}"/> class with a 
-    /// specified root node and no (additional) initial content.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the features (i.e. keys)
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
-    /// </param>
-    /// <param name="root">The root node of the tree.</param>
-    public AsyncFeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IComparer<TFeature> featureComparer,
-        IAsyncFeatureVectorIndexNode<TFeature, TValue> root)
-        : this(featureVectorSelector, featureComparer, root, EmptyElements)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature,TValue}"/> class with a 
-    /// specified root node and some (additional) initial content, that uses the default comparer
-    /// of the key element type to determine the ordering of elements in the tree.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="root">The root node of the tree.</param>
-    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
-    public AsyncFeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IAsyncFeatureVectorIndexNode<TFeature, TValue> root,
-        IEnumerable<KeyValuePair<CNFClause, TValue>> content)
-        : this(featureVectorSelector, Comparer<TFeature>.Default, root, content)
+        : this(featureVectorSelector, root, Enumerable.Empty<KeyValuePair<CNFClause, TValue>>())
     {
     }
 
@@ -84,28 +44,19 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     /// specified root node and some (additional) initial content.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the features (i.e. keys)
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
-    /// </param>
     /// <param name="root">The root node of the tree.</param>
     /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
     public AsyncFeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IComparer<TFeature> featureComparer,
+        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IAsyncFeatureVectorIndexNode<TFeature, TValue> root,
         IEnumerable<KeyValuePair<CNFClause, TValue>> content)
     {
         ArgumentNullException.ThrowIfNull(featureVectorSelector);
         ArgumentNullException.ThrowIfNull(root);
-        ArgumentNullException.ThrowIfNull(featureComparer);
         ArgumentNullException.ThrowIfNull(content);
 
         this.featureVectorSelector = featureVectorSelector;
         this.root = root;
-        this.featureComparer = featureComparer;
 
         foreach (var kvp in content)
         {
@@ -128,9 +79,9 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         }
 
         var currentNode = root;
-        foreach (var element in MakeOrderedFeatureVector(key))
+        foreach (var vectorComponent in MakeOrderedFeatureVector(key))
         {
-            currentNode = await currentNode.GetOrAddChildAsync(element);
+            currentNode = await currentNode.GetOrAddChildAsync(vectorComponent);
         }
 
         await currentNode.AddValueAsync(key, value);
@@ -149,21 +100,21 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
         return await ExpandNodeAsync(root, 0);
 
-        async ValueTask<bool> ExpandNodeAsync(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
+        async ValueTask<bool> ExpandNodeAsync(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
         {
-            if (elementIndex < featureVector.Count)
+            if (componentIndex < featureVector.Count)
             {
-                var element = featureVector[elementIndex];
-                var childNode = await node.TryGetChildAsync(element);
+                var component = featureVector[componentIndex];
+                var childNode = await node.TryGetChildAsync(component);
 
-                if (childNode == null || !await ExpandNodeAsync(childNode, elementIndex + 1))
+                if (childNode == null || !await ExpandNodeAsync(childNode, componentIndex + 1))
                 {
                     return false;
                 }
 
-                if (!await childNode.GetChildren().GetAsyncEnumerator().MoveNextAsync() && !await childNode.GetKeyValuePairs().AnyAsync())
+                if (!await childNode.Children.AnyAsync() && !await childNode.KeyValuePairs.AnyAsync())
                 {
-                    await node.DeleteChildAsync(element);
+                    await node.DeleteChildAsync(component);
                 }
 
                 return true;
@@ -219,10 +170,10 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
             if (elementIndex < featureVector.Count)
             {
                 // If matching feature with lower value, then recurse
-                // todo: can be made more efficient once node children are ordered
-                await foreach (var ((childFeature, childMagnitude), childNode) in node.GetChildren())
+                // todo: can be made more efficient now that node children are ordered
+                await foreach (var ((childFeature, childMagnitude), childNode) in node.Children)
                 {
-                    if (childFeature.Equals(featureVector[elementIndex].Key) && childMagnitude <= featureVector[elementIndex].Value)
+                    if (childFeature.Equals(featureVector[elementIndex].Feature) && childMagnitude <= featureVector[elementIndex].Magnitude)
                     {
                         await foreach (var value in ExpandNode(childNode, elementIndex + 1))
                         {
@@ -242,7 +193,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
             {
                 // NB: note that we need to filter the values to those keyed by clauses that actually
                 // subsume the query clause. The node values are the candidate set.
-                await foreach (var value in node.GetKeyValuePairs().Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value))
+                await foreach (var value in node.KeyValuePairs.Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value))
                 {
                     yield return value;
                 }
@@ -267,16 +218,17 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         {
             if (elementIndex < featureVector.Count)
             {
-                await foreach (var ((childFeature, childMagnitude), childNode) in node.GetChildren())
+                await foreach (var ((childFeature, childMagnitude), childNode) in node.Children)
                 {
                     // todo: is this right? or do we need by feature AND magnitude here?
-                    if (elementIndex == 0 || featureComparer.Compare(childFeature, featureVector[elementIndex - 1].Key) > 0)
+                    // todo: can be made more efficient now that node children are ordered
+                    if (elementIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[elementIndex - 1].Feature) > 0)
                     {
-                        var childComparedToCurrent = featureComparer.Compare(childFeature, featureVector[elementIndex].Key);
+                        var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, featureVector[elementIndex].Feature);
 
                         if (childComparedToCurrent <= 0)
                         {
-                            var keyElementIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[elementIndex].Value ? 1 : 0;
+                            var keyElementIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[elementIndex].Magnitude ? 1 : 0;
 
                             await foreach (var value in ExpandNode(childNode, elementIndex + keyElementIndexOffset))
                             {
@@ -299,12 +251,12 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         {
             // NB: note that we need to filter the values to those keyed by clauses that are
             // actually subsumed by the query clause. The node values are the candidate set.
-            await foreach (var value in node.GetKeyValuePairs().Where(kvp => clause.Subsumes(kvp.Key)).Select(kvp => kvp.Value))
+            await foreach (var value in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)).Select(kvp => kvp.Value))
             {
                 yield return value;
             }
 
-            await foreach (var (_, childNode) in node.GetChildren())
+            await foreach (var (_, childNode) in node.Children)
             {
                 await foreach (var value in GetAllDescendentValues(childNode))
                 {
@@ -314,8 +266,8 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         }
     }
 
-    private IList<KeyValuePair<TFeature, int>> MakeOrderedFeatureVector(CNFClause clause)
+    private IList<FeatureVectorComponent<TFeature>> MakeOrderedFeatureVector(CNFClause clause)
     {
-        return featureVectorSelector(clause).OrderBy(kvp => kvp.Key, featureComparer).ToList();
+        return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
     }
 }

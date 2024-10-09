@@ -4,6 +4,7 @@ using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -12,7 +13,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// <summary>
 /// <para>
 /// An implementation of <see cref="IAsyncFeatureVectorIndexNode{TFeature, TValue}"/> that just stores its content in memory.
-/// Uses a <see cref="ConcurrentDictionary{TKey, TValue}"/> for child nodes.
+/// Uses a <see cref="SortedList{TKey, TValue}"/> for child nodes.
 /// </para>
 /// <para>
 /// NB: If you are using this type, you should consider using <see cref="FeatureVectorIndex{TFeature, TValue}"/> instead, to avoid the overhead of asynchronicity.
@@ -22,55 +23,89 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// </summary>
 /// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
-// todo-breaking-v7: ordered lists for children make way more sense than dictionaries here, but this does of course
-// raise questions about what should be responsible for the feature comparison logic
 public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFeatureVectorIndexNode<TFeature, TValue>
     where TFeature : notnull
 {
-    private readonly ConcurrentDictionary<KeyValuePair<TFeature, int>, IAsyncFeatureVectorIndexNode<TFeature, TValue>> childrenByVectorComponent;
+    private readonly SortedList<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>> childrenByVectorComponent;
     private readonly Dictionary<CNFClause, TValue> valuesByKey = new(new VariableIdIgnorantEqualityComparer());
 
     /// <summary>
     /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
     /// </summary>
     public AsyncFeatureVectorIndexDictionaryNode()
-        : this(EqualityComparer<KeyValuePair<TFeature, int>>.Default)
+        : this(Comparer<TFeature>.Default)
     {
     }
 
     /// <summary>
     /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
     /// </summary>
-    /// <param name="equalityComparer">
-    /// The equality comparer that should be used by the child dictionary.
-    /// For correct behaviour, index instances accessing this node should be using an <see cref="IComparer{T}"/> that is consistent with it. 
-    /// That is, one that only returns zero for features considered equal by equality comparer used by this instance.
+    /// <param name="featureComparer">
+    /// The comparer to use to determine the ordering of features when adding to the index and performing
+    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the components
+    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
+    /// duplicates shouldn't occur in any given vector).
     /// </param>
-    public AsyncFeatureVectorIndexDictionaryNode(IEqualityComparer<KeyValuePair<TFeature, int>> equalityComparer)
+    public AsyncFeatureVectorIndexDictionaryNode(IComparer<TFeature> featureComparer)
     {
-        childrenByVectorComponent = new(equalityComparer);
+        FeatureComparer = featureComparer;
+        childrenByVectorComponent = new(new FeatureVectorComponentComparer<TFeature>(featureComparer));
+    }
+
+    private AsyncFeatureVectorIndexDictionaryNode(IComparer<TFeature> featureComparer, IComparer<FeatureVectorComponent<TFeature>> vectorComponentComparer)
+    {
+        FeatureComparer = featureComparer;
+        childrenByVectorComponent = new(vectorComponentComparer);
     }
 
     /// <inheritdoc/>
-    public async IAsyncEnumerable<KeyValuePair<KeyValuePair<TFeature, int>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> GetChildren()
+    public IComparer<TFeature> FeatureComparer { get; }
+
+    /// <inheritdoc/>
+    public IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> Children
     {
-        foreach (var kvp in childrenByVectorComponent)
+        get
         {
-            yield return kvp;
+            async IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> GetReturnValue()
+            {
+                foreach (var kvp in childrenByVectorComponent)
+                {
+                    yield return kvp;
+                }
+            }
+
+            return GetReturnValue();
         }
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(KeyValuePair<TFeature, int> vectorComponent)
+    public IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> KeyValuePairs
+    {
+        get
+        {
+            async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetReturnValue()
+            {
+                foreach (var kvp in valuesByKey)
+                {
+                    yield return kvp;
+                }
+            }
+
+            return GetReturnValue();
+        }
+    }
+
+    /// <inheritdoc/>
+    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(FeatureVectorComponent<TFeature> vectorComponent)
     {
         childrenByVectorComponent.TryGetValue(vectorComponent, out var child);
         return ValueTask.FromResult(child);
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(KeyValuePair<TFeature, int> vectorComponent)
+    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(FeatureVectorComponent<TFeature> vectorComponent)
     {
-        IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue>(childrenByVectorComponent.Comparer);
+        IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue>(FeatureComparer, childrenByVectorComponent.Comparer);
         if (!childrenByVectorComponent.TryAdd(vectorComponent, node))
         {
             node = childrenByVectorComponent[vectorComponent];
@@ -80,7 +115,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     }
 
     /// <inheritdoc/>
-    public ValueTask DeleteChildAsync(KeyValuePair<TFeature, int> vectorComponent)
+    public ValueTask DeleteChildAsync(FeatureVectorComponent<TFeature> vectorComponent)
     {
         childrenByVectorComponent.Remove(vectorComponent, out _);
         return ValueTask.CompletedTask;
@@ -101,15 +136,6 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     public ValueTask<bool> RemoveValueAsync(CNFClause clause)
     {
         return ValueTask.FromResult(valuesByKey.Remove(clause));
-    }
-
-    /// <inheritdoc/>
-    public async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetKeyValuePairs()
-    {
-        foreach (var kvp in valuesByKey)
-        {
-            yield return kvp;
-        }
     }
 
     /// <inheritdoc/>

@@ -3,11 +3,12 @@
 using SCFirstOrderLogic.SentenceManipulation;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SCFirstOrderLogic.ClauseIndexing.Features;
 
 /// <summary>
-/// Identifying record for a clause indexing feature that is the (1-based) max depth of a particular identifier within positive or negative literals.
+/// A clause indexing feature that is the (1-based) max depth of a particular identifier within positive or negative literals.
 /// </summary>
 /// <param name="Identifier">The identifier to which this feature relates.</param>
 /// <param name="IsInPositiveLiteral">A value indicating whether this feature relates to max depths in positive literals, or negative.</param>
@@ -21,7 +22,7 @@ public record MaxDepthFeature(object Identifier, bool IsInPositiveLiteral)
     /// </summary>
     /// <param name="clause">The clause to retrieve a feature vector for.</param>
     /// <returns>A feature vector.</returns>
-    public static IEnumerable<KeyValuePair<MaxDepthFeature, int>> MakeFeatureVector(CNFClause clause)
+    public static IEnumerable<FeatureVectorComponent<MaxDepthFeature>> MakeFeatureVector(CNFClause clause)
     {
         Dictionary<MaxDepthFeature, int> featureVector = new();
 
@@ -30,7 +31,7 @@ public record MaxDepthFeature(object Identifier, bool IsInPositiveLiteral)
             literal.Predicate.Accept(new CreationVisitor(featureVector, literal.IsPositive), 1);
         }
 
-        return featureVector;
+        return featureVector.Select(kvp => new FeatureVectorComponent<MaxDepthFeature>(kvp.Key, kvp.Value));
     }
 
     /// <summary>

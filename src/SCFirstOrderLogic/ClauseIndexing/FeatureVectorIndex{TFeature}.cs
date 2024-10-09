@@ -22,121 +22,16 @@ public class FeatureVectorIndex<TFeature>
     private readonly FeatureVectorIndex<TFeature, CNFClause> innerIndex;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class with a new 
-    /// <see cref="FeatureVectorIndexDictionaryNode{TFeature,TValue}"/> root node and no initial content, that
-    /// uses the default comparer of the key element type to determine the ordering of elements in the
-    /// tree.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector)
-    {
-        innerIndex = new(featureVectorSelector);
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class with a new 
-    /// <see cref="FeatureVectorIndexDictionaryNode{TFeature,TValue}"/> root node and no initial content.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the features (i.e. keys)
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
-    /// </param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IComparer<TFeature> featureComparer)
-    {
-        innerIndex = new(featureVectorSelector, featureComparer);
-    }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class with a specified
-    /// root node and no (additional) initial content, that uses the default comparer of the key element
-    /// type to determine the ordering of elements in the tree.
+    /// root node and no (additional) initial content.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the tree.</param>
     public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
+        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IFeatureVectorIndexNode<TFeature, CNFClause> root)
     {
         innerIndex = new(featureVectorSelector, root);
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class with a new 
-    /// <see cref="FeatureVectorIndexDictionaryNode{TFeature,TValue}"/> root node and some initial content, that
-    /// uses the default comparer of the key element type to determine the ordering of elements in the
-    /// tree.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="content">The initial content to be added to the tree.</param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IEnumerable<CNFClause> content)
-    {
-        innerIndex = new(featureVectorSelector, content.Select(t => KeyValuePair.Create(t, t)));
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class with a 
-    /// specified root node and no (additional) initial content.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the features (i.e. keys)
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
-    /// </param>
-    /// <param name="root">The root node of the tree.</param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IComparer<TFeature> featureComparer,
-        IFeatureVectorIndexNode<TFeature, CNFClause> root)
-    {
-        innerIndex = new(featureVectorSelector, featureComparer, root);
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class with a new 
-    /// <see cref="FeatureVectorIndexDictionaryNode{TFeature,TValue}"/> root node and some (additional) initial
-    /// content.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the features (i.e. keys)
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
-    /// </param>
-    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IComparer<TFeature> featureComparer,
-        IEnumerable<CNFClause> content)
-    {
-        innerIndex = new(featureVectorSelector, featureComparer, content.Select(t => KeyValuePair.Create(t, t)));
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class with a 
-    /// specified root node and some (additional) initial content, that uses the default 
-    /// comparer of the key element type to determine the ordering of elements in the tree.
-    /// in the tree.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="root">The root node of the tree.</param>
-    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IFeatureVectorIndexNode<TFeature, CNFClause> root,
-        IEnumerable<CNFClause> content)
-    {
-        innerIndex = new(featureVectorSelector, root, content.Select(t => KeyValuePair.Create(t, t)));
     }
 
     /// <summary>
@@ -144,21 +39,14 @@ public class FeatureVectorIndex<TFeature>
     /// specified root node and some (additional) initial content.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the features (i.e. keys)
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
-    /// </param>
     /// <param name="root">The root node of the tree.</param>
     /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
     public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IComparer<TFeature> featureComparer,
+        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IFeatureVectorIndexNode<TFeature, CNFClause> root,
         IEnumerable<CNFClause> content)
     {
-        innerIndex = new(featureVectorSelector, featureComparer, root, content.Select(t => KeyValuePair.Create(t, t)));
+        innerIndex = new(featureVectorSelector, root, content.Select(t => KeyValuePair.Create(t, t)));
     }
 
     /// <summary>

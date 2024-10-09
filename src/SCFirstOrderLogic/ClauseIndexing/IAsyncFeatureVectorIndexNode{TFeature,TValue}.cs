@@ -13,29 +13,39 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public interface IAsyncFeatureVectorIndexNode<TFeature, TValue>
 {
     /// <summary>
-    /// Get the child nodes of this node, keyed by the vector component represented by the child.
+    /// Gets the comparer that should be used to compare features when adding to or retrieving from this node.
     /// </summary>
-    IAsyncEnumerable<KeyValuePair<KeyValuePair<TFeature, int>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> GetChildren();
+    IComparer<TFeature> FeatureComparer { get; }
+
+    /// <summary>
+    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in ascending feature order.
+    /// </summary>
+    IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> Children { get; }
+
+    /// <summary>
+    /// Gets the key-value pairs attached to this node.
+    /// </summary>
+    IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> KeyValuePairs { get; }
 
     /// <summary>
     /// Attempts to retrieve a child node by the vector component it represents.
     /// </summary>
     /// <param name="vectorComponent">The vector component represented by the child node to retrieve.</param>
     /// <returns>The child node, or <see langword="null"/> if no matching node was found.</returns>
-    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(KeyValuePair<TFeature, int> vectorComponent);
+    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(FeatureVectorComponent<TFeature> vectorComponent);
 
     /// <summary>
     /// Gets or adds a child of this node.
     /// </summary>
     /// <param name="vectorComponent">The vector component represented by the retrieved or added node.</param>
     /// <returns>The retrieved or added node.</returns>
-    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(KeyValuePair<TFeature, int> vectorComponent);
+    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(FeatureVectorComponent<TFeature> vectorComponent);
 
     /// <summary>
     /// Deletes a child of this node.
     /// </summary>
     /// <param name="vectorComponent">The vector component represented by the node to be removed.</param>
-    ValueTask DeleteChildAsync(KeyValuePair<TFeature, int> vectorComponent);
+    ValueTask DeleteChildAsync(FeatureVectorComponent<TFeature> vectorComponent);
 
     /// <summary>
     /// Adds a value to this node, in so doing specifying that this node represents the "last" element of a stored set.
@@ -48,11 +58,6 @@ public interface IAsyncFeatureVectorIndexNode<TFeature, TValue>
     /// Removes the value from this node, in so doing specifying that this node no longer represents the "last" element of a stored set.
     /// </summary>
     ValueTask<bool> RemoveValueAsync(CNFClause clause);
-
-    /// <summary>
-    /// Gets the values attached to this node.
-    /// </summary>
-    IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetKeyValuePairs();
 
     /// <summary>
     /// 

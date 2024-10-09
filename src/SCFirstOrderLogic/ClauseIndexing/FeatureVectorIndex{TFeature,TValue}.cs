@@ -24,124 +24,19 @@ public class FeatureVectorIndex<TFeature, TValue>
 {
     private static readonly IEnumerable<KeyValuePair<CNFClause, TValue>> EmptyElements = Enumerable.Empty<KeyValuePair<CNFClause, TValue>>();
 
-    private readonly Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector;
+    private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector;
     private readonly IFeatureVectorIndexNode<TFeature, TValue> root;
-    private readonly IComparer<TFeature> featureComparer;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature,TValue}"/> class with a new 
-    /// <see cref="FeatureVectorIndexDictionaryNode{TFeature,TValue}"/> root node and no initial content, that
-    /// uses the default comparer of the key element type to determine the ordering of elements in the
-    /// tree.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector)
-        : this(featureVectorSelector, Comparer<TFeature>.Default, new FeatureVectorIndexDictionaryNode<TFeature, TValue>(), EmptyElements)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature,TValue}"/> class with a new 
-    /// <see cref="FeatureVectorIndexDictionaryNode{TFeature,TValue}"/> root node and no initial content.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the features (i.e. keys)
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
-    /// </param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IComparer<TFeature> featureComparer)
-        : this(featureVectorSelector, featureComparer, new FeatureVectorIndexDictionaryNode<TFeature, TValue>(), EmptyElements)
-    {
-    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature,TValue}"/> class with a specified
-    /// root node and no (additional) initial content, that uses the default comparer of the key element
-    /// type to determine the ordering of elements in the tree.
+    /// root node and no (additional) initial content.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the tree.</param>
     public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
+        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IFeatureVectorIndexNode<TFeature, TValue> root)
-        : this(featureVectorSelector, Comparer<TFeature>.Default, root, EmptyElements)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature,TValue}"/> class with a new 
-    /// <see cref="FeatureVectorIndexDictionaryNode{TFeature,TValue}"/> root node and some initial content,
-    /// that uses the default comparer of the key element type to determine the ordering of elements
-    /// in the tree.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="content">The initial content to be added to the tree.</param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IEnumerable<KeyValuePair<CNFClause, TValue>> content)
-        : this(featureVectorSelector, Comparer<TFeature>.Default, new FeatureVectorIndexDictionaryNode<TFeature, TValue>(), content)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature,TValue}"/> class with a 
-    /// specified root node and no (additional) initial content.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the features (i.e. keys)
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
-    /// </param>
-    /// <param name="root">The root node of the tree.</param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IComparer<TFeature> featureComparer,
-        IFeatureVectorIndexNode<TFeature, TValue> root)
-        : this(featureVectorSelector, featureComparer, root, EmptyElements)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature,TValue}"/> class with a new 
-    /// <see cref="FeatureVectorIndexDictionaryNode{TFeature,TValue}"/> root node and some (additional) initial
-    /// content.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the features (i.e. keys)
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
-    /// </param>
-    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IComparer<TFeature> featureComparer,
-        IEnumerable<KeyValuePair<CNFClause, TValue>> content)
-        : this(featureVectorSelector, featureComparer, new FeatureVectorIndexDictionaryNode<TFeature, TValue>(), content)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature,TValue}"/> class with a 
-    /// specified root node and some (additional) initial content, that uses the default comparer
-    /// of the key element type to determine the ordering of elements in the tree.
-    /// </summary>
-    /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="root">The root node of the tree.</param>
-    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
-    public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IFeatureVectorIndexNode<TFeature, TValue> root,
-        IEnumerable<KeyValuePair<CNFClause, TValue>> content)
-        : this(featureVectorSelector, Comparer<TFeature>.Default, root, content)
+        : this(featureVectorSelector, root, EmptyElements)
     {
     }
 
@@ -150,28 +45,19 @@ public class FeatureVectorIndex<TFeature, TValue>
     /// specified root node and some (additional) initial content.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the features (i.e. keys)
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
-    /// </param>
     /// <param name="root">The root node of the tree.</param>
     /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
     public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<KeyValuePair<TFeature, int>>> featureVectorSelector,
-        IComparer<TFeature> featureComparer,
+        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IFeatureVectorIndexNode<TFeature, TValue> root,
         IEnumerable<KeyValuePair<CNFClause, TValue>> content)
     {
         ArgumentNullException.ThrowIfNull(featureVectorSelector);
         ArgumentNullException.ThrowIfNull(root);
-        ArgumentNullException.ThrowIfNull(featureComparer);
         ArgumentNullException.ThrowIfNull(content);
 
         this.featureVectorSelector = featureVectorSelector;
         this.root = root;
-        this.featureComparer = featureComparer;
 
         foreach (var kvp in content)
         {
@@ -221,7 +107,7 @@ public class FeatureVectorIndex<TFeature, TValue>
             {
                 var element = featureVector[vectorComponentIndex];
 
-                if (!node.Children.TryGetValue(element, out var childNode) || !ExpandNode(childNode, vectorComponentIndex + 1))
+                if (!node.TryGetChild(element, out var childNode) || !ExpandNode(childNode, vectorComponentIndex + 1))
                 {
                     return false;
                 }
@@ -253,7 +139,7 @@ public class FeatureVectorIndex<TFeature, TValue>
         var currentNode = root;
         foreach (var vectorComponent in MakeOrderedFeatureVector(key))
         {
-            if (currentNode.Children.TryGetValue(vectorComponent, out var childNode))
+            if (currentNode.TryGetChild(vectorComponent, out var childNode))
             {
                 currentNode = childNode;
             }
@@ -283,17 +169,17 @@ public class FeatureVectorIndex<TFeature, TValue>
         // NB: subsumed clauses will have equal or higher vector elements. So subsuming clauses will have equal or lower vector elements.
         // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what identifiers are possible ahead of time).
         // This makes the logic here a little similar to what you'd find in a set trie when querying for subsets.
-        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int vectorComponentIndex)
+        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
         {
-            if (vectorComponentIndex < featureVector.Count)
+            if (componentIndex < featureVector.Count)
             {
                 // If matching feature with lower value, then recurse
-                // TODO: can be made more efficient once node children are ordered
+                // TODO: can be made more efficient now that node children are ordered (e.g. skipwhile, then takeuntil - or "manual" ienumerator stuff)
                 foreach (var ((childFeature, childMagnitude), childNode) in node.Children)
                 {
-                    if (childFeature.Equals(featureVector[vectorComponentIndex].Key) && childMagnitude <= featureVector[vectorComponentIndex].Value)
+                    if (childFeature.Equals(featureVector[componentIndex].Feature) && childMagnitude <= featureVector[componentIndex].Magnitude)
                     {
-                        foreach (var value in ExpandNode(childNode, vectorComponentIndex + 1))
+                        foreach (var value in ExpandNode(childNode, componentIndex + 1))
                         {
                             yield return value;
                         }
@@ -302,7 +188,7 @@ public class FeatureVectorIndex<TFeature, TValue>
 
                 // Matching feature might not be there at all in stored clauses, which means
                 // it has a value of zero (so can't preclude subsumption) - so also just skip the current key element.
-                foreach (var value in ExpandNode(node, vectorComponentIndex + 1))
+                foreach (var value in ExpandNode(node, componentIndex + 1))
                 {
                     yield return value;
                 }
@@ -342,13 +228,14 @@ public class FeatureVectorIndex<TFeature, TValue>
                 foreach (var ((childFeature, childMagnitude), childNode) in node.Children)
                 {
                     // todo: is this right? or do we need by feature AND magnitude here?
-                    if (vectorComponentIndex == 0 || featureComparer.Compare(childFeature, featureVector[vectorComponentIndex - 1].Key) > 0)
+                    // todo: can be made more efficient now that node children are ordered
+                    if (vectorComponentIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[vectorComponentIndex - 1].Feature) > 0)
                     {
-                        var childComparedToCurrent = featureComparer.Compare(childFeature, featureVector[vectorComponentIndex].Key);
+                        var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, featureVector[vectorComponentIndex].Feature);
 
                         if (childComparedToCurrent <= 0)
                         {
-                            var queryComponentIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[vectorComponentIndex].Value ? 1 : 0;
+                            var queryComponentIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[vectorComponentIndex].Magnitude ? 1 : 0;
 
                             foreach (var value in ExpandNode(childNode, vectorComponentIndex + queryComponentIndexOffset))
                             {
@@ -376,7 +263,7 @@ public class FeatureVectorIndex<TFeature, TValue>
                 yield return value;
             }
 
-            foreach (var childNode in node.Children.Values)
+            foreach (var (_, childNode) in node.Children)
             {
                 foreach (var value in GetAllDescendentValues(childNode))
                 {
@@ -386,8 +273,8 @@ public class FeatureVectorIndex<TFeature, TValue>
         }
     }
 
-    private IList<KeyValuePair<TFeature, int>> MakeOrderedFeatureVector(CNFClause clause)
+    private IList<FeatureVectorComponent<TFeature>> MakeOrderedFeatureVector(CNFClause clause)
     {
-        return featureVectorSelector(clause).OrderBy(kvp => kvp.Key, featureComparer).ToList();
+        return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
     }
 }
