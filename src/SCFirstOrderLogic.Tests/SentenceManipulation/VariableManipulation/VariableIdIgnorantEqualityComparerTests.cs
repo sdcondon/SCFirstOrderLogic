@@ -1,12 +1,10 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.SentenceManipulation.Normalisation;
-using System.Linq;
 using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
-public class VariableUnifyingEqualityComparerTests
+public class VariableIdIgnorantEqualityComparerTests
 {
     public static Test EqualityBehaviour_Positive => TestThat
         .GivenEachOf<EqualityTestCase>(() =>

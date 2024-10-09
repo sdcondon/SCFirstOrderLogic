@@ -13,7 +13,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 /// That is, an equality comparer that considers P(x, y) equal to P(a, b) (but of course distinct from P(x, x)).
 /// </para>
 /// <para>
-/// NB: of course, such comparison is sub-optimal in terms of performance. When an unambiguous ordering of literals
+/// NB: of course, such comparison is a little costly in terms of performance. When an unambiguous ordering of literals
 /// can be established, instead consider prior transformation via <see cref="VariableManipulationExtensions.Ordinalise(Literal)"/>,
 /// followed by equality comparison using plain old <see cref="object.Equals(object?)"/>.
 /// </para>

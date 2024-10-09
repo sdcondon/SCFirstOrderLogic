@@ -9,7 +9,7 @@ namespace SCFirstOrderLogic.SentenceManipulation;
 /// Base class for recursive transformations of <see cref="Sentence"/> instances to other <see cref="Sentence"/> instances.
 /// </para>
 /// <para>
-/// That is, a base class for transformations in which the default implementation for any given non-terminal
+/// That is, a base class for transformations in which the default implementation for any non-terminal
 /// sentence/term element leaves the element type unchanged and transforms the element's children - and does
 /// nothing for terminal elements.
 /// </para>

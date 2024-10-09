@@ -4,10 +4,10 @@ namespace SCFirstOrderLogic.SentenceManipulation;
 
 /// <summary>
 /// <para>
-/// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state.
+/// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state that is passed in by reference.
 /// </para>
 /// <para>
-/// That is, a base class for visitors in which the default implementation for any given non-terminal
+/// That is, a base class for visitors in which the default implementation for any non-terminal
 /// sentence/term element simply visits the element's children - and does nothing for terminal elements.
 /// </para>
 /// </summary>
