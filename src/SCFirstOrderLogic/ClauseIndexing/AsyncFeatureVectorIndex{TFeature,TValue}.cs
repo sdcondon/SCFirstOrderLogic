@@ -168,11 +168,11 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
         return ExpandNode(root, 0);
 
-        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
+        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
         {
-            if (elementIndex < featureVector.Count)
+            if (componentIndex < featureVector.Count)
             {
-                var component = featureVector[elementIndex];
+                var component = featureVector[componentIndex];
 
                 // Recurse for children with matching feature and lower magnitude:
                 var matchingChildNodes = node
@@ -183,15 +183,15 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
                 await foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenAscending)
                 {
-                    await foreach (var value in ExpandNode(childNode, elementIndex + 1))
+                    await foreach (var value in ExpandNode(childNode, componentIndex + 1))
                     {
                         yield return value;
                     }
                 }
 
                 // Matching feature might not be there at all in stored clauses, which means it has an implicit
-                // value of zero, and we thus can't preclude subsumption - so we also just skip the current key element:
-                await foreach (var value in ExpandNode(node, elementIndex + 1))
+                // magnitude of zero, and we thus can't preclude subsumption - so we also just skip the current key element:
+                await foreach (var value in ExpandNode(node, componentIndex + 1))
                 {
                     yield return value;
                 }
@@ -221,24 +221,24 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
         return ExpandNode(root, 0);
 
-        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int elementIndex)
+        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
         {
-            if (elementIndex < featureVector.Count)
+            if (componentIndex < featureVector.Count)
             {
                 await foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
                 {
                     // todo: is this right? or do we need by feature AND magnitude here?
                     // todo-bug: think answer to above is that its wrong - think need to look at greater feature AND same feature with equal or higher mag? add a test!
                     // todo: can be made more efficient now that node children are ordered
-                    if (elementIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[elementIndex - 1].Feature) > 0)
+                    if (componentIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[componentIndex - 1].Feature) > 0)
                     {
-                        var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, featureVector[elementIndex].Feature);
+                        var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, featureVector[componentIndex].Feature);
 
                         if (childComparedToCurrent <= 0)
                         {
-                            var keyElementIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[elementIndex].Magnitude ? 1 : 0;
+                            var keyElementIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[componentIndex].Magnitude ? 1 : 0;
 
-                            await foreach (var value in ExpandNode(childNode, elementIndex + keyElementIndexOffset))
+                            await foreach (var value in ExpandNode(childNode, componentIndex + keyElementIndexOffset))
                             {
                                 yield return value;
                             }
@@ -274,7 +274,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         }
     }
 
-    private IList<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
+    private List<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
     {
         // todo-performance: if we need a list anyway, probably faster to make the list, then sort it in place? test me
         return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();

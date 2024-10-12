@@ -99,13 +99,13 @@ public class FeatureVectorIndex<TFeature, TValue>
 
         return ExpandNode(root, 0);
 
-        bool ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int vectorComponentIndex)
+        bool ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
         {
-            if (vectorComponentIndex < featureVector.Count)
+            if (componentIndex < featureVector.Count)
             {
-                var element = featureVector[vectorComponentIndex];
+                var element = featureVector[componentIndex];
 
-                if (!node.TryGetChild(element, out var childNode) || !ExpandNode(childNode, vectorComponentIndex + 1))
+                if (!node.TryGetChild(element, out var childNode) || !ExpandNode(childNode, componentIndex + 1))
                 {
                     return false;
                 }
@@ -189,7 +189,7 @@ public class FeatureVectorIndex<TFeature, TValue>
                 }
 
                 // Matching feature might not be there at all in stored clauses, which means it has an implicit
-                // value of zero, and we thus can't preclude subsumption - so we also just skip the current key element:
+                // magnitude of zero, and we thus can't preclude subsumption - so we also just skip the current key element:
                 foreach (var value in ExpandNode(node, componentIndex + 1))
                 {
                     yield return value;
@@ -223,9 +223,9 @@ public class FeatureVectorIndex<TFeature, TValue>
         // NB: subsumed clauses will have equal or higher vector elements.
         // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
         // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
-        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int vectorComponentIndex)
+        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
         {
-            if (vectorComponentIndex < featureVector.Count)
+            if (componentIndex < featureVector.Count)
             {
                 foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
                 {
@@ -233,15 +233,15 @@ public class FeatureVectorIndex<TFeature, TValue>
                     // todo-bug: think answer to above is that its wrong - think need to look at greater feature AND same feature with equal or higher mag? add a test!
                     // todo: can be made more efficient now that node children are ordered
 
-                    if (vectorComponentIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[vectorComponentIndex - 1].Feature) > 0)
+                    if (componentIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[componentIndex - 1].Feature) > 0)
                     {
-                        var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, featureVector[vectorComponentIndex].Feature);
+                        var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, featureVector[componentIndex].Feature);
 
                         if (childComparedToCurrent <= 0)
                         {
-                            var queryComponentIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[vectorComponentIndex].Magnitude ? 1 : 0;
+                            var queryComponentIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[componentIndex].Magnitude ? 1 : 0;
 
-                            foreach (var value in ExpandNode(childNode, vectorComponentIndex + queryComponentIndexOffset))
+                            foreach (var value in ExpandNode(childNode, componentIndex + queryComponentIndexOffset))
                             {
                                 yield return value;
                             }
@@ -277,7 +277,7 @@ public class FeatureVectorIndex<TFeature, TValue>
         }
     }
 
-    private IList<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
+    private List<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
     {
         // todo-performance: if we need a list anyway, probably faster to make the list, then sort it in place? test me
         return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
