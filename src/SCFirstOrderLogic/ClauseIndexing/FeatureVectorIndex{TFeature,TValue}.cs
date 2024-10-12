@@ -22,8 +22,6 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public class FeatureVectorIndex<TFeature, TValue>
     where TFeature : notnull
 {
-    private static readonly IEnumerable<KeyValuePair<CNFClause, TValue>> EmptyElements = Enumerable.Empty<KeyValuePair<CNFClause, TValue>>();
-
     private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector;
     private readonly IFeatureVectorIndexNode<TFeature, TValue> root;
 
@@ -36,7 +34,7 @@ public class FeatureVectorIndex<TFeature, TValue>
     public FeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IFeatureVectorIndexNode<TFeature, TValue> root)
-        : this(featureVectorSelector, root, EmptyElements)
+        : this(featureVectorSelector, root, Enumerable.Empty<KeyValuePair<CNFClause, TValue>>())
     {
     }
 
@@ -80,7 +78,7 @@ public class FeatureVectorIndex<TFeature, TValue>
         }
 
         var currentNode = root;
-        foreach (var component in MakeOrderedFeatureVector(key))
+        foreach (var component in MakeAndSortFeatureVector(key))
         {
             currentNode = currentNode.GetOrAddChild(component);
         }
@@ -97,7 +95,7 @@ public class FeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var featureVector = MakeOrderedFeatureVector(key);
+        var featureVector = MakeAndSortFeatureVector(key);
 
         return ExpandNode(root, 0);
 
@@ -137,7 +135,7 @@ public class FeatureVectorIndex<TFeature, TValue>
         ArgumentNullException.ThrowIfNull(key);
 
         var currentNode = root;
-        foreach (var vectorComponent in MakeOrderedFeatureVector(key))
+        foreach (var vectorComponent in MakeAndSortFeatureVector(key))
         {
             if (currentNode.TryGetChild(vectorComponent, out var childNode))
             {
@@ -162,12 +160,12 @@ public class FeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(clause);
 
-        var featureVector = MakeOrderedFeatureVector(clause);
+        var featureVector = MakeAndSortFeatureVector(clause);
 
         return ExpandNode(root, 0);
 
         // NB: subsumed clauses will have equal or higher vector elements. So subsuming clauses will have equal or lower vector elements.
-        // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what identifiers are possible ahead of time).
+        // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
         // This makes the logic here a little similar to what you'd find in a set trie when querying for subsets.
         IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
         {
@@ -196,7 +194,7 @@ public class FeatureVectorIndex<TFeature, TValue>
             else
             {
                 // NB: note that we need to filter the values to those keyed by the clauses that
-                // actually subsume the query clause. The values of the node are the candidate set.
+                // actually subsume the query clause. The values of the node are just the *candidate* set.
                 foreach (var value in node.KeyValuePairs.Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value))
                 {
                     yield return value;
@@ -214,7 +212,7 @@ public class FeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(clause);
 
-        var featureVector = MakeOrderedFeatureVector(clause);
+        var featureVector = MakeAndSortFeatureVector(clause);
 
         return ExpandNode(root, 0);
 
@@ -257,7 +255,7 @@ public class FeatureVectorIndex<TFeature, TValue>
         IEnumerable<TValue> GetAllDescendentValues(IFeatureVectorIndexNode<TFeature, TValue> node)
         {
             // NB: note that we need to filter the values to those keyed by clauses that are
-            // actually subsumed by the query clause. The values of the node are the candidate set.
+            // actually subsumed by the query clause. The values of the node are just the *candidate* set.
             foreach (var value in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)).Select(kvp => kvp.Value))
             {
                 yield return value;
@@ -273,8 +271,9 @@ public class FeatureVectorIndex<TFeature, TValue>
         }
     }
 
-    private IList<FeatureVectorComponent<TFeature>> MakeOrderedFeatureVector(CNFClause clause)
+    private IList<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
     {
+        // todo-performance: if we need a list anyway, probably faster to make the list, then sort it in place? test me
         return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
     }
 }

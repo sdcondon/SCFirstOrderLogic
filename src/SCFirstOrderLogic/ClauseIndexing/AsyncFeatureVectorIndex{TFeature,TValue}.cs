@@ -79,7 +79,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         }
 
         var currentNode = root;
-        foreach (var vectorComponent in MakeOrderedFeatureVector(key))
+        foreach (var vectorComponent in MakeAndSortFeatureVector(key))
         {
             currentNode = await currentNode.GetOrAddChildAsync(vectorComponent);
         }
@@ -96,7 +96,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
-        var featureVector = MakeOrderedFeatureVector(key);
+        var featureVector = MakeAndSortFeatureVector(key);
 
         return await ExpandNodeAsync(root, 0);
 
@@ -136,7 +136,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         ArgumentNullException.ThrowIfNull(key);
 
         var currentNode = root;
-        foreach (var element in MakeOrderedFeatureVector(key))
+        foreach (var element in MakeAndSortFeatureVector(key))
         {
             var childNode = await currentNode.TryGetChildAsync(element);
             if (childNode != null)
@@ -161,7 +161,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(clause);
 
-        var featureVector = MakeOrderedFeatureVector(clause);
+        var featureVector = MakeAndSortFeatureVector(clause);
 
         return ExpandNode(root, 0);
 
@@ -192,7 +192,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
             else
             {
                 // NB: note that we need to filter the values to those keyed by clauses that actually
-                // subsume the query clause. The node values are the candidate set.
+                // subsume the query clause. The node values are just the *candidate* set.
                 await foreach (var value in node.KeyValuePairs.Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value))
                 {
                     yield return value;
@@ -210,7 +210,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     {
         ArgumentNullException.ThrowIfNull(clause);
 
-        var featureVector = MakeOrderedFeatureVector(clause);
+        var featureVector = MakeAndSortFeatureVector(clause);
 
         return ExpandNode(root, 0);
 
@@ -250,7 +250,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         async IAsyncEnumerable<TValue> GetAllDescendentValues(IAsyncFeatureVectorIndexNode<TFeature, TValue> node)
         {
             // NB: note that we need to filter the values to those keyed by clauses that are
-            // actually subsumed by the query clause. The node values are the candidate set.
+            // actually subsumed by the query clause. The node values are just the *candidate* set.
             await foreach (var value in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)).Select(kvp => kvp.Value))
             {
                 yield return value;
@@ -266,8 +266,9 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         }
     }
 
-    private IList<FeatureVectorComponent<TFeature>> MakeOrderedFeatureVector(CNFClause clause)
+    private IList<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
     {
+        // todo-performance: if we need a list anyway, probably faster to make the list, then sort it in place? test me
         return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
     }
 }

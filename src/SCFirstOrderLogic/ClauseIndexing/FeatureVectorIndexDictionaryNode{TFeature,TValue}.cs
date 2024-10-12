@@ -21,7 +21,8 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
 
     /// <summary>
     /// Initialises a new instance of the <see cref="FeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class that
-    /// uses the default comparer of the feature type to determine the ordering of nodes.
+    /// uses the default comparer of the feature type to determine the ordering of nodes. Note that this comparer will
+    /// throw if the runtime type of a feature object does not implement <see cref="IComparable{T}"/>.
     /// </summary>
     public FeatureVectorIndexDictionaryNode()
         : this(Comparer<TFeature>.Default)

@@ -2,9 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -30,7 +28,9 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     private readonly Dictionary<CNFClause, TValue> valuesByKey = new(new VariableIdIgnorantEqualityComparer());
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
+    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class that
+    /// uses the default comparer of the feature type to determine the ordering of nodes. Note that this comparer will
+    /// throw if the runtime type of a feature object does not implement <see cref="IComparable{T}"/>.
     /// </summary>
     public AsyncFeatureVectorIndexDictionaryNode()
         : this(Comparer<TFeature>.Default)
@@ -41,10 +41,9 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
     /// </summary>
     /// <param name="featureComparer">
-    /// The comparer to use to determine the ordering of features when adding to the index and performing
-    /// queries. NB: For correct behaviour, the index must be able to unambiguously order the components
-    /// of a feature vector. As such, this comparer must only return zero for equal features (and of course 
-    /// duplicates shouldn't occur in any given vector).
+    /// The comparer to use to determine the ordering of nodes. NB: For correct behaviour, the index must be able to
+    /// unambiguously order the components of a feature vector. As such, this comparer must only return zero for equal 
+    /// features (and of course duplicates shouldn't occur in any given vector).
     /// </param>
     public AsyncFeatureVectorIndexDictionaryNode(IComparer<TFeature> featureComparer)
     {
