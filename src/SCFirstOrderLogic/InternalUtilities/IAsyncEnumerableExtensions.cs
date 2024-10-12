@@ -109,4 +109,45 @@ internal static class IAsyncEnumerableExtensions
             yield return map(enumerator.Current);
         }
     }
+
+    public static async IAsyncEnumerable<T> SkipWhile<T>(
+        this IAsyncEnumerable<T> asyncEnumerable,
+        Func<T, bool> predicate,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await using var enumerator = asyncEnumerable.GetAsyncEnumerator(cancellationToken);
+
+        while (await enumerator.MoveNextAsync())
+        {
+            var current = enumerator.Current;
+
+            if (!predicate(current))
+            {
+                yield return current;
+
+                while (await enumerator.MoveNextAsync())
+                {
+                    yield return enumerator.Current;
+                }
+
+                yield break;
+            }
+        }
+    }
+
+    public static async IAsyncEnumerable<T> TakeWhile<T>(
+        this IAsyncEnumerable<T> asyncEnumerable,
+        Func<T, bool> predicate,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await foreach (var element in asyncEnumerable.WithCancellation(cancellationToken))
+        {
+            if (!predicate(element))
+            {
+                yield break;
+            }
+
+            yield return element;
+        }
+    }
 }

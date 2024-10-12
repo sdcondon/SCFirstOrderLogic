@@ -173,7 +173,7 @@ public class FeatureVectorIndex<TFeature, TValue>
             {
                 var component = featureVector[componentIndex];
 
-                // Recurse for children with matching feature and lower value:
+                // Recurse for children with matching feature and lower magnitude:
                 var matchingChildNodes = node
                     .ChildrenAscending
                     .SkipWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) < 0)

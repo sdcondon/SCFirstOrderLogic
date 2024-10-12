@@ -172,16 +172,20 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         {
             if (elementIndex < featureVector.Count)
             {
-                // If matching feature with lower value, then recurse
-                // todo: can be made more efficient now that node children are ordered
+                var component = featureVector[elementIndex];
+
+                // Recurse for children with matching feature and lower magnitude:
+                var matchingChildNodes = node
+                    .ChildrenAscending
+                    .SkipWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) < 0)
+                    .TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) == 0 && kvp.Key.Magnitude <= component.Magnitude)
+                    .Select(kvp => kvp.Value);
+
                 await foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenAscending)
                 {
-                    if (childFeature.Equals(featureVector[elementIndex].Feature) && childMagnitude <= featureVector[elementIndex].Magnitude)
+                    await foreach (var value in ExpandNode(childNode, elementIndex + 1))
                     {
-                        await foreach (var value in ExpandNode(childNode, elementIndex + 1))
-                        {
-                            yield return value;
-                        }
+                        yield return value;
                     }
                 }
 
