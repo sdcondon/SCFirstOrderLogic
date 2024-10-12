@@ -21,37 +21,37 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// </summary>
 /// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
-public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFeatureVectorIndexNode<TFeature, TValue>
+public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVectorIndexNode<TFeature, TValue>
     where TFeature : notnull
 {
     private readonly SortedList<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>> childrenByVectorComponent;
     private readonly Dictionary<CNFClause, TValue> valuesByKey = new(new VariableIdIgnorantEqualityComparer());
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class that
+    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexListNode{TFeature, TValue}"/> class that
     /// uses the default comparer of the feature type to determine the ordering of nodes. Note that this comparer will
     /// throw if the runtime type of a feature object does not implement <see cref="IComparable{T}"/>.
     /// </summary>
-    public AsyncFeatureVectorIndexDictionaryNode()
+    public AsyncFeatureVectorIndexListNode()
         : this(Comparer<TFeature>.Default)
     {
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexDictionaryNode{TFeature, TValue}"/> class.
+    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexListNode{TFeature, TValue}"/> class.
     /// </summary>
     /// <param name="featureComparer">
     /// The comparer to use to determine the ordering of nodes. NB: For correct behaviour, the index must be able to
     /// unambiguously order the components of a feature vector. As such, this comparer must only return zero for equal 
     /// features (and of course duplicates shouldn't occur in any given vector).
     /// </param>
-    public AsyncFeatureVectorIndexDictionaryNode(IComparer<TFeature> featureComparer)
+    public AsyncFeatureVectorIndexListNode(IComparer<TFeature> featureComparer)
     {
         FeatureComparer = featureComparer;
         childrenByVectorComponent = new(new FeatureVectorComponentComparer<TFeature>(featureComparer));
     }
 
-    private AsyncFeatureVectorIndexDictionaryNode(IComparer<TFeature> featureComparer, IComparer<FeatureVectorComponent<TFeature>> vectorComponentComparer)
+    private AsyncFeatureVectorIndexListNode(IComparer<TFeature> featureComparer, IComparer<FeatureVectorComponent<TFeature>> vectorComponentComparer)
     {
         FeatureComparer = featureComparer;
         childrenByVectorComponent = new(vectorComponentComparer);
@@ -121,7 +121,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     /// <inheritdoc/>
     public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(FeatureVectorComponent<TFeature> vectorComponent)
     {
-        IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue>(FeatureComparer, childrenByVectorComponent.Comparer);
+        IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexListNode<TFeature, TValue>(FeatureComparer, childrenByVectorComponent.Comparer);
         if (!childrenByVectorComponent.TryAdd(vectorComponent, node))
         {
             node = childrenByVectorComponent[vectorComponent];

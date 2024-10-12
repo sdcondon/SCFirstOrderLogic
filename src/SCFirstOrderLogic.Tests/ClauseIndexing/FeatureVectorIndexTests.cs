@@ -22,7 +22,7 @@ public static class FeatureVectorIndexTests
         {
             var index = new FeatureVectorIndex<OccurenceCountFeature>(
                 OccurenceCountFeature.MakeFeatureVector,
-                new FeatureVectorIndexDictionaryNode<OccurenceCountFeature, CNFClause>(OccurenceCountFeature.MakeFeatureComparer(Comparer<object>.Default)),
+                new FeatureVectorIndexListNode<OccurenceCountFeature, CNFClause>(OccurenceCountFeature.MakeFeatureComparer(Comparer<object>.Default)),
                 tc.PriorContent);
             index.Add(tc.Add);
         })
@@ -38,7 +38,7 @@ public static class FeatureVectorIndexTests
         {
             var index = new FeatureVectorIndex<OccurenceCountFeature>(
                 OccurenceCountFeature.MakeFeatureVector,
-                new FeatureVectorIndexDictionaryNode<OccurenceCountFeature, CNFClause>(OccurenceCountFeature.MakeFeatureComparer(Comparer<object>.Default)),
+                new FeatureVectorIndexListNode<OccurenceCountFeature, CNFClause>(OccurenceCountFeature.MakeFeatureComparer(Comparer<object>.Default)),
                 AllNonEmptyClausesFromSubsumptionFacts);
             return index.GetSubsumed(tc.Query);
         })
@@ -56,7 +56,7 @@ public static class FeatureVectorIndexTests
         {
             var index = new FeatureVectorIndex<OccurenceCountFeature>(
                 OccurenceCountFeature.MakeFeatureVector,
-                new FeatureVectorIndexDictionaryNode<OccurenceCountFeature, CNFClause>(OccurenceCountFeature.MakeFeatureComparer(Comparer<object>.Default)),
+                new FeatureVectorIndexListNode<OccurenceCountFeature, CNFClause>(OccurenceCountFeature.MakeFeatureComparer(Comparer<object>.Default)),
                 AllNonEmptyClausesFromSubsumptionFacts);
             return index.GetSubsuming(tc.Query);
         })
