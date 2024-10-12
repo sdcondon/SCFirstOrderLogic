@@ -20,7 +20,12 @@ public interface IAsyncFeatureVectorIndexNode<TFeature, TValue>
     /// <summary>
     /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in ascending feature order.
     /// </summary>
-    IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> Children { get; }
+    IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> ChildrenAscending { get; }
+
+    /// <summary>
+    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in descending feature order.
+    /// </summary>
+    IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> ChildrenDescending { get; }
 
     /// <summary>
     /// Gets the key-value pairs attached to this node.
@@ -48,14 +53,14 @@ public interface IAsyncFeatureVectorIndexNode<TFeature, TValue>
     ValueTask DeleteChildAsync(FeatureVectorComponent<TFeature> vectorComponent);
 
     /// <summary>
-    /// Adds a value to this node, in so doing specifying that this node represents the "last" element of a stored set.
+    /// Adds a value to this node.
     /// </summary>
     /// <param name="clause"></param>
     /// <param name="value">The value to store.</param>
     ValueTask AddValueAsync(CNFClause clause, TValue value);
 
     /// <summary>
-    /// Removes the value from this node, in so doing specifying that this node no longer represents the "last" element of a stored set.
+    /// Removes the value from this node.
     /// </summary>
     ValueTask<bool> RemoveValueAsync(CNFClause clause);
 

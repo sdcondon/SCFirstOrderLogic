@@ -61,7 +61,7 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
     public IComparer<TFeature> FeatureComparer { get; }
 
     /// <inheritdoc/>
-    public IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> Children
+    public IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> ChildrenAscending
     {
         get
         {
@@ -70,6 +70,23 @@ public class AsyncFeatureVectorIndexDictionaryNode<TFeature, TValue> : IAsyncFea
                 foreach (var kvp in childrenByVectorComponent)
                 {
                     yield return kvp;
+                }
+            }
+
+            return GetReturnValue();
+        }
+    }
+
+    /// <inheritdoc/>
+    public IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> ChildrenDescending
+    {
+        get
+        {
+            async IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> GetReturnValue()
+            {
+                for (int i = childrenByVectorComponent.Count - 1; i >= 0; i--)
+                {
+                    yield return new KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>(childrenByVectorComponent.Keys[i], childrenByVectorComponent.Values[i]);
                 }
             }
 

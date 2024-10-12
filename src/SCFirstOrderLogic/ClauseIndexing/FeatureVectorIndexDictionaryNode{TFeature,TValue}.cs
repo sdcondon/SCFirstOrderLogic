@@ -55,7 +55,19 @@ public class FeatureVectorIndexDictionaryNode<TFeature, TValue> : IFeatureVector
     /// <inheritdoc/>
     // NB: we don't bother wrapping children in a ReadOnlyDict to stop unscrupulous
     // users from casting. Would be more memory for a real edge case.
-    public IReadOnlyCollection<KeyValuePair<FeatureVectorComponent<TFeature>, IFeatureVectorIndexNode<TFeature, TValue>>> Children => childrenByVectorComponent;
+    public IEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IFeatureVectorIndexNode<TFeature, TValue>>> ChildrenAscending => childrenByVectorComponent;
+
+    /// <inheritdoc/>
+    public IEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IFeatureVectorIndexNode<TFeature, TValue>>> ChildrenDescending
+    {
+        get
+        {
+            for (int i = childrenByVectorComponent.Count - 1; i >= 0; i--)
+            {
+                yield return new KeyValuePair<FeatureVectorComponent<TFeature>, IFeatureVectorIndexNode<TFeature, TValue>>(childrenByVectorComponent.Keys[i], childrenByVectorComponent.Values[i]);
+            }
+        }
+    }
 
     /// <inheritdoc/>
     public IEnumerable<KeyValuePair<CNFClause, TValue>> KeyValuePairs => valuesByKey;

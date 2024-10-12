@@ -20,7 +20,12 @@ public interface IFeatureVectorIndexNode<TFeature, TValue>
     /// <summary>
     /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in ascending feature order.
     /// </summary>
-    IReadOnlyCollection<KeyValuePair<FeatureVectorComponent<TFeature>, IFeatureVectorIndexNode<TFeature, TValue>>> Children { get; }
+    IEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IFeatureVectorIndexNode<TFeature, TValue>>> ChildrenAscending { get; }
+
+    /// <summary>
+    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in descending feature order.
+    /// </summary>
+    IEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IFeatureVectorIndexNode<TFeature, TValue>>> ChildrenDescending { get; }
 
     /// <summary>
     /// Gets the key-value pairs attached to this node.

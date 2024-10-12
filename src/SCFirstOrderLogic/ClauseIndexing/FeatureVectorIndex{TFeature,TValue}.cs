@@ -110,7 +110,7 @@ public class FeatureVectorIndex<TFeature, TValue>
                     return false;
                 }
 
-                if (childNode.Children.Count == 0 && !childNode.KeyValuePairs.Any())
+                if (!childNode.ChildrenAscending.Any() && !childNode.KeyValuePairs.Any())
                 {
                     node.DeleteChild(element);
                 }
@@ -173,7 +173,7 @@ public class FeatureVectorIndex<TFeature, TValue>
             {
                 // If matching feature with lower value, then recurse
                 // TODO: can be made more efficient now that node children are ordered (e.g. skipwhile, then takeuntil - or "manual" ienumerator stuff)
-                foreach (var ((childFeature, childMagnitude), childNode) in node.Children)
+                foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenAscending)
                 {
                     if (childFeature.Equals(featureVector[componentIndex].Feature) && childMagnitude <= featureVector[componentIndex].Magnitude)
                     {
@@ -223,7 +223,7 @@ public class FeatureVectorIndex<TFeature, TValue>
         {
             if (vectorComponentIndex < featureVector.Count)
             {
-                foreach (var ((childFeature, childMagnitude), childNode) in node.Children)
+                foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
                 {
                     // todo: is this right? or do we need by feature AND magnitude here?
                     // todo: can be made more efficient now that node children are ordered
@@ -261,7 +261,7 @@ public class FeatureVectorIndex<TFeature, TValue>
                 yield return value;
             }
 
-            foreach (var (_, childNode) in node.Children)
+            foreach (var (_, childNode) in node.ChildrenAscending)
             {
                 foreach (var value in GetAllDescendentValues(childNode))
                 {
