@@ -20,6 +20,9 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// </summary>
 /// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
+// todo-breaking-performance: at least on the read side, consider processing nodes in parallel.
+// what are some best practices here (esp re consumers/node implementers being able to control DoP)?
+// e.g allow consumers to pass a scheduler? allow nodes to specify a scheduler?
 public class AsyncFeatureVectorIndex<TFeature, TValue>
     where TFeature : notnull
 {
@@ -182,8 +185,8 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
                     }
                 }
 
-                // NB: Matching feature might not be there at all in stored clause (which we interpret
-                // as it having value zero) so also just skip the current key element.
+                // Matching feature might not be there at all in stored clauses, which means it has an implicit
+                // value of zero, and we thus can't preclude subsumption - so we also just skip the current key element:
                 await foreach (var value in ExpandNode(node, elementIndex + 1))
                 {
                     yield return value;
@@ -221,6 +224,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
                 await foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
                 {
                     // todo: is this right? or do we need by feature AND magnitude here?
+                    // todo-bug: think answer to above is that its wrong - think need to look at greater feature AND same feature with equal or higher mag? add a test!
                     // todo: can be made more efficient now that node children are ordered
                     if (elementIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[elementIndex - 1].Feature) > 0)
                     {

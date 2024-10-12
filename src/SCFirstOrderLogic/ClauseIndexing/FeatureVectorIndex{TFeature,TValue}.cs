@@ -164,28 +164,32 @@ public class FeatureVectorIndex<TFeature, TValue>
 
         return ExpandNode(root, 0);
 
-        // NB: subsumed clauses will have equal or higher vector elements. So subsuming clauses will have equal or lower vector elements.
+        // NB: Subsuming clauses will have equal or lower vector elements.
         // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
         // This makes the logic here a little similar to what you'd find in a set trie when querying for subsets.
         IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
         {
             if (componentIndex < featureVector.Count)
             {
-                // If matching feature with lower value, then recurse
-                // TODO: can be made more efficient now that node children are ordered (e.g. skipwhile, then takeuntil - or "manual" ienumerator stuff)
-                foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenAscending)
+                var component = featureVector[componentIndex];
+
+                // Recurse for children with matching feature and lower value:
+                var matchingChildNodes = node
+                    .ChildrenAscending
+                    .SkipWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) < 0)
+                    .TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) == 0 && kvp.Key.Magnitude <= component.Magnitude)
+                    .Select(kvp => kvp.Value);
+
+                foreach (var childNode in matchingChildNodes)
                 {
-                    if (childFeature.Equals(featureVector[componentIndex].Feature) && childMagnitude <= featureVector[componentIndex].Magnitude)
+                    foreach (var value in ExpandNode(childNode, componentIndex + 1))
                     {
-                        foreach (var value in ExpandNode(childNode, componentIndex + 1))
-                        {
-                            yield return value;
-                        }
+                        yield return value;
                     }
                 }
 
-                // Matching feature might not be there at all in stored clauses, which means
-                // it has a value of zero (so can't preclude subsumption) - so also just skip the current key element.
+                // Matching feature might not be there at all in stored clauses, which means it has an implicit
+                // value of zero, and we thus can't preclude subsumption - so we also just skip the current key element:
                 foreach (var value in ExpandNode(node, componentIndex + 1))
                 {
                     yield return value;
@@ -226,7 +230,9 @@ public class FeatureVectorIndex<TFeature, TValue>
                 foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
                 {
                     // todo: is this right? or do we need by feature AND magnitude here?
+                    // todo-bug: think answer to above is that its wrong - think need to look at greater feature AND same feature with equal or higher mag? add a test!
                     // todo: can be made more efficient now that node children are ordered
+
                     if (vectorComponentIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[vectorComponentIndex - 1].Feature) > 0)
                     {
                         var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, featureVector[vectorComponentIndex].Feature);
