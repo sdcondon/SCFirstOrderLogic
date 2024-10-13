@@ -231,10 +231,11 @@ public class FeatureVectorIndex<TFeature, TValue>
 
                 foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
                 {
-                    // todo: is this right? or do we need by feature AND magnitude here?
-                    // todo-bug: think answer to above is that its wrong - think need to look at greater feature AND same feature with equal or higher mag? add a test! 
                     // todo: can be made more efficient now that node children are ordered
 
+                    // NB: only need to compare feature here because the only way that component index could be greater than 0 is if
+                    // all earlier nodes matched to an ancestor node by feature (and had an equal or higher magnitude). And there
+                    // shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
                     if (componentIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[componentIndex - 1].Feature) > 0)
                     {
                         var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, component.Feature);
