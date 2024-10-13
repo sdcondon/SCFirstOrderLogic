@@ -229,25 +229,24 @@ public class FeatureVectorIndex<TFeature, TValue>
             {
                 var component = featureVector[componentIndex];
 
+                // NB: only need to compare feature (not magnitude) here because the only way that component index could be greater
+                // than 0 is if all earlier nodes matched to an ancestor node by feature (and had an equal or higher magnitude).
+                // And there shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
+                var matchingChildNodes = componentIndex == 0
+                    ? node.ChildrenDescending
+                    : node.ChildrenDescending.TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0);
+
                 foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
                 {
-                    // todo: can be made more efficient now that node children are ordered
+                    var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, component.Feature);
 
-                    // NB: only need to compare feature here because the only way that component index could be greater than 0 is if
-                    // all earlier nodes matched to an ancestor node by feature (and had an equal or higher magnitude). And there
-                    // shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
-                    if (componentIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[componentIndex - 1].Feature) > 0)
+                    if (childComparedToCurrent <= 0)
                     {
-                        var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, component.Feature);
+                        var queryComponentIndexOffset = childComparedToCurrent == 0 && childMagnitude >= component.Magnitude ? 1 : 0;
 
-                        if (childComparedToCurrent <= 0)
+                        foreach (var value in ExpandNode(childNode, componentIndex + queryComponentIndexOffset))
                         {
-                            var queryComponentIndexOffset = childComparedToCurrent == 0 && childMagnitude >= component.Magnitude ? 1 : 0;
-
-                            foreach (var value in ExpandNode(childNode, componentIndex + queryComponentIndexOffset))
-                            {
-                                yield return value;
-                            }
+                            yield return value;
                         }
                     }
                 }

@@ -227,25 +227,24 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
             {
                 var component = featureVector[componentIndex];
 
-                await foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
+                // NB: only need to compare feature (not magnitude) here because the only way that component index could be greater
+                // than 0 is if all earlier nodes matched to an ancestor node by feature (and had an equal or higher magnitude).
+                // And there shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
+                var matchingChildNodes = componentIndex == 0
+                    ? node.ChildrenDescending
+                    : node.ChildrenDescending.TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0);
+
+                await foreach (var ((childFeature, childMagnitude), childNode) in matchingChildNodes)
                 {
-                    // todo: can be made more efficient now that node children are ordered
+                    var childFeatureVsCurrent = root.FeatureComparer.Compare(childFeature, component.Feature);
 
-                    // NB: only need to compare feature here because the only way that component index could be greater than 0 is if
-                    // all earlier nodes matched to an ancestor node by feature (and had an equal or higher magnitude). And there
-                    // shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
-                    if (componentIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[componentIndex - 1].Feature) > 0)
+                    if (childFeatureVsCurrent <= 0)
                     {
-                        var childFeatureVsCurrent = root.FeatureComparer.Compare(childFeature, component.Feature);
+                        var keyElementIndexOffset = childFeatureVsCurrent == 0 && childMagnitude >= component.Magnitude ? 1 : 0;
 
-                        if (childFeatureVsCurrent <= 0)
+                        await foreach (var value in ExpandNode(childNode, componentIndex + keyElementIndexOffset))
                         {
-                            var keyElementIndexOffset = childFeatureVsCurrent == 0 && childMagnitude >= component.Magnitude ? 1 : 0;
-
-                            await foreach (var value in ExpandNode(childNode, componentIndex + keyElementIndexOffset))
-                            {
-                                yield return value;
-                            }
+                            yield return value;
                         }
                     }
                 }
