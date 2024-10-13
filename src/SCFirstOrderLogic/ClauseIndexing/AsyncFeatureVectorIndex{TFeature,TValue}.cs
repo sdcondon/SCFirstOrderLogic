@@ -228,7 +228,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
                 var component = featureVector[componentIndex];
 
                 // NB: only need to compare feature (not magnitude) here because the only way that component index could be greater
-                // than 0 is if all earlier nodes matched to an ancestor node by feature (and had an equal or higher magnitude).
+                // than 0 is if all earlier components matched to an ancestor node by feature (which had an equal or higher magnitude).
                 // And there shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
                 var matchingChildNodes = componentIndex == 0
                     ? node.ChildrenDescending
@@ -240,9 +240,9 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
 
                     if (childFeatureVsCurrent <= 0)
                     {
-                        var keyElementIndexOffset = childFeatureVsCurrent == 0 && childMagnitude >= component.Magnitude ? 1 : 0;
+                        var componentIndexOffset = childFeatureVsCurrent == 0 && childMagnitude >= component.Magnitude ? 1 : 0;
 
-                        await foreach (var value in ExpandNode(childNode, componentIndex + keyElementIndexOffset))
+                        await foreach (var value in ExpandNode(childNode, componentIndex + componentIndexOffset))
                         {
                             yield return value;
                         }
@@ -280,6 +280,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     private List<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
     {
         // todo-performance: if we need a list anyway, probably faster to make the list, then sort it in place? test me
+        // todo-robustness: should probably throw if any distinct pairs have a comparison of zero. could happen efficiently as part of the sort
         return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
     }
 }

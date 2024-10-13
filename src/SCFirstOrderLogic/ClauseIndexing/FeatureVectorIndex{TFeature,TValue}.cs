@@ -230,7 +230,7 @@ public class FeatureVectorIndex<TFeature, TValue>
                 var component = featureVector[componentIndex];
 
                 // NB: only need to compare feature (not magnitude) here because the only way that component index could be greater
-                // than 0 is if all earlier nodes matched to an ancestor node by feature (and had an equal or higher magnitude).
+                // than 0 is if all earlier components matched to an ancestor node by feature (which had an equal or higher magnitude).
                 // And there shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
                 var matchingChildNodes = componentIndex == 0
                     ? node.ChildrenDescending
@@ -238,13 +238,13 @@ public class FeatureVectorIndex<TFeature, TValue>
 
                 foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
                 {
-                    var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, component.Feature);
+                    var childFeatureVsCurrent = root.FeatureComparer.Compare(childFeature, component.Feature);
 
-                    if (childComparedToCurrent <= 0)
+                    if (childFeatureVsCurrent <= 0)
                     {
-                        var queryComponentIndexOffset = childComparedToCurrent == 0 && childMagnitude >= component.Magnitude ? 1 : 0;
+                        var componentIndexOffset = childFeatureVsCurrent == 0 && childMagnitude >= component.Magnitude ? 1 : 0;
 
-                        foreach (var value in ExpandNode(childNode, componentIndex + queryComponentIndexOffset))
+                        foreach (var value in ExpandNode(childNode, componentIndex + componentIndexOffset))
                         {
                             yield return value;
                         }
@@ -282,6 +282,7 @@ public class FeatureVectorIndex<TFeature, TValue>
     private List<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
     {
         // todo-performance: if we need a list anyway, probably faster to make the list, then sort it in place? test me
+        // todo-robustness: should probably throw if any distinct pairs have a comparison of zero. could happen efficiently as part of the sort
         return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
     }
 }
