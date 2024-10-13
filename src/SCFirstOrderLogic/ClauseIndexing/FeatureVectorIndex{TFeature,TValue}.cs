@@ -103,16 +103,16 @@ public class FeatureVectorIndex<TFeature, TValue>
         {
             if (componentIndex < featureVector.Count)
             {
-                var element = featureVector[componentIndex];
+                var component = featureVector[componentIndex];
 
-                if (!node.TryGetChild(element, out var childNode) || !ExpandNode(childNode, componentIndex + 1))
+                if (!node.TryGetChild(component, out var childNode) || !ExpandNode(childNode, componentIndex + 1))
                 {
                     return false;
                 }
 
                 if (!childNode.ChildrenAscending.Any() && !childNode.KeyValuePairs.Any())
                 {
-                    node.DeleteChild(element);
+                    node.DeleteChild(component);
                 }
 
                 return true;
@@ -176,8 +176,8 @@ public class FeatureVectorIndex<TFeature, TValue>
                 // Recurse for children with matching feature and lower magnitude:
                 var matchingChildNodes = node
                     .ChildrenAscending
-                    .SkipWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) < 0)
-                    .TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) == 0 && kvp.Key.Magnitude <= component.Magnitude)
+                    .SkipWhile(kvp => node.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) < 0)
+                    .TakeWhile(kvp => node.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) == 0 && kvp.Key.Magnitude <= component.Magnitude)
                     .Select(kvp => kvp.Value);
 
                 foreach (var childNode in matchingChildNodes)
@@ -227,19 +227,21 @@ public class FeatureVectorIndex<TFeature, TValue>
         {
             if (componentIndex < featureVector.Count)
             {
+                var component = featureVector[componentIndex];
+
                 foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
                 {
                     // todo: is this right? or do we need by feature AND magnitude here?
-                    // todo-bug: think answer to above is that its wrong - think need to look at greater feature AND same feature with equal or higher mag? add a test!
+                    // todo-bug: think answer to above is that its wrong - think need to look at greater feature AND same feature with equal or higher mag? add a test! 
                     // todo: can be made more efficient now that node children are ordered
 
                     if (componentIndex == 0 || root.FeatureComparer.Compare(childFeature, featureVector[componentIndex - 1].Feature) > 0)
                     {
-                        var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, featureVector[componentIndex].Feature);
+                        var childComparedToCurrent = root.FeatureComparer.Compare(childFeature, component.Feature);
 
                         if (childComparedToCurrent <= 0)
                         {
-                            var queryComponentIndexOffset = childComparedToCurrent == 0 && childMagnitude >= featureVector[componentIndex].Magnitude ? 1 : 0;
+                            var queryComponentIndexOffset = childComparedToCurrent == 0 && childMagnitude >= component.Magnitude ? 1 : 0;
 
                             foreach (var value in ExpandNode(childNode, componentIndex + queryComponentIndexOffset))
                             {

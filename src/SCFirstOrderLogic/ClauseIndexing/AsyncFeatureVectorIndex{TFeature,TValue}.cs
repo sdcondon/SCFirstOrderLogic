@@ -177,11 +177,11 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
                 // Recurse for children with matching feature and lower magnitude:
                 var matchingChildNodes = node
                     .ChildrenAscending
-                    .SkipWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) < 0)
-                    .TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) == 0 && kvp.Key.Magnitude <= component.Magnitude)
+                    .SkipWhile(kvp => node.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) < 0)
+                    .TakeWhile(kvp => node.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) == 0 && kvp.Key.Magnitude <= component.Magnitude)
                     .Select(kvp => kvp.Value);
 
-                await foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenAscending)
+                await foreach (var childNode in matchingChildNodes)
                 {
                     await foreach (var value in ExpandNode(childNode, componentIndex + 1))
                     {
