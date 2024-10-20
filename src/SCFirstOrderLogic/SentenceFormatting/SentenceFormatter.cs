@@ -14,20 +14,37 @@ namespace SCFirstOrderLogic.SentenceFormatting;
 // TODO-FEATURE: Will ultimately want something that is more intelligent with brackets (i.e. drops them where not needed).
 // Will need precedence list in here - then presumably not too tough to include brackets or not based on the relative priority
 // of current op and child.
-// TODO-BREAKING-FEATURE: Allow for configuration of whether zero-arity functions (and predicates?) should have brackets or not.
-// Or roll into labeller (perhaps renamed - or separate interface - some broader refactoring to do here, anyway) so can be by identifier? 
 public class SentenceFormatter
 {
     private const char PrecedenceBracketL = '[';
     private const char PrecedenceBracketR = ']';
 
     private readonly ILabellingScope labellingScope;
+    private readonly Func<object, bool> includeBracketsForConstant;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SentenceFormatter"/> class that uses the <see cref="DefaultLabeller"/> and includes postfix brackets for all zero-arity functions.
+    /// </summary>
+    public SentenceFormatter()
+        : this(DefaultLabeller, c => true)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SentenceFormatter"/> class that includes postfix brackets for all zero-arity functions.
+    /// </summary>
+    /// <param name="labeller">The labeller to use for identifiers.</param>
+    public SentenceFormatter(ILabeller labeller)
+        : this(labeller, c => true)
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SentenceFormatter"/> class that uses the <see cref="DefaultLabeller"/>.
     /// </summary>
-    public SentenceFormatter()
-        : this(DefaultLabeller)
+    /// <param name="includeBracketsForConstant">A delegate to determine whether postfix brackets should be included for zero-arity functions with a given identifier.</param>
+    public SentenceFormatter(Func<object, bool> includeBracketsForConstant)
+        : this(DefaultLabeller, includeBracketsForConstant)
     {
     }
 
@@ -35,9 +52,11 @@ public class SentenceFormatter
     /// Initializes a new instance of the <see cref="SentenceFormatter"/> class.
     /// </summary>
     /// <param name="labeller">The labeller to use for identifiers.</param>
-    public SentenceFormatter(ILabeller labeller)
+    /// <param name="includeBracketsForConstant">A delegate to determine whether postfix brackets should be included for zero-arity functions with a given identifier.</param>
+    public SentenceFormatter(ILabeller labeller, Func<object, bool> includeBracketsForConstant)
     {
         this.labellingScope = labeller.MakeLabellingScope();
+        this.includeBracketsForConstant = includeBracketsForConstant;
     }
 
     /// <summary>
@@ -207,8 +226,17 @@ public class SentenceFormatter
     /// </summary>
     /// <param name="function">The function to be formatted.</param>
     /// <returns>A string representation of the given function.</returns>
-    public string Format(Function function) =>
-        $"{Format(function.Identifier)}({string.Join(", ", function.Arguments.Select(a => Format(a)))})";
+    public string Format(Function function)
+    {
+        if (function.Arguments.Count > 0 || includeBracketsForConstant(function.Identifier))
+        {
+            return $"{Format(function.Identifier)}({string.Join(", ", function.Arguments.Select(a => Format(a)))})";
+        }
+        else
+        {
+            return Format(function.Identifier);
+        }
+    }
 
     /// <summary>
     /// Returns a string representation of a given <see cref="VariableDeclaration"/> instance.
