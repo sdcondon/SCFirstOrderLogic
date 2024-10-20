@@ -5,6 +5,9 @@ Here is a quick overview of the namespaces found within the SCFirsrtOrderLogic l
 * **`SCFirstOrderLogic`:** the root namespace contains classes representing individual elements of first order logic sentences (universal and existential quantifications, conjunctions, disjunctions, predicates, functions and so on).
   Instances of these classes are composed into tree structures that represent sentences of first order logic.
   This namespace also contains classes that represent sentences in [conjunctive normal form](https://en.wikipedia.org/wiki/Conjunctive_normal_form), as well as some that represent some well-known kinds of identifier - one for the equality predicate, one for standardised variables and one for Skolem functions.
+* * **`ClauseIndexing`:** clause indexing data structures, for fast lookup of stored clauses that subsume or are subsumed by a query clause.
+    Specifically, there are feature vector index implementations in here.
+    Customisation of the backing store is allowed for via an abstraction for tree nodes, and both synchronous and asynchronous versions exist.
   * **`Inference`:** intended as the top-level namespace for actual inference algorithms. Contains `IKnowledgeBase`, an interface for knowledge bases (stores of knowledge that callers can `Tell` and `Ask` things).
   * **`LanguageIntegration`:** contains classes to create FoL sentences from LINQ expressions (i.e. allowing sentences to be provided as lambda expressions).
   * **`SentenceCreation`:** logic to ease the creation of sentences (which the `LanguageIntegration` classes - see above - serve as an alternative to).
