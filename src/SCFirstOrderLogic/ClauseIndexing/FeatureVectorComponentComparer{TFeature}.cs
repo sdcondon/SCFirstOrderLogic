@@ -22,6 +22,6 @@ internal class FeatureVectorComponentComparer<TFeature> : IComparer<FeatureVecto
             return featureComparison;
         }
 
-        return Comparer<int>.Default.Compare(x.Magnitude, y.Magnitude);
+        return x.Magnitude.CompareTo(y.Magnitude);
     }
 }

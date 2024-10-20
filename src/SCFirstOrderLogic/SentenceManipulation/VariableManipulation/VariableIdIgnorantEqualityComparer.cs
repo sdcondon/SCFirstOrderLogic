@@ -10,10 +10,10 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 /// <summary>
 /// <para>
 /// Equality comparer for CNF clauses for which variable identifiers (though not their distinctness) are deemed irrelevant.
-/// That is, an equality comparer that considers P(x, y) equal to P(a, b) (but of course distinct from P(x, x)).
+/// That is, an equality comparer that considers P(x, y) equal to P(a, b) - but distinct from P(x, x).
 /// </para>
 /// <para>
-/// NB: of course, such comparison is a little costly in terms of performance. When an unambiguous ordering of literals
+/// NB: of course, such comparison is costly in terms of performance. When an unambiguous ordering of literals
 /// can be established, instead consider prior transformation via <see cref="VariableManipulationExtensions.Ordinalise(Literal)"/>,
 /// followed by equality comparison using plain old <see cref="object.Equals(object?)"/>.
 /// </para>
