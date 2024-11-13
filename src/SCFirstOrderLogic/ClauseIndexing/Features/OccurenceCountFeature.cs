@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +17,9 @@ namespace SCFirstOrderLogic.ClauseIndexing.Features;
 public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral)
 {
     /// <summary>
-    /// Feature vector selection logic that returns a feature vector consisting of: 
-    /// positive literal count, negative literal count, occurence count of each occuring
-    /// identifier among positive literals, and occurence count of each occuring identifier
-    /// among negative literals.
+    /// Creates a feature vector consisting of: positive literal count, negative literal count, 
+    /// occurence count of each occuring identifier among positive literals, and occurence count 
+    /// of each occuring identifier among negative literals.
     /// </summary>
     /// <param name="clause">The clause to retrieve a feature vector for.</param>
     /// <returns>A feature vector.</returns>
@@ -40,8 +40,19 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     }
 
     /// <summary>
-    /// Makes a comparer that can be used (to determine the ordering of nodes in the index) with the features included
-    /// in feature vectors created by <see cref="MakeFeatureVector(CNFClause)"/>.
+    /// Makes a comparer of <see cref="OccurenceCountFeature"/>s that can be used to determine the ordering of nodes in a feature vector index.
+    /// This overload creates a comparer that uses <see cref="Comparer.Default"/> to compare identifiers as part of doing its comparison.
+    /// Note that <see cref="Comparer.Default"/> will throw if it encounters any object of a type that does not implement <see cref="IComparable"/>.
+    /// So, this overload should only be used if it can be guaranteed that all identifiers implement <see cref="IComparable"/>.
+    /// </summary>
+    /// <returns>A new <see cref="IComparer{T}"/>.</returns>
+    public static IComparer<OccurenceCountFeature> MakeFeatureComparer()
+    {
+        return MakeFeatureComparer(Comparer.Default);
+    }
+
+    /// <summary>
+    /// Makes a comparer of <see cref="MaxDepthFeature"/>s that can be used to determine the ordering of nodes in a feature vector index.
     /// </summary>
     /// <param name="identifierComparer">The comparer to use to compare identifiers.</param>
     /// <returns>A new <see cref="IComparer{T}"/>.</returns>

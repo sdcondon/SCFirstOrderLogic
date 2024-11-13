@@ -198,7 +198,7 @@ public class FeatureVectorIndex<TFeature, TValue>
             else
             {
                 // NB: note that we need to filter the values to those keyed by the clauses that
-                // actually subsume the query clause. The values of the node are just the *candidate* set.
+                // actually subsume the query clause. The values of the matching nodes are just the *candidate* set.
                 foreach (var value in node.KeyValuePairs.Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value))
                 {
                     yield return value;
@@ -263,7 +263,7 @@ public class FeatureVectorIndex<TFeature, TValue>
         IEnumerable<TValue> GetAllDescendentValues(IFeatureVectorIndexNode<TFeature, TValue> node)
         {
             // NB: note that we need to filter the values to those keyed by clauses that are
-            // actually subsumed by the query clause. The values of the node are just the *candidate* set.
+            // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
             foreach (var value in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)).Select(kvp => kvp.Value))
             {
                 yield return value;
