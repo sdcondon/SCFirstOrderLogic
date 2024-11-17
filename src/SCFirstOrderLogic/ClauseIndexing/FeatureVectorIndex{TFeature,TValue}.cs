@@ -236,7 +236,7 @@ public class FeatureVectorIndex<TFeature, TValue>
                     ? node.ChildrenDescending
                     : node.ChildrenDescending.TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0);
 
-                foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenDescending)
+                foreach (var ((childFeature, childMagnitude), childNode) in matchingChildNodes)
                 {
                     var childFeatureVsCurrent = root.FeatureComparer.Compare(childFeature, component.Feature);
 
