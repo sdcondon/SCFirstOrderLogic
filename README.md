@@ -4,7 +4,7 @@
 
 [![NuGet version (SCFirstOrderLogic)](https://img.shields.io/nuget/v/SCFirstOrderLogic.svg?style=flat-square)](https://www.nuget.org/packages/SCFirstOrderLogic/) 
 [![NuGet downloads (SCFirstOrderLogic)](https://img.shields.io/nuget/dt/SCFirstOrderLogic.svg?style=flat-square)](https://www.nuget.org/packages/SCFirstOrderLogic/) 
-[![Commits since latest release](https://img.shields.io/github/commits-since/sdcondon/SCFirstOrderLogic/latest?style=flat-square)](https://github.com/sdcondon/SCFirstOrderLogic/compare/7.0.0...main)
+[![Commits since latest release](https://img.shields.io/github/commits-since/sdcondon/SCFirstOrderLogic/latest?style=flat-square)](https://github.com/sdcondon/SCFirstOrderLogic/compare/7.0.1...main)
 
 This repository contains the source code for the SCFirstOrderLogic NuGet package - along with its tests, performance benchmarks, and documentation website.
 It also contains some example domains and alternative algorithm implementations, which are used in the tests and performance benchmarks. 
