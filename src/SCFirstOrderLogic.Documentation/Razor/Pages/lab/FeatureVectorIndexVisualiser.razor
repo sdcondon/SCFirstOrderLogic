@@ -68,16 +68,16 @@
         <li>
             @label
             <ul>
-            @if (node.Children.Count > 0)
+            @if (node.ChildrenAscending.Count() > 0)
             {
-                @foreach (var ((childFeature, childMagnitude), childNode) in node.Children)
+                @foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenAscending)
                 {
                     RenderFeatureVectorIndexNode($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode);
                 }
             }
             else
             {
-                foreach (var (_, clause) in node.Values)
+                foreach (var (_, clause) in node.KeyValuePairs)
                 {
                     <li>Value: @clause</li>
                 }
@@ -94,17 +94,14 @@
 </ul>
 
 @code {
-    private FeatureVectorIndexDictionaryNode<MaxDepthFeature, CNFClause> rootNode;
+    private FeatureVectorIndexListNode<MaxDepthFeature, CNFClause> rootNode;
     private FeatureVectorIndex<MaxDepthFeature> index;
     private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
 
     public FeatureVectorIndexVisualiser()
     {
-        rootNode = new FeatureVectorIndexDictionaryNode<MaxDepthFeature, CNFClause>();
-        index = new FeatureVectorIndex<MaxDepthFeature>(
-            MaxDepthFeature.MakeFeatureVector,
-            MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default),
-            rootNode);
+        rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
+        index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
     }
 
     private void Add(EditContext editContext)
@@ -125,11 +122,8 @@
 
     private void RemoveAll(EditContext editContext)
     {
-        rootNode = new FeatureVectorIndexDictionaryNode<MaxDepthFeature, CNFClause>();
-        index = new FeatureVectorIndex<MaxDepthFeature>(
-            MaxDepthFeature.MakeFeatureVector,
-            MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default),
-            rootNode);
+        rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
+        index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
         StateHasChanged();
     }
 
