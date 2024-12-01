@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+using System.Collections.Generic;
+using System.Linq;
 using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.TestData;
 
 public static class SubsumptionFacts
 {
+    /// <summary>
+    /// Gets a set of subsumption facts.
+    /// </summary>
     public static readonly IReadOnlyList<SubsumptionFact> All =
     [
         new (X: P(),             Y: P(),         IsXSubsumedByY: true,  IsYSubsumedByX: true),
@@ -22,4 +27,100 @@ public static class SubsumptionFacts
         new (X: P(U) | Q(V),     Y: P(C),        IsXSubsumedByY: false, IsYSubsumedByX: false),
         new (X: CNFClause.Empty, Y: P(),         IsXSubsumedByY: false, IsYSubsumedByX: false),
     ];
+
+    /// <summary>
+    /// Gets all of the (distinct, accounting for variable renames) non-empty clauses that appear in <see cref="All"/>.
+    /// </summary>
+    public static IEnumerable<CNFClause> AllNonEmptyClauses => All
+        .SelectMany(f => new[] { f.X, f.Y })
+        .Except([CNFClause.Empty])
+        .Distinct(new VariableIdIgnorantEqualityComparer());
+
+    /// <summary>
+    /// Gets all of the (distinct, accounting for variable renames) clauses that appear in <see cref="All"/> that are subsumed by the given clause.
+    /// </summary>
+    /// <param name="subsumingClause">The subsuming clause.</param>
+    /// <returns>All of the clauses that appear in <see cref="All"/> that are subsumed by the given clause.</returns>
+    public static CNFClause[] GetSubsumedClauses(CNFClause subsumingClause)
+    {
+        var xClauses = All
+            .Where(f => f.X.Equals(subsumingClause) && f.IsYSubsumedByX)
+            .Select(f => f.Y);
+
+        var yClauses = All
+            .Where(f => f.Y.Equals(subsumingClause) && f.IsXSubsumedByY)
+            .Select(f => f.X);
+
+        return xClauses
+            .Concat(yClauses)
+            .Except([CNFClause.Empty])
+            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .ToArray();
+    }
+
+    /// <summary>
+    /// Gets all of the (distinct, accounting for variable renames) clauses that appear in <see cref="All"/> that are not subsumed by the given clause.
+    /// </summary>
+    /// <param name="subsumingClause">The non-subsuming clause.</param>
+    /// <returns>All of the clauses that appear in <see cref="All"/> that are not subsumed by the given clause.</returns>
+    public static CNFClause[] GetNonSubsumedClauses(CNFClause subsumingClause)
+    {
+        var xClauses = All
+            .Where(f => f.X.Equals(subsumingClause) && !f.IsYSubsumedByX)
+            .Select(f => f.Y);
+
+        var yClauses = All
+            .Where(f => f.Y.Equals(subsumingClause) && !f.IsXSubsumedByY)
+            .Select(f => f.X);
+
+        return xClauses
+            .Concat(yClauses)
+            .Except([CNFClause.Empty])
+            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .ToArray();
+    }
+
+    /// <summary>
+    /// Gets all of the (distinct, accounting for variable renames) clauses that appear in <see cref="All"/> that subsume the given clause.
+    /// </summary>
+    /// <param name="subsumingClause">The subsumed clause.</param>
+    /// <returns>All of the clauses that appear in <see cref="All"/> that subsume the given clause.</returns>
+    public static CNFClause[] GetSubsumingClauses(CNFClause subsumedClause)
+    {
+        var xClauses = All
+            .Where(f => f.X.Equals(subsumedClause) && f.IsXSubsumedByY)
+            .Select(f => f.Y);
+
+        var yClauses = All
+            .Where(f => f.Y.Equals(subsumedClause) && f.IsYSubsumedByX)
+            .Select(f => f.X);
+
+        return xClauses
+            .Concat(yClauses)
+            .Except([CNFClause.Empty])
+            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .ToArray();
+    }
+
+    /// <summary>
+    /// Gets all of the (distinct, accounting for variable renames) clauses that appear in <see cref="All"/> that do not subsume the given clause.
+    /// </summary>
+    /// <param name="subsumingClause">The non subsumed clause.</param>
+    /// <returns>All of the clauses that appear in <see cref="All"/> that do not subsume the given clause.</returns>
+    public static CNFClause[] GetNonSubsumingClauses(CNFClause subsumedClause)
+    {
+        var xClauses = All
+            .Where(f => f.X.Equals(subsumedClause) && !f.IsXSubsumedByY)
+            .Select(f => f.Y);
+
+        var yClauses = All
+            .Where(f => f.Y.Equals(subsumedClause) && !f.IsYSubsumedByX)
+            .Select(f => f.X);
+
+        return xClauses
+            .Concat(yClauses)
+            .Except([CNFClause.Empty])
+            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .ToArray();
+    }
 }
