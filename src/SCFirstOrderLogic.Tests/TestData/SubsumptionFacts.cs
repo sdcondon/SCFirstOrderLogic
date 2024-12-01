@@ -37,10 +37,11 @@ public static class SubsumptionFacts
         .Distinct(new VariableIdIgnorantEqualityComparer());
 
     /// <summary>
-    /// Gets all of the (distinct, accounting for variable renames) clauses that appear in <see cref="All"/> that are subsumed by the given clause.
+    /// Given a clause that appears in at least one of the facts in <see cref="All"/>, gets the  (distinct, accounting
+    /// for variable renames) clauses that are subsumed by it, according to the facts in <see cref="All"/>.
     /// </summary>
     /// <param name="subsumingClause">The subsuming clause.</param>
-    /// <returns>All of the clauses that appear in <see cref="All"/> that are subsumed by the given clause.</returns>
+    /// <returns>The clauses that are subsumed by the given clause, according to the facts in <see cref="All"/>.</returns>
     public static CNFClause[] GetSubsumedClauses(CNFClause subsumingClause)
     {
         var xClauses = All
@@ -59,10 +60,11 @@ public static class SubsumptionFacts
     }
 
     /// <summary>
-    /// Gets all of the (distinct, accounting for variable renames) clauses that appear in <see cref="All"/> that are not subsumed by the given clause.
+    /// Given a clause that appears in at least one of the facts in <see cref="All"/>, gets the  (distinct, accounting
+    /// for variable renames) clauses that are not subsumed by it, according to the facts in <see cref="All"/>.
     /// </summary>
     /// <param name="subsumingClause">The non-subsuming clause.</param>
-    /// <returns>All of the clauses that appear in <see cref="All"/> that are not subsumed by the given clause.</returns>
+    /// <returns>The clauses that are not subsumed by the given clause, according to the facts in <see cref="All"/>.</returns>
     public static CNFClause[] GetNonSubsumedClauses(CNFClause subsumingClause)
     {
         var xClauses = All
@@ -81,10 +83,11 @@ public static class SubsumptionFacts
     }
 
     /// <summary>
-    /// Gets all of the (distinct, accounting for variable renames) clauses that appear in <see cref="All"/> that subsume the given clause.
+    /// Given a clause that appears in at least one of the facts in <see cref="All"/>, gets the  (distinct, accounting
+    /// for variable renames) clauses that subsume it, according to the facts in <see cref="All"/>.
     /// </summary>
     /// <param name="subsumingClause">The subsumed clause.</param>
-    /// <returns>All of the clauses that appear in <see cref="All"/> that subsume the given clause.</returns>
+    /// <returns>The clauses that subsume the given clause, according to the facts in <see cref="All"/>.</returns>
     public static CNFClause[] GetSubsumingClauses(CNFClause subsumedClause)
     {
         var xClauses = All
@@ -103,10 +106,11 @@ public static class SubsumptionFacts
     }
 
     /// <summary>
-    /// Gets all of the (distinct, accounting for variable renames) clauses that appear in <see cref="All"/> that do not subsume the given clause.
+    /// Given a clause that appears in at least one of the facts in <see cref="All"/>, gets the  (distinct, accounting
+    /// for variable renames) clauses that do not subsume it, according to the facts in <see cref="All"/>.
     /// </summary>
     /// <param name="subsumingClause">The non subsumed clause.</param>
-    /// <returns>All of the clauses that appear in <see cref="All"/> that do not subsume the given clause.</returns>
+    /// <returns>The clauses that do not subsume the given clause, according to the facts in <see cref="All"/>.</returns>
     public static CNFClause[] GetNonSubsumingClauses(CNFClause subsumedClause)
     {
         var xClauses = All
