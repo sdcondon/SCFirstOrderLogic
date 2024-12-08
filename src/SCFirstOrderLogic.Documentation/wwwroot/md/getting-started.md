@@ -141,6 +141,7 @@ Notes:
 
 Once you have some sentences, storing them and making inferences can be done with the aid of the types in the `SCFirstOrderLogic.Inference.Basic` package.
 This library includes a few very simple knowledge bases - one that uses forward chaining, one that uses backward chaining, and one that uses resolution.
+These implementations are not as yet sophisticated enough to be useful in a production scenario, but should be useful as a learning tool, and perhaps even as a starting point for more capable implementations.
 Some examples follow, but first, here's our domain, taken from section 9.3 of 'Artificial Intelligence: A Modern Approach':
 
 ```
@@ -187,7 +188,7 @@ using SCFirstOrderLogic.Inference.Basic.ForwardChaining;
 // The clause store takes responsibility for the storage and lookup of
 // individual clauses. The package provides only HashSetClauseStore, which stores
 // things in memory. This is an extension point - you can create your own implementation
-// of IClauseStore to use secondary storage and/or customised indexing, for example.
+// of IClauseStore to use external storage and/or customised indexing, for example.
 var kb = new ForwardChainingKnowledgeBase(new HashSetClauseStore());
 kb.Tell(rules);
 var querySentence = SentenceParser.BasicParser.Parse("IsCriminal(West)");
