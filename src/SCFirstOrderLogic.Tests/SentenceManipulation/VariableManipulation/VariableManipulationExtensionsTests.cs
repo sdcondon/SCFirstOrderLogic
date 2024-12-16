@@ -66,7 +66,7 @@ public static class VariableManipulationExtensionsTests
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.Expected));
 
-    public static Test SubsumedByBehaviourBehaviour => TestThat
+    public static Test SubsumedByBehaviour => TestThat
         .GivenEachOf<SubsumptionTestCase>(() =>
         [
             new (X: P(),         Y: P(),             Expected: true),
