@@ -20,15 +20,16 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public class AsyncFeatureVectorIndex<TFeature>
     where TFeature : notnull
 {
+    /// <summary>
+    /// The inner <see cref="CNFClause"/>-valued index that this one merely wraps.
+    /// </summary>
     private readonly AsyncFeatureVectorIndex<TFeature, CNFClause> innerIndex;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature}"/> class with a specified
-    /// root node and no (additional) initial content, that uses the default comparer of the key element
-    /// type to determine the ordering of elements in the tree.
+    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature}"/> class.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="root">The root node of the tree.</param>
+    /// <param name="root">The root node of the index.</param>
     public AsyncFeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IAsyncFeatureVectorIndexNode<TFeature, CNFClause> root)
@@ -37,13 +38,12 @@ public class AsyncFeatureVectorIndex<TFeature>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature}"/> class with a 
-    /// specified root node and some (additional) initial content, that uses the default comparer
-    /// of the key element type to determine the ordering of elements in the tree.
+    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature}"/> class, 
+    /// and adds some additional initial content (beyond any already attached to the provided root node).
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the tree.</param>
-    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
+    /// <param name="content">The additional content to be added.</param>
     public AsyncFeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IAsyncFeatureVectorIndexNode<TFeature, CNFClause> root,

@@ -26,15 +26,21 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public class AsyncFeatureVectorIndex<TFeature, TValue>
     where TFeature : notnull
 {
+    /// <summary>
+    /// The delegate used to retrieve the feature vector for any given clause.
+    /// </summary>
     private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector;
+
+    /// <summary>
+    /// The root node of the index.
+    /// </summary>
     private readonly IAsyncFeatureVectorIndexNode<TFeature, TValue> root;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature,TValue}"/> class with a specified
-    /// root node and no (additional) initial content.
+    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature,TValue}"/> class.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="root">The root node of the tree.</param>
+    /// <param name="root">The root node of the index.</param>
     public AsyncFeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IAsyncFeatureVectorIndexNode<TFeature, TValue> root)
@@ -43,12 +49,12 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature,TValue}"/> class with a 
-    /// specified root node and some (additional) initial content.
+    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature,TValue}"/> class,
+    /// and adds some additional initial content (beyond any already attached to the provided root node).
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="root">The root node of the tree.</param>
-    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
+    /// <param name="root">The root node of the index.</param>
+    /// <param name="content">The additional content to be added.</param>
     public AsyncFeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IAsyncFeatureVectorIndexNode<TFeature, TValue> root,
@@ -277,7 +283,12 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
         }
     }
 
-    private List<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
+    /// <summary>
+    /// Gets the feature vector for a clause, and sorts it using the feature comparer specified by the index's root node.
+    /// </summary>
+    /// <param name="clause">The clause to retrieve the feature vector for.</param>
+    /// <returns>The feature vector, represented as a read-only list.</returns>
+    private IReadOnlyList<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
     {
         // todo-performance: if we need a list anyway, probably faster to make the list, then sort it in place? test me
         // todo-robustness: should probably throw if any distinct pairs have a comparison of zero. could happen efficiently as part of the sort

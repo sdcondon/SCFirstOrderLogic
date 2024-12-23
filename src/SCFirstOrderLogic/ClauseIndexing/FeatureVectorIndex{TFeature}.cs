@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// An implementation of a feature vector index for <see cref="CNFClause"/>s. Specifically, one for which the associated values are the clauses themselves.
 /// </para>
 /// <para>
-/// Feature vector indexing (in this context, at least) is an non-perfect indexing method for clause subsumption.
+/// Feature vector indexing (in this context, at least) is an indexing method for clause subsumption.
 /// That is, feature vector indices can be used to store clauses in such a way that we can quickly look up the stored clauses that subsume or are subsumed by a query clause.
 /// </para>
 /// </summary>
@@ -19,14 +19,16 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 public class FeatureVectorIndex<TFeature>
     where TFeature : notnull
 {
+    /// <summary>
+    /// The inner <see cref="CNFClause"/>-valued index that this one merely wraps.
+    /// </summary>
     private readonly FeatureVectorIndex<TFeature, CNFClause> innerIndex;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class with a specified
-    /// root node and no (additional) initial content.
+    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="root">The root node of the tree.</param>
+    /// <param name="root">The root node of the index.</param>
     public FeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IFeatureVectorIndexNode<TFeature, CNFClause> root)
@@ -35,12 +37,12 @@ public class FeatureVectorIndex<TFeature>
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class with a 
-    /// specified root node and some (additional) initial content.
+    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature}"/> class with
+    /// some additional initial content (beyond any already attached to the provided root node).
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the tree.</param>
-    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
+    /// <param name="content">The additional content to be added.</param>
     public FeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IFeatureVectorIndexNode<TFeature, CNFClause> root,

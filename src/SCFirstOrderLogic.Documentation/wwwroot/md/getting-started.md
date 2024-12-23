@@ -88,7 +88,7 @@ modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as
 
 ```
 using SCFirstOrderLogic.LanguageIntegration;
-using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff an If methods
+using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff and If methods
 
 // The helper methods recommended for the other approaches become full interfaces
 // when language integration is used (no implementation is needed):

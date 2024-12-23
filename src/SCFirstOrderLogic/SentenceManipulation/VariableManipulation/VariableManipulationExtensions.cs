@@ -23,6 +23,10 @@ public static class VariableManipulationExtensions
     /// <returns>True if this clause subsumes the other; otherwise false.</returns>
     public static bool Subsumes(this CNFClause thisClause, CNFClause otherClause)
     {
+        // TODO: is this conventional? otherwise the empty clause (which is conventially ⊥, a contradiction)
+        // would subsume everything. which is.. weird - but might be useful for e.g. getting everything from
+        // an FVI (GetSubsumed(CNFClause.Empty)), and might even make sense from a vague 'if false is true,
+        // all is permitted..' kinda perspective. Can't find any resources on this..
         if (thisClause.IsEmpty)
         {
             return false;
