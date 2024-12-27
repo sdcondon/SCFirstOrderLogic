@@ -44,6 +44,9 @@ public sealed class Literal : IEquatable<Literal>
     /// </summary>
     /// <param name="predicate">The atomic sentence to which this literal refers.</param>
     /// <param name="isNegated">A value indicating whether the atomic sentence is negated.</param>
+    // TODO-BREAKING: looking at this with fresh eyes, its really counterintuitive - new Literal(MyPredicate, false)
+    // would make more intuitive sense to be negated. That is, this should probably be Literal(predicate, isPositive)
+    // This is unfortunately a really dangerous breaking change (because it'll still compile..)
     public Literal(Predicate predicate, bool isNegated)
     {
         Predicate = predicate;
@@ -62,6 +65,7 @@ public sealed class Literal : IEquatable<Literal>
     /// <summary>
     /// Gets a value indicating whether this literal is a negation of the underlying atomic sentence.
     /// </summary>
+    // TODO-BREAKING: IsNegative? Consistency in naming..
     public bool IsNegated { get; }
 
     /// <summary>
@@ -77,7 +81,7 @@ public sealed class Literal : IEquatable<Literal>
     /// <summary>
     /// Constructs and returns a literal that is the negation of this one.
     /// </summary>
-    /// <returns>A literal that is the negation of this one.</returns>
+    /// <returns>A literal that is the negation of this one.</returns>6
     public Literal Negate() => new(Predicate, !IsNegated);
 
     /// <summary>

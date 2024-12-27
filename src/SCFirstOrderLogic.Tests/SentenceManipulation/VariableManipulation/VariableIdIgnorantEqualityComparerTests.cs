@@ -28,12 +28,15 @@ public class VariableIdIgnorantEqualityComparerTests
         .When(tc =>
         {
             var comparer = new VariableIdIgnorantEqualityComparer();
-            return (XEqualsY: comparer.Equals(tc.X, tc.Y), YEqualsX: comparer.Equals(tc.Y, tc.X), HashCodeEquality: comparer.GetHashCode(tc.X) == comparer.GetHashCode(tc.Y));
+            return (
+                XEqualsY: comparer.Equals(tc.X, tc.Y),
+                YEqualsX: comparer.Equals(tc.Y, tc.X),
+                HashCodeEquality: comparer.GetHashCode(tc.X) == comparer.GetHashCode(tc.Y));
         })
         .ThenReturns()
-        .And((_, rv) => rv.XEqualsY.Should().BeTrue())
-        .And((_, rv) => rv.YEqualsX.Should().BeTrue())
-        .And((_, rv) => rv.HashCodeEquality.Should().BeTrue());
+        .And((_, outcome) => outcome.XEqualsY.Should().BeTrue())
+        .And((_, outcome) => outcome.YEqualsX.Should().BeTrue())
+        .And((_, outcome) => outcome.HashCodeEquality.Should().BeTrue());
 
     public static Test EqualityBehaviour_Negative => TestThat
         .GivenEachOf<EqualityTestCase>(() =>
@@ -84,8 +87,8 @@ public class VariableIdIgnorantEqualityComparerTests
             return (XEqualsY: comparer.Equals(tc.X, tc.Y), YEqualsX: comparer.Equals(tc.Y, tc.X));
         })
         .ThenReturns()
-        .And((tc, rv) => rv.XEqualsY.Should().BeFalse())
-        .And((tc, rv) => rv.YEqualsX.Should().BeFalse());
+        .And((_, outcome) => outcome.XEqualsY.Should().BeFalse())
+        .And((_, outcome) => outcome.YEqualsX.Should().BeFalse());
 
     private record EqualityTestCase(CNFClause X, CNFClause Y)
     {
