@@ -34,3 +34,14 @@ jobs:
     - name: Push packages
       run: nuget push "**/*.nupkg" -Source nuget.org
       working-directory: ./src
+
+    - name: Create 'latest-release' tag
+      uses: actions/github-script@v5
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: 'refs/tags/latest-release',
+            sha: context.sha
+          })

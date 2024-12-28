@@ -30,6 +30,48 @@ public static class FeatureVectorIndexTests
         })
         .ThenThrows((_, ex) => ex.Should().BeOfType<ArgumentException>());
 
+    ////public static Test TryReplaceSubsumedBehaviour => TestThat
+    ////    .GivenEachOf<TryReplaceSubsumedTestCase>(() =>
+    ////    [
+    ////        new(
+    ////            PriorContent: [],
+    ////            Add: new(P()),
+    ////            ExpectedReturnValue: true,
+    ////            ExpectedContent: [new(P())]),
+
+    ////         new(
+    ////            PriorContent: [new(P())],
+    ////            Add: new(P()),
+    ////            ExpectedReturnValue: false,
+    ////            ExpectedContent: [new(P())]),
+
+    ////         // nb somewhat tricky one. if the arg is subsumed, should it still remove
+    ////         // clauses that it subsumes? will def need to clarify in method docs. and
+    ////         // should think carefully about the name..
+    ////         new(
+    ////            PriorContent: [new(P()), new(P() | Q())],
+    ////            Add: new(P()),
+    ////            ExpectedReturnValue: false,
+    ////            ExpectedContent: [new(P()), new(P() | Q())]),
+
+    ////         new(
+    ////            PriorContent: [new(P() | Q()), new(P() | R())],
+    ////            Add: new(P()),
+    ////            ExpectedReturnValue: true,
+    ////            ExpectedContent: [new(P())]),
+    ////    ])
+    ////    .When(tc =>
+    ////    {
+    ////        var index = new FeatureVectorIndex<OccurenceCountFeature>(
+    ////            OccurenceCountFeature.MakeFeatureVector,
+    ////            new FeatureVectorIndexListNode<OccurenceCountFeature, CNFClause>(OccurenceCountFeature.MakeFeatureComparer(Comparer<object>.Default)),
+    ////            tc.PriorContent);
+
+    ////        return true; // index.TryReplaceSubsumed(tc.Add);
+    ////    })
+    ////    .Then((tc, rv) => rv.Should().Be(tc.ExpectedReturnValue));
+    ////    //.And((tc, _) => tc.)
+
     public static Test GetSubsumedBehaviour => TestThat
         .GivenEachOf(() =>
         {
