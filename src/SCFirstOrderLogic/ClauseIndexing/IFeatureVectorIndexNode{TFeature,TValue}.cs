@@ -18,12 +18,12 @@ public interface IFeatureVectorIndexNode<TFeature, TValue>
     IComparer<TFeature> FeatureComparer { get; }
 
     /// <summary>
-    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in ascending feature order.
+    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in ascending order.
     /// </summary>
     IEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IFeatureVectorIndexNode<TFeature, TValue>>> ChildrenAscending { get; }
 
     /// <summary>
-    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in descending feature order.
+    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in descending order.
     /// </summary>
     IEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IFeatureVectorIndexNode<TFeature, TValue>>> ChildrenDescending { get; }
 

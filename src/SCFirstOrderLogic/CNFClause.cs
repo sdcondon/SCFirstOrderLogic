@@ -34,8 +34,9 @@ public class CNFClause : IEquatable<CNFClause>
     {
     }
 
-    // NB: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
-    // but this is a very low-level class, so I've opted to be lean and mean.
+    // TODO-ZZ-ROBUSTNESS: We *could* actually use an immutable type to stop unscrupulous consumers from making it mutable by casting,
+    // but this is a very low-level class, so I've opted to be lean and mean. Yes, this does mean that its possible for
+    // consumers to break the empty clause (below), so.. yeah, maybe I should fix it..
     internal CNFClause(HashSet<Literal> literals) => this.literals = literals;
 
     /// <summary>

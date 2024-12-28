@@ -46,8 +46,8 @@ public static class FeatureVectorIndexTests
         })
         .When(tc => tc.Index.GetSubsumed(tc.Query))
         .ThenReturns()
-        .And((tc, rv) => tc.Expected.Should().BeSubsetOf(rv))
-        .And((tc, rv) => rv.Should().NotIntersectWith(tc.NotExpected));
+        .And((tc, rv) => tc.ExpectedPresent.Should().BeSubsetOf(rv))
+        .And((tc, rv) => rv.Should().NotIntersectWith(tc.ExpectedAbsent));
 
     public static Test GetSubsumingBehaviour => TestThat
         .GivenEachOf(() =>
@@ -58,15 +58,15 @@ public static class FeatureVectorIndexTests
                 SubsumptionFacts.AllNonEmptyClauses);
 
             return SubsumptionFacts.AllNonEmptyClauses.Select(c => new GetTestCase(
-                index,
-                c,
-                SubsumptionFacts.GetSubsumingClauses(c),
-                SubsumptionFacts.GetNonSubsumingClauses(c)));
+                Index: index,
+                Query: c,
+                ExpectedPresent: SubsumptionFacts.GetSubsumingClauses(c),
+                ExpectedAbsent: SubsumptionFacts.GetNonSubsumingClauses(c)));
         })
         .When(tc => tc.Index.GetSubsuming(tc.Query))
         .ThenReturns()
-        .And((tc, rv) => tc.Expected.Should().BeSubsetOf(rv))
-        .And((tc, rv) => rv.Should().NotIntersectWith(tc.NotExpected));
+        .And((tc, rv) => tc.ExpectedPresent.Should().BeSubsetOf(rv))
+        .And((tc, rv) => rv.Should().NotIntersectWith(tc.ExpectedAbsent));
 
     public static Test GetSubsumingBehaviourFuzz => TestThat
         .GivenEachOf(() =>
@@ -82,9 +82,9 @@ public static class FeatureVectorIndexTests
                 content);
 
             return content.Select(c => new GetTestCaseExact(
-                index,
-                c,
-                content.Where(o => o.Subsumes(c))));
+                Index: index,
+                Query: c,
+                Expected: content.Where(o => o.Subsumes(c))));
         })
         .When(tc => tc.Index.GetSubsuming(tc.Query))
         .ThenReturns()
@@ -104,26 +104,32 @@ public static class FeatureVectorIndexTests
                 content);
 
             return content.Select(c => new GetTestCaseExact(
-                index,
-                c,
-                content.Where(o => o.IsSubsumedBy(c))));
+                Index: index,
+                Query: c,
+                Expected: content.Where(o => o.IsSubsumedBy(c))));
         })
         .When(tc => tc.Index.GetSubsumed(tc.Query))
         .ThenReturns()
         .And((tc, rv) => rv.Should().BeEquivalentTo(tc.Expected));
 
+    private record AddTestCase(
+        CNFClause[] PriorContent,
+        CNFClause Add);
+
+    private record TryReplaceSubsumedTestCase(
+        CNFClause[] PriorContent,
+        CNFClause Add,
+        bool ExpectedReturnValue,
+        CNFClause[] ExpectedContent);
+
     private record GetTestCase(
         FeatureVectorIndex<OccurenceCountFeature> Index,
         CNFClause Query,
-        IEnumerable<CNFClause> Expected,
-        IEnumerable<CNFClause> NotExpected);
+        IEnumerable<CNFClause> ExpectedPresent,
+        IEnumerable<CNFClause> ExpectedAbsent);
 
     private record GetTestCaseExact(
         FeatureVectorIndex<OccurenceCountFeature> Index,
         CNFClause Query,
         IEnumerable<CNFClause> Expected);
-
-    private record AddTestCase(
-        CNFClause[] PriorContent,
-        CNFClause Add);
 }
