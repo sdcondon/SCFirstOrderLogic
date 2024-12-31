@@ -1,6 +1,6 @@
 ﻿# Library Overview
 
-Here is a quick overview of the namespaces found within the SCFirsrtOrderLogic library. Reading this should give you some helpful context for diving a little deeper:
+Here is a quick overview of the namespaces found within the SCFirstOrderLogic library. Reading this should give you some helpful context for diving a little deeper:
 
 * **`SCFirstOrderLogic`:** the root namespace contains classes representing individual elements of first order logic sentences (universal and existential quantifications, conjunctions, disjunctions, predicates, functions and so on).
   Instances of these classes are composed into tree structures that represent sentences of first order logic.

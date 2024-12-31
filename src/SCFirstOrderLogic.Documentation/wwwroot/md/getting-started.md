@@ -101,7 +101,7 @@ interface IPerson
 // The sentence is expressed as a boolean-valued lambda that we are asserting will evaluate
 // as true when provided an enumerable representing the domain. Quantifiers are provided
 // via the "Any" and "All" LINQ to objects extension methods (the library provides some overloads
-// for declaring multiple variables at once).
+// for quantifying multiple variables at once).
 var grandparentDefn = 
     SentenceFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
 ```
