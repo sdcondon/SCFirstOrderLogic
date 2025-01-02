@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// </summary>
 /// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
-public class FeatureVectorIndex<TFeature, TValue>
+public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNFClause, TValue>>
     where TFeature : notnull
 {
     /// <summary>
@@ -131,11 +132,115 @@ public class FeatureVectorIndex<TFeature, TValue>
     }
 
     /// <summary>
+    /// Removes all values keyed by a clause that is subsumed by a given clause.
+    /// </summary>
+    /// <param name="clause">The subsuming clause.</param>
+    public void RemoveSubsumed(CNFClause clause)
+    {
+        ArgumentNullException.ThrowIfNull(clause);
+
+        var featureVector = MakeAndSortFeatureVector(clause);
+
+        ExpandNode(root, 0);
+
+        // NB: subsumed clauses will have equal or higher vector elements.
+        // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
+        // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
+        void ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
+        {
+            if (componentIndex < featureVector.Count)
+            {
+                var component = featureVector[componentIndex];
+
+                // NB: only need to compare feature (not magnitude) here because the only way that component index could be greater
+                // than 0 is if all earlier components matched to an ancestor node by feature (which had an equal or higher magnitude).
+                // And there shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
+                var matchingChildNodes = componentIndex == 0
+                    ? node.ChildrenDescending
+                    : node.ChildrenDescending.TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0);
+
+                var toRemove = new List<FeatureVectorComponent<TFeature>>();
+                foreach (var (childComponent, childNode) in matchingChildNodes)
+                {
+                    var childFeatureVsCurrent = root.FeatureComparer.Compare(childComponent.Feature, component.Feature);
+
+                    if (childFeatureVsCurrent <= 0)
+                    {
+                        var componentIndexOffset = childFeatureVsCurrent == 0 && childComponent.Magnitude >= component.Magnitude ? 1 : 0;
+                        ExpandNode(childNode, componentIndex + componentIndexOffset);
+                        if (!childNode.ChildrenAscending.Any() && !childNode.KeyValuePairs.Any())
+                        {
+                            toRemove.Add(childComponent);
+                        }
+                    }
+                }
+
+                foreach (var childComponent in toRemove)
+                {
+                    node.DeleteChild(childComponent);
+                }
+            }
+            else
+            {
+                RemoveAllDescendentSubsumed(node);
+            }
+        }
+
+        void RemoveAllDescendentSubsumed(IFeatureVectorIndexNode<TFeature, TValue> node)
+        {
+            // NB: note that we need to filter the values to those keyed by clauses that are
+            // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
+            foreach (var (key, _) in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)))
+            {
+                node.RemoveValue(key);
+            }
+
+            var toRemove = new List<FeatureVectorComponent<TFeature>>();
+            foreach (var (childComponent, childNode) in node.ChildrenAscending)
+            {
+                RemoveAllDescendentSubsumed(childNode);
+
+                if (!childNode.ChildrenAscending.Any() && !childNode.KeyValuePairs.Any())
+                {
+                    toRemove.Add(childComponent);
+                }
+            }
+
+            foreach (var childComponent in toRemove)
+            {
+                node.DeleteChild(childComponent);
+            }
+        }
+    }
+
+    /// <summary>
+    /// If the index contains any clause that subsumes the given clause, does nothing and returns <see langword="false"/>.
+    /// Otherwise, adds the given clause to the index, removes any clauses that it subsumes, and returns <see langword="true"/>.
+    /// </summary>
+    /// <param name="clause">The clause to add.</param>
+    /// <param name="value">The value to associate with the clause.</param>
+    /// <returns>True if and only if the clause was added.</returns>
+    public bool TryReplaceSubsumed(CNFClause clause, TValue value)
+    {
+        // TODO-PERFORMANCE: a bit of refactoring would enable us to make the FV just once
+        // rather than three times. Not a big deal for now.
+        if (GetSubsuming(clause).Any())
+        {
+            return false;
+        }
+
+        RemoveSubsumed(clause);
+        Add(clause, value);
+        return true;
+    }
+
+    /// <summary>
     /// Attempts to retrieve the value associated with a clause, matched exactly.
     /// </summary>
     /// <param name="key">The clause to retrieve the associated value of.</param>
     /// <param name="value">Will be populated with the retrieved value.</param>
     /// <returns>True if and only if a value was successfully retrieved.</returns>
+    // TODO-BREAKING: Should probably be called TryGetValue, for consistency with IDictionary
     public bool TryGet(CNFClause key, [MaybeNullWhen(false)] out TValue value)
     {
         ArgumentNullException.ThrowIfNull(key);
@@ -284,6 +389,34 @@ public class FeatureVectorIndex<TFeature, TValue>
             }
         }
     }
+
+    /// <inheritdoc />
+    public IEnumerator<KeyValuePair<CNFClause, TValue>> GetEnumerator()
+    {
+        foreach (var kvp in GetAllKeyValuePairs(root))
+        {
+            yield return kvp;
+        }
+
+        static IEnumerable<KeyValuePair<CNFClause, TValue>> GetAllKeyValuePairs(IFeatureVectorIndexNode<TFeature, TValue> node)
+        {
+            foreach (var kvp in node.KeyValuePairs)
+            {
+                yield return kvp;
+            }
+
+            foreach (var (_, childNode) in node.ChildrenAscending)
+            {
+                foreach (var kvp in GetAllKeyValuePairs(childNode))
+                {
+                    yield return kvp;
+                }
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>
     /// Gets the feature vector for a clause, and sorts it using the feature comparer specified by the index's root node.

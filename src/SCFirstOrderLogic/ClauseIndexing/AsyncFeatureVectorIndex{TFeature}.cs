@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -17,7 +18,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// </para>
 /// </summary>
 /// <typeparam name="TFeature">The type of each key of the feature vectors.</typeparam>
-public class AsyncFeatureVectorIndex<TFeature>
+public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
     where TFeature : notnull
 {
     /// <summary>
@@ -67,6 +68,26 @@ public class AsyncFeatureVectorIndex<TFeature>
     public Task<bool> RemoveAsync(CNFClause key) => innerIndex.RemoveAsync(key);
 
     /// <summary>
+    /// Removes all values keyed by a clause that is subsumed by a given clause.
+    /// </summary>
+    /// <param name="clause">The subsuming clause.</param>
+    public async Task RemoveSubsumedAsync(CNFClause clause)
+    {
+        await innerIndex.RemoveSubsumedAsync(clause);
+    }
+
+    /// <summary>
+    /// If the index contains any clause that subsumes the given clause, does nothing and returns <see langword="false"/>.
+    /// Otherwise, adds the given clause to the index, removes any clauses that it subsumes, and returns <see langword="true"/>.
+    /// </summary>
+    /// <param name="clause">The clause to add.</param>
+    /// <returns>True if and only if the clause was added.</returns>
+    public async Task<bool> TryReplaceSubsumedAsync(CNFClause clause)
+    {
+        return await innerIndex.TryReplaceSubsumedAsync(clause, clause);
+    }
+
+    /// <summary>
     /// Determines whether a given clause (matched exactly) is present in the index.
     /// </summary>
     /// <param name="key">The clause to check for.</param>
@@ -86,4 +107,13 @@ public class AsyncFeatureVectorIndex<TFeature>
     /// <param name="clause">The stored clauses that are subsumed by this clause will be retrieved.</param>
     /// <returns>An async enumerable of each clause that is subsumed by the given clause.</returns>
     public IAsyncEnumerable<CNFClause> GetSubsumed(CNFClause clause) => innerIndex.GetSubsumed(clause);
+
+    /// <inheritdoc />
+    public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    {
+        await foreach (var (_, value) in innerIndex.WithCancellation(cancellationToken))
+        {
+            yield return value;
+        }
+    }
 }

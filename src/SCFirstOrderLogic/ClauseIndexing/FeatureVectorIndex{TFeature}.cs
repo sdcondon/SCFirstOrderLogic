@@ -1,6 +1,7 @@
 ﻿// Copyright © 2023-2024 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,7 +17,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// </para>
 /// </summary>
 /// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
-public class FeatureVectorIndex<TFeature>
+public class FeatureVectorIndex<TFeature> : IEnumerable<CNFClause>
     where TFeature : notnull
 {
     /// <summary>
@@ -71,6 +72,26 @@ public class FeatureVectorIndex<TFeature>
     }
 
     /// <summary>
+    /// Removes all values keyed by a clause that is subsumed by a given clause.
+    /// </summary>
+    /// <param name="clause">The subsuming clause.</param>
+    public void RemoveSubsumed(CNFClause clause)
+    {
+        innerIndex.RemoveSubsumed(clause);
+    }
+
+    /// <summary>
+    /// If the index contains any clause that subsumes the given clause, does nothing and returns <see langword="false"/>.
+    /// Otherwise, adds the given clause to the index, removes any clauses that it subsumes, and returns <see langword="true"/>.
+    /// </summary>
+    /// <param name="clause">The clause to add.</param>
+    /// <returns>True if and only if the clause was added.</returns>
+    public bool TryReplaceSubsumed(CNFClause clause)
+    {
+        return innerIndex.TryReplaceSubsumed(clause, clause);
+    }
+
+    /// <summary>
     /// Determines whether a given clause (matched exactly) is present in the index.
     /// </summary>
     /// <param name="key">The clause to check for.</param>
@@ -96,4 +117,16 @@ public class FeatureVectorIndex<TFeature>
     {
         return innerIndex.GetSubsumed(clause);
     }
+
+    /// <inheritdoc />>
+    public IEnumerator<CNFClause> GetEnumerator()
+    {
+        foreach (var (_, value) in innerIndex)
+        {
+            yield return value;
+        }
+    }
+
+    /// <inheritdoc />>
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

@@ -5,6 +5,7 @@ using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -20,10 +21,10 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// </summary>
 /// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
-// todo-breaking-performance: at least on the read side, consider processing nodes in parallel.
+// TODO-PERFORMANCE: at least on the read side, consider processing nodes in parallel.
 // what are some best practices here (esp re consumers/node implementers being able to control DoP)?
 // e.g allow consumers to pass a scheduler? allow nodes to specify a scheduler?
-public class AsyncFeatureVectorIndex<TFeature, TValue>
+public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyValuePair<CNFClause, TValue>>
     where TFeature : notnull
 {
     /// <summary>
@@ -133,6 +134,109 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
                 return await node.RemoveValueAsync(key);
             }
         }
+    }
+
+    /// <summary>
+    /// Removes all values keyed by a clause that is subsumed by a given clause.
+    /// </summary>
+    /// <param name="clause">The subsuming clause.</param>
+    public async Task RemoveSubsumedAsync(CNFClause clause)
+    {
+        ArgumentNullException.ThrowIfNull(clause);
+
+        var featureVector = MakeAndSortFeatureVector(clause);
+
+        await ExpandNode(root, 0);
+
+        // NB: subsumed clauses will have equal or higher vector elements.
+        // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
+        // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
+        async Task ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
+        {
+            if (componentIndex < featureVector.Count)
+            {
+                var component = featureVector[componentIndex];
+
+                // NB: only need to compare feature (not magnitude) here because the only way that component index could be greater
+                // than 0 is if all earlier components matched to an ancestor node by feature (which had an equal or higher magnitude).
+                // And there shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
+                var matchingChildNodes = componentIndex == 0
+                    ? node.ChildrenDescending
+                    : node.ChildrenDescending.TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0);
+
+                var toRemove = new List<FeatureVectorComponent<TFeature>>();
+                await foreach (var (childComponent, childNode) in matchingChildNodes)
+                {
+                    var childFeatureVsCurrent = root.FeatureComparer.Compare(childComponent.Feature, component.Feature);
+
+                    if (childFeatureVsCurrent <= 0)
+                    {
+                        var componentIndexOffset = childFeatureVsCurrent == 0 && childComponent.Magnitude >= component.Magnitude ? 1 : 0;
+                        await ExpandNode(childNode, componentIndex + componentIndexOffset);
+                        if (!await childNode.ChildrenAscending.AnyAsync() && !await childNode.KeyValuePairs.AnyAsync())
+                        {
+                            toRemove.Add(childComponent);
+                        }
+                    }
+                }
+
+                foreach (var childComponent in toRemove)
+                {
+                    await node.DeleteChildAsync(childComponent);
+                }
+            }
+            else
+            {
+                await RemoveAllDescendentSubsumed(node);
+            }
+        }
+
+        async Task RemoveAllDescendentSubsumed(IAsyncFeatureVectorIndexNode<TFeature, TValue> node)
+        {
+            // NB: note that we need to filter the values to those keyed by clauses that are
+            // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
+            await foreach (var (key, _) in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)))
+            {
+                await node.RemoveValueAsync(key);
+            }
+
+            var toRemove = new List<FeatureVectorComponent<TFeature>>();
+            await foreach (var (childComponent, childNode) in node.ChildrenAscending)
+            {
+                await RemoveAllDescendentSubsumed(childNode);
+
+                if (!await childNode.ChildrenAscending.AnyAsync() && !await childNode.KeyValuePairs.AnyAsync())
+                {
+                    toRemove.Add(childComponent);
+                }
+            }
+
+            foreach (var childComponent in toRemove)
+            {
+                await node.DeleteChildAsync(childComponent);
+            }
+        }
+    }
+
+    /// <summary>
+    /// If the index contains any clause that subsumes the given clause, does nothing and returns <see langword="false"/>.
+    /// Otherwise, adds the given clause to the index, removes any clauses that it subsumes, and returns <see langword="true"/>.
+    /// </summary>
+    /// <param name="clause">The clause to add.</param>
+    /// <param name="value">The value to associate with the clause.</param>
+    /// <returns>True if and only if the clause was added.</returns>
+    public async Task<bool> TryReplaceSubsumedAsync(CNFClause clause, TValue value)
+    {
+        // TODO-PERFORMANCE: a bit of refactoring would enable us to make the FV just once
+        // rather than three times. Not a big deal for now.
+        if (await GetSubsuming(clause).AnyAsync())
+        {
+            return false;
+        }
+
+        await RemoveSubsumedAsync(clause);
+        await AddAsync(clause, value);
+        return true;
     }
 
     /// <summary>
@@ -278,6 +382,33 @@ public class AsyncFeatureVectorIndex<TFeature, TValue>
                 await foreach (var value in GetAllDescendentValues(childNode))
                 {
                     yield return value;
+                }
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public async IAsyncEnumerator<KeyValuePair<CNFClause, TValue>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    {
+        await foreach (var kvp in GetAllKeyValuePairs(root))
+        {
+            yield return kvp;
+        }
+
+        static async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetAllKeyValuePairs(IAsyncFeatureVectorIndexNode<TFeature, TValue> node)
+        {
+            // NB: note that we need to filter the values to those keyed by clauses that are
+            // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
+            await foreach (var kvp in node.KeyValuePairs)
+            {
+                yield return kvp;
+            }
+
+            await foreach (var (_, childNode) in node.ChildrenAscending)
+            {
+                await foreach (var kvp in GetAllKeyValuePairs(childNode))
+                {
+                    yield return kvp;
                 }
             }
         }
