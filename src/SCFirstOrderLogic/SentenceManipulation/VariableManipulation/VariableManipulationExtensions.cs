@@ -63,13 +63,39 @@ public static class VariableManipulationExtensions
 
     /// <summary>
     /// <para>
-    /// Checks whether "this" clause unifies with any of an enumeration of other definite clauses.
+    /// Checks whether this clause subsumes any of an enumeration of other clauses.
+    /// </para>
+    /// </summary>
+    /// <param name="thisClause">"This" clause.</param>
+    /// <param name="clauses">The clauses to check for subsumption.</param>
+    /// <returns>True if this clause subsumes any of the provided clauses; otherwise false.</returns>.
+    public static bool SubsumesAnyOf(this CNFClause thisClause, IEnumerable<CNFClause> clauses)
+    {
+        return clauses.Any(c => thisClause.Subsumes(c));
+    }
+
+    /// <summary>
+    /// <para>
+    /// Checks whether this clause is subsumed by any of an enumeration of other clauses.
+    /// </para>
+    /// </summary>
+    /// <param name="thisClause">"This" clause.</param>
+    /// <param name="clauses">The clauses to check for subsumption.</param>
+    /// <returns>True if this clause subsumes any of the provided clauses; otherwise false.</returns>.
+    public static bool IsSubsumedByAnyOf(this CNFClause thisClause, IEnumerable<CNFClause> clauses)
+    {
+        return clauses.Any(c => c.Subsumes(thisClause));
+    }
+
+    /// <summary>
+    /// <para>
+    /// Checks whether this clause unifies with any of an enumeration of other clauses.
     /// </para>
     /// </summary>
     /// <param name="thisClause">"This" clause.</param>
     /// <param name="clauses">The clauses to check for unification with.</param>
     /// <returns>True if this clause unifies with any of the provided clauses; otherwise false.</returns>
-    // TODO: probably remove (/replace with SubsumesAnyOf/IsSubsumedByAnyOf?) - created prior to subsumption methods,
+    // TODO-BREAKING: probably remove - created prior to subsumption methods,
     // and its usage looks plain wrong now that I've a bit more FoL experience under my belt..
     public static bool UnifiesWithAnyOf(this CNFClause thisClause, IEnumerable<CNFClause> clauses)
     {
