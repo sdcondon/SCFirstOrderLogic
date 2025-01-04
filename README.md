@@ -30,7 +30,9 @@ Do bear in mind that I have a very particular scope in mind for the library, tho
 
 You might also be interested in:
 
-* Some related AI projects: 
+* Some related AI projects:
+  * [SCFirstOrderLogic.Inference.Basic](https://github.com/sdcondon/SCFirstOrderLogic.Inference.Basic): A few very basic knowledge base implementations that use the model defined in this library. Too basic to be of use in a production scenario, but perhaps useful as a learning tool, or a starting point for something more sophisticated.
+  * [SCFirstOrderLogic.ExampleDomains](https://github.com/sdcondon/SCFirstOrderLogic.ExampleDomains): A few simple first-order logic domains declared using the models found in this library - for use in tests and demos.
   * [SCClassicalPlanning](https://github.com/sdcondon/SCClassicalPlanning): Basic classical planning implementations. Based on chapter 10 of "Artificial Intelligence: A Modern Approach" - though perhaps a _little_ more loosely than this repo is based on chapters 8 and 9. Specifically, introduces a couple more PDDL concepts that the book doesn't bother with (but should IMO). Depends on this library (and [SCGraphTheory.Search](https://github.com/sdcondon/SCGraphTheory.Search)).
   * [SCPropositionalLogic](https://github.com/sdcondon/SCPropositionalLogic): Basic propositional logic implementations. Based on chapter 7 of "Artificial Intelligence: A Modern Approach". Mostly just a precursor to this repo - I haven't bothered publishing this one to NuGet - but might be of use if you find this repo a bit too much.
 * Some unrelated AI projects:
