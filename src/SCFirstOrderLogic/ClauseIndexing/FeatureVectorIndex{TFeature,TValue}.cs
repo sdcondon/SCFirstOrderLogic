@@ -71,6 +71,16 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     }
 
     /// <summary>
+    /// Event that is fired whenever a key is added to the index.
+    /// </summary>
+    public event EventHandler<CNFClause>? KeyAdded;
+
+    /// <summary>
+    /// Event that is fired whenever a key is removed from the index.
+    /// </summary>
+    public event EventHandler<CNFClause>? KeyRemoved;
+
+    /// <summary>
     /// Adds a clause and associated value to the index.
     /// </summary>
     /// <param name="key">The clause to add.</param>
@@ -91,6 +101,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
         }
 
         currentNode.AddValue(key, value);
+        OnKeyAdded(key);
     }
 
     /// <summary>
@@ -124,9 +135,14 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
 
                 return true;
             }
+            else if (node.RemoveValue(key))
+            {
+                OnKeyRemoved(key);
+                return true;
+            }
             else
             {
-                return node.RemoveValue(key);
+                return false;
             }
         }
     }
@@ -193,6 +209,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
             foreach (var (key, _) in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)))
             {
                 node.RemoveValue(key);
+                OnKeyRemoved(key);
             }
 
             var toRemove = new List<FeatureVectorComponent<TFeature>>();
@@ -428,5 +445,15 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
         // todo-performance: if we need a list anyway, probably faster to make the list, then sort it in place? test me
         // todo-robustness: should probably throw if any distinct pairs have a comparison of zero. could happen efficiently as part of the sort
         return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
+    }
+
+    private void OnKeyAdded(CNFClause key)
+    {
+        KeyAdded?.Invoke(this, key);
+    }
+
+    private void OnKeyRemoved(CNFClause key)
+    {
+        KeyRemoved?.Invoke(this, key);
     }
 }

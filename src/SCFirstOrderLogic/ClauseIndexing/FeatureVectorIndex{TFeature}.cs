@@ -33,8 +33,8 @@ public class FeatureVectorIndex<TFeature> : IEnumerable<CNFClause>
     public FeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IFeatureVectorIndexNode<TFeature, CNFClause> root)
+        : this(featureVectorSelector, root, Enumerable.Empty<CNFClause>())
     {
-        innerIndex = new(featureVectorSelector, root);
     }
 
     /// <summary>
@@ -50,7 +50,19 @@ public class FeatureVectorIndex<TFeature> : IEnumerable<CNFClause>
         IEnumerable<CNFClause> content)
     {
         innerIndex = new(featureVectorSelector, root, content.Select(t => KeyValuePair.Create(t, t)));
+        innerIndex.KeyAdded += (_, e) => OnKeyAdded(e);
+        innerIndex.KeyRemoved += (_, e) => OnKeyRemoved(e);
     }
+
+    /// <summary>
+    /// Event that is fired whenever a clause is added to the index.
+    /// </summary>
+    public event EventHandler<CNFClause>? KeyAdded;
+
+    /// <summary>
+    /// Event that is fired whenever a clause is removed from the index.
+    /// </summary>
+    public event EventHandler<CNFClause>? KeyRemoved;
 
     /// <summary>
     /// Adds a clause to the index.
@@ -129,4 +141,14 @@ public class FeatureVectorIndex<TFeature> : IEnumerable<CNFClause>
 
     /// <inheritdoc />>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    private void OnKeyAdded(CNFClause clause)
+    {
+        KeyAdded?.Invoke(this, clause);
+    }
+
+    private void OnKeyRemoved(CNFClause clause)
+    {
+        KeyRemoved?.Invoke(this, clause);
+    }
 }

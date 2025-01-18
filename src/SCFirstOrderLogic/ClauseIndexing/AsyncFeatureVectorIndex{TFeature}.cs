@@ -34,8 +34,8 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
     public AsyncFeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IAsyncFeatureVectorIndexNode<TFeature, CNFClause> root)
+        : this(featureVectorSelector, root, Enumerable.Empty<CNFClause>())
     {
-        innerIndex = new(featureVectorSelector, root);
     }
 
     /// <summary>
@@ -51,7 +51,19 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
         IEnumerable<CNFClause> content)
     {
         innerIndex = new(featureVectorSelector, root, content.Select(a => KeyValuePair.Create(a, a)));
+        innerIndex.KeyAdded += (_, e) => OnKeyAdded(e);
+        innerIndex.KeyRemoved += (_, e) => OnKeyRemoved(e);
     }
+
+    /// <summary>
+    /// Event that is fired whenever a clause is added to the index.
+    /// </summary>
+    public event EventHandler<CNFClause>? KeyAdded;
+
+    /// <summary>
+    /// Event that is fired whenever a clause is removed from the index.
+    /// </summary>
+    public event EventHandler<CNFClause>? KeyRemoved;
 
     /// <summary>
     /// Adds a clause to the index.
@@ -115,5 +127,15 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
         {
             yield return value;
         }
+    }
+
+    private void OnKeyAdded(CNFClause clause)
+    {
+        KeyAdded?.Invoke(this, clause);
+    }
+
+    private void OnKeyRemoved(CNFClause clause)
+    {
+        KeyRemoved?.Invoke(this, clause);
     }
 }

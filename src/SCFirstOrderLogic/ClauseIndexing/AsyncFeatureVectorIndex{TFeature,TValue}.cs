@@ -75,6 +75,17 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
     }
 
     /// <summary>
+    /// Event that is fired whenever a key is added to the index.
+    /// </summary>
+    // TODO: should perhaps be async - not really an event handler then though..?
+    public event EventHandler<CNFClause>? KeyAdded;
+
+    /// <summary>
+    /// Event that is fired whenever a key is removed from the index.
+    /// </summary>
+    public event EventHandler<CNFClause>? KeyRemoved;
+
+    /// <summary>
     /// Adds a clause and associated value to the index.
     /// </summary>
     /// <param name="key">The clause to add.</param>
@@ -95,6 +106,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
         }
 
         await currentNode.AddValueAsync(key, value);
+        OnKeyAdded(key);
     }
 
     /// <summary>
@@ -129,9 +141,14 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
 
                 return true;
             }
+            else if (await node.RemoveValueAsync(key))
+            {
+                OnKeyRemoved(key);
+                return true;
+            }
             else
             {
-                return await node.RemoveValueAsync(key);
+                return false;
             }
         }
     }
@@ -198,6 +215,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
             await foreach (var (key, _) in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)))
             {
                 await node.RemoveValueAsync(key);
+                OnKeyRemoved(key);
             }
 
             var toRemove = new List<FeatureVectorComponent<TFeature>>();
@@ -424,5 +442,15 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
         // todo-performance: if we need a list anyway, probably faster to make the list, then sort it in place? test me
         // todo-robustness: should probably throw if any distinct pairs have a comparison of zero. could happen efficiently as part of the sort
         return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
+    }
+
+    private void OnKeyAdded(CNFClause key)
+    {
+        KeyAdded?.Invoke(this, key);
+    }
+
+    private void OnKeyRemoved(CNFClause key)
+    {
+        KeyRemoved?.Invoke(this, key);
     }
 }
