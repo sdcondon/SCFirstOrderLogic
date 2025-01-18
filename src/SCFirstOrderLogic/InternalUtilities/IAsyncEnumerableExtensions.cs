@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2024 Simon Condon.
+// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System;
 using System.Collections.Generic;

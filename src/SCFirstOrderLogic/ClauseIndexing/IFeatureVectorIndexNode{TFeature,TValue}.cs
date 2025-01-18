@@ -1,4 +1,4 @@
-// Copyright © 2023-2024 Simon Condon.
+// Copyright © 2023-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
