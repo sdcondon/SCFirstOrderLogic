@@ -77,7 +77,6 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
     /// <summary>
     /// Event that is fired whenever a key is added to the index.
     /// </summary>
-    // TODO: should perhaps be async - not really an event handler then though..?
     public event EventHandler<CNFClause>? KeyAdded;
 
     /// <summary>
