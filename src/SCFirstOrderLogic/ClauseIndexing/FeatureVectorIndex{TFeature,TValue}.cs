@@ -4,6 +4,7 @@ using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -94,14 +95,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
             throw new ArgumentException("The empty clause is not a valid key", nameof(key));
         }
 
-        var currentNode = root;
-        foreach (var component in MakeAndSortFeatureVector(key))
-        {
-            currentNode = currentNode.GetOrAddChild(component);
-        }
-
-        currentNode.AddValue(key, value);
-        OnKeyAdded(key);
+        Add(key, MakeAndSortFeatureVector(key), value);
     }
 
     /// <summary>
@@ -154,80 +148,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     public void RemoveSubsumed(CNFClause clause)
     {
         ArgumentNullException.ThrowIfNull(clause);
-
-        var featureVector = MakeAndSortFeatureVector(clause);
-
-        ExpandNode(root, 0);
-
-        // NB: subsumed clauses will have equal or higher vector elements.
-        // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
-        // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
-        void ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
-        {
-            if (componentIndex < featureVector.Count)
-            {
-                var component = featureVector[componentIndex];
-
-                // NB: only need to compare feature (not magnitude) here because the only way that component index could be greater
-                // than 0 is if all earlier components matched to an ancestor node by feature (which had an equal or higher magnitude).
-                // And there shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
-                var matchingChildNodes = componentIndex == 0
-                    ? node.ChildrenDescending
-                    : node.ChildrenDescending.TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0);
-
-                var toRemove = new List<FeatureVectorComponent<TFeature>>();
-                foreach (var (childComponent, childNode) in matchingChildNodes)
-                {
-                    var childFeatureVsCurrent = root.FeatureComparer.Compare(childComponent.Feature, component.Feature);
-
-                    if (childFeatureVsCurrent <= 0)
-                    {
-                        var componentIndexOffset = childFeatureVsCurrent == 0 && childComponent.Magnitude >= component.Magnitude ? 1 : 0;
-                        ExpandNode(childNode, componentIndex + componentIndexOffset);
-                        if (!childNode.ChildrenAscending.Any() && !childNode.KeyValuePairs.Any())
-                        {
-                            toRemove.Add(childComponent);
-                        }
-                    }
-                }
-
-                foreach (var childComponent in toRemove)
-                {
-                    node.DeleteChild(childComponent);
-                }
-            }
-            else
-            {
-                RemoveAllDescendentSubsumed(node);
-            }
-        }
-
-        void RemoveAllDescendentSubsumed(IFeatureVectorIndexNode<TFeature, TValue> node)
-        {
-            // NB: note that we need to filter the values to those keyed by clauses that are
-            // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
-            foreach (var (key, _) in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)))
-            {
-                node.RemoveValue(key);
-                OnKeyRemoved(key);
-            }
-
-            var toRemove = new List<FeatureVectorComponent<TFeature>>();
-            foreach (var (childComponent, childNode) in node.ChildrenAscending)
-            {
-                RemoveAllDescendentSubsumed(childNode);
-
-                if (!childNode.ChildrenAscending.Any() && !childNode.KeyValuePairs.Any())
-                {
-                    toRemove.Add(childComponent);
-                }
-            }
-
-            foreach (var childComponent in toRemove)
-            {
-                node.DeleteChild(childComponent);
-            }
-        }
+        RemoveSubsumed(root, clause, MakeAndSortFeatureVector(clause), 0);
     }
 
     /// <summary>
@@ -239,15 +160,22 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     /// <returns>True if and only if the clause was added.</returns>
     public bool TryReplaceSubsumed(CNFClause clause, TValue value)
     {
-        // TODO-PERFORMANCE: a bit of refactoring would enable us to make the FV just once
-        // rather than three times. Not a big deal for now.
-        if (GetSubsuming(clause).Any())
+        ArgumentNullException.ThrowIfNull(clause);
+
+        if (clause == CNFClause.Empty)
+        {
+            throw new ArgumentException("The empty clause is not a valid key", nameof(clause));
+        }
+
+        var featureVector = MakeAndSortFeatureVector(clause);
+
+        if (GetSubsuming(root, clause, featureVector, 0).Any())
         {
             return false;
         }
 
-        RemoveSubsumed(clause);
-        Add(clause, value);
+        RemoveSubsumed(root, clause, featureVector, 0);
+        Add(clause, featureVector, value);
         return true;
     }
 
@@ -431,6 +359,95 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
                 yield return value;
             }
         }
+    }
+
+    // NB: subsumed clauses will have equal or higher vector elements.
+    // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
+    // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
+    private void RemoveSubsumed(
+        IFeatureVectorIndexNode<TFeature, TValue> node,
+        CNFClause clause,
+        IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
+        int componentIndex)
+    {
+        if (componentIndex < featureVector.Count)
+        {
+            var component = featureVector[componentIndex];
+
+            // NB: only need to compare feature (not magnitude) here because the only way that component index could be greater
+            // than 0 is if all earlier components matched to an ancestor node by feature (which had an equal or higher magnitude).
+            // And there shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
+            var matchingChildNodes = componentIndex == 0
+                ? node.ChildrenDescending
+                : node.ChildrenDescending.TakeWhile(kvp => node.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0);
+
+            var toRemove = new List<FeatureVectorComponent<TFeature>>();
+            foreach (var (childComponent, childNode) in matchingChildNodes)
+            {
+                var childFeatureVsCurrent = node.FeatureComparer.Compare(childComponent.Feature, component.Feature);
+
+                if (childFeatureVsCurrent <= 0)
+                {
+                    var componentIndexOffset = childFeatureVsCurrent == 0 && childComponent.Magnitude >= component.Magnitude ? 1 : 0;
+                    RemoveSubsumed(childNode, clause, featureVector, componentIndex + componentIndexOffset);
+                    if (!childNode.ChildrenAscending.Any() && !childNode.KeyValuePairs.Any())
+                    {
+                        toRemove.Add(childComponent);
+                    }
+                }
+            }
+
+            foreach (var childComponent in toRemove)
+            {
+                node.DeleteChild(childComponent);
+            }
+        }
+        else
+        {
+            RemoveAllDescendentSubsumed(node, clause);
+        }
+
+        void RemoveAllDescendentSubsumed(IFeatureVectorIndexNode<TFeature, TValue> node, CNFClause clause)
+        {
+            // NB: note that we need to filter the values to those keyed by clauses that are
+            // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
+            foreach (var (key, _) in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)))
+            {
+                node.RemoveValue(key);
+                OnKeyRemoved(key);
+            }
+
+            var toRemove = new List<FeatureVectorComponent<TFeature>>();
+            foreach (var (childComponent, childNode) in node.ChildrenAscending)
+            {
+                RemoveAllDescendentSubsumed(childNode, clause);
+
+                if (!childNode.ChildrenAscending.Any() && !childNode.KeyValuePairs.Any())
+                {
+                    toRemove.Add(childComponent);
+                }
+            }
+
+            foreach (var childComponent in toRemove)
+            {
+                node.DeleteChild(childComponent);
+            }
+        }
+    }
+
+    private void Add(
+        CNFClause key,
+        IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
+        TValue value)
+    {
+        var currentNode = root;
+        foreach (var component in featureVector)
+        {
+            currentNode = currentNode.GetOrAddChild(component);
+        }
+
+        currentNode.AddValue(key, value);
+        OnKeyAdded(key);
     }
 
     /// <summary>
