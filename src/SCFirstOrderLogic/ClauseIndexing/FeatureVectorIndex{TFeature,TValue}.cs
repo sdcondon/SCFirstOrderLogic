@@ -287,52 +287,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     public IEnumerable<TValue> GetSubsuming(CNFClause clause)
     {
         ArgumentNullException.ThrowIfNull(clause);
-
-        var featureVector = MakeAndSortFeatureVector(clause);
-
-        return ExpandNode(root, 0);
-
-        // NB: Subsuming clauses will have equal or lower vector elements.
-        // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
-        // This makes the logic here a little similar to what you'd find in a set trie when querying for subsets.
-        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
-        {
-            if (componentIndex < featureVector.Count)
-            {
-                var component = featureVector[componentIndex];
-
-                // Recurse for children with matching feature and lower magnitude:
-                var matchingChildNodes = node
-                    .ChildrenAscending
-                    .SkipWhile(kvp => node.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) < 0)
-                    .TakeWhile(kvp => node.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) == 0 && kvp.Key.Magnitude <= component.Magnitude)
-                    .Select(kvp => kvp.Value);
-
-                foreach (var childNode in matchingChildNodes)
-                {
-                    foreach (var value in ExpandNode(childNode, componentIndex + 1))
-                    {
-                        yield return value;
-                    }
-                }
-
-                // Matching feature might not be there at all in stored clauses, which means it has an implicit
-                // magnitude of zero, and we thus can't preclude subsumption - so we also just skip the current key element:
-                foreach (var value in ExpandNode(node, componentIndex + 1))
-                {
-                    yield return value;
-                }
-            }
-            else
-            {
-                // NB: note that we need to filter the values to those keyed by the clauses that
-                // actually subsume the query clause. The values of the matching nodes are just the *candidate* set.
-                foreach (var value in node.KeyValuePairs.Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value))
-                {
-                    yield return value;
-                }
-            }
-        }
+        return GetSubsuming(root, clause, MakeAndSortFeatureVector(clause), 0);
     }
 
     /// <summary>
@@ -434,6 +389,49 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    private static IEnumerable<TValue> GetSubsuming(
+        IFeatureVectorIndexNode<TFeature, TValue> node,
+        CNFClause clause,
+        IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
+        int componentIndex)
+    {
+        if (componentIndex < featureVector.Count)
+        {
+            var component = featureVector[componentIndex];
+
+            // Recurse for children with matching feature and lower magnitude:
+            var matchingChildNodes = node
+                .ChildrenAscending
+                .SkipWhile(kvp => node.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) < 0)
+                .TakeWhile(kvp => node.FeatureComparer.Compare(kvp.Key.Feature, component.Feature) == 0 && kvp.Key.Magnitude <= component.Magnitude)
+                .Select(kvp => kvp.Value);
+
+            foreach (var childNode in matchingChildNodes)
+            {
+                foreach (var value in GetSubsuming(childNode, clause, featureVector, componentIndex + 1))
+                {
+                    yield return value;
+                }
+            }
+
+            // Matching feature might not be there at all in stored clauses, which means it has an implicit
+            // magnitude of zero, and we thus can't preclude subsumption - so we also just skip the current key element:
+            foreach (var value in GetSubsuming(node, clause, featureVector, componentIndex + 1))
+            {
+                yield return value;
+            }
+        }
+        else
+        {
+            // NB: note that we need to filter the values to those keyed by the clauses that
+            // actually subsume the query clause. The values of the matching nodes are just the *candidate* set.
+            foreach (var value in node.KeyValuePairs.Where(kvp => kvp.Key.Subsumes(clause)).Select(kvp => kvp.Value))
+            {
+                yield return value;
+            }
+        }
+    }
 
     /// <summary>
     /// Gets the feature vector for a clause, and sorts it using the feature comparer specified by the index's root node.
