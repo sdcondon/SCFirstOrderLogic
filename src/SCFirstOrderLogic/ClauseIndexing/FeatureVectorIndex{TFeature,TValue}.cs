@@ -72,16 +72,6 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     }
 
     /// <summary>
-    /// Event that is fired whenever a key is added to the index.
-    /// </summary>
-    public event EventHandler<CNFClause>? KeyAdded;
-
-    /// <summary>
-    /// Event that is fired whenever a key is removed from the index.
-    /// </summary>
-    public event EventHandler<CNFClause>? KeyRemoved;
-
-    /// <summary>
     /// Adds a clause and associated value to the index.
     /// </summary>
     /// <param name="key">The clause to add.</param>
@@ -131,7 +121,6 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
             }
             else if (node.RemoveValue(key))
             {
-                OnKeyRemoved(key);
                 return true;
             }
             else
@@ -145,10 +134,11 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     /// Removes all values keyed by a clause that is subsumed by a given clause.
     /// </summary>
     /// <param name="clause">The subsuming clause.</param>
-    public void RemoveSubsumed(CNFClause clause)
+    /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
+    public void RemoveSubsumed(CNFClause clause, Action<CNFClause>? clauseRemovedCallback = null)
     {
         ArgumentNullException.ThrowIfNull(clause);
-        RemoveSubsumed(root, clause, MakeAndSortFeatureVector(clause), 0);
+        RemoveSubsumed(root, clause, MakeAndSortFeatureVector(clause), 0, clauseRemovedCallback);
     }
 
     /// <summary>
@@ -157,8 +147,9 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     /// </summary>
     /// <param name="clause">The clause to add.</param>
     /// <param name="value">The value to associate with the clause.</param>
+    /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
     /// <returns>True if and only if the clause was added.</returns>
-    public bool TryReplaceSubsumed(CNFClause clause, TValue value)
+    public bool TryReplaceSubsumed(CNFClause clause, TValue value, Action<CNFClause>? clauseRemovedCallback = null)
     {
         ArgumentNullException.ThrowIfNull(clause);
 
@@ -174,7 +165,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
             return false;
         }
 
-        RemoveSubsumed(root, clause, featureVector, 0);
+        RemoveSubsumed(root, clause, featureVector, 0, clauseRemovedCallback);
         Add(clause, featureVector, value);
         return true;
     }
@@ -364,11 +355,13 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     // NB: subsumed clauses will have equal or higher vector elements.
     // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
     // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
+    // TODO-ZZZ-PERFORMANCE: replace individual unchanging things (clause, FV, callback) with single ref for smaller stack frame?
     private void RemoveSubsumed(
         IFeatureVectorIndexNode<TFeature, TValue> node,
         CNFClause clause,
         IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
-        int componentIndex)
+        int componentIndex,
+        Action<CNFClause>? clauseRemovedCallback)
     {
         if (componentIndex < featureVector.Count)
         {
@@ -389,7 +382,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
                 if (childFeatureVsCurrent <= 0)
                 {
                     var componentIndexOffset = childFeatureVsCurrent == 0 && childComponent.Magnitude >= component.Magnitude ? 1 : 0;
-                    RemoveSubsumed(childNode, clause, featureVector, componentIndex + componentIndexOffset);
+                    RemoveSubsumed(childNode, clause, featureVector, componentIndex + componentIndexOffset, clauseRemovedCallback);
                     if (!childNode.ChildrenAscending.Any() && !childNode.KeyValuePairs.Any())
                     {
                         toRemove.Add(childComponent);
@@ -404,23 +397,26 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
         }
         else
         {
-            RemoveAllDescendentSubsumed(node, clause);
+            RemoveAllDescendentSubsumed(node, clause, clauseRemovedCallback);
         }
 
-        void RemoveAllDescendentSubsumed(IFeatureVectorIndexNode<TFeature, TValue> node, CNFClause clause)
+        void RemoveAllDescendentSubsumed(
+            IFeatureVectorIndexNode<TFeature, TValue> node,
+            CNFClause clause,
+            Action<CNFClause>? clauseRemovedCallback)
         {
             // NB: note that we need to filter the values to those keyed by clauses that are
             // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
             foreach (var (key, _) in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)))
             {
                 node.RemoveValue(key);
-                OnKeyRemoved(key);
+                clauseRemovedCallback?.Invoke(key);
             }
 
             var toRemove = new List<FeatureVectorComponent<TFeature>>();
             foreach (var (childComponent, childNode) in node.ChildrenAscending)
             {
-                RemoveAllDescendentSubsumed(childNode, clause);
+                RemoveAllDescendentSubsumed(childNode, clause, clauseRemovedCallback);
 
                 if (!childNode.ChildrenAscending.Any() && !childNode.KeyValuePairs.Any())
                 {
@@ -447,7 +443,6 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
         }
 
         currentNode.AddValue(key, value);
-        OnKeyAdded(key);
     }
 
     /// <summary>
@@ -460,15 +455,5 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
         // todo-performance: if we need a list anyway, probably faster to make the list, then sort it in place? test me
         // todo-robustness: should probably throw if any distinct pairs have a comparison of zero. could happen efficiently as part of the sort
         return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
-    }
-
-    private void OnKeyAdded(CNFClause key)
-    {
-        KeyAdded?.Invoke(this, key);
-    }
-
-    private void OnKeyRemoved(CNFClause key)
-    {
-        KeyRemoved?.Invoke(this, key);
     }
 }

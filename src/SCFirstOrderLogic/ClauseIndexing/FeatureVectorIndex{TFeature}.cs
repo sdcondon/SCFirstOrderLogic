@@ -50,19 +50,7 @@ public class FeatureVectorIndex<TFeature> : IEnumerable<CNFClause>
         IEnumerable<CNFClause> content)
     {
         innerIndex = new(featureVectorSelector, root, content.Select(t => KeyValuePair.Create(t, t)));
-        innerIndex.KeyAdded += (_, e) => OnKeyAdded(e);
-        innerIndex.KeyRemoved += (_, e) => OnKeyRemoved(e);
     }
-
-    /// <summary>
-    /// Event that is fired whenever a clause is added to the index.
-    /// </summary>
-    public event EventHandler<CNFClause>? KeyAdded;
-
-    /// <summary>
-    /// Event that is fired whenever a clause is removed from the index.
-    /// </summary>
-    public event EventHandler<CNFClause>? KeyRemoved;
 
     /// <summary>
     /// Adds a clause to the index.
@@ -87,9 +75,10 @@ public class FeatureVectorIndex<TFeature> : IEnumerable<CNFClause>
     /// Removes all values keyed by a clause that is subsumed by a given clause.
     /// </summary>
     /// <param name="clause">The subsuming clause.</param>
-    public void RemoveSubsumed(CNFClause clause)
+    /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
+    public void RemoveSubsumed(CNFClause clause, Action<CNFClause>? clauseRemovedCallback = null)
     {
-        innerIndex.RemoveSubsumed(clause);
+        innerIndex.RemoveSubsumed(clause, clauseRemovedCallback);
     }
 
     /// <summary>
@@ -97,10 +86,11 @@ public class FeatureVectorIndex<TFeature> : IEnumerable<CNFClause>
     /// Otherwise, adds the given clause to the index, removes any clauses that it subsumes, and returns <see langword="true"/>.
     /// </summary>
     /// <param name="clause">The clause to add.</param>
+    /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
     /// <returns>True if and only if the clause was added.</returns>
-    public bool TryReplaceSubsumed(CNFClause clause)
+    public bool TryReplaceSubsumed(CNFClause clause, Action<CNFClause>? clauseRemovedCallback = null)
     {
-        return innerIndex.TryReplaceSubsumed(clause, clause);
+        return innerIndex.TryReplaceSubsumed(clause, clause, clauseRemovedCallback);
     }
 
     /// <summary>
@@ -141,14 +131,4 @@ public class FeatureVectorIndex<TFeature> : IEnumerable<CNFClause>
 
     /// <inheritdoc />>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    private void OnKeyAdded(CNFClause clause)
-    {
-        KeyAdded?.Invoke(this, clause);
-    }
-
-    private void OnKeyRemoved(CNFClause clause)
-    {
-        KeyRemoved?.Invoke(this, clause);
-    }
 }

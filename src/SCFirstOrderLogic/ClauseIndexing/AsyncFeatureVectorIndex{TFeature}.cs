@@ -51,19 +51,7 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
         IEnumerable<CNFClause> content)
     {
         innerIndex = new(featureVectorSelector, root, content.Select(a => KeyValuePair.Create(a, a)));
-        innerIndex.KeyAdded += (_, e) => OnKeyAdded(e);
-        innerIndex.KeyRemoved += (_, e) => OnKeyRemoved(e);
     }
-
-    /// <summary>
-    /// Event that is fired whenever a clause is added to the index.
-    /// </summary>
-    public event EventHandler<CNFClause>? KeyAdded;
-
-    /// <summary>
-    /// Event that is fired whenever a clause is removed from the index.
-    /// </summary>
-    public event EventHandler<CNFClause>? KeyRemoved;
 
     /// <summary>
     /// Adds a clause to the index.
@@ -83,9 +71,10 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
     /// Removes all values keyed by a clause that is subsumed by a given clause.
     /// </summary>
     /// <param name="clause">The subsuming clause.</param>
-    public async Task RemoveSubsumedAsync(CNFClause clause)
+    /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
+    public async Task RemoveSubsumedAsync(CNFClause clause, Func<CNFClause, Task>? clauseRemovedCallback = null)
     {
-        await innerIndex.RemoveSubsumedAsync(clause);
+        await innerIndex.RemoveSubsumedAsync(clause, clauseRemovedCallback);
     }
 
     /// <summary>
@@ -93,10 +82,11 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
     /// Otherwise, adds the given clause to the index, removes any clauses that it subsumes, and returns <see langword="true"/>.
     /// </summary>
     /// <param name="clause">The clause to add.</param>
+    /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
     /// <returns>True if and only if the clause was added.</returns>
-    public async Task<bool> TryReplaceSubsumedAsync(CNFClause clause)
+    public async Task<bool> TryReplaceSubsumedAsync(CNFClause clause, Func<CNFClause, Task>? clauseRemovedCallback = null)
     {
-        return await innerIndex.TryReplaceSubsumedAsync(clause, clause);
+        return await innerIndex.TryReplaceSubsumedAsync(clause, clause, clauseRemovedCallback);
     }
 
     /// <summary>
@@ -127,15 +117,5 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
         {
             yield return value;
         }
-    }
-
-    private void OnKeyAdded(CNFClause clause)
-    {
-        KeyAdded?.Invoke(this, clause);
-    }
-
-    private void OnKeyRemoved(CNFClause clause)
-    {
-        KeyRemoved?.Invoke(this, clause);
     }
 }
