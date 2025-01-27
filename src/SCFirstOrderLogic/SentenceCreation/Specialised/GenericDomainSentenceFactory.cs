@@ -1,20 +1,20 @@
-﻿// Copyright (c) 2021-2025 Simon Condon.
-// You may use this file in accordance with the terms of the MIT license.
-namespace SCFirstOrderLogic.SentenceCreation;
+﻿namespace SCFirstOrderLogic.SentenceCreation.Specialised;
 
 /// <summary>
 /// <para>
-/// Shorthand static factory methods for <see cref="Sentence"/> instances. Intended to be used with a 'using static' directive to make method invocations acceptably succinct.
+/// Identical to <see cref="SentenceFactory"/>, except that the A-Z variable declaration properties are replaced by:
 /// </para>
+/// <list type="bullet">
+/// <item>Properties 'A', 'B', 'C' &amp; 'D': zero-arity functions (i.e. constants)</item>
+/// <item>Properties 'U', 'V', 'W', 'X', 'Y' &amp; 'Z': variable declarations</item>
+/// <item>Methods 'F', 'G', 'H' &amp; 'I': functions (with an arbitrary number of args, via a Term[]-valued params parameter)</item>
+/// <item>Methods 'P', 'Q', 'R' &amp; 'S': predicates (with an arbitrary number of args, via a Term[]-valued params parameter)</item>
+/// </list>
 /// <para>
-/// For domain-specific sentence elements (i.e. predicates &amp; functions), the recommendation is to create appropriate methods and properties to create them. For example:
-/// <code>Predicate MyBinaryPredicate(Term arg1, Term arg2) => new Predicate(nameof(MyBinaryPredicate), arg1, arg2);</code>
-/// ..which means that (if you include an appropriate 'using static' directive) you can then write things like:
-/// <code>ForAll(X, ThereExists(Y, MyBinaryPredicate(X, Y)));</code>
-/// See the SCFirstOrderLogic.ExampleDomains project for examples of this. Also see the <see cref="LanguageIntegration.SentenceFactory"/> class for an alternative method of creating sentences (from lambda expressions acting on interfaces representing the domain and entities therein).
+/// Intended for use with very simple generic domains, such as those found in tests and basic examples.
 /// </para>
 /// </summary>
-public static class SentenceFactory
+public static class GenericDomainSentenceFactory
 {
     /// <summary>
     /// Shorthand factory method for a new <see cref="UniversalQuantification"/> instance.
@@ -23,7 +23,7 @@ public static class SentenceFactory
     /// <param name="sentence">The body sentence that refers to the declared variable.</param>
     /// <returns>A new <see cref="UniversalQuantification"/> instance.</returns>
     public static Sentence ForAll(VariableDeclaration variableDeclaration, Sentence sentence) =>
-        new UniversalQuantification(variableDeclaration, sentence);
+        SentenceFactory.ForAll(variableDeclaration, sentence);
 
     /// <summary>
     /// Shorthand factory method for a (tree of) new <see cref="UniversalQuantification"/> instances that declares two universally quantified variables.
@@ -33,7 +33,7 @@ public static class SentenceFactory
     /// <param name="sentence">The body sentence that refers to the declared variables.</param>
     /// <returns>A new <see cref="UniversalQuantification"/> instance.</returns>
     public static Sentence ForAll(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, Sentence sentence) =>
-        new UniversalQuantification(variableDeclaration1, new UniversalQuantification(variableDeclaration2, sentence));
+        SentenceFactory.ForAll(variableDeclaration1, variableDeclaration2, sentence);
 
     /// <summary>
     /// Shorthand factory method for a (tree of) new <see cref="UniversalQuantification"/> instances that declares three universally quantified variables.
@@ -44,7 +44,7 @@ public static class SentenceFactory
     /// <param name="sentence">The body sentence that refers to the declared variables.</param>
     /// <returns>A new <see cref="UniversalQuantification"/> instance.</returns>
     public static Sentence ForAll(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, VariableDeclaration variableDeclaration3, Sentence sentence) =>
-        new UniversalQuantification(variableDeclaration1, new UniversalQuantification(variableDeclaration2, new UniversalQuantification(variableDeclaration3, sentence)));
+        SentenceFactory.ForAll(variableDeclaration1, variableDeclaration2, variableDeclaration3, sentence);
 
     /// <summary>
     /// Shorthand factory method for a new <see cref="ExistentialQuantification"/> instance.
@@ -53,7 +53,7 @@ public static class SentenceFactory
     /// <param name="sentence">The body sentence that refers to the declared variable.</param>
     /// <returns>A new <see cref="ExistentialQuantification"/> instance.</returns>
     public static Sentence ThereExists(VariableDeclaration variableDeclaration, Sentence sentence) =>
-        new ExistentialQuantification(variableDeclaration, sentence);
+        SentenceFactory.ThereExists(variableDeclaration, sentence);
 
     /// <summary>
     /// Shorthand factory method for a (tree of) new <see cref="ExistentialQuantification"/> instances that declares two universally quantified variables.
@@ -63,7 +63,7 @@ public static class SentenceFactory
     /// <param name="sentence">The body sentence that refers to the declared variables.</param>
     /// <returns>A new <see cref="ExistentialQuantification"/> instance.</returns>
     public static Sentence ThereExists(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, Sentence sentence) =>
-        new ExistentialQuantification(variableDeclaration1, new UniversalQuantification(variableDeclaration2, sentence));
+        SentenceFactory.ThereExists(variableDeclaration1, variableDeclaration2, sentence);
 
     /// <summary>
     /// Shorthand factory method for a (tree of) new <see cref="ExistentialQuantification"/> instances that declares three universally quantified variables.
@@ -74,7 +74,7 @@ public static class SentenceFactory
     /// <param name="sentence">The body sentence that refers to the declared variables.</param>
     /// <returns>A new <see cref="ExistentialQuantification"/> instance.</returns>
     public static Sentence ThereExists(VariableDeclaration variableDeclaration1, VariableDeclaration variableDeclaration2, VariableDeclaration variableDeclaration3, Sentence sentence) =>
-        new ExistentialQuantification(variableDeclaration1, new ExistentialQuantification(variableDeclaration2, new ExistentialQuantification(variableDeclaration3, sentence)));
+        SentenceFactory.ThereExists(variableDeclaration1, variableDeclaration2, variableDeclaration3, sentence);
 
     /// <summary>
     /// Shorthand factory method for a (tree of) new <see cref="Conjunction"/>(s) of two (or more) operands.
@@ -83,17 +83,8 @@ public static class SentenceFactory
     /// <param name="operand2">The second operand of the conjunction.</param>
     /// <param name="otherOperands">Any additional operands.</param>
     /// <returns>A new <see cref="Conjunction"/> instance.</returns>
-    public static Sentence And(Sentence operand1, Sentence operand2, params Sentence[] otherOperands)
-    {
-        var conjunction = new Conjunction(operand1, operand2);
-
-        foreach (var operand in otherOperands)
-        {
-            conjunction = new Conjunction(conjunction, operand);
-        }
-
-        return conjunction;
-    }
+    public static Sentence And(Sentence operand1, Sentence operand2, params Sentence[] otherOperands) =>
+        SentenceFactory.And(operand1, operand2, otherOperands);
 
     /// <summary>
     /// Shorthand factory method for a (tree of) new <see cref="Disjunction"/>(s) of two (or more) operands.
@@ -102,17 +93,8 @@ public static class SentenceFactory
     /// <param name="operand2">The second operand of the disjunction.</param>
     /// <param name="otherOperands">Any additional operands.</param>
     /// <returns>A new <see cref="Disjunction"/> instance.</returns>
-    public static Sentence Or(Sentence operand1, Sentence operand2, params Sentence[] otherOperands)
-    {
-        var disjunction = new Disjunction(operand1, operand2);
-
-        foreach (var operand in otherOperands)
-        {
-            disjunction = new Disjunction(disjunction, operand);
-        }
-
-        return disjunction;
-    }
+    public static Sentence Or(Sentence operand1, Sentence operand2, params Sentence[] otherOperands) =>
+        SentenceFactory.Or(operand1, operand2, otherOperands);
 
     /// <summary>
     /// Shorthand factory method for a new <see cref="Implication"/> instance.
@@ -121,7 +103,7 @@ public static class SentenceFactory
     /// <param name="consequent">The consequent sentence of the implication.</param>
     /// <returns>A new <see cref="Implication"/> instance.</returns>
     public static Sentence If(Sentence antecedent, Sentence consequent) =>
-        new Implication(antecedent, consequent);
+        SentenceFactory.If(antecedent, consequent);
 
     /// <summary>
     /// Shorthand factory method for a new <see cref="Equivalence"/> instance.
@@ -130,7 +112,7 @@ public static class SentenceFactory
     /// <param name="right">The right-hand operand of the equivalence.</param>
     /// <returns>A new <see cref="Equivalence"/> instance.</returns>
     public static Sentence Iff(Sentence left, Sentence right) =>
-        new Equivalence(left, right);
+        SentenceFactory.Iff(left, right);
 
     /// <summary>
     /// Shorthand factory method for a new <see cref="Negation"/> instance.
@@ -138,7 +120,7 @@ public static class SentenceFactory
     /// <param name="sentence">The negated sentence.</param>
     /// <returns>A new <see cref="Negation"/> instance.</returns>
     public static Sentence Not(Sentence sentence) =>
-        new Negation(sentence);
+        SentenceFactory.Not(sentence);
 
     /// <summary>
     /// Shorthand factory method for a new <see cref="Predicate"/> instance with the <see cref="EqualityIdentifier.Instance"/> identifier.
@@ -147,146 +129,105 @@ public static class SentenceFactory
     /// <param name="right">The right-hand operand of the equality.</param>
     /// <returns>A new <see cref="Predicate"/> instance.</returns>
     public static Sentence AreEqual(Term left, Term right) =>
-        new Predicate(EqualityIdentifier.Instance, left, right);
+        SentenceFactory.AreEqual(left, right);
 
     /// <summary>
     /// Shorthand factory method for a new <see cref="VariableDeclaration"/> instance.
     /// </summary>
     /// <param name="identifier">The identifier of the variable.</param>>
     /// <returns>A new <see cref="VariableDeclaration"/> instance.</returns>
-    public static VariableDeclaration Var(object identifier) => new(identifier);
-
-    #region VariableDeclarations
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "A".
-    /// </summary>
-    public static VariableDeclaration A { get; } = new(nameof(A));
+    public static VariableDeclaration Var(object identifier) =>
+        SentenceFactory.Var(identifier);
 
     /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "B".
+    /// Gets a zero-arity <see cref="Function"/> with the identifier "A".
     /// </summary>
-    public static VariableDeclaration B { get; } = new(nameof(B));
-
+    public static Function A { get; } = new(nameof(A));
     /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "C".
+    /// Gets a zero-arity <see cref="Function"/> with the identifier "B".
     /// </summary>
-    public static VariableDeclaration C { get; } = new(nameof(C));
-
+    public static Function B { get; } = new(nameof(B));
     /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "D".
+    /// Gets a zero-arity <see cref="Function"/> with the identifier "C".
     /// </summary>
-    public static VariableDeclaration D { get; } = new(nameof(D));
-
+    public static Function C { get; } = new(nameof(C));
     /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "E".
+    /// Gets a zero-arity <see cref="Function"/> with the identifier "D".
     /// </summary>
-    public static VariableDeclaration E { get; } = new(nameof(E));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "F".
-    /// </summary>
-    public static VariableDeclaration F { get; } = new(nameof(F));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "G".
-    /// </summary>
-    public static VariableDeclaration G { get; } = new(nameof(G));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "H".
-    /// </summary>
-    public static VariableDeclaration H { get; } = new(nameof(H));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "I".
-    /// </summary>
-    public static VariableDeclaration I { get; } = new(nameof(I));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "J".
-    /// </summary>
-    public static VariableDeclaration J { get; } = new(nameof(J));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "K".
-    /// </summary>
-    public static VariableDeclaration K { get; } = new(nameof(K));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "L".
-    /// </summary>
-    public static VariableDeclaration L { get; } = new(nameof(L));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "M".
-    /// </summary>
-    public static VariableDeclaration M { get; } = new(nameof(M));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "N".
-    /// </summary>
-    public static VariableDeclaration N { get; } = new(nameof(N));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "O".
-    /// </summary>
-    public static VariableDeclaration O { get; } = new(nameof(O));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "P".
-    /// </summary>
-    public static VariableDeclaration P { get; } = new(nameof(P));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "Q".
-    /// </summary>
-    public static VariableDeclaration Q { get; } = new(nameof(Q));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "R".
-    /// </summary>
-    public static VariableDeclaration R { get; } = new(nameof(R));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "S".
-    /// </summary>
-    public static VariableDeclaration S { get; } = new(nameof(S));
-
-    /// <summary>
-    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "T".
-    /// </summary>
-    public static VariableDeclaration T { get; } = new(nameof(T));
+    public static Function D { get; } = new(nameof(D));
 
     /// <summary>
     /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "U".
     /// </summary>
     public static VariableDeclaration U { get; } = new(nameof(U));
-
     /// <summary>
     /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "V".
     /// </summary>
     public static VariableDeclaration V { get; } = new(nameof(V));
-
     /// <summary>
     /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "W".
     /// </summary>
     public static VariableDeclaration W { get; } = new(nameof(W));
-
     /// <summary>
     /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "X".
     /// </summary>
     public static VariableDeclaration X { get; } = new(nameof(X));
-
     /// <summary>
     /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "Y".
     /// </summary>
     public static VariableDeclaration Y { get; } = new(nameof(Y));
-
     /// <summary>
     /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "Z".
     /// </summary>
     public static VariableDeclaration Z { get; } = new(nameof(Z));
 
-    #endregion
+    /// <summary>
+    /// Returns a new <see cref="Function"/> instance with the identifier "F".
+    /// </summary>
+    /// <param name="args">The arguments of the function.</param>
+    /// <returns>A new <see cref="Function"/> instance with the identifier "F".</returns>
+    public static Function F(params Term[] args) => new(nameof(F), args);
+    /// <summary>
+    /// Returns a new <see cref="Function"/> instance with the identifier "G".
+    /// </summary>
+    /// <param name="args">The arguments of the function.</param>
+    /// <returns>A new <see cref="Function"/> instance with the identifier "G".</returns>
+    public static Function G(params Term[] args) => new(nameof(G), args);
+    /// <summary>
+    /// Returns a new <see cref="Function"/> instance with the identifier "H".
+    /// </summary>
+    /// <param name="args">The arguments of the function.</param>
+    /// <returns>A new <see cref="Function"/> instance with the identifier "H".</returns>
+    public static Function H(params Term[] args) => new(nameof(H), args);
+    /// <summary>
+    /// Returns a new <see cref="Function"/> instance with the identifier "I".
+    /// </summary>
+    /// <param name="args">The arguments of the function.</param>
+    /// <returns>A new <see cref="Function"/> instance with the identifier "I".</returns>
+    public static Function I(params Term[] args) => new(nameof(I), args);
+
+    /// <summary>
+    /// Returns a new <see cref="Predicate"/> instance with the identifier "P".
+    /// </summary>
+    /// <param name="args">The arguments of the predicate.</param>
+    /// <returns>A new <see cref="Predicate"/> instance with the identifier "P".</returns>
+    public static Predicate P(params Term[] args) => new(nameof(P), args);
+    /// <summary>
+    /// Returns a new <see cref="Predicate"/> instance with the identifier "Q".
+    /// </summary>
+    /// <param name="args">The arguments of the predicate.</param>
+    /// <returns>A new <see cref="Predicate"/> instance with the identifier "Q".</returns>
+    public static Predicate Q(params Term[] args) => new(nameof(Q), args);
+    /// <summary>
+    /// Returns a new <see cref="Predicate"/> instance with the identifier "R".
+    /// </summary>
+    /// <param name="args">The arguments of the predicate.</param>
+    /// <returns>A new <see cref="Predicate"/> instance with the identifier "R".</returns>
+    public static Predicate R(params Term[] args) => new(nameof(R), args);
+    /// <summary>
+    /// Returns a new <see cref="Predicate"/> instance with the identifier "S".
+    /// </summary>
+    /// <param name="args">The arguments of the predicate.</param>
+    /// <returns>A new <see cref="Predicate"/> instance with the identifier "S".</returns>
+    public static Predicate S(params Term[] args) => new(nameof(S), args);
 }

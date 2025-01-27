@@ -2,7 +2,8 @@
 using FlUnit;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
+using System.Threading.Tasks;
+using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.TermIndexing;
 
@@ -120,23 +121,23 @@ public static class AsyncPathTreeTests
             var rootNode = new AsyncPathTreeDictionaryNode<Term>();
             var tree = new AsyncPathTree(rootNode, tc.CurrentTerms);
             await tree.AddAsync(tc.NewTerm);
-            return GetParameterNodeChildren(rootNode);
+            return await GetParameterNodeChildrenAsync(rootNode);
 
-            static Dictionary<IPathTreeArgumentNodeKey, object> GetParameterNodeChildren(IAsyncPathTreeParameterNode<Term> node)
+            static async Task<Dictionary<IPathTreeArgumentNodeKey, object>> GetParameterNodeChildrenAsync(IAsyncPathTreeParameterNode<Term> node)
             {
-                return new(node.GetChildren().ToListAsync().GetAwaiter().GetResult().Select(kvp =>
+                return new((await node.GetChildren().ToListAsync()).Select(kvp =>
                 {
-                    var children = GetArgumentNodeChildren(kvp.Value);
-                    object comparisonObject = children.Count() > 0 ? new { Children = children } : new { Values = kvp.Value.GetValues().ToArrayAsync().GetAwaiter().GetResult() };
+                    var children = GetArgumentNodeChildrenAsync(kvp.Value).GetAwaiter().GetResult();
+                    object comparisonObject = children.Any() ? new { Children = children } : new { Values = kvp.Value.GetValues().ToArrayAsync().AsTask().GetAwaiter().GetResult() };
                     return KeyValuePair.Create(kvp.Key, comparisonObject);
                 }));
             }
 
-            static IEnumerable<object> GetArgumentNodeChildren(IAsyncPathTreeArgumentNode<Term> node)
+            static async Task<IEnumerable<object>> GetArgumentNodeChildrenAsync(IAsyncPathTreeArgumentNode<Term> node)
             {
-                return node.GetChildren().ToListAsync().GetAwaiter().GetResult().Select(n =>
+                return (await node.GetChildren().ToListAsync()).Select(n =>
                 {
-                    return new { Children = GetParameterNodeChildren(n) };
+                    return new { Children = GetParameterNodeChildrenAsync(n).GetAwaiter().GetResult() };
                 });
             }
         })

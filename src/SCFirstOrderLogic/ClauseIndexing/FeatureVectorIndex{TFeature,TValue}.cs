@@ -356,7 +356,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
     // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
     // TODO-ZZZ-PERFORMANCE: replace individual unchanging things (clause, FV, callback) with single ref for smaller stack frame?
-    private void RemoveSubsumed(
+    private static void RemoveSubsumed(
         IFeatureVectorIndexNode<TFeature, TValue> node,
         CNFClause clause,
         IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,

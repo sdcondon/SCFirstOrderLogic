@@ -2,11 +2,10 @@
 using BenchmarkDotNet.Engines;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainSentenceFactory;
+using static SCFirstOrderLogic.TestProblems.FromMpg.TermIndexingExample;
 
 namespace SCFirstOrderLogic.TermIndexing;
-
-using static SCFirstOrderLogic.TestProblems.FromMpg.TermIndexingExample;
 
 [MemoryDiagnoser]
 [InProcess]
@@ -16,7 +15,7 @@ public class PathTreeBenchmarks
     private static readonly PathTree_WOVarBinding<Term> tree_withoutVarBinding = new(ExampleTerms.Select(t => KeyValuePair.Create(t, t)));
     private static readonly PathTree_GradualVarBinding<Term> tree_gradualVarBinding = new(ExampleTerms.Select(t => KeyValuePair.Create(t, t)));
 
-    private readonly Consumer consumer = new Consumer();
+    private readonly Consumer consumer = new();
 
     [Benchmark]
     public static bool Contains() => tree.Contains(F(X, G(C, B)));

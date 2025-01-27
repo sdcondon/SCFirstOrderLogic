@@ -3,7 +3,7 @@ using FlUnit;
 using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 

@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>SCFirstOrderLogic.ExampleDomains</RootNamespace>
-    <AssemblyName>SCFirstOrderLogic.ExampleDomains</AssemblyName>
+    <RootNamespace>SCFirstOrderLogic.TestProblems</RootNamespace>
+    <AssemblyName>SCFirstOrderLogic.TestProblems</AssemblyName>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

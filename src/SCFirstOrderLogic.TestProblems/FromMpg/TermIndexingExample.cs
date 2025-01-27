@@ -1,4 +1,4 @@
-﻿using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+﻿using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainSentenceFactory;
 
 namespace SCFirstOrderLogic.TestProblems.FromMpg;
 
@@ -9,17 +9,7 @@ namespace SCFirstOrderLogic.TestProblems.FromMpg;
 /// See https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script-6.2-7.4.pdf for the actual source.
 /// </summary>
 public static class TermIndexingExample
-{
-    public static readonly Function A = new(nameof(A));
-    public static readonly Function B = new(nameof(B));
-    public static readonly Function C = new(nameof(C));
-    public static readonly Function D = new(nameof(D));
-
-    public static Function F(Term x, Term y) => new(nameof(F), x, y);
-    public static Function G(Term x, Term y) => new(nameof(G), x, y);
-    public static Function H(Term x) => new(nameof(H), x);
-
-    
+{   
     public static readonly Term[] ExampleTerms =
     {
         F(G(D, X), C),

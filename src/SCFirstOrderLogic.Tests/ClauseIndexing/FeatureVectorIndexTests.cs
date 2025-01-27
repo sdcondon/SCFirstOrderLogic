@@ -7,7 +7,7 @@ using SCFirstOrderLogic.TestUtilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
 

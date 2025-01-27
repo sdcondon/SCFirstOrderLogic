@@ -433,7 +433,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
 
     private async Task AddAsync(
         CNFClause key,
-        IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
+        IEnumerable<FeatureVectorComponent<TFeature>> featureVector,
         TValue value)
     {
         var currentNode = root;
