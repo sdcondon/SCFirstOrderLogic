@@ -81,8 +81,17 @@ public class SentenceFormatter
     /// </summary>
     /// <param name="clause">The clause to be formatted.</param>
     /// <returns>A string representation of the given clause.</returns>
-    public string Format(CNFClause clause) =>
-        string.Join(" ∨ ", clause.Literals.Select(l => Format(l)));
+    public string Format(CNFClause clause)
+    {
+        if (clause.Literals.Count > 0)
+        {
+            return string.Join(" ∨ ", clause.Literals.Select(l => Format(l)));
+        }
+        else
+        {
+            return "⊥";
+        }
+    }
 
     /// <summary>
     /// Returns a string representation of a given <see cref="CNFDefiniteClause"/> instance.
