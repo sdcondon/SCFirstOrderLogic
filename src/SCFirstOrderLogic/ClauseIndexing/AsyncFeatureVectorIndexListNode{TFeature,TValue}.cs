@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// <summary>
 /// <para>
 /// An implementation of <see cref="IAsyncFeatureVectorIndexNode{TFeature, TValue}"/> that just stores its content in memory.
-/// Uses a <see cref="SortedList{TKey, TValue}"/> for child nodes.
+/// Uses a <see cref="SortedList{TKey, TValue}"/> for child nodes, and a <see cref="Dictionary{TKey, TValue}"/> for leaf values.
 /// </para>
 /// <para>
 /// NB: If you are using this type, you should consider using <see cref="FeatureVectorIndex{TFeature, TValue}"/> instead, to avoid the overhead of asynchronicity.

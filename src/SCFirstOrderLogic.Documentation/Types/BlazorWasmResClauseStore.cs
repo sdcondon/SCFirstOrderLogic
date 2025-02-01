@@ -72,11 +72,9 @@ public class BlazorWasmResClauseStore : IKnowledgeBaseClauseStore
     /// <summary>
     /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="HashSetClauseStore"/>.
     /// </summary>
-    private class QueryStore : IQueryClauseStore
+    private class QueryStore(IEnumerable<KeyValuePair<CNFClause, byte>> clauses) : IQueryClauseStore
     {
-        private readonly ConcurrentDictionary<CNFClause, byte> clauses = new();
-
-        public QueryStore(IEnumerable<KeyValuePair<CNFClause, byte>> clauses) => this.clauses = new(clauses);
+        private readonly ConcurrentDictionary<CNFClause, byte> clauses = new(clauses);
 
         /// <inheritdoc />
         public Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)

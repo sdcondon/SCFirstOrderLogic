@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using System;
 
 namespace SCFirstOrderLogic.SentenceCreation;
 
@@ -123,12 +122,12 @@ public static class SentenceParserTests
 
     public static Test ParseList_NegativeTestCases => TestThat
         .GivenTestContext()
-        .AndEachOf(() => new[]
-        {
+        .AndEachOf<string>(() =>
+        [
             "P() Q()aaa",
             "P() Q();aaa",
             "P(); ; Q()",
-        })
+        ])
         .When((ctx, tc) => SentenceParser.BasicParser.ParseList(tc))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 

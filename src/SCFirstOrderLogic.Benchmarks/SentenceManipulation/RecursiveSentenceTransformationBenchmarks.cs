@@ -1,10 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using System.Collections.Generic;
-using System;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
-using SCFirstOrderLogic.SentenceManipulation;
 
-namespace SCFirstOrderLogic.Benchmarks.SentenceManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation;
 
 [MemoryDiagnoser]
 [InProcess]

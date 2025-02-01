@@ -34,7 +34,7 @@ public interface IKnowledgeBase
     /// </para>
     /// <para>
     /// NB #2: This method itself is async (rather than just returning an <see cref="IQuery"/>) to allow for implementations
-    /// that use IO to initialise the query before returning it (e.g. setting up secondary storage for intermediate clauses).
+    /// that use IO to initialise the query before returning it (e.g. setting up external storage for intermediate clauses).
     /// We view this kind of initialisation as a significant enough milestone to be separately monitorable (rather than requiring
     /// it to just be folded into the query object's implementation). Note that a synchronous extension method does exist, though.
     /// </para>
