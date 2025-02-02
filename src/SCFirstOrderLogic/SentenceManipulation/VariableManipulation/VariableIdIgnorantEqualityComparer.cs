@@ -20,7 +20,9 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 /// </summary>
 // TODO-PERFORMANCE: The doc above does make it clear that this is a last resort, but I should defo take some time to try
 // to optimise here. *Two* short-lived dictionaries in equality comparison? Could avoid one of 'em by effectively standardising
-// apart as we go (e.g. making x vs y part of the key in a singular dict)? Benchmark me.
+// apart as we go (e.g. making x vs y part of the key in a singular dict)? Also, the variable counts could easily be low enough
+// that its not worth anything hash-based at all, and just a list is better. Benchmark me.
+// TODO-BREAKING: VariableId*Agnostic*Comparer a better name? Cos its not really "ignorant" - its taking into account the fact that they could differ..
 public class VariableIdIgnorantEqualityComparer : IEqualityComparer<CNFClause>, IEqualityComparer<Literal>, IEqualityComparer<Predicate>, IEqualityComparer<Term>
 {
     private static readonly VariableReference VariableReferenceForHashCode = new(new {});

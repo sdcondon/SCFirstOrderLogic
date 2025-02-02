@@ -43,7 +43,7 @@ public static class NormalisationExtensions
 
         StandardisedVariableIdentifier GetOrAddNewIdentifier(StandardisedVariableIdentifier oldIdentifier)
         {
-            if (!newIdentifiersByOld!.TryGetValue(oldIdentifier, out var newIdentifier))
+            if (!newIdentifiersByOld.TryGetValue(oldIdentifier, out var newIdentifier))
             {
                 newIdentifier = newIdentifiersByOld[oldIdentifier] = new StandardisedVariableIdentifier(oldIdentifier.OriginalVariableScope, oldIdentifier.OriginalSentence);
             }
