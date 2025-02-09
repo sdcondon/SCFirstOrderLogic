@@ -104,8 +104,12 @@ public static class NormalisationExtensionsTests
             },
             new
             {
-                // TODO-BUG?: We don't remove the trivially true clauses (e.g. P ∨ ¬P) - none of the source material
-                // references this as being part of the normalisation process. But we probably should..
+                // TODO-ZZZ: We don't remove the trivially true clauses (e.g. P ∨ ¬P), and *maybe* should.
+                // The trivially true clauses don't cause any/much harm (note that you'll just never get a resolution with them
+                // that tells you anything new - since the resolvent clause will always be the same as the other input one) - 
+                // and checking for trivially true clauses would come at a performance cost that could well outweigh
+                // the cost of having trivially true ones in there. So, leaving behaviour like this for the mo - would
+                // least need to do some perf testing before changing this.
                 Sentence = Or(And(P, Q), And(Not(P), Not(Q))),
                 ExpectedCNF = new
                 {

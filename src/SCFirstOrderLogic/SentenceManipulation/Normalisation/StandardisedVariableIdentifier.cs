@@ -65,19 +65,6 @@ public class StandardisedVariableIdentifier
     /// </summary>
     public object OriginalIdentifier => OriginalVariableScope.Variable.Identifier;
 
-    /////// <summary>
-    /////// Gets the context of the original variable identifier that this identifier is the standardisation of.
-    /////// An enumeration starting from the quantification that declares the variable, moving back up through
-    /////// the sentence tree to the top-level sentence.
-    /////// </summary>
-    ////public IEnumerable<Sentence> OriginalContext
-    ////{
-    ////    get
-    ////    {
-    ////        // DFS for originalvariablescope (by reference, just in case), keeping track of path to it as we do so.
-    ////    }
-    ////}
-
     /// <inheritdoc/>
     public override string? ToString() => OriginalIdentifier.ToString();
 }
