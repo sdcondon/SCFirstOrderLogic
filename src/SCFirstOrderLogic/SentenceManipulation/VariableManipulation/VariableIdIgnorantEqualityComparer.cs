@@ -15,7 +15,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 /// <para>
 /// NB: of course, such comparison is costly in terms of performance. When an unambiguous ordering of literals
 /// can be established, instead consider prior transformation via <see cref="VariableManipulationExtensions.Ordinalise(Literal)"/>,
-/// followed by equality comparison using plain old <see cref="object.Equals(object?)"/>.
+/// followed by equality comparison using <see cref="object.Equals(object?)"/>.
 /// </para>
 /// </summary>
 // TODO-PERFORMANCE: The doc above does make it clear that this is a last resort, but I should defo take some time to try

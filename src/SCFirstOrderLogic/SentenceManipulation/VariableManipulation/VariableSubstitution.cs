@@ -9,8 +9,6 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 /// <summary>
 /// Sentence transformation class that makes some substitutions for <see cref="VariableReference"/> instances.
-/// In addition to the various method ApplyTo methods offered by the base class that operate on <see cref="Sentence"/>
-/// and <see cref="Term"/> subtypes, this class also offers an <see cref="ApplyTo(Literal)"/> method.
 /// </summary>
 public class VariableSubstitution : RecursiveSentenceTransformation
 {
@@ -68,16 +66,6 @@ public class VariableSubstitution : RecursiveSentenceTransformation
     /// </summary>
     /// <returns>A new <see cref="MutableVariableSubstitution"/> instance with the same bindings as this one.</returns>
     public MutableVariableSubstitution CopyAsMutable() => new(bindings);
-
-    /// <summary>
-    /// Applies this substitution to a <see cref="Literal"/> instance.
-    /// </summary>
-    /// <param name="literal">The <see cref="Literal"/> instance to transform.</param>
-    /// <returns>The transformed <see cref="Literal"/>.</returns>
-    public Literal ApplyTo(Literal literal)
-    {
-        return new Literal((Predicate)base.ApplyTo(literal.Predicate), literal.IsNegated);
-    }
 
     /// <summary>
     /// Applies this substitution to a <see cref="Conjunction"/> instance.
@@ -198,6 +186,81 @@ public class VariableSubstitution : RecursiveSentenceTransformation
     public override Function ApplyTo(Function function)
     {
         return (Function)base.ApplyTo(function);
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="CNFSentence"/> instance.
+    /// </summary>
+    /// <param name="cnfSentence">The <see cref="CNFSentence"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="CNFSentence"/>.</returns>
+    public CNFSentence ApplyTo(CNFSentence cnfSentence)
+    {
+        var isChanged = false;
+        var transformedClauses = new HashSet<CNFClause>();
+
+        foreach (var clause in cnfSentence.Clauses)
+        {
+            var transformedClause = ApplyTo(clause);
+            transformedClauses.Add(transformedClause);
+
+            if (transformedClause != clause)
+            {
+                isChanged = true;
+            }
+        }
+
+        if (isChanged)
+        {
+            return new CNFSentence(transformedClauses);
+        }
+
+        return cnfSentence;
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="CNFClause"/> instance.
+    /// </summary>
+    /// <param name="cnfClause">The <see cref="CNFClause"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="CNFClause"/>.</returns>
+    public CNFClause ApplyTo(CNFClause cnfClause)
+    {
+        var isChanged = false;
+        var transformedLiterals = new HashSet<Literal>();
+
+        foreach (var literal in cnfClause.Literals)
+        {
+            var transformedLiteral = ApplyTo(literal);
+            transformedLiterals.Add(transformedLiteral);
+
+            if (transformedLiteral != literal)
+            {
+                isChanged = true;
+            }
+        }
+
+        if (isChanged)
+        {
+            return new CNFClause(transformedLiterals);
+        }
+
+        return cnfClause;
+    }
+
+    /// <summary>
+    /// Applies this substitution to a <see cref="Literal"/> instance.
+    /// </summary>
+    /// <param name="literal">The <see cref="Literal"/> instance to transform.</param>
+    /// <returns>The transformed <see cref="Literal"/>.</returns>
+    public Literal ApplyTo(Literal literal)
+    {
+        var transformedPredicate = ApplyTo(literal.Predicate);
+
+        if (transformedPredicate != literal.Predicate)
+        {
+            return new Literal(transformedPredicate, literal.IsNegated);
+        }
+
+        return literal;
     }
 
     /// <inheritdoc />
