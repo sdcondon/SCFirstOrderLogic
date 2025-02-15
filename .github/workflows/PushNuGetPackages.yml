@@ -39,9 +39,17 @@ jobs:
       uses: actions/github-script@v5
       with:
         script: |
-          github.rest.git.updateRef({
+          github.rest.git.createRef({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            ref: 'tags/latest-release',
+            ref: 'refs/tags/latest-release',
             sha: context.sha
+          }).catch(err => {
+            if (err.status !== 422) throw err;
+            github.rest.git.updateRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'tags/latest-release',
+              sha: context.sha
+            });
           })
