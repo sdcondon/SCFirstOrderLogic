@@ -68,8 +68,9 @@ public static class VariableSubstitutionTests
             ////    InputTerm: P(C, X),
             ////    Expected: P(C, F(F(X)))),
         ])
-        .When(tc => { })
-        .ThenReturns();
+        .When(tc => new VariableSubstitution(tc.Bindings).ApplyTo(tc.InputTerm))
+        .ThenReturns()
+        .And((tc, rv) => rv.Should().Be(tc.Expected));
 
     public static Test EqualityBehaviour => TestThat
         .GivenEachOf<EqualityTestCase>(() =>
