@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
 
@@ -86,6 +87,12 @@ public sealed class Function : Term
 
     /// <inheritdoc />
     public override TOut Accept<TOut, TState>(ITermTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
+
+    /// <inheritdoc />
+    public override Task AcceptAsync(IAsyncTermVisitor visitor) => visitor.VisitAsync(this);
+
+    /// <inheritdoc />
+    public override Task AcceptAsync<T>(IAsyncTermVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
 
     /// <inheritdoc />
     public override bool Equals(object? obj)
