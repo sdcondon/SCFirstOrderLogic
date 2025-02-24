@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
 
@@ -53,6 +54,20 @@ public abstract class Term
     /// <param name="transformation">The transformation to apply.</param>
     /// <param name="state">The state that the transformation is to work with.</param>
     public abstract TOut Accept<TOut, TState>(ITermTransformation<TOut, TState> transformation, TState state);
+
+    /// <summary>
+    /// Accepts a <see cref="IAsyncTermVisitor"/> instance.
+    /// </summary>
+    /// <param name="visitor">The visitor to be visited by.</param>
+    public abstract Task AcceptAsync(IAsyncTermVisitor visitor);
+
+    /// <summary>
+    /// Accepts a <see cref="IAsyncTermVisitor{TState}"/> instance.
+    /// </summary>
+    /// <param name="visitor">The visitor to be visited by.</param>
+    /// <param name="state">A reference to the state that the visitor is working with.</param>
+    /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
+    public abstract Task AcceptAsync<TState>(IAsyncTermVisitor<TState> visitor, TState state);
 
     /// <summary>
     /// <para>
