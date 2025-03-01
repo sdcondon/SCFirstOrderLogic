@@ -23,11 +23,11 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     /// <summary>
     /// <para>
     /// Creates a feature vector consisting of: positive literal count, negative literal count, 
-    /// occurence count of each occuring identifier among positive literals, and occurence count 
-    /// of each occuring identifier among negative literals.
+    /// occurence count of each occuring admissible identifier among positive literals, and occurence count 
+    /// of each occuring admissible identifier among negative literals.
     /// </para>
     /// <para>
-    /// Skolem function identifiers and the identifier for the equality predicate are not included in the returned vectors.
+    /// All predicate and function identifiers are admissible, with the sole exception of Skolem function identifiers.
     /// </para>
     /// </summary>
     /// <param name="clause">The clause to retrieve a feature vector for.</param>
@@ -38,8 +38,14 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     }
 
     /// <summary>
-    /// Creates a feature vector selector delegate that gives vectors consisting of the max depth of each occuring identifier
-    /// among positive literals, and the max depth of each occuring identifier among negative literals.
+    /// <para>
+    /// Creates a feature vector selector delegate that gives vectors consisting of: positive literal count, 
+    /// negative literal count, occurence count of each occuring admissible identifier among positive literals,
+    /// and occurence count of each occuring admissible identifier among negative literals.
+    /// </para>
+    /// <para>
+    /// All predicate and function identifiers for which <see paramref="identifierFilter"/> returns <see langword="true"/> are admissible.
+    /// </para>
     /// </summary>
     /// <param name="identifierFilter">The filter to use to determine whether identifiers should be included in a vector.</param>
     /// <returns>A delegate for creating feature vectors.</returns>
@@ -79,7 +85,13 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     /// <returns>A new <see cref="IComparer{T}"/>.</returns>
     public static IComparer<OccurenceCountFeature> MakeFeatureComparer()
     {
-        return MakeFeatureComparer(Comparer.Default);
+        return MakeFeatureComparer(Comparer<object>.Create((x, y) => (x, y) switch
+        {
+            (EqualityIdentifier, EqualityIdentifier) => 0,
+            (EqualityIdentifier, _) => 1,
+            (_, EqualityIdentifier) => -1,
+            (_, _) => Comparer.Default.Compare(x, y),
+        }));
     }
 
     /// <summary>
