@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,22 +17,44 @@ namespace SCFirstOrderLogic.ClauseIndexing.Features;
 /// <seealso href="http://wwwlehre.dhbw-stuttgart.de/~sschulz/PAPERS/Schulz2013-FVI.pdf"/>
 public record MaxDepthFeature(object Identifier, bool IsInPositiveLiteral)
 {
+    private static readonly Func<object, bool> DefaultIdentifierFilter = i => i is not SkolemFunctionIdentifier && i is not EqualityIdentifier;
+    private static readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<MaxDepthFeature>>> DefaultFeatureVectorSelector = MakeFeatureVectorSelector(DefaultIdentifierFilter);
+
     /// <summary>
+    /// <para>
     /// Creates a feature vector consisting of the max depth of each occuring identifier among positive literals,
     /// and the max depth of each occuring identifier among negative literals.
+    /// </para>
+    /// <para>
+    /// Skolem function identifiers and the identifier for the equality predicate are not included in the returned vector.
+    /// </para>
     /// </summary>
     /// <param name="clause">The clause to retrieve a feature vector for.</param>
     /// <returns>A feature vector.</returns>
     public static IEnumerable<FeatureVectorComponent<MaxDepthFeature>> MakeFeatureVector(CNFClause clause)
     {
-        Dictionary<MaxDepthFeature, int> featureVector = new();
+        return DefaultFeatureVectorSelector(clause);
+    }
 
-        foreach (var literal in clause.Literals)
+    /// <summary>
+    /// Creates a feature vector selector delegate that gives vectors consisting of the max depth of each occuring identifier
+    /// among positive literals, and the max depth of each occuring identifier among negative literals.
+    /// </summary>
+    /// <param name="identifierFilter">The filter to use to determine whether identifiers should be included in a vector.</param>
+    /// <returns>A feature vector.</returns>
+    public static Func<CNFClause, IEnumerable<FeatureVectorComponent<MaxDepthFeature>>> MakeFeatureVectorSelector(Func<object, bool> identifierFilter)
+    {
+        return clause =>
         {
-            literal.Predicate.Accept(new CreationVisitor(featureVector, literal.IsPositive), 1);
-        }
+            Dictionary<MaxDepthFeature, int> featureVector = new();
 
-        return featureVector.Select(kvp => new FeatureVectorComponent<MaxDepthFeature>(kvp.Key, kvp.Value));
+            foreach (var literal in clause.Literals)
+            {
+                literal.Predicate.Accept(new CreationVisitor(featureVector, literal.IsPositive, identifierFilter), 1);
+            }
+
+            return featureVector.Select(kvp => new FeatureVectorComponent<MaxDepthFeature>(kvp.Key, kvp.Value));
+        };
     }
 
     /// <summary>
@@ -81,22 +104,32 @@ public record MaxDepthFeature(object Identifier, bool IsInPositiveLiteral)
     {
         private readonly IDictionary<MaxDepthFeature, int> featureVector;
         private readonly bool forPositiveLiterals;
+        private readonly Func<object, bool> identifierFilter;
 
-        public CreationVisitor(IDictionary<MaxDepthFeature, int> featureVector, bool forPositiveLiterals)
+        public CreationVisitor(IDictionary<MaxDepthFeature, int> featureVector, bool forPositiveLiterals, Func<object, bool> identifierFilter)
         {
             this.featureVector = featureVector;
             this.forPositiveLiterals = forPositiveLiterals;
+            this.identifierFilter = identifierFilter;
         }
 
         public override void Visit(Predicate predicate, int depth)
         {
-            UpdateMaxDepth(predicate.Identifier, depth);
+            if (identifierFilter(predicate.Identifier))
+            {
+                UpdateMaxDepth(predicate.Identifier, depth);
+            }
+
             base.Visit(predicate, depth + 1);
         }
 
         public override void Visit(Function function, int depth)
         {
-            UpdateMaxDepth(function.Identifier, depth);
+            if (identifierFilter(function.Identifier))
+            {
+                UpdateMaxDepth(function.Identifier, depth);
+            }
+
             base.Visit(function, depth + 1);
         }
 

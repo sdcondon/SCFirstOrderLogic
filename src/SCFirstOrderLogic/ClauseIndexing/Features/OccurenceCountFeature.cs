@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,27 +17,49 @@ namespace SCFirstOrderLogic.ClauseIndexing.Features;
 /// <seealso href="http://wwwlehre.dhbw-stuttgart.de/~sschulz/PAPERS/Schulz2013-FVI.pdf"/>
 public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral)
 {
+    private static readonly Func<object, bool> DefaultIdentifierFilter = i => i is not SkolemFunctionIdentifier && i is not EqualityIdentifier;
+    private static readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<OccurenceCountFeature>>> DefaultFeatureVectorSelector = MakeFeatureVectorSelector(DefaultIdentifierFilter);
+
     /// <summary>
+    /// <para>
     /// Creates a feature vector consisting of: positive literal count, negative literal count, 
     /// occurence count of each occuring identifier among positive literals, and occurence count 
     /// of each occuring identifier among negative literals.
+    /// </para>
+    /// <para>
+    /// Skolem function identifiers and the identifier for the equality predicate are not included in the returned vectors.
+    /// </para>
     /// </summary>
     /// <param name="clause">The clause to retrieve a feature vector for.</param>
     /// <returns>A feature vector.</returns>
     public static IEnumerable<FeatureVectorComponent<OccurenceCountFeature>> MakeFeatureVector(CNFClause clause)
     {
-        Dictionary<OccurenceCountFeature, int> featureVector = new();
+        return DefaultFeatureVectorSelector(clause);
+    }
 
-        foreach (var literal in clause.Literals)
+    /// <summary>
+    /// Creates a feature vector selector delegate that gives vectors consisting of the max depth of each occuring identifier
+    /// among positive literals, and the max depth of each occuring identifier among negative literals.
+    /// </summary>
+    /// <param name="identifierFilter">The filter to use to determine whether identifiers should be included in a vector.</param>
+    /// <returns>A delegate for creating feature vectors.</returns>
+    public static Func<CNFClause, IEnumerable<FeatureVectorComponent<OccurenceCountFeature>>> MakeFeatureVectorSelector(Func<object, bool> identifierFilter)
+    {
+        return clause =>
         {
-            var literalCountFeature = new OccurenceCountFeature(null, literal.IsPositive);
-            featureVector.TryGetValue(literalCountFeature, out var value);
-            featureVector[literalCountFeature] = value + 1;
+            Dictionary<OccurenceCountFeature, int> featureVector = new();
 
-            literal.Predicate.Accept(new CreationVisitor(featureVector, literal.IsPositive));
-        }
+            foreach (var literal in clause.Literals)
+            {
+                var literalCountFeature = new OccurenceCountFeature(null, literal.IsPositive);
+                featureVector.TryGetValue(literalCountFeature, out var value);
+                featureVector[literalCountFeature] = value + 1;
 
-        return featureVector.Select(kvp => new FeatureVectorComponent<OccurenceCountFeature>(kvp.Key, kvp.Value));
+                literal.Predicate.Accept(new CreationVisitor(featureVector, literal.IsPositive, identifierFilter));
+            }
+
+            return featureVector.Select(kvp => new FeatureVectorComponent<OccurenceCountFeature>(kvp.Key, kvp.Value));
+        };
     }
 
     /// <summary>
@@ -100,22 +123,32 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     {
         private readonly IDictionary<OccurenceCountFeature, int> featureVector;
         private readonly bool forPositiveLiterals;
+        private readonly Func<object, bool> identifierFilter;
 
-        public CreationVisitor(IDictionary<OccurenceCountFeature, int> featureVector, bool forPositiveLiterals)
+        public CreationVisitor(IDictionary<OccurenceCountFeature, int> featureVector, bool forPositiveLiterals, Func<object, bool> identifierFilter)
         {
             this.featureVector = featureVector;
             this.forPositiveLiterals = forPositiveLiterals;
+            this.identifierFilter = identifierFilter;
         }
 
         public override void Visit(Predicate predicate)
         {
-            AddOccurence(predicate.Identifier);
+            if (identifierFilter(predicate.Identifier))
+            {
+                AddOccurence(predicate.Identifier);
+            }
+
             base.Visit(predicate);
         }
 
         public override void Visit(Function function)
         {
-            AddOccurence(function.Identifier);
+            if (identifierFilter(function.Identifier))
+            {
+                AddOccurence(function.Identifier);
+            }
+
             base.Visit(function);
         }
 
