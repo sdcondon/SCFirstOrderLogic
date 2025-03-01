@@ -17,7 +17,7 @@ namespace SCFirstOrderLogic.ClauseIndexing.Features;
 /// <seealso href="http://wwwlehre.dhbw-stuttgart.de/~sschulz/PAPERS/Schulz2013-FVI.pdf"/>
 public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral)
 {
-    private static readonly Func<object, bool> DefaultIdentifierFilter = i => i is not SkolemFunctionIdentifier && i is not EqualityIdentifier;
+    private static readonly Func<object, bool> DefaultIdentifierFilter = i => i is not SkolemFunctionIdentifier;
     private static readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<OccurenceCountFeature>>> DefaultFeatureVectorSelector = MakeFeatureVectorSelector(DefaultIdentifierFilter);
 
     /// <summary>
