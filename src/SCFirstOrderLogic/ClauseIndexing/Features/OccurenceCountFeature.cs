@@ -73,14 +73,22 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     /// Makes a comparer of <see cref="OccurenceCountFeature"/>s that can be used to determine the ordering of nodes in a feature vector index.
     /// </para>
     /// <para>
-    /// This overload creates a comparer that uses <see cref="Comparer.Default"/> to compare identifiers as part of doing its comparison.
-    /// Note that <see cref="Comparer.Default"/> will throw if it encounters any object of a type that does not implement <see cref="IComparable"/>,
-    /// and many types that *do* implement <see cref="IComparable"/> (including <see cref="string"/>) will throw when attempting to compare to objects
-    /// of another type. This overload should only be used if all identifiers that it will encounter implement <see cref="IComparable"/> in such a 
-    /// way that it will never throw when comparing to any other enountered identifier. For example, its safe enough to use if all of your identiers are
-    /// <see cref="string"/>s, but not if some are <see cref="string"/>s and others are <see cref="int"/>s, or if any are of a type that does not implement
-    /// <see cref="IComparable"/>.
+    /// This overload creates a comparer that uses the following logic to compare identifiers as part of doing its comparison:
     /// </para>
+    /// <list type="bullet">
+    /// <item>
+    /// The <see cref="EqualityIdentifier"/> singleton is considered "greater than" any other identifier type - so that the features for this identifier
+    /// occur deeper in the index than features for any other identifier type.
+    /// </item>
+    /// <item>
+    /// <see cref = "Comparer.Default" /> is used to all other identifier types. Note that <see cref="Comparer.Default"/> will throw if it encounters
+    /// any object of a type that does not implement <see cref="IComparable"/>, and many types that *do* implement <see cref="IComparable"/> (including
+    /// <see cref="string"/>) will throw when attempting to compare to objects of another type. This overload should only be used if all identifiers
+    /// that it will encounter implement <see cref="IComparable"/> in such a way that it will never throw when comparing to any other enountered identifier.
+    /// For example, its safe enough to use if all of your identiers are <see cref="string"/>s, but not if some are <see cref="string"/>s and others are
+    /// <see cref="int"/>s, or if any are of a type that does not implement <see cref="IComparable"/>.
+    /// </item>
+    /// </list>
     /// </summary>
     /// <returns>A new <see cref="IComparer{T}"/>.</returns>
     public static IComparer<OccurenceCountFeature> MakeFeatureComparer()
