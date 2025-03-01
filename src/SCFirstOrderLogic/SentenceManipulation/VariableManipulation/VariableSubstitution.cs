@@ -196,7 +196,7 @@ public class VariableSubstitution : RecursiveSentenceTransformation
     public CNFSentence ApplyTo(CNFSentence cnfSentence)
     {
         var isChanged = false;
-        var transformedClauses = new HashSet<CNFClause>();
+        var transformedClauses = new HashSet<CNFClause>(cnfSentence.Clauses.Count);
 
         foreach (var clause in cnfSentence.Clauses)
         {
@@ -225,7 +225,7 @@ public class VariableSubstitution : RecursiveSentenceTransformation
     public CNFClause ApplyTo(CNFClause cnfClause)
     {
         var isChanged = false;
-        var transformedLiterals = new HashSet<Literal>();
+        var transformedLiterals = new HashSet<Literal>(cnfClause.Literals.Count);
 
         foreach (var literal in cnfClause.Literals)
         {

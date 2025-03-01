@@ -161,3 +161,4 @@ public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVe
         return ValueTask.FromResult((isSucceeded, value));
     }
 }
+#pragma warning restore CS1998 // async lacks await. See 'NB' in class summary.
