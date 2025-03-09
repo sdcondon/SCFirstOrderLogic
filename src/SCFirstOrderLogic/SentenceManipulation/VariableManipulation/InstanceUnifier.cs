@@ -3,6 +3,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
+// TODO-BREAKING: I'm beginning to think that Substitution would be a better namespace name than VariableManipulation
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 /// <summary>
