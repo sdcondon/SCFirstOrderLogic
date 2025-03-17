@@ -14,6 +14,10 @@ public abstract class SteppableQuery<TStepResult> : IQuery
 {
     private int executeCount = 0;
 
+    // TODO-BREAKING: No real point in making this or Result abstract - only one kind of
+    // implementation makes much sense - e.g. IsComplete returns if result (nullable bool)
+    // has a value. Result throws InvalidOperationEx if not complete. Add protected
+    // SetResult(bool) method.
     /// <inheritdoc />
     public abstract bool IsComplete { get; }
 

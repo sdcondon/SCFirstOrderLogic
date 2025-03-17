@@ -33,6 +33,9 @@ Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantific
 Notice that:
 
 * This is very "simple" in that it involves nothing other than the sentence types themselves, but is obviously far too verbose to be workable. Hence the alternatives.
+* There's a `VariableDeclaration` class - it is worth examining the class summary docs for this one. To quickly summarise, we have a `VariableReference` class (which appears in sentence trees -
+  it's a subtype of a `Term` class), and a `VariableDeclaration` class (which is NOT a subtype of `Term` - it appears only in `VariableReference` and quantifications).
+  `VariableDeclaration`s are however implicitly convertible to `VariableReference`s that refer to them (note that we utilise this in the example above), to aid with succinct sentence creation.
 
 ### Writing Sentences as Code - with SentenceFactory
 
@@ -53,7 +56,7 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, And(I
 
 Notice that:
 
-* The factory provides `ForAll` and `ThereExists` methods for creating quantifications. There are overloads for declaring multiple variables at once.
+* The factory provides `ForAll` and `ThereExists` methods for creating quantifications. There are overloads for quantifying multiple variables at once.
 * The factory provides `If` and `Iff` methods for creating implications and equivalences, respectively.
 * The factory provides methods for conjunctions (`And`), disjunctions (`Or`) and negations (`Not`). See the next two examples if you really want to use C# operators for these.
 * The factory provides `A` through `Z` as properties that return variable declarations with these letters as their identifier. There is also a `Var` method that allows you to specify an identifier.
@@ -134,7 +137,7 @@ Notes:
 * Variable, function and predicate identifiers must be alphanumeric (i.e. must match the regex `[A-Za-z0-9]+`).
 * Constants (that is, zero-arity functions) can be written with or without parentheses. Whether the returned identifiers for `myConstant` and `myConstant()` are the same depends upon the configuration of the parser. 
 * To create a predicate that refers to the `EqualityIdentifier` type (and thus capable of being leveraged by KBs that have particular handling for equality, etc), use `{term} = {term}`.
-* An identifier where a term is expected is interpreted as a variable reference if a matching declaration (from a quantification) is in scope - otherwise it is interpreted as a constant.
+* An identifier where a term is expected is interpreted as a variable reference if a matching declaration (from a quantification) is in scope - otherwise it is interpreted as a constant (that is, a zero-arity function).
 * All identifiers are **case sensitive**. This is, for example, something to double-check if you're seeing something interpreted as a constant that you intend as a variable reference.
 
 ## Storing Knowledge & Making Inferences - with SCFirstOrderLogic.Inference.Basic
