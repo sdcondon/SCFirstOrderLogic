@@ -52,6 +52,7 @@ public class CNFClause : IEquatable<CNFClause>
     /// <summary>
     /// Gets a value indicating whether this is a Horn clause - that is, whether at most one of its literals is positive.
     /// </summary>
+    // TODO-ZZ-PERFORMANCE: could not use Count so that we return false early as soon as second positive literal encountered
     public bool IsHornClause => Literals.Count(l => l.IsPositive) <= 1;
 
     /// <summary>
