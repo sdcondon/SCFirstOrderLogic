@@ -292,8 +292,6 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
 
         static async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetAllKeyValuePairs(IAsyncFeatureVectorIndexNode<TFeature, TValue> node)
         {
-            // NB: note that we need to filter the values to those keyed by clauses that are
-            // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
             await foreach (var kvp in node.KeyValuePairs)
             {
                 yield return kvp;
