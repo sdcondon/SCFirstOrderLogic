@@ -61,6 +61,8 @@ public static class VariableManipulationExtensionsTests
             new (X: P(X) | Q(Y),     Y: P(C),        Expected: false),
             new (X: P(C),            Y: P(X),        Expected: false),
             new (X: CNFClause.Empty, Y: P(),         Expected: false),
+
+            new (X: P(X, C) | Q(Y, X), Y: P(X, C) | Q(X, F(X)), Expected: false)
         ])
         .When(tc => tc.X.Subsumes(tc.Y))
         .ThenReturns()
