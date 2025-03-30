@@ -5,9 +5,9 @@ using System.Runtime.CompilerServices;
 namespace SCFirstOrderLogic.Inference.Basic.Resolution;
 
 /// <summary>
-/// Implementation of <see cref="IClauseStore"/> geared towwards use in Blazor WASM, before multithreading support is added in v8.
+/// Implementation of <see cref="IClauseStore"/> geared towwards use in Blazor WASM, before multithreading support is added.
 /// Hacky - adds in a bunch of Task.Delay(1)'s.
-/// https://stackoverflow.com/questions/71287775/how-to-correctly-create-an-async-method-in-blazor
+/// https://github.com/dotnet/aspnetcore/issues/17730
 /// </summary>
 public class BlazorWasmResClauseStore : IKnowledgeBaseClauseStore
 {
