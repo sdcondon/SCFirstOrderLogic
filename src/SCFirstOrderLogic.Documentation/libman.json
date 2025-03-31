@@ -14,15 +14,11 @@
       ]
     },
     {
-      "provider": "unpkg",
-      "library": "@highlightjs/cdn-assets@11.8.0",
-      "destination": "wwwroot/lib/highlightjs/",
+      "provider": "cdnjs",
+      "library": "highlight.js@11.11.1",
+      "destination": "wwwroot/lib/highlight.js/",
       "files": [
-        "highlight.js",
         "highlight.min.js",
-        "LICENSE",
-        "package.json",
-        "README.md",
         "languages/csharp.min.js",
         "styles/default.min.css"
       ]
