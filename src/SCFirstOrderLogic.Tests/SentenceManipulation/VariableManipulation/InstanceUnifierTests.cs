@@ -26,15 +26,6 @@ public class InstanceUnifierTests
                     [X] = F(Y),
                 }),
 
-            new ( // vars matched to vars
-                Generalisation: P(X, X),
-                Instance: P(Y, C),
-                ExpectedBindings: new()
-                {
-                    [X] = Y,
-                    [Y] = C,
-                }),
-
             // NB: at the time of writing this will cause infinite recursion if actually applied - since there's no loop protection.
             // Need to decide whether I'd prefer to leverage loop protection, or add an occurs check (and thus require standardisation
             // where needed to use it). In the meantime, this is why the type is internal.
@@ -73,6 +64,10 @@ public class InstanceUnifierTests
             new (
                 Generalisation: P(X, F(X)),
                 Instance: P(G(Y), Y)),
+
+            new ( // vars matched to vars
+                Generalisation: P(X, X),
+                Instance: P(Y, C)),
 
             new ( // vars matched to vars
                 Generalisation: P(Y, C),

@@ -28,6 +28,7 @@ public static class VariableManipulationExtensionsTests
             new(X: F(G(Y, C)), Y: F(X), Expected: true),
             new(X: F(X), Y: F(C), Expected: false),
             new(X: F(X, C), Y: F(C, X), Expected: false),
+            new(X: F(X, X), Y: F(Y, C), Expected: false),
         ])
         .When(tc => tc.X.IsInstanceOf(tc.Y))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.Expected));
@@ -40,6 +41,7 @@ public static class VariableManipulationExtensionsTests
             new(X: F(X), Y: F(G(Y, C)), Expected: true),
             new(X: F(C), Y: F(X), Expected: false),
             new(X: F(X, C), Y: F(C, X), Expected: false),
+            new(X: F(X, X), Y: F(Y, C), Expected: false),
         ])
         .When(tc => tc.X.IsGeneralisationOf(tc.Y))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.Expected));
@@ -62,7 +64,8 @@ public static class VariableManipulationExtensionsTests
             new (X: P(C),            Y: P(X),        Expected: false),
             new (X: CNFClause.Empty, Y: P(),         Expected: false),
 
-            new (X: P(X, C) | Q(Y, X), Y: P(X, C) | Q(X, F(X)), Expected: false)
+            new (X: P(X) | Q(X), Y: P(X) | Q(D), Expected: false),
+            new (X: P(X) | Q(Y, X), Y: P(X) | Q(X, F(X)), Expected: false)
         ])
         .When(tc => tc.X.Subsumes(tc.Y))
         .ThenReturns()
