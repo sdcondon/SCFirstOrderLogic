@@ -58,6 +58,7 @@ public static class VariableManipulationExtensionsTests
             new (X: P(X) | Q(Y),     Y: P(C) | Q(D), Expected: true),
             new (X: P(X) | Q(Y),     Y: P(C) | Q(Z), Expected: true),
             new (X: P(X) | Q(X),     Y: P(C) | Q(C), Expected: true),
+            new (X: P(X) | Q(X),     Y: P(X) | Q(D), Expected: false),
             new (X: P(X) | Q(X),     Y: P(C) | Q(D), Expected: false),
             new (X: P(X),            Y: Q(C),        Expected: false),
             new (X: P(X) | Q(Y),     Y: P(C),        Expected: false),
@@ -109,6 +110,11 @@ public static class VariableManipulationExtensionsTests
                 Clause: P(X, Y) | Q(X, Y),
                 Clauses: [P(A, B) | Q(A, B)],
                 ExpectedResult: true),
+
+            new (
+                Clause: P(X, C) | Q(Y, X),
+                Clauses: [P(X, C) | Q(X, F(X))],
+                ExpectedResult: false),
         ])
         .When(tc => tc.Clause.ToCNF().Clauses.Single().UnifiesWithAnyOf(tc.Clauses.Select(s => s.ToCNF().Clauses.Single())))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.ExpectedResult));
