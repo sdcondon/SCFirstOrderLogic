@@ -227,16 +227,21 @@ var result = kb.Ask(SentenceParser.BasicParser.Parse("IsCriminal(West)")); // ==
 ### Using Resolution
 
 ```
+using SCFirstOrderLogic.ClauseIndexing;
+using SCFirstOrderLogic.ClauseIndexing.Features;
 using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
 using SCFirstOrderLogic.Inference.Basic.Resolution;
 
 // .. paste the domain listing here ..
 
-// The resolution KB has a little more configurability/extensibility than the other two:
-var kb = new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
-    new HashSetClauseStore(),
-    DelegateResolutionStrategy.Filters.None,
-    DelegateResolutionStrategy.PriorityComparisons.UnitPreference));
+// The resolution KB has more configurability/extensibility than the other two:
+var clauseStore = new FeatureVectorIndexClauseStore<MaxDepthFeature>(
+    MaxDepthFeature.MakeFeatureVector,
+    new ClauseStoreFVIListNode<MaxDepthFeature>(MaxDepthFeature.MakeFeatureComparer()));
+
+var kb = new ResolutionKnowledgeBase(new LinearResolutionStrategy(
+    clauseStore,
+    ClauseResolutionPriorityComparisons.UnitPreference));
 
 kb.Tell(rules);
 var result = kb.Ask(SentenceParser.BasicParser.Parse("IsCriminal(West)")); // == true

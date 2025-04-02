@@ -83,6 +83,18 @@ public class BlazorWasmResClauseStore : IKnowledgeBaseClauseStore
         }
 
         /// <inheritdoc />
+        public Task<bool> AddAsync(CNFClause clause, Func<CNFClause, Task> removedClauseCallback, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(clauses.TryAdd(clause, 0));
+        }
+
+        /// <inheritdoc />
+        public Task<bool> ContainsAsync(CNFClause clause, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(clauses.ContainsKey(clause));
+        }
+
+        /// <inheritdoc />
         public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
             await Task.Delay(1, cancellationToken);
