@@ -10,6 +10,7 @@ namespace SCFirstOrderLogic.Inference.Basic.Resolution;
 /// An implementation of <see cref="IKnowledgeBaseClauseStore"/> that maintains all known clauses in
 /// a <see cref="AsyncFeatureVectorIndex{TFeature}"/>.
 /// </summary>
+// TODO: Remove as soon as possible, keep in sync with real implementation until then
 public class BlazorWasmFVIResClauseStore<TFeature> : IKnowledgeBaseClauseStore
     where TFeature : notnull
 {

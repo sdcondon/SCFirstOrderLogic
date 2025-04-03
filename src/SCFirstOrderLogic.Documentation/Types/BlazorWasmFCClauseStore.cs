@@ -10,6 +10,7 @@ namespace SCFirstOrderLogic.Inference.Basic.ForwardChaining;
 /// Hacky - adds in a bunch of Task.Delay(1)'s.
 /// https://github.com/dotnet/aspnetcore/issues/17730
 /// </summary>
+// TODO: Remove as soon as possible, keep in sync with real implementation until then
 public class BlazorWasmFCClauseStore : IKnowledgeBaseClauseStore
 {
     // Yes, not actually a hash set, despite the name of the class. I want strong concurrency support,

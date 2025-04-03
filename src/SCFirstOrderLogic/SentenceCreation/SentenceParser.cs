@@ -47,8 +47,12 @@ public class SentenceParser
     }
 
     /// <summary>
+    /// <para>
     /// Retrieves an instance of a parser that just uses the symbol text as the identifier for returned predicates, functions, and variables.
+    /// </para>
+    /// <para>
     /// NB: This means that the identifiers for the zero arity functions declared as `f` and as `f()` are identical.
+    /// </para>
     /// </summary>
     public static SentenceParser BasicParser { get; } = new SentenceParser(s => s, s => s, s => s);
 
@@ -57,10 +61,21 @@ public class SentenceParser
     /// </summary>
     /// <param name="sentence">The string to parse.</param>
     /// <returns>The parsed <see cref="Sentence"/>.</returns>
-    public Sentence Parse(string sentence)
-    {
-        return new SentenceTransformation(identifierGetters, Enumerable.Empty<VariableDeclaration>()).Visit(MakeParser(sentence).singleSentence().sentence());
-    }
+    public Sentence Parse(string sentence) => Parse(new AntlrInputStream(sentence));
+
+    /// <summary>
+    /// Parses a stream containing first-order logic syntax into a <see cref="Sentence"/> object.
+    /// </summary>
+    /// <param name="sentence">The stream to parse.</param>
+    /// <returns>The parsed <see cref="Sentence"/>.</returns>
+    public Sentence Parse(Stream sentence) => Parse(new AntlrInputStream(sentence));
+
+    /// <summary>
+    /// Parses a text reader containing first-order logic syntax into a <see cref="Sentence"/> object.
+    /// </summary>
+    /// <param name="sentence">The text reader to parse.</param>
+    /// <returns>The parsed <see cref="Sentence"/>.</returns>
+    public Sentence Parse(TextReader sentence) => Parse(new AntlrInputStream(sentence));
 
     /// <summary>
     /// Parses a string containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -68,17 +83,39 @@ public class SentenceParser
     /// </summary>
     /// <param name="sentences">The string to parse.</param>
     /// <returns>A new array of sentences.</returns>
-    public Sentence[] ParseList(string sentences)
+    public Sentence[] ParseList(string sentences) => ParseList(new AntlrInputStream(sentences));
+
+    /// <summary>
+    /// Parses a stream containing zero or more sentences into a <see cref="Sentence"/> array.
+    /// Sentences can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="sentences">The stream to parse.</param>
+    /// <returns>A new array of sentences.</returns>
+    public Sentence[] ParseList(Stream sentences) => ParseList(new AntlrInputStream(sentences));
+
+    /// <summary>
+    /// Parses a text reader containing zero or more sentences into a <see cref="Sentence"/> array.
+    /// Sentences can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="sentences">The text reader to parse.</param>
+    /// <returns>A new array of sentences.</returns>
+    public Sentence[] ParseList(TextReader sentences) => ParseList(new AntlrInputStream(sentences));
+
+    private Sentence Parse(AntlrInputStream inputStream)
     {
-        return MakeParser(sentences).sentenceList()._sentences
+        return new SentenceTransformation(identifierGetters, Enumerable.Empty<VariableDeclaration>())
+            .Visit(MakeParser(inputStream).singleSentence().sentence());
+    }
+
+    private Sentence[] ParseList(AntlrInputStream inputStream)
+    {
+        return MakeParser(inputStream).sentenceList()._sentences
             .Select(s => new SentenceTransformation(identifierGetters, Enumerable.Empty<VariableDeclaration>()).Visit(s))
             .ToArray();
     }
 
-    private static FirstOrderLogicParser MakeParser(string input)
+    private static FirstOrderLogicParser MakeParser(AntlrInputStream inputStream)
     {
-        AntlrInputStream inputStream = new(input);
-
         // NB: ANTLR apparently adds a listener by default that writes to the console.
         // Which is crazy default behaviour if you ask me, but never mind.
         // We remove it so that consumers of this lib don't get random messages turning up on their console.

@@ -10,7 +10,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Basic but fully functional and documented first-order logic implementations. Includes models for raw and CNF sentences, as well as extensible logic for creating, manipulating, formatting and indexing them.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageTags>first order predicate logic inference engine knowledge base linq</PackageTags>
+    <PackageTags>first order predicate logic quantificational calculus</PackageTags>
     <Product>SCFirstOrderLogic</Product>
     <PackageId>SCFirstOrderLogic</PackageId>
     <PackageReadmeFile>README.md</PackageReadmeFile>
