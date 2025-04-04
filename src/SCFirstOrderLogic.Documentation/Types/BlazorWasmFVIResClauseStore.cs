@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.Inference.Basic.Resolution;
 /// An implementation of <see cref="IKnowledgeBaseClauseStore"/> that maintains all known clauses in
 /// a <see cref="AsyncFeatureVectorIndex{TFeature}"/>.
 /// </summary>
-// TODO: Remove as soon as possible, keep in sync with real implementation until then
+// TODO-MAINTAINABILITY/PERFORMANCE: Remove as soon as possible, keep in sync with real implementation until then
 public class BlazorWasmFVIResClauseStore<TFeature> : IKnowledgeBaseClauseStore
     where TFeature : notnull
 {
@@ -113,8 +113,6 @@ public class BlazorWasmFVIResClauseStore<TFeature> : IKnowledgeBaseClauseStore
             CNFClause clause,
             [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            // todo: feels like we should be able to filter somehow just using the FVI - what's the relationship
-            // (if any) between *resolution* potential and feature vectors? think about/read up.
             await foreach (var otherClause in this.WithCancellation(cancellationToken))
             {
                 foreach (var resolution in ClauseResolution.Resolve(clause, otherClause))

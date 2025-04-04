@@ -127,7 +127,7 @@
     {
         if (editContext.Validate())
         {
-            // TODO: probably useful to offer term parsing..
+            // TODO-FEATURE: probably useful to offer term parsing..
             var sentence = SentenceParser.BasicParser.Parse($"forall {formData.Variables}, P({formData.Term})");
             var visitor = new TermExtractor();
             visitor.Visit(sentence);

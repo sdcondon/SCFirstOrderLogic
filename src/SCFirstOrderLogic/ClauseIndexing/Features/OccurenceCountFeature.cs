@@ -133,7 +133,7 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
                     (false, false) => x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral),
                     (false, true) => -1,
                     (true, false) => 1,
-                    (true, true) => x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral) // todo: will never happen. refactor me. 
+                    (true, true) => x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral) // TODO-MAINTAINABILITY: will never happen. refactor me. 
                 };
             }
         });

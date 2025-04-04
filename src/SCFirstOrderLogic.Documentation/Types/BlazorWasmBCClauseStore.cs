@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.Inference.Basic.BackwardChaining;
 /// Hacky - adds in a bunch of Task.Delay(1)'s.
 /// https://github.com/dotnet/aspnetcore/issues/17730
 /// </summary>
-// TODO: Remove as soon as possible, keep in sync with real implementation until then
+// TODO-MAINTAINABILITY/PERFORMANCE: Remove as soon as possible, keep in sync with real implementation until then
 public class BlazorWasmBCClauseStore : IClauseStore
 {
     // NB: the inner dictionary here is intended more as a hash set - but system.collections.concurrent doesn't
