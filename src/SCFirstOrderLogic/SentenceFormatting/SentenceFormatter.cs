@@ -4,6 +4,7 @@ using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace SCFirstOrderLogic.SentenceFormatting;
 
@@ -184,10 +185,20 @@ public class SentenceFormatter
     /// </summary>
     /// <param name="existentialQuantification">The existential quantification to be formatted.</param>
     /// <returns>A string representation of the given existential quantification.</returns>
-    // TODO: collapse if inner sentence is another existential q
     public string Format(ExistentialQuantification existentialQuantification)
     {
-        return $"∃ {Format(existentialQuantification.Variable)}, {Format(existentialQuantification.Sentence)}";
+        var stringBuilder = new StringBuilder($"∃ {Format(existentialQuantification.Variable)}, ");
+
+        Sentence innerSentence = existentialQuantification.Sentence;
+        while (innerSentence is ExistentialQuantification innerExistentialQuantification)
+        {
+            stringBuilder.Append($"{Format(innerExistentialQuantification.Variable)}, ");
+            innerSentence = innerExistentialQuantification.Sentence;
+        }
+
+        stringBuilder.Append(Format(innerSentence));
+
+        return stringBuilder.ToString();
     }
 
     /// <summary>
@@ -226,10 +237,20 @@ public class SentenceFormatter
     /// </summary>
     /// <param name="universalQuantification">The universal quantification to be formatted.</param>
     /// <returns>A string representation of the given universal quantification.</returns>
-    // TODO: collapse if inner sentence is another universal q
     public string Format(UniversalQuantification universalQuantification)
     {
-        return $"∀ {Format(universalQuantification.Variable)}, {Format(universalQuantification.Sentence)}";
+        var stringBuilder = new StringBuilder($"∀ {Format(universalQuantification.Variable)}, ");
+
+        Sentence innerSentence = universalQuantification.Sentence;
+        while (innerSentence is UniversalQuantification innerUniversalQuantification)
+        {
+            stringBuilder.Append($"{Format(innerUniversalQuantification.Variable)}, ");
+            innerSentence = innerUniversalQuantification.Sentence;
+        }
+
+        stringBuilder.Append(Format(innerSentence));
+
+        return stringBuilder.ToString();
     }
 
     /// <summary>

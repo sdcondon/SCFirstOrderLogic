@@ -24,6 +24,9 @@ public static class SentenceFormatterTests
             new(Sentence: "∃ x, ∀ y, P(x, y)",        Expected: "∃ x, ∀ y, P(x, y)"),
 
             new(Sentence: "∀ x, P(x) => Q(x) => R(x)", Expected: "∀ x, [P(x) ⇒ Q(x)] ⇒ R(x)"),
+
+            new(Sentence: "∀ x, ∀ y, P(x, y)", Expected: "∀ x, y, P(x, y)"),
+            new(Sentence: "∃ x, ∃ y, P(x, y)", Expected: "∃ x, y, P(x, y)"),
         ])
         .When(tc => new SentenceFormatter().Format(SentenceParser.BasicParser.Parse(tc.Sentence)))
         .ThenReturns()
