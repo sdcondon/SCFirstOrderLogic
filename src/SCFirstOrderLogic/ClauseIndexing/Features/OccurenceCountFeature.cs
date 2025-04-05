@@ -111,30 +111,37 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     {
         return Comparer<OccurenceCountFeature>.Create((x, y) =>
         {
-            if (x.Identifier != null && y.Identifier != null)
+            if (x.Identifier != null)
             {
-                var identifierComparison = identifierComparer.Compare(x.Identifier, y.Identifier);
-                if (identifierComparison != 0)
+                if (y.Identifier != null)
                 {
-                    return identifierComparison;
+                    var identifierComparison = identifierComparer.Compare(x.Identifier, y.Identifier);
+                    if (identifierComparison != 0)
+                    {
+                        return identifierComparison;
+                    }
+                    else
+                    {
+                        // NB: this an arbitrary decision. We just need a consistent comparison - there's no
+                        // reason to think that positive literals are more or less informative than negative ones.
+                        return x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral);
+                    }
                 }
                 else
                 {
-                    // NB: this an arbitrary decision. We just need a consistent comparison - there's no
-                    // reason to think that positive literals are more or less informative than negative ones.
-                    return x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral);
+                    return 1;
                 }
             }
             else
             {
-                // literal counts are of low informativeness, so we score them lower than identifier occurence counts:
-                return (x.Identifier != null, y.Identifier != null) switch
+                if (y.Identifier != null)
                 {
-                    (false, false) => x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral),
-                    (false, true) => -1,
-                    (true, false) => 1,
-                    (true, true) => x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral) // TODO-MAINTAINABILITY: will never happen. refactor me. 
-                };
+                    return -1;
+                }
+                else
+                {
+                    return x.IsInPositiveLiteral.CompareTo(y.IsInPositiveLiteral);
+                }
             }
         });
     }
