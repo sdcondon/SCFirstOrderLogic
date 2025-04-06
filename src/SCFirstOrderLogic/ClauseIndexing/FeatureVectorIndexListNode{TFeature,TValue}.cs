@@ -1,4 +1,4 @@
-// Copyright © 2023-2024 Simon Condon.
+// Copyright © 2023-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
@@ -9,7 +9,8 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 
 /// <summary>
 /// An implementation of <see cref="IFeatureVectorIndexNode{TFeature, TValue}"/> that just stores things in memory. 
-/// Uses a <see cref="SortedList{TKey, TValue}"/> for the children of a node.
+/// Uses a <see cref="SortedList{TKey, TValue}"/> for the children of a node, and a <see cref="Dictionary{TKey, TValue}"/>
+/// for leaf values.
 /// </summary>
 /// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>

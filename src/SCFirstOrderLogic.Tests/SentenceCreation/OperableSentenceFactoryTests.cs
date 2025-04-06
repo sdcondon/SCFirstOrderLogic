@@ -22,14 +22,14 @@ public class OperableSentenceFactoryTests
             new(
                 SentenceSurrogate: GroundPredicate1 & UnaryPredicate(Constant1),
                 ExpectedSentence: new Conjunction(
-                    new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()),
+                    new Predicate(nameof(GroundPredicate1), []),
                     new Predicate(nameof(UnaryPredicate), new Function(nameof(Constant1))))),
 
             new(
                 SentenceSurrogate: GroundPredicate1 | GroundPredicate2,
                 ExpectedSentence: new Disjunction(
-                    new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()),
-                    new Predicate(nameof(GroundPredicate2), Array.Empty<Term>()))),
+                    new Predicate(nameof(GroundPredicate1), []),
+                    new Predicate(nameof(GroundPredicate2), []))),
 
             new(
                 SentenceSurrogate: Constant1 == Constant2,
@@ -41,8 +41,8 @@ public class OperableSentenceFactoryTests
             new(
                 SentenceSurrogate: Iff(GroundPredicate1, GroundPredicate2),
                 ExpectedSentence: new Equivalence(
-                    new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()),
-                    new Predicate(nameof(GroundPredicate2), Array.Empty<Term>()))),
+                    new Predicate(nameof(GroundPredicate1), []),
+                    new Predicate(nameof(GroundPredicate2), []))),
 
             new(
                 SentenceSurrogate: ThereExists(X, UnaryFunction(X) == Constant1),
@@ -50,19 +50,19 @@ public class OperableSentenceFactoryTests
                     new VariableDeclaration("X"),
                     new Predicate(
                         EqualityIdentifier.Instance,
-                        new Function(nameof(UnaryFunction), new[] { new VariableReference(new VariableDeclaration("X")) }),
+                        new Function(nameof(UnaryFunction), [ new VariableReference(new VariableDeclaration("X")) ]),
                         new Function(nameof(Constant1))))),
 
             new(
                 SentenceSurrogate: If(GroundPredicate1, GroundPredicate2),
                 ExpectedSentence: new Implication(
-                    new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()),
-                    new Predicate(nameof(GroundPredicate2), Array.Empty<Term>()))),
+                    new Predicate(nameof(GroundPredicate1), []),
+                    new Predicate(nameof(GroundPredicate2), []))),
 
             new(
                 SentenceSurrogate: !GroundPredicate1,
                 ExpectedSentence: new Negation(
-                    new Predicate(nameof(GroundPredicate1), Array.Empty<Term>()))),
+                    new Predicate(nameof(GroundPredicate1), []))),
 
             new(
                 SentenceSurrogate: ForAll(X, UnaryFunction(X) == Constant1),
@@ -70,7 +70,7 @@ public class OperableSentenceFactoryTests
                     new VariableDeclaration("X"),
                     new Predicate(
                         EqualityIdentifier.Instance,
-                        new Function(nameof(UnaryFunction), new[] { new VariableReference(new VariableDeclaration("X")) }),
+                        new Function(nameof(UnaryFunction), [ new VariableReference(new VariableDeclaration("X")) ]),
                         new Function(nameof(Constant1))))),
         ])
         .When(tc => (Sentence)tc.SentenceSurrogate)

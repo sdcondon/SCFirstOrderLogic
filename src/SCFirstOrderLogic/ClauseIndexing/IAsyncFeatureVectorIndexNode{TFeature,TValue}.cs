@@ -1,4 +1,4 @@
-// Copyright © 2023-2024 Simon Condon.
+// Copyright © 2023-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,12 +18,12 @@ public interface IAsyncFeatureVectorIndexNode<TFeature, TValue>
     IComparer<TFeature> FeatureComparer { get; }
 
     /// <summary>
-    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in ascending feature order.
+    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in ascending order.
     /// </summary>
     IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> ChildrenAscending { get; }
 
     /// <summary>
-    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in descending feature order.
+    /// Gets the child nodes of this node, keyed by the vector component represented by the child, and in descending order.
     /// </summary>
     IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> ChildrenDescending { get; }
 

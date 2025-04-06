@@ -1,7 +1,8 @@
-﻿// Copyright (c) 2021-2024 Simon Condon.
+﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
 
@@ -52,6 +53,12 @@ public sealed class VariableReference : Term
 
     /// <inheritdoc />
     public override TOut Accept<TOut, TState>(ITermTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
+
+    /// <inheritdoc />
+    public override Task AcceptAsync(IAsyncTermVisitor visitor) => visitor.VisitAsync(this);
+
+    /// <inheritdoc />
+    public override Task AcceptAsync<T>(IAsyncTermVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
 
     /// <inheritdoc />
     public override bool Equals(object? obj)

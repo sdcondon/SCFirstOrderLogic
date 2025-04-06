@@ -6,10 +6,11 @@ using System.Runtime.CompilerServices;
 namespace SCFirstOrderLogic.Inference.Basic.ForwardChaining;
 
 /// <summary>
-/// Implementation of <see cref="IClauseStore"/> geared towards use in Blazor WASM, before multithreading support is added in v8.
+/// Implementation of <see cref="IClauseStore"/> geared towards use in Blazor WASM, before multithreading support is added.
 /// Hacky - adds in a bunch of Task.Delay(1)'s.
-/// https://stackoverflow.com/questions/71287775/how-to-correctly-create-an-async-method-in-blazor
+/// https://github.com/dotnet/aspnetcore/issues/17730
 /// </summary>
+// TODO: Remove as soon as possible, keep in sync with real implementation until then
 public class BlazorWasmFCClauseStore : IKnowledgeBaseClauseStore
 {
     // Yes, not actually a hash set, despite the name of the class. I want strong concurrency support,
@@ -78,11 +79,9 @@ public class BlazorWasmFCClauseStore : IKnowledgeBaseClauseStore
     /// <summary>
     /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="HashSetClauseStore"/>.
     /// </summary>
-    private class QueryStore : IQueryClauseStore
+    private class QueryStore(IEnumerable<KeyValuePair<CNFDefiniteClause, byte>> clauses) : IQueryClauseStore
     {
-        private readonly ConcurrentDictionary<CNFDefiniteClause, byte> clauses;
-
-        public QueryStore(IEnumerable<KeyValuePair<CNFDefiniteClause, byte>> clauses) => this.clauses = new(clauses);
+        private readonly ConcurrentDictionary<CNFDefiniteClause, byte> clauses = new(clauses);
 
         /// <inheritdoc />
         public Task<bool> AddAsync(CNFDefiniteClause clause, CancellationToken cancellationToken = default)

@@ -1,8 +1,9 @@
-﻿// Copyright © 2023-2024 Simon Condon.
+﻿// Copyright © 2023-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -17,33 +18,33 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// </para>
 /// </summary>
 /// <typeparam name="TFeature">The type of each key of the feature vectors.</typeparam>
-public class AsyncFeatureVectorIndex<TFeature>
+public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
     where TFeature : notnull
 {
+    /// <summary>
+    /// The inner <see cref="CNFClause"/>-valued index that this one merely wraps.
+    /// </summary>
     private readonly AsyncFeatureVectorIndex<TFeature, CNFClause> innerIndex;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature}"/> class with a specified
-    /// root node and no (additional) initial content, that uses the default comparer of the key element
-    /// type to determine the ordering of elements in the tree.
+    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature}"/> class.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
-    /// <param name="root">The root node of the tree.</param>
+    /// <param name="root">The root node of the index.</param>
     public AsyncFeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IAsyncFeatureVectorIndexNode<TFeature, CNFClause> root)
+        : this(featureVectorSelector, root, Enumerable.Empty<CNFClause>())
     {
-        innerIndex = new(featureVectorSelector, root);
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature}"/> class with a 
-    /// specified root node and some (additional) initial content, that uses the default comparer
-    /// of the key element type to determine the ordering of elements in the tree.
+    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature}"/> class, 
+    /// and adds some additional initial content (beyond any already attached to the provided root node).
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the tree.</param>
-    /// <param name="content">The (additional) content to be added to the tree (beyond any already attached to the provided root node).</param>
+    /// <param name="content">The additional content to be added.</param>
     public AsyncFeatureVectorIndex(
         Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
         IAsyncFeatureVectorIndexNode<TFeature, CNFClause> root,
@@ -67,6 +68,28 @@ public class AsyncFeatureVectorIndex<TFeature>
     public Task<bool> RemoveAsync(CNFClause key) => innerIndex.RemoveAsync(key);
 
     /// <summary>
+    /// Removes all values keyed by a clause that is subsumed by a given clause.
+    /// </summary>
+    /// <param name="clause">The subsuming clause.</param>
+    /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
+    public async Task RemoveSubsumedAsync(CNFClause clause, Func<CNFClause, Task>? clauseRemovedCallback = null)
+    {
+        await innerIndex.RemoveSubsumedAsync(clause, clauseRemovedCallback);
+    }
+
+    /// <summary>
+    /// If the index contains any clause that subsumes the given clause, does nothing and returns <see langword="false"/>.
+    /// Otherwise, adds the given clause to the index, removes any clauses that it subsumes, and returns <see langword="true"/>.
+    /// </summary>
+    /// <param name="clause">The clause to add.</param>
+    /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
+    /// <returns>True if and only if the clause was added.</returns>
+    public async Task<bool> TryReplaceSubsumedAsync(CNFClause clause, Func<CNFClause, Task>? clauseRemovedCallback = null)
+    {
+        return await innerIndex.TryReplaceSubsumedAsync(clause, clause, clauseRemovedCallback);
+    }
+
+    /// <summary>
     /// Determines whether a given clause (matched exactly) is present in the index.
     /// </summary>
     /// <param name="key">The clause to check for.</param>
@@ -86,4 +109,13 @@ public class AsyncFeatureVectorIndex<TFeature>
     /// <param name="clause">The stored clauses that are subsumed by this clause will be retrieved.</param>
     /// <returns>An async enumerable of each clause that is subsumed by the given clause.</returns>
     public IAsyncEnumerable<CNFClause> GetSubsumed(CNFClause clause) => innerIndex.GetSubsumed(clause);
+
+    /// <inheritdoc />
+    public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    {
+        await foreach (var (_, value) in innerIndex.WithCancellation(cancellationToken))
+        {
+            yield return value;
+        }
+    }
 }

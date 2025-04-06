@@ -33,6 +33,9 @@ Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantific
 Notice that:
 
 * This is very "simple" in that it involves nothing other than the sentence types themselves, but is obviously far too verbose to be workable. Hence the alternatives.
+* There's a `VariableDeclaration` class - it is worth examining the class summary docs for this one. To quickly summarise, we have a `VariableReference` class (which appears in sentence trees -
+  it's a subtype of a `Term` class), and a `VariableDeclaration` class (which is NOT a subtype of `Term` - it appears only in `VariableReference` and quantifications).
+  `VariableDeclaration`s are however implicitly convertible to `VariableReference`s that refer to them (note that we utilise this in the example above), to aid with succinct sentence creation.
 
 ### Writing Sentences as Code - with SentenceFactory
 
@@ -53,7 +56,7 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, And(I
 
 Notice that:
 
-* The factory provides `ForAll` and `ThereExists` methods for creating quantifications. There are overloads for declaring multiple variables at once.
+* The factory provides `ForAll` and `ThereExists` methods for creating quantifications. There are overloads for quantifying multiple variables at once.
 * The factory provides `If` and `Iff` methods for creating implications and equivalences, respectively.
 * The factory provides methods for conjunctions (`And`), disjunctions (`Or`) and negations (`Not`). See the next two examples if you really want to use C# operators for these.
 * The factory provides `A` through `Z` as properties that return variable declarations with these letters as their identifier. There is also a `Var` method that allows you to specify an identifier.
@@ -88,7 +91,7 @@ modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as
 
 ```
 using SCFirstOrderLogic.LanguageIntegration;
-using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff an If methods
+using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff and If methods
 
 // The helper methods recommended for the other approaches become full interfaces
 // when language integration is used (no implementation is needed):
@@ -101,7 +104,7 @@ interface IPerson
 // The sentence is expressed as a boolean-valued lambda that we are asserting will evaluate
 // as true when provided an enumerable representing the domain. Quantifiers are provided
 // via the "Any" and "All" LINQ to objects extension methods (the library provides some overloads
-// for declaring multiple variables at once).
+// for quantifying multiple variables at once).
 var grandparentDefn = 
     SentenceFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
 ```
@@ -134,13 +137,14 @@ Notes:
 * Variable, function and predicate identifiers must be alphanumeric (i.e. must match the regex `[A-Za-z0-9]+`).
 * Constants (that is, zero-arity functions) can be written with or without parentheses. Whether the returned identifiers for `myConstant` and `myConstant()` are the same depends upon the configuration of the parser. 
 * To create a predicate that refers to the `EqualityIdentifier` type (and thus capable of being leveraged by KBs that have particular handling for equality, etc), use `{term} = {term}`.
-* An identifier where a term is expected is interpreted as a variable reference if a matching declaration (from a quantification) is in scope - otherwise it is interpreted as a constant.
+* An identifier where a term is expected is interpreted as a variable reference if a matching declaration (from a quantification) is in scope - otherwise it is interpreted as a constant (that is, a zero-arity function).
 * All identifiers are **case sensitive**. This is, for example, something to double-check if you're seeing something interpreted as a constant that you intend as a variable reference.
 
 ## Storing Knowledge & Making Inferences - with SCFirstOrderLogic.Inference.Basic
 
 Once you have some sentences, storing them and making inferences can be done with the aid of the types in the `SCFirstOrderLogic.Inference.Basic` package.
 This library includes a few very simple knowledge bases - one that uses forward chaining, one that uses backward chaining, and one that uses resolution.
+These implementations are not as yet sophisticated enough to be useful in a production scenario, but should be useful as a learning tool, and perhaps even as a starting point for more capable implementations.
 Some examples follow, but first, here's our domain, taken from section 9.3 of 'Artificial Intelligence: A Modern Approach':
 
 ```
@@ -187,7 +191,7 @@ using SCFirstOrderLogic.Inference.Basic.ForwardChaining;
 // The clause store takes responsibility for the storage and lookup of
 // individual clauses. The package provides only HashSetClauseStore, which stores
 // things in memory. This is an extension point - you can create your own implementation
-// of IClauseStore to use secondary storage and/or customised indexing, for example.
+// of IClauseStore to use external storage and/or customised indexing, for example.
 var kb = new ForwardChainingKnowledgeBase(new HashSetClauseStore());
 kb.Tell(rules);
 var querySentence = SentenceParser.BasicParser.Parse("IsCriminal(West)");
@@ -223,16 +227,21 @@ var result = kb.Ask(SentenceParser.BasicParser.Parse("IsCriminal(West)")); // ==
 ### Using Resolution
 
 ```
+using SCFirstOrderLogic.ClauseIndexing;
+using SCFirstOrderLogic.ClauseIndexing.Features;
 using SCFirstOrderLogic.Inference; // For the "Tell" and "Ask" extension methods
 using SCFirstOrderLogic.Inference.Basic.Resolution;
 
 // .. paste the domain listing here ..
 
-// The resolution KB has a little more configurability/extensibility than the other two:
-var kb = new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
-    new HashSetClauseStore(),
-    DelegateResolutionStrategy.Filters.None,
-    DelegateResolutionStrategy.PriorityComparisons.UnitPreference));
+// The resolution KB has more configurability/extensibility than the other two:
+var clauseStore = new FeatureVectorIndexClauseStore<MaxDepthFeature>(
+    MaxDepthFeature.MakeFeatureVector,
+    new ClauseStoreFVIListNode<MaxDepthFeature>(MaxDepthFeature.MakeFeatureComparer()));
+
+var kb = new ResolutionKnowledgeBase(new LinearResolutionStrategy(
+    clauseStore,
+    ClauseResolutionPriorityComparisons.UnitPreference));
 
 kb.Tell(rules);
 var result = kb.Ask(SentenceParser.BasicParser.Parse("IsCriminal(West)")); // == true

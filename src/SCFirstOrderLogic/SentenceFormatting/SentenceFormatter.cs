@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2021-2024 Simon Condon.
+﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace SCFirstOrderLogic.SentenceFormatting;
 
@@ -11,13 +12,10 @@ namespace SCFirstOrderLogic.SentenceFormatting;
 /// This class provides functionality for rendering <see cref="Sentence"/> instances (and <see cref="CNFSentence"/> instances) in the standard first-order logic syntax.
 /// Using a single <see cref="SentenceFormatter"/> instance allows for unique (and customisable) labelling of standardised variables and Skolem functions for all sentences formatted with the instance.
 /// </summary>
-// TODO-FEATURE: Will ultimately want something that is more intelligent with brackets (i.e. drops them where not needed).
-// Will need precedence list in here - then presumably not too tough to include brackets or not based on the relative priority
-// of current op and child.
 public class SentenceFormatter
 {
-    private const char PrecedenceBracketL = '[';
-    private const char PrecedenceBracketR = ']';
+    private const string PrecedenceBracketL = "[";
+    private const string PrecedenceBracketR = "]";
 
     private readonly ILabellingScope labellingScope;
     private readonly Func<object, bool> includeBracketsForConstant;
@@ -81,8 +79,17 @@ public class SentenceFormatter
     /// </summary>
     /// <param name="clause">The clause to be formatted.</param>
     /// <returns>A string representation of the given clause.</returns>
-    public string Format(CNFClause clause) =>
-        string.Join(" ∨ ", clause.Literals.Select(l => Format(l)));
+    public string Format(CNFClause clause)
+    {
+        if (clause.Literals.Count > 0)
+        {
+            return string.Join(" ∨ ", clause.Literals.Select(l => Format(l)));
+        }
+        else
+        {
+            return "⊥";
+        }
+    }
 
     /// <summary>
     /// Returns a string representation of a given <see cref="CNFDefiniteClause"/> instance.
@@ -141,48 +148,81 @@ public class SentenceFormatter
     /// </summary>
     /// <param name="conjunction">The conjunction to be formatted.</param>
     /// <returns>A string representation of the given conjunction.</returns>
-    public string Format(Conjunction conjunction) =>
-        $"{PrecedenceBracketL}{Format(conjunction.Left)} ∧ {Format(conjunction.Right)}{PrecedenceBracketR}";
+    public string Format(Conjunction conjunction)
+    {
+        var (lOpen, lClose) = GetPrecedenceBrackets(conjunction.Left, conjunction);
+        var (rOpen, rClose) = GetPrecedenceBrackets(conjunction.Right, conjunction);
+        return $"{lOpen}{Format(conjunction.Left)}{lClose} ∧ {rOpen}{Format(conjunction.Right)}{rClose}";
+    }
+
 
     /// <summary>
     /// Returns a string representation of a given <see cref="Disjunction"/> instance.
     /// </summary>
     /// <param name="disjunction">The disjunction to be formatted.</param>
     /// <returns>A string representation of the given disjunction.</returns>
-    public string Format(Disjunction disjunction) =>
-        $"{PrecedenceBracketL}{Format(disjunction.Left)} ∨ {Format(disjunction.Right)}{PrecedenceBracketR}";
+    public string Format(Disjunction disjunction)
+    {
+        var (lOpen, lClose) = GetPrecedenceBrackets(disjunction.Left, disjunction);
+        var (rOpen, rClose) = GetPrecedenceBrackets(disjunction.Right, disjunction);
+        return $"{lOpen}{Format(disjunction.Left)}{lClose} ∨ {rOpen}{Format(disjunction.Right)}{rClose}";
+    }
 
     /// <summary>
     /// Returns a string representation of a given <see cref="Equivalence"/> instance.
     /// </summary>
     /// <param name="equivalence">The equivalence to be formatted.</param>
     /// <returns>A string representation of the given equivalence.</returns>
-    public string Format(Equivalence equivalence) =>
-        $"{PrecedenceBracketL}{Format(equivalence.Left)} ⇔ {Format(equivalence.Right)}{PrecedenceBracketR}";
+    public string Format(Equivalence equivalence)
+    {
+        var (lOpen, lClose) = GetPrecedenceBrackets(equivalence.Left, equivalence);
+        var (rOpen, rClose) = GetPrecedenceBrackets(equivalence.Right, equivalence);
+        return $"{lOpen}{Format(equivalence.Left)}{lClose} ⇔ {rOpen}{Format(equivalence.Right)}{rClose}";
+    }
 
     /// <summary>
     /// Returns a string representation of a given <see cref="ExistentialQuantification"/> instance.
     /// </summary>
     /// <param name="existentialQuantification">The existential quantification to be formatted.</param>
     /// <returns>A string representation of the given existential quantification.</returns>
-    public string Format(ExistentialQuantification existentialQuantification) =>
-        $"{PrecedenceBracketL}∃ {Format(existentialQuantification.Variable)}, {Format(existentialQuantification.Sentence)}{PrecedenceBracketR}";
+    public string Format(ExistentialQuantification existentialQuantification)
+    {
+        var stringBuilder = new StringBuilder($"∃ {Format(existentialQuantification.Variable)}, ");
+
+        Sentence innerSentence = existentialQuantification.Sentence;
+        while (innerSentence is ExistentialQuantification innerExistentialQuantification)
+        {
+            stringBuilder.Append($"{Format(innerExistentialQuantification.Variable)}, ");
+            innerSentence = innerExistentialQuantification.Sentence;
+        }
+
+        stringBuilder.Append(Format(innerSentence));
+
+        return stringBuilder.ToString();
+    }
 
     /// <summary>
     /// Returns a string representation of a given <see cref="Implication"/> instance.
     /// </summary>
     /// <param name="implication">The implication to be formatted.</param>
     /// <returns>A string representation of the given implication.</returns>
-    public string Format(Implication implication) =>
-        $"{PrecedenceBracketL}{Format(implication.Antecedent)} ⇒ {Format(implication.Consequent)}{PrecedenceBracketR}";
+    public string Format(Implication implication)
+    {
+        var (lOpen, lClose) = GetPrecedenceBrackets(implication.Antecedent, implication);
+        var (rOpen, rClose) = GetPrecedenceBrackets(implication.Consequent, implication);
+        return $"{lOpen}{Format(implication.Antecedent)}{lClose} ⇒ {rOpen}{Format(implication.Consequent)}{rClose}";
+    }
 
     /// <summary>
     /// Returns a string representation of a given <see cref="Negation"/> instance.
     /// </summary>
     /// <param name="negation">The negation to be formatted.</param>
     /// <returns>A string representation of the given negation.</returns>
-    public string Format(Negation negation) =>
-        $"¬{Format(negation.Sentence)}";
+    public string Format(Negation negation)
+    {
+        var (open, close) = GetPrecedenceBrackets(negation.Sentence, negation);
+        return $"¬{open}{Format(negation.Sentence)}{close}";
+    }
 
     /// <summary>
     /// Returns a string representation of a given <see cref="Predicate"/> instance.
@@ -197,8 +237,21 @@ public class SentenceFormatter
     /// </summary>
     /// <param name="universalQuantification">The universal quantification to be formatted.</param>
     /// <returns>A string representation of the given universal quantification.</returns>
-    public string Format(UniversalQuantification universalQuantification) =>
-        $"{PrecedenceBracketL}∀ {Format(universalQuantification.Variable)}, {Format(universalQuantification.Sentence)}{PrecedenceBracketR}";
+    public string Format(UniversalQuantification universalQuantification)
+    {
+        var stringBuilder = new StringBuilder($"∀ {Format(universalQuantification.Variable)}, ");
+
+        Sentence innerSentence = universalQuantification.Sentence;
+        while (innerSentence is UniversalQuantification innerUniversalQuantification)
+        {
+            stringBuilder.Append($"{Format(innerUniversalQuantification.Variable)}, ");
+            innerSentence = innerUniversalQuantification.Sentence;
+        }
+
+        stringBuilder.Append(Format(innerSentence));
+
+        return stringBuilder.ToString();
+    }
 
     /// <summary>
     /// Returns a string representation of a given <see cref="Term"/> instance.
@@ -253,4 +306,35 @@ public class SentenceFormatter
     /// <returns>A string representation of a given identifier.</returns>
     public string Format(object identifier) =>
         labellingScope.GetLabel(identifier);
+
+    private static (string open, string close) GetPrecedenceBrackets(Sentence child, Sentence parent)
+    {
+        var precedenceDiff = GetPrecedence(parent) - GetPrecedence(child);
+
+        return precedenceDiff > 0 || (precedenceDiff == 0 && SamePrecedenceNeedsBrackets(parent, child))
+            ? (PrecedenceBracketL, PrecedenceBracketR)
+            : (string.Empty, string.Empty);
+    }
+
+    private static int GetPrecedence(Sentence sentence)
+    {
+        return sentence switch
+        {
+            Quantification => 0,
+            Equivalence => 1,
+            Implication => 1,
+            Conjunction => 2,
+            Disjunction => 2,
+            Negation => 3,
+            Predicate => 4,
+            _ => throw new ArgumentException($"Unsupported sentence type '{sentence.GetType()}'")
+        };
+    }
+
+    private static bool SamePrecedenceNeedsBrackets(Sentence parent, Sentence child)
+    {
+        return child.GetType() != parent.GetType()
+            || parent is Equivalence
+            || parent is Implication;
+    }
 }

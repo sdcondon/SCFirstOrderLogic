@@ -10,7 +10,6 @@ Having said all that, some hopefully useful notes do follow here.
 
 * **CNF:** While it wasn't explicity mentioned in "getting started", the knowledge bases referenced in that document do of course make use of conjunctive normal form where appropriate.
   Classes for representation of CNF can be found alongside the "raw" sentence types in the SCFirstOrderLogic namespace.
-  Note that the Sentence base class defines a `ToCNF` method.
 * **Equality:** The SCFirstOrderLogic namespace includes EqualityIdentifier, intended to be used as the identifier for the equality predicate.
   The various sentence creation methods make use of this in created sentences where appropriate.
 
@@ -25,7 +24,7 @@ The sets of labels used can be specified by the caller (but defaults do exist).
 
 ### `SCFirstOrderLogic.TermIndexing`
 
-While they are not yet used by any of the clause store types in the library, several types for fast term lookup are now present in the TermIndexing namespace.
+Several types for fast term lookup are present in the TermIndexing namespace.
 There are implementations of both discrimination trees and path indices.
 An abstraction for the nodes of these structures allows for customisation of the underlying storage.
 The only implementations provided in the library store things in memory, however.

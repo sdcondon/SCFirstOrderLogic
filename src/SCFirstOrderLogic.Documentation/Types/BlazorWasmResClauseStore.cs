@@ -5,10 +5,11 @@ using System.Runtime.CompilerServices;
 namespace SCFirstOrderLogic.Inference.Basic.Resolution;
 
 /// <summary>
-/// Implementation of <see cref="IClauseStore"/> geared towwards use in Blazor WASM, before multithreading support is added in v8.
+/// Implementation of <see cref="IClauseStore"/> geared towwards use in Blazor WASM, before multithreading support is added.
 /// Hacky - adds in a bunch of Task.Delay(1)'s.
-/// https://stackoverflow.com/questions/71287775/how-to-correctly-create-an-async-method-in-blazor
+/// https://github.com/dotnet/aspnetcore/issues/17730
 /// </summary>
+// TODO: Remove as soon as possible, keep in sync with real implementation until then
 public class BlazorWasmResClauseStore : IKnowledgeBaseClauseStore
 {
     // Yes, not actually a hash set, despite the name of the class. I want strong concurrency support,
@@ -72,16 +73,26 @@ public class BlazorWasmResClauseStore : IKnowledgeBaseClauseStore
     /// <summary>
     /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="HashSetClauseStore"/>.
     /// </summary>
-    private class QueryStore : IQueryClauseStore
+    private class QueryStore(IEnumerable<KeyValuePair<CNFClause, byte>> clauses) : IQueryClauseStore
     {
-        private readonly ConcurrentDictionary<CNFClause, byte> clauses = new();
-
-        public QueryStore(IEnumerable<KeyValuePair<CNFClause, byte>> clauses) => this.clauses = new(clauses);
+        private readonly ConcurrentDictionary<CNFClause, byte> clauses = new(clauses);
 
         /// <inheritdoc />
         public Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(clauses.TryAdd(clause, 0));
+        }
+
+        /// <inheritdoc />
+        public Task<bool> AddAsync(CNFClause clause, Func<CNFClause, Task> removedClauseCallback, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(clauses.TryAdd(clause, 0));
+        }
+
+        /// <inheritdoc />
+        public Task<bool> ContainsAsync(CNFClause clause, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(clauses.ContainsKey(clause));
         }
 
         /// <inheritdoc />

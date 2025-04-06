@@ -1,6 +1,4 @@
 ﻿The SCFirstOrderLogic NuGet package contains basic but fully functional and documented [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) implementations for .NET.
-It is heavily influenced by (chapters 8 and 9 of) [Artificial Intelligence: A Modern Approach" (Russell & Norvig)](https://www.google.com/search?q=isbn+978-1292153964).
-It is intended first and foremost to assist with learning and experimentation, but does include extension points (and async support) so that it is at least conceivable that it could be (extended to be) useful in a production scenario.
 Included are:
 
 * Implementations of both raw and CNF sentence representation. 

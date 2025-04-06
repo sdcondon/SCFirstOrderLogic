@@ -1,7 +1,8 @@
-﻿// Copyright (c) 2021-2024 Simon Condon.
+﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation;
 using System;
+using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
 
@@ -42,6 +43,12 @@ public sealed class Implication : Sentence
 
     /// <inheritdoc />
     public override TOut Accept<TOut, TState>(ISentenceTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
+
+    /// <inheritdoc />
+    public override Task AcceptAsync(IAsyncSentenceVisitor visitor) => visitor.VisitAsync(this);
+
+    /// <inheritdoc />
+    public override Task AcceptAsync<T>(IAsyncSentenceVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is Implication otherImplication

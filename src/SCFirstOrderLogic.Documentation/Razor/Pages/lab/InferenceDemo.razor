@@ -1,6 +1,7 @@
 ﻿@page "/lab/inference-demo"
 
 @using SCFirstOrderLogic;
+@using SCFirstOrderLogic.ClauseIndexing.Features
 @using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParser;
 @using SCFirstOrderLogic.Inference;
 @using SCFirstOrderLogic.Inference.Basic.BackwardChaining;
@@ -146,10 +147,16 @@
         ["Basic Forward Chaining"] = () => new ForwardChainingKnowledgeBase(
             new BlazorWasmFCClauseStore()),
 
-        ["Basic Resolution (Unit Preference)"] = () => new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
+        ["Resolution (Basic, Unit Preference)"] = () => new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
             new BlazorWasmResClauseStore(),
-            DelegateResolutionStrategy.Filters.None,
-            DelegateResolutionStrategy.PriorityComparisons.UnitPreference)),
+            ClauseResolutionFilters.None,
+            ClauseResolutionPriorityComparisons.UnitPreference)),
+
+        ["Resolution (Linear, Feature Vector Index Clause Storage)"] = () => new ResolutionKnowledgeBase(new LinearResolutionStrategy(
+            new BlazorWasmFVIResClauseStore<MaxDepthFeature>(
+                MaxDepthFeature.MakeFeatureVector,
+                new ClauseStoreFVIListNode<MaxDepthFeature>(MaxDepthFeature.MakeFeatureComparer())),
+            ClauseResolutionPriorityComparisons.UnitPreference)),
     };
 
     private static Dictionary<string, Func<FormData>> Presets = new()
@@ -165,7 +172,7 @@
             query: CrimeDomain.UnparsedExampleQuery),
 
         ["Curiousity and the Cat"] = () => new(
-            knowledgeBaseDescription: "Basic Resolution (Unit Preference)",
+            knowledgeBaseDescription: "Resolution (Linear, Feature Vector Index Clause Storage)",
             knowledge: string.Join(Environment.NewLine, CuriousityAndTheCatDomain.UnparsedAxioms),
             query: CuriousityAndTheCatDomain.UnparsedExampleQuery),
     };

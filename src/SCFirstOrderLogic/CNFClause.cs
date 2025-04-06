@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2021-2024 Simon Condon.
+﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
@@ -34,8 +34,9 @@ public class CNFClause : IEquatable<CNFClause>
     {
     }
 
-    // NB: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
-    // but this is a very low-level class, so I've opted to be lean and mean.
+    // TODO-ZZ-ROBUSTNESS: We *could* actually use an immutable type to stop unscrupulous consumers from making it mutable by casting,
+    // but this is a very low-level class, so I've opted to be lean and mean. Yes, this does mean that its possible for
+    // consumers to break the empty clause (below), so.. yeah, maybe I should fix it..
     internal CNFClause(HashSet<Literal> literals) => this.literals = literals;
 
     /// <summary>
@@ -51,6 +52,7 @@ public class CNFClause : IEquatable<CNFClause>
     /// <summary>
     /// Gets a value indicating whether this is a Horn clause - that is, whether at most one of its literals is positive.
     /// </summary>
+    // TODO-ZZ-PERFORMANCE: could not use Count so that we return false early as soon as second positive literal encountered
     public bool IsHornClause => Literals.Count(l => l.IsPositive) <= 1;
 
     /// <summary>

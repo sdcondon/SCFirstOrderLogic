@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using System.Collections.Generic;
-using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
 using FunctionInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeFunctionNodeKey;
 using IElementInfo = SCFirstOrderLogic.TermIndexing.IDiscriminationTreeNodeKey;
 using VariableInfo = SCFirstOrderLogic.TermIndexing.DiscriminationTreeVariableNodeKey;

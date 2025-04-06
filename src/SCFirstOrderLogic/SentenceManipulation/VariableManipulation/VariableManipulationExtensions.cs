@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2021-2024 Simon Condon.
+﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +23,10 @@ public static class VariableManipulationExtensions
     /// <returns>True if this clause subsumes the other; otherwise false.</returns>
     public static bool Subsumes(this CNFClause thisClause, CNFClause otherClause)
     {
+        // TODO: is this conventional? otherwise the empty clause (which is conventially ⊥, a contradiction)
+        // would subsume everything. which is.. weird - but might be useful for e.g. getting everything from
+        // an FVI (GetSubsumed(CNFClause.Empty)), and might even make sense from a vague 'if false is true,
+        // all is permitted..' kinda perspective. Can't find any resources on this..
         if (thisClause.IsEmpty)
         {
             return false;
@@ -59,13 +63,39 @@ public static class VariableManipulationExtensions
 
     /// <summary>
     /// <para>
-    /// Checks whether "this" clause unifies with any of an enumeration of other definite clauses.
+    /// Checks whether this clause subsumes any of an enumeration of other clauses.
+    /// </para>
+    /// </summary>
+    /// <param name="thisClause">"This" clause.</param>
+    /// <param name="clauses">The clauses to check for subsumption.</param>
+    /// <returns>True if this clause subsumes any of the provided clauses; otherwise false.</returns>.
+    public static bool SubsumesAnyOf(this CNFClause thisClause, IEnumerable<CNFClause> clauses)
+    {
+        return clauses.Any(c => thisClause.Subsumes(c));
+    }
+
+    /// <summary>
+    /// <para>
+    /// Checks whether this clause is subsumed by any of an enumeration of other clauses.
+    /// </para>
+    /// </summary>
+    /// <param name="thisClause">"This" clause.</param>
+    /// <param name="clauses">The clauses to check for subsumption.</param>
+    /// <returns>True if this clause subsumes any of the provided clauses; otherwise false.</returns>.
+    public static bool IsSubsumedByAnyOf(this CNFClause thisClause, IEnumerable<CNFClause> clauses)
+    {
+        return clauses.Any(c => c.Subsumes(thisClause));
+    }
+
+    /// <summary>
+    /// <para>
+    /// Checks whether this clause unifies with any of an enumeration of other clauses.
     /// </para>
     /// </summary>
     /// <param name="thisClause">"This" clause.</param>
     /// <param name="clauses">The clauses to check for unification with.</param>
     /// <returns>True if this clause unifies with any of the provided clauses; otherwise false.</returns>
-    // TODO: probably remove (/replace with SubsumesAnyOf/IsSubsumedByAnyOf?) - created prior to subsumption methods,
+    // TODO-BREAKING: probably remove - created prior to subsumption methods,
     // and its usage looks plain wrong now that I've a bit more FoL experience under my belt..
     public static bool UnifiesWithAnyOf(this CNFClause thisClause, IEnumerable<CNFClause> clauses)
     {

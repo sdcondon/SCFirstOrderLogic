@@ -3,7 +3,7 @@ using FlUnit;
 using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
@@ -28,6 +28,7 @@ public static class VariableManipulationExtensionsTests
             new(X: F(G(Y, C)), Y: F(X), Expected: true),
             new(X: F(X), Y: F(C), Expected: false),
             new(X: F(X, C), Y: F(C, X), Expected: false),
+            new(X: F(X, X), Y: F(Y, C), Expected: false),
         ])
         .When(tc => tc.X.IsInstanceOf(tc.Y))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.Expected));
@@ -40,6 +41,7 @@ public static class VariableManipulationExtensionsTests
             new(X: F(X), Y: F(G(Y, C)), Expected: true),
             new(X: F(C), Y: F(X), Expected: false),
             new(X: F(X, C), Y: F(C, X), Expected: false),
+            new(X: F(X, X), Y: F(Y, C), Expected: false),
         ])
         .When(tc => tc.X.IsGeneralisationOf(tc.Y))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.Expected));
@@ -56,17 +58,21 @@ public static class VariableManipulationExtensionsTests
             new (X: P(X) | Q(Y),     Y: P(C) | Q(D), Expected: true),
             new (X: P(X) | Q(Y),     Y: P(C) | Q(Z), Expected: true),
             new (X: P(X) | Q(X),     Y: P(C) | Q(C), Expected: true),
+            new (X: P(X) | Q(X),     Y: P(X) | Q(D), Expected: false),
             new (X: P(X) | Q(X),     Y: P(C) | Q(D), Expected: false),
             new (X: P(X),            Y: Q(C),        Expected: false),
             new (X: P(X) | Q(Y),     Y: P(C),        Expected: false),
             new (X: P(C),            Y: P(X),        Expected: false),
             new (X: CNFClause.Empty, Y: P(),         Expected: false),
+
+            new (X: P(X) | Q(X), Y: P(X) | Q(D), Expected: false),
+            new (X: P(X) | Q(Y, X), Y: P(X) | Q(X, F(X)), Expected: false)
         ])
         .When(tc => tc.X.Subsumes(tc.Y))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.Expected));
 
-    public static Test SubsumedByBehaviourBehaviour => TestThat
+    public static Test SubsumedByBehaviour => TestThat
         .GivenEachOf<SubsumptionTestCase>(() =>
         [
             new (X: P(),         Y: P(),             Expected: true),
@@ -104,6 +110,11 @@ public static class VariableManipulationExtensionsTests
                 Clause: P(X, Y) | Q(X, Y),
                 Clauses: [P(A, B) | Q(A, B)],
                 ExpectedResult: true),
+
+            new (
+                Clause: P(X, C) | Q(Y, X),
+                Clauses: [P(X, C) | Q(X, F(X))],
+                ExpectedResult: false),
         ])
         .When(tc => tc.Clause.ToCNF().Clauses.Single().UnifiesWithAnyOf(tc.Clauses.Select(s => s.ToCNF().Clauses.Single())))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.ExpectedResult));

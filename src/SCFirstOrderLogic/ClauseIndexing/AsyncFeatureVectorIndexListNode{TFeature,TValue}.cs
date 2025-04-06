@@ -1,4 +1,4 @@
-// Copyright © 2023-2024 Simon Condon.
+// Copyright © 2023-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using System;
@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// <summary>
 /// <para>
 /// An implementation of <see cref="IAsyncFeatureVectorIndexNode{TFeature, TValue}"/> that just stores its content in memory.
-/// Uses a <see cref="SortedList{TKey, TValue}"/> for child nodes.
+/// Uses a <see cref="SortedList{TKey, TValue}"/> for child nodes, and a <see cref="Dictionary{TKey, TValue}"/> for leaf values.
 /// </para>
 /// <para>
 /// NB: If you are using this type, you should consider using <see cref="FeatureVectorIndex{TFeature, TValue}"/> instead, to avoid the overhead of asynchronicity.
@@ -161,3 +161,4 @@ public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVe
         return ValueTask.FromResult((isSucceeded, value));
     }
 }
+#pragma warning restore CS1998 // async lacks await. See 'NB' in class summary.

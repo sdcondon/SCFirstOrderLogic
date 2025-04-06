@@ -23,7 +23,7 @@
                 <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-            </div>
+        </div>
         </div>
         -->
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
@@ -40,7 +40,7 @@
         <NavMenu />
     </MudDrawer>
     <MudMainContent Class="mt-16 pa-4">
-        @Body
+            @Body
     </MudMainContent>
 </MudLayout>
 

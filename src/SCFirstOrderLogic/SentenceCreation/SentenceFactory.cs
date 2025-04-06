@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2021-2024 Simon Condon.
+﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 namespace SCFirstOrderLogic.SentenceCreation;
 
@@ -159,132 +159,132 @@ public static class SentenceFactory
     #region VariableDeclarations
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "A".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "A".
     /// </summary>
     public static VariableDeclaration A { get; } = new(nameof(A));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "B".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "B".
     /// </summary>
     public static VariableDeclaration B { get; } = new(nameof(B));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "C".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "C".
     /// </summary>
     public static VariableDeclaration C { get; } = new(nameof(C));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "D".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "D".
     /// </summary>
     public static VariableDeclaration D { get; } = new(nameof(D));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "E".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "E".
     /// </summary>
     public static VariableDeclaration E { get; } = new(nameof(E));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "F".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "F".
     /// </summary>
     public static VariableDeclaration F { get; } = new(nameof(F));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "G".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "G".
     /// </summary>
     public static VariableDeclaration G { get; } = new(nameof(G));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "H".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "H".
     /// </summary>
     public static VariableDeclaration H { get; } = new(nameof(H));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "I".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "I".
     /// </summary>
     public static VariableDeclaration I { get; } = new(nameof(I));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "J".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "J".
     /// </summary>
     public static VariableDeclaration J { get; } = new(nameof(J));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "K".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "K".
     /// </summary>
     public static VariableDeclaration K { get; } = new(nameof(K));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "L".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "L".
     /// </summary>
     public static VariableDeclaration L { get; } = new(nameof(L));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "M".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "M".
     /// </summary>
     public static VariableDeclaration M { get; } = new(nameof(M));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "N".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "N".
     /// </summary>
     public static VariableDeclaration N { get; } = new(nameof(N));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "O".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "O".
     /// </summary>
     public static VariableDeclaration O { get; } = new(nameof(O));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "P".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "P".
     /// </summary>
     public static VariableDeclaration P { get; } = new(nameof(P));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "Q".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "Q".
     /// </summary>
     public static VariableDeclaration Q { get; } = new(nameof(Q));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "R".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "R".
     /// </summary>
     public static VariableDeclaration R { get; } = new(nameof(R));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "S".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "S".
     /// </summary>
     public static VariableDeclaration S { get; } = new(nameof(S));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "T".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "T".
     /// </summary>
     public static VariableDeclaration T { get; } = new(nameof(T));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "U".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "U".
     /// </summary>
     public static VariableDeclaration U { get; } = new(nameof(U));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "V".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "V".
     /// </summary>
     public static VariableDeclaration V { get; } = new(nameof(V));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "W".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "W".
     /// </summary>
     public static VariableDeclaration W { get; } = new(nameof(W));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "X".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "X".
     /// </summary>
     public static VariableDeclaration X { get; } = new(nameof(X));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "Y".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "Y".
     /// </summary>
     public static VariableDeclaration Y { get; } = new(nameof(Y));
 
     /// <summary>
-    /// Gets a new <see cref="VariableDeclaration"/> for a variable with the identifier "Z".
+    /// Gets a <see cref="VariableDeclaration"/> for a variable with the identifier "Z".
     /// </summary>
     public static VariableDeclaration Z { get; } = new(nameof(Z));
 

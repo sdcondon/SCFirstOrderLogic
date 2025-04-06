@@ -4,11 +4,9 @@
 /// A badly behaved class of which all instances share a hash code of zero.
 /// Intended for tests that cover hash code collision (of an constant, function or predicate identifier) scenarios.
 /// </summary>
-public class HashCodeCollision
+public class HashCodeCollision(string id)
 {
-    private readonly string id;
-
-    public HashCodeCollision(string id) => this.id = id;
+    private readonly string id = id;
 
     public override int GetHashCode() => 0;
 

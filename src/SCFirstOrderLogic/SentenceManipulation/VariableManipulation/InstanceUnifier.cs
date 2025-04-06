@@ -1,12 +1,19 @@
-﻿// Copyright (c) 2021-2024 Simon Condon.
+﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
+// TODO-BREAKING: I'm beginning to think that Substitution would be a better namespace name than VariableManipulation
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
 /// <summary>
+/// <para>
 /// Unification logic that is "one-way" - only allows variables present in one of the arguments (the "generalisation") to be substituted.
+/// </para>
+/// <para>
+/// NB: Lack of occurs check means this can give substitutions that would infinitely loop if applied (see unit tests for an example).
+/// As it stands, no subtitutions created by this class are actually ever applied, so this isnt a problem - but this is why the type is internal.
+/// </para>
 /// </summary>
 internal static class InstanceUnifier
 {
@@ -320,15 +327,9 @@ internal static class InstanceUnifier
     // NB: 'unsafe' in that it can partially update the unifier on failure
     private static bool TryUpdateUnsafe(VariableReference generalisationVariable, Term instanceTerm, MutableVariableSubstitution unifier)
     {
-        if (generalisationVariable.Equals(instanceTerm))
+        if (unifier.Bindings.TryGetValue(generalisationVariable, out var variableValue))
         {
-            return true;
-        }
-        else if (unifier.Bindings.TryGetValue(generalisationVariable, out var variableValue))
-        {
-            // The variable is already mapped to something - we need to make sure that the
-            // mapping is consistent with the "other" value.
-            return TryUpdateUnsafe(variableValue, instanceTerm, unifier);
+            return variableValue.Equals(instanceTerm);
         }
         else
         {

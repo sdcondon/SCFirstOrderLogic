@@ -1,6 +1,8 @@
-﻿// Copyright (c) 2021-2024 Simon Condon.
+﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Normalisation;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,33 +17,93 @@ namespace SCFirstOrderLogic.ClauseIndexing.Features;
 /// <seealso href="http://wwwlehre.dhbw-stuttgart.de/~sschulz/PAPERS/Schulz2013-FVI.pdf"/>
 public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral)
 {
+    private static readonly Func<object, bool> DefaultIdentifierFilter = i => i is not SkolemFunctionIdentifier;
+    private static readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<OccurenceCountFeature>>> DefaultFeatureVectorSelector = MakeFeatureVectorSelector(DefaultIdentifierFilter);
+
     /// <summary>
-    /// Feature vector selection logic that returns a feature vector consisting of: 
-    /// positive literal count, negative literal count, occurence count of each occuring
-    /// identifier among positive literals, and occurence count of each occuring identifier
-    /// among negative literals.
+    /// <para>
+    /// Creates a feature vector consisting of: positive literal count, negative literal count, 
+    /// occurence count of each occuring admissible identifier among positive literals, and occurence count 
+    /// of each occuring admissible identifier among negative literals.
+    /// </para>
+    /// <para>
+    /// All predicate and function identifiers are admissible, with the sole exception of Skolem function identifiers.
+    /// </para>
     /// </summary>
     /// <param name="clause">The clause to retrieve a feature vector for.</param>
     /// <returns>A feature vector.</returns>
     public static IEnumerable<FeatureVectorComponent<OccurenceCountFeature>> MakeFeatureVector(CNFClause clause)
     {
-        Dictionary<OccurenceCountFeature, int> featureVector = new();
-
-        foreach (var literal in clause.Literals)
-        {
-            var literalCountFeature = new OccurenceCountFeature(null, literal.IsPositive);
-            featureVector.TryGetValue(literalCountFeature, out var value);
-            featureVector[literalCountFeature] = value + 1;
-
-            literal.Predicate.Accept(new CreationVisitor(featureVector, literal.IsPositive));
-        }
-
-        return featureVector.Select(kvp => new FeatureVectorComponent<OccurenceCountFeature>(kvp.Key, kvp.Value));
+        return DefaultFeatureVectorSelector(clause);
     }
 
     /// <summary>
-    /// Makes a comparer that can be used (to determine the ordering of nodes in the index) with the features included
-    /// in feature vectors created by <see cref="MakeFeatureVector(CNFClause)"/>.
+    /// <para>
+    /// Creates a feature vector selector delegate that gives vectors consisting of: positive literal count, 
+    /// negative literal count, occurence count of each occuring admissible identifier among positive literals,
+    /// and occurence count of each occuring admissible identifier among negative literals.
+    /// </para>
+    /// <para>
+    /// All predicate and function identifiers for which <see paramref="identifierFilter"/> returns <see langword="true"/> are admissible.
+    /// </para>
+    /// </summary>
+    /// <param name="identifierFilter">The filter to use to determine whether identifiers should be included in a vector.</param>
+    /// <returns>A delegate for creating feature vectors.</returns>
+    public static Func<CNFClause, IEnumerable<FeatureVectorComponent<OccurenceCountFeature>>> MakeFeatureVectorSelector(Func<object, bool> identifierFilter)
+    {
+        return clause =>
+        {
+            Dictionary<OccurenceCountFeature, int> featureVector = new();
+
+            foreach (var literal in clause.Literals)
+            {
+                var literalCountFeature = new OccurenceCountFeature(null, literal.IsPositive);
+                featureVector.TryGetValue(literalCountFeature, out var value);
+                featureVector[literalCountFeature] = value + 1;
+
+                literal.Predicate.Accept(new CreationVisitor(featureVector, literal.IsPositive, identifierFilter));
+            }
+
+            return featureVector.Select(kvp => new FeatureVectorComponent<OccurenceCountFeature>(kvp.Key, kvp.Value));
+        };
+    }
+
+    /// <summary>
+    /// <para>
+    /// Makes a comparer of <see cref="OccurenceCountFeature"/>s that can be used to determine the ordering of nodes in a feature vector index.
+    /// </para>
+    /// <para>
+    /// This overload creates a comparer that uses the following logic to compare identifiers as part of doing its comparison:
+    /// </para>
+    /// <list type="bullet">
+    /// <item>
+    /// The <see cref="EqualityIdentifier"/> singleton is considered "greater than" any other identifier type - so that the features for this identifier
+    /// occur deeper in the index than features for any other identifier type.
+    /// </item>
+    /// <item>
+    /// <see cref = "Comparer.Default" /> is used to all other identifier types. Note that <see cref="Comparer.Default"/> will throw if it encounters
+    /// any object of a type that does not implement <see cref="IComparable"/>, and many types that *do* implement <see cref="IComparable"/> (including
+    /// <see cref="string"/>) will throw when attempting to compare to objects of another type. This overload should only be used if all identifiers
+    /// that it will encounter implement <see cref="IComparable"/> in such a way that it will never throw when comparing to any other enountered identifier.
+    /// For example, its safe enough to use if all of your identiers are <see cref="string"/>s, but not if some are <see cref="string"/>s and others are
+    /// <see cref="int"/>s, or if any are of a type that does not implement <see cref="IComparable"/>.
+    /// </item>
+    /// </list>
+    /// </summary>
+    /// <returns>A new <see cref="IComparer{T}"/>.</returns>
+    public static IComparer<OccurenceCountFeature> MakeFeatureComparer()
+    {
+        return MakeFeatureComparer(Comparer<object>.Create((x, y) => (x, y) switch
+        {
+            (EqualityIdentifier, EqualityIdentifier) => 0,
+            (EqualityIdentifier, _) => 1,
+            (_, EqualityIdentifier) => -1,
+            (_, _) => Comparer.Default.Compare(x, y),
+        }));
+    }
+
+    /// <summary>
+    /// Makes a comparer of <see cref="MaxDepthFeature"/>s that can be used to determine the ordering of nodes in a feature vector index.
     /// </summary>
     /// <param name="identifierComparer">The comparer to use to compare identifiers.</param>
     /// <returns>A new <see cref="IComparer{T}"/>.</returns>
@@ -81,22 +143,32 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     {
         private readonly IDictionary<OccurenceCountFeature, int> featureVector;
         private readonly bool forPositiveLiterals;
+        private readonly Func<object, bool> identifierFilter;
 
-        public CreationVisitor(IDictionary<OccurenceCountFeature, int> featureVector, bool forPositiveLiterals)
+        public CreationVisitor(IDictionary<OccurenceCountFeature, int> featureVector, bool forPositiveLiterals, Func<object, bool> identifierFilter)
         {
             this.featureVector = featureVector;
             this.forPositiveLiterals = forPositiveLiterals;
+            this.identifierFilter = identifierFilter;
         }
 
         public override void Visit(Predicate predicate)
         {
-            AddOccurence(predicate.Identifier);
+            if (identifierFilter(predicate.Identifier))
+            {
+                AddOccurence(predicate.Identifier);
+            }
+
             base.Visit(predicate);
         }
 
         public override void Visit(Function function)
         {
-            AddOccurence(function.Identifier);
+            if (identifierFilter(function.Identifier))
+            {
+                AddOccurence(function.Identifier);
+            }
+
             base.Visit(function);
         }
 

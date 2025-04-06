@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
 using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;

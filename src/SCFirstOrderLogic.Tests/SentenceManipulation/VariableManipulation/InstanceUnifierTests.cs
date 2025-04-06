@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
 using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
@@ -24,15 +24,6 @@ public class InstanceUnifierTests
                 ExpectedBindings: new()
                 {
                     [X] = F(Y),
-                }),
-
-            new ( // vars matched to vars
-                Generalisation: P(X, X),
-                Instance: P(Y, C),
-                ExpectedBindings: new()
-                {
-                    [X] = Y,
-                    [Y] = C,
                 }),
 
             // NB: at the time of writing this will cause infinite recursion if actually applied - since there's no loop protection.
@@ -73,6 +64,10 @@ public class InstanceUnifierTests
             new (
                 Generalisation: P(X, F(X)),
                 Instance: P(G(Y), Y)),
+
+            new ( // vars matched to vars
+                Generalisation: P(X, X),
+                Instance: P(Y, C)),
 
             new ( // vars matched to vars
                 Generalisation: P(Y, C),

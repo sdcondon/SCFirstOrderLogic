@@ -6,10 +6,11 @@ using System.Runtime.CompilerServices;
 namespace SCFirstOrderLogic.Inference.Basic.BackwardChaining;
 
 /// <summary>
-/// Implementation of <see cref="IClauseStore"/> geared towards use in Blazor WASM, before multithreading support is added in v8.
+/// Implementation of <see cref="IClauseStore"/> geared towards use in Blazor WASM, before multithreading support is added.
 /// Hacky - adds in a bunch of Task.Delay(1)'s.
-/// https://stackoverflow.com/questions/71287775/how-to-correctly-create-an-async-method-in-blazor
+/// https://github.com/dotnet/aspnetcore/issues/17730
 /// </summary>
+// TODO: Remove as soon as possible, keep in sync with real implementation until then
 public class BlazorWasmBCClauseStore : IClauseStore
 {
     // NB: the inner dictionary here is intended more as a hash set - but system.collections.concurrent doesn't
@@ -87,10 +88,6 @@ public class BlazorWasmBCClauseStore : IClauseStore
         {
             foreach (var clause in clausesWithThisGoal.Keys)
             {
-                // TODO-CODE-STINK: restandardisation doesn't belong here - the need to restandardise is due to the algorithm we use.
-                // A query other than SimpleBackwardChain might not need this (if e.g. it had a different unifier instance for each step).
-                // TODO*-BUG?: hmm, looks odd. we restandardise, THEN do a thing involving the constraint.. When could the constraint ever
-                // kick in? Verify test coverage here..
                 var restandardisedClause = clause.Restandardise();
 
                 if (Unifier.TryUpdate(restandardisedClause.Consequent, goal, constraints, out var substitution))

@@ -12,6 +12,16 @@
         "font/bootstrap-icons.json",
         "font/bootstrap-icons.min.css"
       ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "highlight.js@11.11.1",
+      "destination": "wwwroot/lib/highlight.js/",
+      "files": [
+        "highlight.min.js",
+        "languages/csharp.min.js",
+        "styles/default.min.css"
+      ]
     }
   ]
 }

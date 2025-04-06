@@ -1,6 +1,6 @@
-﻿using static SCFirstOrderLogic.TestProblems.GenericDomainOperableSentenceFactory;
+﻿using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainSentenceFactory;
 
-namespace SCFirstOrderLogic.TermIndexing.TestUtilities;
+namespace SCFirstOrderLogic.TestProblems.FromMpg;
 
 /// <summary>
 /// Essentially a handy example for demonstrating and testing term indexing.
@@ -8,9 +8,9 @@ namespace SCFirstOrderLogic.TermIndexing.TestUtilities;
 /// index with some content that goes at least a little beyond complete triviality.
 /// See https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script-6.2-7.4.pdf for the actual source.
 /// </summary>
-public static class TermIndexingExampleProblem
-{    
-    public static readonly Term[] Terms =
+public static class TermIndexingExample
+{   
+    public static readonly Term[] ExampleTerms =
     {
         F(G(D, X), C),
         F(X, C),

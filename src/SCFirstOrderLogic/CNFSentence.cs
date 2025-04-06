@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2021-2024 Simon Condon.
+﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.SentenceFormatting;
 using SCFirstOrderLogic.SentenceManipulation;
@@ -36,7 +36,7 @@ public class CNFSentence : IEquatable<CNFSentence>
     {
     }
 
-    // NB: We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting,
+    // NB: We *could* actually use an immutable type to stop unscrupulous consumers from making it mutable by casting,
     // but this is a very low-level class, so I've opted to be lean and mean.
     internal CNFSentence(HashSet<CNFClause> clauses) => this.clauses = clauses;
 
