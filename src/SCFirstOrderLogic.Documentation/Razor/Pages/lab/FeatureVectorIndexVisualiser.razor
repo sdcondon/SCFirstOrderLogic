@@ -11,37 +11,35 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Feature Vector Index Visualiser <a data-bs-toggle="modal" data-bs-target="#infoModal" href="#"><span class="bi bi-info-circle" aria-hidden="true"></span></a></h3>
+<h3>Lab - Feature Vector Index Visualiser <Button Clicked="ShowExplanationModal"><Span Class="bi bi-info-circle" aria-hidden="true"></Span></Button></h3>
 
-<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="infoModalLabel">Lab Explanation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>
-                    This page is an interactive visualiser for feature vector indices, as implemented by SCFirstOrderLogic.
-                </p>
-                <p>
-                    Feature vector indices (in this context, at least) are an indexing structure for CNF clauses that enable quick lookup of stored clauses that subsume or are subsumed by a query term.
-                    The general idea is that each stored clause and query clause, we calculate a set of "features" (essentially, metrics) that will always have a greater or equal value for subsumed clauses.
-                </p>
-                <p>
-                    Note that:
-                </p>
-                <ul>
-                    <li>This lab is admittedly a little rough around the edges with regards to the tree view itself (currently just nested unordered lists) and input validation. It'll be iterated upon.</li>
-                    <li>You can add clauses to the tree by entering them into the Clause text box and clicking the 'Add' button.</li>
-                    <li>When parsing the clause, identifiers not followed by any parentheses (to indicate a function) will be interpreted as variables if they feature in the "variables" text box. Otherwise they will be interpreted as zero-arity functions (i.e. constants).</li>
-                    <li>Guidance for writing clauses as strings can be found on the "getting started" page.</li>
-                    <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Razor/Pages/lab/FeatureVectorIndexVisualiser.razor">here</a>.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
+<Modal @ref="explanationModal">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Lab Explanation</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <p>
+                This page is an interactive visualiser for feature vector indices, as implemented by SCFirstOrderLogic.
+            </p>
+            <p>
+                Feature vector indices (in this context, at least) are an indexing structure for CNF clauses that enable quick lookup of stored clauses that subsume or are subsumed by a query term.
+                The general idea is that each stored clause and query clause, we calculate a set of "features" (essentially, metrics) that will always have a greater or equal value for subsumed clauses.
+            </p>
+            <p>
+                Note that:
+            </p>
+            <ul>
+                <li>This lab is admittedly a little rough around the edges with regards to the tree view itself (currently just nested unordered lists) and input validation. It'll be iterated upon.</li>
+                <li>You can add clauses to the tree by entering them into the Clause text box and clicking the 'Add' button.</li>
+                <li>When parsing the clause, identifiers not followed by any parentheses (to indicate a function) will be interpreted as variables if they feature in the "variables" text box. Otherwise they will be interpreted as zero-arity functions (i.e. constants).</li>
+                <li>Guidance for writing clauses as strings can be found on the "getting started" page.</li>
+                <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Razor/Pages/lab/FeatureVectorIndexVisualiser.razor">here</a>.</li>
+            </ul>
+        </ModalBody>
+    </ModalContent>
+</Modal>
 
 <EditForm Model=@formData Context="editContext" style="font-family: monospace">
     <DataAnnotationsValidator />
@@ -94,6 +92,7 @@
 </ul>
 
 @code {
+    private Modal? explanationModal;
     private FeatureVectorIndexListNode<MaxDepthFeature, CNFClause> rootNode;
     private FeatureVectorIndex<MaxDepthFeature> index;
     private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
@@ -103,6 +102,8 @@
         rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
         index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
     }
+
+    private Task ShowExplanationModal() => explanationModal!.Show();
 
     private void Add(EditContext editContext)
     {

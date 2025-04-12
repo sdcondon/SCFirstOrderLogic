@@ -8,37 +8,35 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Discrimination Tree Visualiser <a data-bs-toggle="modal" data-bs-target="#infoModal" href="#"><span class="bi bi-info-circle" aria-hidden="true"></span></a></h3>
+<h3>Lab - Discrimination Tree Visualiser <Button Clicked="ShowExplanationModal"><Span Class="bi bi-info-circle" aria-hidden="true"></Span></Button></h3>
 
-<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="infoModalLabel">Lab Explanation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>
-                    This page is an interactive visualiser for discrimination trees, as implemented by SCFirstOrderLogic (in the SCFirstOrderLogic.TermIndexing namespace).
-                </p>
-                <p>
-                    Discrimination trees are an indexing structure for terms that are particularly good for looking up generalisations of a query term.
-                    Each path from root to leaf in a discrimination tree consists of a depth-first traversal of the elements of the term that the leaf represents.
-                </p>
-                <p>
-                    Note that:
-                </p>
-                <ul>
-                    <li>This lab is admittedly a little rough around the edges with regards to the tree view itself (currently just nested unordered lists) and input validation. It'll be iterated upon.</li>
-                    <li>You can add terms to the tree by entering them into the Term text box and clicking the 'Add' button.</li>
-                    <li>When parsing the term, identifiers not followed by any parentheses (to indicate a function) will be interpreted as variables if they feature in the "variables" text box. Otherwise they will be interpreted as zero-arity functions (i.e. constants).</li>
-                    <li>Guidance for writing terms as strings can be found on the "getting started" page.</li>
-                    <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Razor/Pages/lab/DiscriminationTreeVisualiser.razor">here</a>.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
+<Modal @ref="explanationModal">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Lab Explanation</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <p>
+                This page is an interactive visualiser for discrimination trees, as implemented by SCFirstOrderLogic (in the SCFirstOrderLogic.TermIndexing namespace).
+            </p>
+            <p>
+                Discrimination trees are an indexing structure for terms that are particularly good for looking up generalisations of a query term.
+                Each path from root to leaf in a discrimination tree consists of a depth-first traversal of the elements of the term that the leaf represents.
+            </p>
+            <p>
+                Note that:
+            </p>
+            <ul>
+                <li>This lab is admittedly a little rough around the edges with regards to the tree view itself (currently just nested unordered lists) and input validation. It'll be iterated upon.</li>
+                <li>You can add terms to the tree by entering them into the Term text box and clicking the 'Add' button.</li>
+                <li>When parsing the term, identifiers not followed by any parentheses (to indicate a function) will be interpreted as variables if they feature in the "variables" text box. Otherwise they will be interpreted as zero-arity functions (i.e. constants).</li>
+                <li>Guidance for writing terms as strings can be found on the "getting started" page.</li>
+                <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Razor/Pages/lab/DiscriminationTreeVisualiser.razor">here</a>.</li>
+            </ul>
+        </ModalBody>
+    </ModalContent>
+</Modal>
 
 <EditForm Model=@formData Context="editContext" style="font-family: monospace">
     <DataAnnotationsValidator />
@@ -103,6 +101,7 @@
 </ul>
 
 @code {
+    private Modal? explanationModal;
     private DiscriminationTreeDictionaryNode<Term> discriminationTreeRootNode;
     private DiscriminationTree discriminationTree;
     private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
@@ -112,6 +111,8 @@
         discriminationTreeRootNode = new DiscriminationTreeDictionaryNode<Term>();
         discriminationTree = new DiscriminationTree(discriminationTreeRootNode);
     }
+
+    private Task ShowExplanationModal() => explanationModal!.Show();
 
     private void Add(EditContext editContext)
     {

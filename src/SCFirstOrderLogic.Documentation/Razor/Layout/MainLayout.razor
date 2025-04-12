@@ -1,19 +1,61 @@
 ﻿@inherits LayoutComponentBase
-@inject IJSRuntime JS
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<Layout Sider ElementId="page">
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://www.nuget.org/packages/SCFirstOrderLogic/"><img src="https://img.shields.io/nuget/v/SCFirstOrderLogic.svg?style=flat-square" alt="NuGet version (SCFirstOrderLogic)"/></a>
-            <a href="https://github.com/sdcondon/SCFirstOrderLogic"><img src="img/GitHub-Mark-32px.png" alt="GitHub Repository (SCFirstOrderLogic)"/></a>
-        </div>
+    <LayoutSider>
+        <LayoutSiderContent ElementId="sidebar" Width="Width.Is100">
+            <Div Class="top-row navbar navbar-dark" Padding="Padding.Is1.OnX">
+                <Dropdown>
+                    <DropdownToggle Color="Color.Primary" Background="Background.Transparent" Style="font-size: 1.1rem">
+                        <img src="img/SCFirstOrderLogic-32.png" alt="SCFirstOrderLogic icon" /> SCFirstOrderLogic
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        <NavDropdownItem TargetUri="https://sdcondon.net/FlUnit" IconUri="https://sdcondon.net/FlUnit/img/FlUnit-32.png" Text="FlUnit" />
+                        <NavDropdownItem TargetUri="https://sdcondon.net/SCClassicalPlanning" IconUri="https://sdcondon.net/SCClassicalPlanning/img/SCClassicalPlanning-32.png" Text="SCClassicalPlanning" />
+                        <NavDropdownItem TargetUri="https://sdcondon.net/SCGraphTheory" IconUri="https://sdcondon.net/SCGraphTheory/img/SCGraphTheoryIcon-32.png" Text="SCGraphTheory" />
+                        <NavDropdownItem TargetUri="https://sdcondon.net/SCSetTrie" IconUri="https://sdcondon.net/SCSetTrie/img/SCSetTrie-32.png" Text="SCSetTrie" />
+                        <DropdownDivider />
+                        <NavDropdownItem TargetUri="https://sdcondon.net/" IconUri="https://sdcondon.net/favicon.ico" Text="Personal Homepage" />
+                    </DropdownMenu>
+                </Dropdown>
 
-        <article class="content px-4">
+                <Button title="Navigation menu" ElementId="navbar-toggler" Clicked="ToggleNavMenu" Padding="Padding.Is2.FromEnd">
+                    <Span Class="navbar-toggler-icon"></Span>
+                </Button>
+            </Div>
+
+            <Div Class="@NavMenuCssClass">
+                <nav class="flex-column">
+                    <NavItem Href="" IconClass="bi-house-door-fill" Text="Home" Match="NavLinkMatch.All" />
+                    <NavItem Href="library-overview" IconClass="bi-braces" Text="Library Overview" />
+                    <NavItem Href="getting-started" IconClass="bi-info-circle" Text="Getting Started" />
+                    <NavItem Href="beyond-getting-started" IconClass="bi-mortarboard-fill" Text="Beyond Getting Started" />
+                    <NavItem Href="lab" IconClass="bi-tools" Text="Lab" />
+                    <NavItem Href="roadmap" IconClass="bi-signpost-split-fill" Text="Roadmap" />
+                    <NavItem Href="see-also" IconClass="bi-box-arrow-up-right" Text="See Also" />
+                </nav>
+            </Div>
+        </LayoutSiderContent>
+    </LayoutSider>
+
+    <Layout ElementId="main">
+        <LayoutHeader Fixed>
+            <Div ElementId="main-header">
+                <a href="https://www.nuget.org/packages/SCFirstOrderLogic/"><img src="https://img.shields.io/nuget/v/SCFirstOrderLogic.svg?style=flat-square" alt="NuGet version (SCFirstOrderLogic)" /></a>
+                <a href="https://github.com/sdcondon/SCFirstOrderLogic"><img src="img/GitHub-Mark-32px.png" alt="GitHub Repository (SCFirstOrderLogic)" /></a>
+            </Div>
+        </LayoutHeader>
+        <LayoutContent Padding="Padding.Is4.OnX" ElementId="main-content">
             @Body
-        </article>
-    </main>
-</div>
+        </LayoutContent>
+    </Layout>
+
+</Layout>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
+}

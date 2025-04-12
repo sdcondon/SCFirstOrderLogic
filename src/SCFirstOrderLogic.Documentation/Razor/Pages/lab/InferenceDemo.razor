@@ -12,39 +12,37 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Inference Demo <a data-bs-toggle="modal" data-bs-target="#exampleModal" href="#"><span class="bi bi-info-circle" aria-hidden="true"></span></a></h3>
+<h3>Lab - Inference Demo <Button Clicked="ShowExplanationModal"><Span Class="bi bi-info-circle" aria-hidden="true"></Span></Button></h3>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Lab Explanation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>
-                    This page is an interactive demonstration of inference with SCFirstOrderLogic that runs in your browser. Note that:
-                </p>
-                <ul>
-                    <li>
-                        The knowledge base implementations offered here - which reside in the SCFirstOrderLogic.Inference.Basic package - are very basic, to the extent that it is very easy to create queries that they will struggle with.
-                        The goal of this package is learning and experimentation more than anything else.
-                        I am intending (assuming no one else beats me to it) to create some better KB implementations at some point.
-                    </li>
-                    <li>
-                        Querying with this page is slower than it generally would be, due to limitations of the app framework used.
-                        Blazor WASM's single-threaded nature necessitates the use of clause stores with some delays coded in, so as not to lock up the browser if a query takes a long time.
-                    </li>
-                    <li>Use the buttons at the top of the form to populate it with example queries, taken from "Artificial Intelligence: A Modern Approach".</li>
-                    <li>Guidance for writing sentences as strings can be found on the "getting started" page.</li>
-                    <li>
-                        The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Razor/Pages/lab/InferenceDemo.razor">here</a>.
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
+<Modal @ref="explanationModal">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>Lab Explanation</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <p>
+                This page is an interactive demonstration of inference with SCFirstOrderLogic that runs in your browser. Note that:
+            </p>
+            <ul>
+                <li>
+                    The knowledge base implementations offered here - which reside in the SCFirstOrderLogic.Inference.Basic package - are very basic, to the extent that it is very easy to create queries that they will struggle with.
+                    The goal of this package is learning and experimentation more than anything else.
+                    I am intending (assuming no one else beats me to it) to create some better KB implementations at some point.
+                </li>
+                <li>
+                    Querying with this page is slower than it generally would be, due to limitations of the app framework used.
+                    Blazor WASM's single-threaded nature necessitates the use of clause stores with some delays coded in, so as not to lock up the browser if a query takes a long time.
+                </li>
+                <li>Use the buttons at the top of the form to populate it with example queries, taken from "Artificial Intelligence: A Modern Approach".</li>
+                <li>Guidance for writing sentences as strings can be found on the "getting started" page.</li>
+                <li>
+                    The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Razor/Pages/lab/InferenceDemo.razor">here</a>.
+                </li>
+            </ul>
+        </ModalBody>
+    </ModalContent>
+</Modal>
 
 <EditForm Model=@formData OnSubmit=@HandleFormSubmission style="font-family: monospace">
     <DataAnnotationsValidator />
@@ -177,11 +175,14 @@
             query: CuriousityAndTheCatDomain.UnparsedExampleQuery),
     };
 
+    private Modal? explanationModal;
     private FormData formData = Presets["Crime"].Invoke();
 
     private CancellationTokenSource? currentQueryCancellation;
     private IQuery? currentQuery;
     private Task? currentQueryExecution;
+
+    private Task ShowExplanationModal() => explanationModal!.Show();
 
     private async Task HandleFormSubmission(EditContext editContext)
     {

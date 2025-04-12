@@ -14,7 +14,6 @@
       ]
     },
     {
-      "provider": "cdnjs",
       "library": "highlight.js@11.11.1",
       "destination": "wwwroot/lib/highlight.js/",
       "files": [
