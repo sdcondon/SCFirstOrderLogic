@@ -12,8 +12,8 @@ Included are:
 
 Accompanying the core SCFirstOrderLogic package are two supporting packages:
 
-* SCFirstOrderLogic.ExampleDomains: A few simple first-order logic domains declared using the models found in the SCFirstOrderLogic package - for use in tests and demos.
 * SCFirstOrderLogic.Inference.Basic: Very basic first-order logic knowledge base implementations that use the models defined by the SCFirstOrderLogic package. Not useful for anything resembling a production scenario, but perhaps useful as a tool for learning, and as a starting point for more sophisticated implementations.
+* SCFirstOrderLogic.ExampleDomains: A few simple first-order logic domains declared using the models found in the SCFirstOrderLogic package - for use in tests and demos.
 
 The recommended initial learning path is as follows:
 

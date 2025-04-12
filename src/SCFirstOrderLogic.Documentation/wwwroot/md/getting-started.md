@@ -238,6 +238,7 @@ using SCFirstOrderLogic.Inference.Basic.Resolution;
 var clauseStore = new FeatureVectorIndexClauseStore<MaxDepthFeature>(
     MaxDepthFeature.MakeFeatureVector,
     new ClauseStoreFVIListNode<MaxDepthFeature>(MaxDepthFeature.MakeFeatureComparer()));
+// ..or var clauseStore = new HashSetClauseSetore(); for a simpler, less powerful clause store.
 
 var kb = new ResolutionKnowledgeBase(new LinearResolutionStrategy(
     clauseStore,
