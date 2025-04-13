@@ -113,7 +113,7 @@
         <div class="alert alert-danger mt-4" role="alert">
             <h3>Query Failed</h3>
             <p>
-                In case it helps, here are the details of the exception that was thrown:
+                Here are the details of the exception that was thrown:
             </p>
             @foreach (var e in currentQueryExecution.Exception!.InnerExceptions)
             {
@@ -160,7 +160,7 @@
     private static Dictionary<string, Func<FormData>> Presets = new()
     {
         ["[Empty]"] = () => new(
-            knowledgeBaseDescription: "Basic Backward Chaining",
+                knowledgeBaseDescription: "Resolution (Linear, Feature Vector Index Clause Storage)",
             knowledge: string.Empty,
             query: string.Empty),
 
