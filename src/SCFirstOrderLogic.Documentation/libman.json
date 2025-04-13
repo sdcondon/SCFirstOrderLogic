@@ -18,8 +18,7 @@
       "destination": "wwwroot/lib/highlight.js/",
       "files": [
         "highlight.min.js",
-        "languages/csharp.min.js",
-        "styles/default.min.css"
+        "languages/csharp.min.js"
       ]
     }
   ]
