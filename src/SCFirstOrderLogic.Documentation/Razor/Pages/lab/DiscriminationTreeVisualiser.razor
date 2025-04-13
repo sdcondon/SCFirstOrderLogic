@@ -8,10 +8,10 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Discrimination Tree Visualiser <Button Clicked="ShowExplanationModal"><Span Class="bi bi-info-circle" aria-hidden="true"></Span></Button></h3>
+<h3>Lab - Discrimination Tree Visualiser <Button Clicked="ShowExplanationModal" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
 <Modal @ref="explanationModal">
-    <ModalContent Centered>
+    <ModalContent>
         <ModalHeader>
             <ModalTitle>Lab Explanation</ModalTitle>
             <CloseButton />
@@ -56,24 +56,30 @@
     </div>
 </EditForm>
 
+<ul class="mt-4">
+    @{
+        RenderDiscriminationTreeNode("(root node)", discriminationTreeRootNode);
+    }
+</ul>
+
 @{
     void RenderDiscriminationTreeNode(string label, IDiscriminationTreeNode<Term> node)
     {
         <li>
             @label
             <ul>
-            @if (node.Children.Count > 0)
-            {
-                @foreach (var (childNodeKey, childNode) in node.Children)
+                @if (node.Children.Count > 0)
                 {
-                    var childNodeLabel = childNodeKey switch
+                    @foreach (var (childNodeKey, childNode) in node.Children)
                     {
-                        DiscriminationTreeFunctionNodeKey functionNodeKey => $"function: {functionNodeKey.Identifier} (arity {functionNodeKey.ChildElementCount})",
-                        DiscriminationTreeVariableNodeKey variableNodeKey => $"variable: #{variableNodeKey.Ordinal}",
-                        _ => throw new ArgumentException(nameof(node))
-                    };
+                        var childNodeLabel = childNodeKey switch
+                        {
+                            DiscriminationTreeFunctionNodeKey functionNodeKey => $"function: {functionNodeKey.Identifier} (arity {functionNodeKey.ChildElementCount})",
+                            DiscriminationTreeVariableNodeKey variableNodeKey => $"variable: #{variableNodeKey.Ordinal}",
+                            _ => throw new ArgumentException(nameof(node))
+                        };
 
-                    RenderDiscriminationTreeNode(childNodeLabel, childNode);
+                        RenderDiscriminationTreeNode(childNodeLabel, childNode);
                     }
                 }
                 else
@@ -93,12 +99,6 @@
         </li>
     }
 }
-
-<ul class="mt-4">
-    @{
-        RenderDiscriminationTreeNode("(root node)", discriminationTreeRootNode);
-    }
-</ul>
 
 @code {
     private Modal? explanationModal;

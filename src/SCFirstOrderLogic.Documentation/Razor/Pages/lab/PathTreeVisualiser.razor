@@ -8,10 +8,10 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Path Tree Visualiser <Button Clicked="ShowExplanationModal"><Span Class="bi bi-info-circle" aria-hidden="true"></Span></Button></h3>
+<h3>Lab - Path Tree Visualiser <Button Clicked="ShowExplanationModal" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
 <Modal @ref="explanationModal">
-    <ModalContent Centered>
+    <ModalContent>
         <ModalHeader>
             <ModalTitle>Lab Explanation</ModalTitle>
             <CloseButton />
@@ -59,6 +59,12 @@
     </div>
 </EditForm>
 
+<ul class="mt-4">
+    @{
+        RenderPathTreeParameterNode("(root node)", pathTreeRootNode);
+    }
+</ul>
+
 @{
     void RenderPathTreeParameterNode(string label, IPathTreeParameterNode<Term> node)
     {
@@ -85,30 +91,24 @@
         <li>
             @label
             <ul>
-            @if (node.Children.Count > 0)
-            {
-                for (int i = 0; i < node.Children.Count; i++)
+                @if (node.Children.Count > 0)
                 {
-                    RenderPathTreeParameterNode($"argument #{i}", node.Children[i]);
+                    for (int i = 0; i < node.Children.Count; i++)
+                    {
+                        RenderPathTreeParameterNode($"argument #{i}", node.Children[i]);
+                    }
                 }
-            }
-            else
-            {
-                foreach (var (key, value) in node.Values)
+                else
                 {
-                    <li>value: @value</li>
+                    foreach (var (key, value) in node.Values)
+                    {
+                        <li>value: @value</li>
+                    }
                 }
-            }
             </ul>
         </li>
     }
 }
-
-<ul class="mt-4">
-    @{
-        RenderPathTreeParameterNode("(root node)", pathTreeRootNode);
-    }
-</ul>
 
 @code {
     private Modal? explanationModal;

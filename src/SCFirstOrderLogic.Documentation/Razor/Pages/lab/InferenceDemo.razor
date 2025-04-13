@@ -12,10 +12,10 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Inference Demo <Button Clicked="ShowExplanationModal"><Span Class="bi bi-info-circle" aria-hidden="true"></Span></Button></h3>
+<h3>Lab - Inference Demo <Button Clicked="ShowExplanationModal" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
 <Modal @ref="explanationModal">
-    <ModalContent Centered>
+    <ModalContent>
         <ModalHeader>
             <ModalTitle>Lab Explanation</ModalTitle>
             <CloseButton />

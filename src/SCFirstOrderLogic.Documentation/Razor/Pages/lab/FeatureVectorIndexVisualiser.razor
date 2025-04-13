@@ -11,10 +11,10 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Feature Vector Index Visualiser <Button Clicked="ShowExplanationModal"><Span Class="bi bi-info-circle" aria-hidden="true"></Span></Button></h3>
+<h3>Lab - Feature Vector Index Visualiser <Button Clicked="ShowExplanationModal" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
 <Modal @ref="explanationModal">
-    <ModalContent Centered>
+    <ModalContent>
         <ModalHeader>
             <ModalTitle>Lab Explanation</ModalTitle>
             <CloseButton />
@@ -60,36 +60,36 @@
     </div>
 </EditForm>
 
+<ul class="mt-4">
+@{
+    RenderFeatureVectorIndexNode("(root node)", rootNode);
+}
+</ul>
+
 @{
     void RenderFeatureVectorIndexNode(string label, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> node)
     {
         <li>
             @label
             <ul>
-            @if (node.ChildrenAscending.Count() > 0)
-            {
-                @foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenAscending)
+                @if (node.ChildrenAscending.Count() > 0)
                 {
-                    RenderFeatureVectorIndexNode($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode);
+                    @foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenAscending)
+                    {
+                        RenderFeatureVectorIndexNode($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode);
+                    }
                 }
-            }
-            else
-            {
-                foreach (var (_, clause) in node.KeyValuePairs)
+                else
                 {
-                    <li>Value: @clause</li>
+                    foreach (var (_, clause) in node.KeyValuePairs)
+                    {
+                        <li>Value: @clause</li>
+                    }
                 }
-            }
             </ul>
         </li>
     }
 }
-
-<ul class="mt-4">
-@{
-    RenderFeatureVectorIndexNode("(root node)", rootNode);
-}
-</ul>
 
 @code {
     private Modal? explanationModal;
