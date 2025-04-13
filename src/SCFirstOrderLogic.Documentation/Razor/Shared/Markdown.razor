@@ -12,77 +12,76 @@
 @markup
 
 @code {
-    private MarkupString markup;
+  private MarkupString markup;
 
-    [Parameter]
-    public string? MarkdownUri { get; set; }
+  [Parameter]
+  public string? MarkdownUri { get; set; }
 
-    protected override async Task OnInitializedAsync()
+  protected override async Task OnInitializedAsync()
+  {
+    var markdown = await Http.GetStringAsync(MarkdownUri);
+
+    var pipeline = new MarkdownPipelineBuilder()
+        .Use(new Extension(Nav.Uri))
+        .UseAutoIdentifiers()
+        .UseTaskLists()
+        .UsePipeTables()
+        .UseBootstrap()
+        .Build();
+
+    markup = new MarkupString(Markdig.Markdown.ToHtml(markdown, pipeline));
+  }
+
+  protected override void OnAfterRender(bool firstRender)
+  {
+    JS.InvokeVoidAsync("hljs.highlightAll");
+  }
+
+  public class Extension : IMarkdownExtension
+  {
+    private readonly string baseUrl;
+
+    public Extension(string baseUrl) => this.baseUrl = baseUrl;
+
+    public void Setup(MarkdownPipelineBuilder pipeline) { }
+
+    public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
     {
-        var markdown = await Http.GetStringAsync(MarkdownUri);
+      var htmlRenderer = renderer as Markdig.Renderers.HtmlRenderer;
+      ////if (htmlRenderer != null)
+      ////{
+      ////  htmlRenderer.BaseUrl = new Uri(baseUrl);
+      ////}
 
-        var pipeline = new MarkdownPipelineBuilder()
-            .Use(new Extension(Nav.Uri))
-            .UseAutoIdentifiers()
-            .UseTaskLists()
-            .UsePipeTables()
-            .UseBootstrap()
-            .Build();
+      ObjectRendererCollection? objectRenderers = htmlRenderer?.ObjectRenderers;
 
-        markup = new MarkupString(Markdig.Markdown.ToHtml(markdown, pipeline));
+      if (objectRenderers != null && !objectRenderers.Contains<PrettyPrintCodeBlockRenderer>())
+      {
+        var codeBlockRenderer = objectRenderers.OfType<CodeBlockRenderer>().SingleOrDefault() ?? new CodeBlockRenderer();
+        objectRenderers.Replace<CodeBlockRenderer>(new PrettyPrintCodeBlockRenderer(codeBlockRenderer));
+      }
+    }
+  }
+
+  class PrettyPrintCodeBlockRenderer : HtmlObjectRenderer<CodeBlock>
+  {
+    private CodeBlockRenderer innerRenderer;
+
+    public PrettyPrintCodeBlockRenderer(CodeBlockRenderer innerRenderer)
+    {
+      this.innerRenderer = innerRenderer;
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override void Write(Markdig.Renderers.HtmlRenderer renderer, CodeBlock obj)
     {
-        JS.InvokeVoidAsync("PR.prettyPrint");
+      if (obj is FencedCodeBlock fencedCodeBlock)
+      {
+        var attr = obj.TryGetAttributes() ?? new();
+        attr.AddClass("language-csharp");
+        obj.SetAttributes(attr);
+      }
+
+      innerRenderer.Write(renderer, obj);
     }
-
-    public class Extension : IMarkdownExtension
-    {
-        private readonly string baseUrl;
-
-        public Extension(string baseUrl) => this.baseUrl = baseUrl;
-
-        public void Setup(MarkdownPipelineBuilder pipeline) { }
-
-        public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
-        {
-            var htmlRenderer = renderer as Markdig.Renderers.HtmlRenderer;
-            ////if (htmlRenderer != null)
-            ////{
-            ////  htmlRenderer.BaseUrl = new Uri(baseUrl);
-            ////}
-
-            ObjectRendererCollection? objectRenderers = htmlRenderer?.ObjectRenderers;
-
-            if (objectRenderers != null && !objectRenderers.Contains<PrettyPrintCodeBlockRenderer>())
-            {
-                var codeBlockRenderer = objectRenderers.OfType<CodeBlockRenderer>().SingleOrDefault() ?? new CodeBlockRenderer();
-                codeBlockRenderer.OutputAttributesOnPre = true;
-                objectRenderers.Replace<CodeBlockRenderer>(new PrettyPrintCodeBlockRenderer(codeBlockRenderer));
-            }
-        }
-    }
-
-    class PrettyPrintCodeBlockRenderer : HtmlObjectRenderer<CodeBlock>
-    {
-        private CodeBlockRenderer innerRenderer;
-
-        public PrettyPrintCodeBlockRenderer(CodeBlockRenderer innerRenderer)
-        {
-            this.innerRenderer = innerRenderer;
-        }
-
-        protected override void Write(Markdig.Renderers.HtmlRenderer renderer, CodeBlock obj)
-        {
-            if (obj is FencedCodeBlock fencedCodeBlock)
-            {
-                var attr = obj.TryGetAttributes() ?? new();
-                attr.AddClass("prettyprint");
-                obj.SetAttributes(attr);
-            }
-
-            innerRenderer.Write(renderer, obj);
-        }
-    }
+  }
 }
