@@ -1,6 +1,6 @@
 using Blazorise;
 using Blazorise.Bootstrap5;
-using Blazorise.Icons.FontAwesome;
+using Blazorise.Icons.Bootstrap;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SCFirstOrderLogic.Documentation.Razor;
@@ -15,7 +15,7 @@ builder.Services
         options.Immediate = true;
     })
     .AddBootstrap5Providers()
-    .AddFontAwesomeIcons()
+    .AddBootstrapIcons()
     .AddScoped(sp => new HttpClient
     {
         BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
