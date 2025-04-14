@@ -46,12 +46,12 @@
     (TODO: allow choice of feature set)
     <div class="form-group">
         <label for="variablesText">Variables (comma-separated)</label>
-        <InputText class="form-control" id="variablesText" @bind-Value=formData.Variables />
+        <InputText class="form-control" id="variablesText" spellcheck="false" @bind-Value=formData.Variables />
         <ValidationMessage For="@(() => formData.Variables)" />
     </div>
     <div class="form-group">
         <label for="queryText">Clause (or clauses - all will be added if it normalises to multi-clause sentence)</label>
-        <InputText class="form-control" id="queryText" @bind-Value=formData.Sentence />
+        <InputText class="form-control" id="queryText" spellcheck="false" @bind-Value=formData.Sentence />
         <ValidationMessage For="@(() => formData.Sentence)" />
     </div>
     <div class="form-group mt-2">

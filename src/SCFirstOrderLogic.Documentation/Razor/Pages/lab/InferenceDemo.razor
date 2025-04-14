@@ -67,12 +67,12 @@
     </div>
     <div class="form-group">
         <label for="factsTextArea">Knowledge</label>
-        <InputTextArea class="form-control" id="factsTextArea" @bind-Value=formData.Knowledge rows="8" />
+        <InputTextArea class="form-control" id="factsTextArea" spellcheck="false" @bind-Value=formData.Knowledge rows="8" />
         <ValidationMessage For="@(() => formData.Knowledge)" />
     </div>
     <div class="form-group">
         <label for="queryText">Query</label>
-        <InputText class="form-control" id="queryText" @bind-Value=formData.Query />
+        <InputText class="form-control" id="queryText" spellcheck="false" @bind-Value=formData.Query />
         <ValidationMessage For="() => formData.Query" />
     </div>
     <div class="form-group mt-2">

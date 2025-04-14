@@ -42,12 +42,12 @@
     <DataAnnotationsValidator />
     <div class="form-group">
         <label for="variablesText">Variables (comma-separated)</label>
-        <InputText class="form-control" id="variablesText" @bind-Value=formData.Variables />
+        <InputText class="form-control" id="variablesText" spellcheck="false" @bind-Value=formData.Variables />
         <ValidationMessage For="@(() => formData.Variables)" />
     </div>
     <div class="form-group">
         <label for="queryText">Term</label>
-        <InputText class="form-control" id="queryText" @bind-Value=formData.Term />
+        <InputText class="form-control" id="queryText" spellcheck="false" @bind-Value=formData.Term />
         <ValidationMessage For="@(() => formData.Term)" />
     </div>
     <div class="form-group mt-2">
