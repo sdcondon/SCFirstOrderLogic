@@ -1,0 +1,120 @@
+/*!
+  Theme: GitHub
+  Description: Light theme as seen on github.com
+  Author: github.com
+  Maintainer: @Hirse
+  Updated: 2021-05-15
+
+  Outdated base version: https://github.com/primer/github-syntax-light
+  Current colors taken from GitHub's CSS
+*/
+.markdown-container ::deep pre code.hljs{display:block;overflow-x:auto;padding:1em}
+.markdown-container ::deep code.hljs{padding:3px 5px}
+.markdown-container ::deep .hljs{color:#24292e;background:#fff}
+
+.markdown-container ::deep .hljs-doctag,
+.markdown-container ::deep .hljs-keyword,.hljs-meta .hljs-keyword,
+.markdown-container ::deep .hljs-template-tag,.hljs-template-variable,
+.markdown-container ::deep .hljs-type,
+.markdown-container ::deep .hljs-variable.language_{color:#d73a49}
+
+.markdown-container ::deep .hljs-title,.hljs-title.class_,
+.markdown-container ::deep .hljs-title.class_.inherited__,
+.markdown-container ::deep .hljs-title.function_{color:#6f42c1}
+
+.markdown-container ::deep .hljs-attr,
+.markdown-container ::deep .hljs-attribute,
+.markdown-container ::deep .hljs-literal,
+.markdown-container ::deep .hljs-meta,
+.markdown-container ::deep .hljs-number,
+.markdown-container ::deep .hljs-operator,
+.markdown-container ::deep .hljs-selector-attr,
+.markdown-container ::deep .hljs-selector-class,
+.markdown-container ::deep .hljs-selector-id,
+.markdown-container ::deep .hljs-variable{color:#005cc5}
+
+.markdown-container ::deep .hljs-meta .hljs-string,
+.markdown-container ::deep .hljs-regexp,
+.markdown-container ::deep .hljs-string{color:#032f62}
+
+.markdown-container ::deep .hljs-built_in,
+.markdown-container ::deep .hljs-symbol{color:#e36209}
+
+.markdown-container ::deep .hljs-code,
+.markdown-container ::deep .hljs-comment,
+.markdown-container ::deep .hljs-formula{color:#6a737d}
+
+.markdown-container ::deep .hljs-name,
+.markdown-container ::deep .hljs-quote,
+.markdown-container ::deep .hljs-selector-pseudo,
+.markdown-container ::deep .hljs-selector-tag{color:#22863a}
+
+.markdown-container ::deep .hljs-subst{color:#24292e}
+.markdown-container ::deep .hljs-section{color:#005cc5;font-weight:700}
+.markdown-container ::deep .hljs-bullet{color:#735c0f}
+.markdown-container ::deep .hljs-emphasis{color:#24292e;font-style:italic}
+.markdown-container ::deep .hljs-strong{color:#24292e;font-weight:700}
+.markdown-container ::deep .hljs-addition{color:#22863a;background-color:#f0fff4}
+.markdown-container ::deep .hljs-deletion{color:#b31d28;background-color:#ffeef0}
+
+/*!
+  Theme: GitHub Dark
+  Description: Dark theme as seen on github.com
+  Author: github.com
+  Maintainer: @Hirse
+  Updated: 2021-05-15
+
+  Outdated base version: https://github.com/primer/github-syntax-dark
+  Current colors taken from GitHub's CSS
+*/
+[data-bs-theme=dark] .markdown-container ::deep pre code.hljs{display:block;overflow-x:auto;padding:1em}
+[data-bs-theme=dark] .markdown-container ::deep code.hljs{padding:3px 5px}
+[data-bs-theme=dark] .markdown-container ::deep .hljs{color:#c9d1d9;background:#0d1117}
+
+[data-bs-theme=dark] .markdown-container ::deep .hljs-doctag,
+.markdown-container ::deep .hljs-keyword,
+.markdown-container ::deep .hljs-meta .hljs-keyword,
+.markdown-container ::deep .hljs-template-tag,
+.markdown-container ::deep .hljs-template-variable,
+.markdown-container ::deep .hljs-type,
+.markdown-container ::deep .hljs-variable.language_ {color: #ff7b72}
+
+[data-bs-theme=dark] .markdown-container ::deep .hljs-title,
+.markdown-container ::deep .hljs-title.class_,
+.markdown-container ::deep .hljs-title.class_.inherited__,
+.markdown-container ::deep .hljs-title.function_ {color: #d2a8ff}
+
+[data-bs-theme=dark] .markdown-container ::deep .hljs-attr,
+.markdown-container ::deep .hljs-attribute,
+.markdown-container ::deep .hljs-literal,
+.markdown-container ::deep .hljs-meta,
+.markdown-container ::deep .hljs-number,
+.markdown-container ::deep .hljs-operator,
+.markdown-container ::deep .hljs-selector-attr,
+.markdown-container ::deep .hljs-selector-class,
+.markdown-container ::deep .hljs-selector-id,
+.markdown-container ::deep .hljs-variable {color: #79c0ff}
+
+[data-bs-theme=dark] .markdown-container ::deep .hljs-meta .hljs-string,
+.markdown-container ::deep .hljs-regexp,
+.markdown-container ::deep .hljs-string {color: #a5d6ff}
+
+[data-bs-theme=dark] .markdown-container ::deep .hljs-built_in,
+.markdown-container ::deep .hljs-symbol {color: #ffa657}
+
+[data-bs-theme=dark] .markdown-container ::deep .hljs-code,
+.markdown-container ::deep .hljs-comment,
+.markdown-container ::deep .hljs-formula {color: #8b949e}
+
+[data-bs-theme=dark] .markdown-container ::deep .hljs-name,
+.markdown-container ::deep .hljs-quote,
+.markdown-container ::deep .hljs-selector-pseudo,
+.markdown-container ::deep .hljs-selector-tag {color: #7ee787}
+
+[data-bs-theme=dark] .markdown-container ::deep .hljs-subst{color:#c9d1d9}
+[data-bs-theme=dark] .markdown-container ::deep .hljs-section{color:#1f6feb;font-weight:700}
+[data-bs-theme=dark] .markdown-container ::deep .hljs-bullet{color:#f2cc60}
+[data-bs-theme=dark] .markdown-container ::deep .hljs-emphasis{color:#c9d1d9;font-style:italic}
+[data-bs-theme=dark] .markdown-container ::deep .hljs-strong{color:#c9d1d9;font-weight:700}
+[data-bs-theme=dark] .markdown-container ::deep .hljs-addition{color:#aff5b4;background-color:#033a16}
+[data-bs-theme=dark] .markdown-container ::deep .hljs-deletion{color:#ffdcd7;background-color:#67060c}

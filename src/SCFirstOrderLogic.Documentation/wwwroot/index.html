@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" href="img/SCFirstOrderLogic-32.png" type="image/png" />
     <title>SCFirstOrderLogic</title>
     <base href="/" />
 
@@ -12,16 +13,14 @@
     <link rel="stylesheet" href="_content/Blazorise/blazorise.css?v=1.7.5.0" />
     <link rel="stylesheet" href="_content/Blazorise.Bootstrap5/blazorise.bootstrap5.css?v=1.7.5.0" />
 
-    <link rel="stylesheet" href="highlightjs.css" />
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="SCFirstOrderLogic.Documentation.styles.css" />
-    <link rel="stylesheet" href="_content/Blazorise.styles.css" />
-
-    <link href="img/SCFirstOrderLogic-32.png" rel="icon" type="image/png" />
 </head>
 
 <body>
     <script src="js/colorModeToggler.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="lib/highlight.js/highlight.min.js"></script>
 
     <div id="app">
         <div id="loading-placeholder" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center">
@@ -37,11 +36,8 @@
         <a class="dismiss">🗙</a>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <script src="lib/highlight.js/highlight.min.js"></script>
-
     <script src="_framework/blazor.webassembly.js" autostart="false"></script>
-    <script src="js/startBlazor.js"></script>
+    <script src="js/startBlazorWithProgressFeedback.js"></script>
 </body>
 
 </html>

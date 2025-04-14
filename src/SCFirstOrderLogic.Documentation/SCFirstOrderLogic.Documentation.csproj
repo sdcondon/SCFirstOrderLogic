@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\lib\google-code-prettify\**" />
-    <Content Remove="wwwroot\lib\google-code-prettify\**" />
-    <EmbeddedResource Remove="wwwroot\lib\google-code-prettify\**" />
-    <None Remove="wwwroot\lib\google-code-prettify\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.5" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.7.5" />
     <PackageReference Include="Markdig" Version="0.38.0" />
