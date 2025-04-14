@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Razor\Pages\beyond-getting-started\Index.razor.md" />
+    <EmbeddedResource Include="Razor\Pages\beyond-getting-started\LanguageIntegration.razor.md" />
+    <EmbeddedResource Include="Razor\Pages\GettingStarted.razor.md" />
+    <EmbeddedResource Include="Razor\Pages\Home.razor.md" />
+    <EmbeddedResource Include="Razor\Pages\LibraryOverview.razor.md" />
+    <EmbeddedResource Include="Razor\Pages\Roadmap.razor.md" />
+    <EmbeddedResource Include="Razor\Pages\SeeAlso.razor.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.5" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.7.5" />
     <PackageReference Include="Markdig" Version="0.38.0" />

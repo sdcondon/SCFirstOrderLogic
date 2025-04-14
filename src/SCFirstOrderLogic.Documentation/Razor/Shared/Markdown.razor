@@ -4,6 +4,7 @@
 @using Markdig.Renderers
 @using Markdig.Renderers.Html
 @using Markdig.Syntax
+@using System.Reflection
 @inherits ComponentBase
 @inject HttpClient Http
 @inject NavigationManager Nav
@@ -14,76 +15,103 @@
 </div>
 
 @code {
-  private MarkupString markup;
+    private MarkupString markup;
 
-  [Parameter]
-  public string? MarkdownUri { get; set; }
+    [Parameter]
+    public string? MarkdownUri { get; set; }
 
-  protected override async Task OnInitializedAsync()
-  {
-    var markdown = await Http.GetStringAsync(MarkdownUri);
+    [Parameter]
+    public string? MarkdownResourceName { get; set; }
 
-    var pipeline = new MarkdownPipelineBuilder()
-        .Use(new Extension(Nav.Uri))
-        .UseAutoIdentifiers()
-        .UseTaskLists()
-        .UsePipeTables()
-        .UseBootstrap()
-        .Build();
-
-    markup = new MarkupString(Markdig.Markdown.ToHtml(markdown, pipeline));
-  }
-
-  protected override void OnAfterRender(bool firstRender)
-  {
-    JS.InvokeVoidAsync("hljs.highlightAll");
-  }
-
-  public class Extension : IMarkdownExtension
-  {
-    private readonly string baseUrl;
-
-    public Extension(string baseUrl) => this.baseUrl = baseUrl;
-
-    public void Setup(MarkdownPipelineBuilder pipeline) { }
-
-    public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
+    protected override async Task OnInitializedAsync()
     {
-      var htmlRenderer = renderer as Markdig.Renderers.HtmlRenderer;
-      ////if (htmlRenderer != null)
-      ////{
-      ////  htmlRenderer.BaseUrl = new Uri(baseUrl);
-      ////}
+        string? markdown = null;
+        if (!string.IsNullOrEmpty(MarkdownUri))
+        {
+            markdown = await Http.GetStringAsync(MarkdownUri);
+        }
+        else if (!string.IsNullOrEmpty(MarkdownResourceName))
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream(MarkdownResourceName))
+            {
+                if (stream == null)
+                {
+                    throw new ArgumentException($"Resource '{MarkdownResourceName}' not found");
+                }
 
-      ObjectRendererCollection? objectRenderers = htmlRenderer?.ObjectRenderers;
+                using (var reader = new StreamReader(stream))
+                {
+                    markdown = reader.ReadToEnd();
+                }
+            }
+        }
+        else
+        {
+            throw new InvalidOperationException();
+        }
 
-      if (objectRenderers != null && !objectRenderers.Contains<PrettyPrintCodeBlockRenderer>())
-      {
-        var codeBlockRenderer = objectRenderers.OfType<CodeBlockRenderer>().SingleOrDefault() ?? new CodeBlockRenderer();
-        objectRenderers.Replace<CodeBlockRenderer>(new PrettyPrintCodeBlockRenderer(codeBlockRenderer));
-      }
-    }
-  }
+        var pipeline = new MarkdownPipelineBuilder()
+            .Use(new Extension(Nav.Uri))
+            .UseAutoIdentifiers()
+            .UseTaskLists()
+            .UsePipeTables()
+            .UseBootstrap()
+            .Build();
 
-  class PrettyPrintCodeBlockRenderer : HtmlObjectRenderer<CodeBlock>
-  {
-    private CodeBlockRenderer innerRenderer;
-
-    public PrettyPrintCodeBlockRenderer(CodeBlockRenderer innerRenderer)
-    {
-      this.innerRenderer = innerRenderer;
+        markup = new MarkupString(Markdig.Markdown.ToHtml(markdown!, pipeline));
     }
 
-    protected override void Write(Markdig.Renderers.HtmlRenderer renderer, CodeBlock obj)
+    protected override void OnAfterRender(bool firstRender)
     {
-      if (obj is FencedCodeBlock fencedCodeBlock)
-      {
-        var attr = obj.TryGetAttributes() ?? new();
-        attr.AddClass("language-csharp");
-        obj.SetAttributes(attr);
-      }
-
-      innerRenderer.Write(renderer, obj);
+        JS.InvokeVoidAsync("hljs.highlightAll");
     }
-  }
+
+    public class Extension : IMarkdownExtension
+    {
+        private readonly string baseUrl;
+
+        public Extension(string baseUrl) => this.baseUrl = baseUrl;
+
+        public void Setup(MarkdownPipelineBuilder pipeline) { }
+
+        public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
+        {
+            var htmlRenderer = renderer as Markdig.Renderers.HtmlRenderer;
+            ////if (htmlRenderer != null)
+            ////{
+            ////  htmlRenderer.BaseUrl = new Uri(baseUrl);
+            ////}
+
+            ObjectRendererCollection? objectRenderers = htmlRenderer?.ObjectRenderers;
+
+            if (objectRenderers != null && !objectRenderers.Contains<PrettyPrintCodeBlockRenderer>())
+            {
+                var codeBlockRenderer = objectRenderers.OfType<CodeBlockRenderer>().SingleOrDefault() ?? new CodeBlockRenderer();
+                objectRenderers.Replace<CodeBlockRenderer>(new PrettyPrintCodeBlockRenderer(codeBlockRenderer));
+            }
+        }
+    }
+
+    private class PrettyPrintCodeBlockRenderer : HtmlObjectRenderer<CodeBlock>
+    {
+        private CodeBlockRenderer innerRenderer;
+
+        public PrettyPrintCodeBlockRenderer(CodeBlockRenderer innerRenderer)
+        {
+            this.innerRenderer = innerRenderer;
+        }
+
+        protected override void Write(Markdig.Renderers.HtmlRenderer renderer, CodeBlock obj)
+        {
+            if (obj is FencedCodeBlock fencedCodeBlock)
+            {
+                var attr = obj.TryGetAttributes() ?? new();
+                attr.AddClass("language-csharp");
+                obj.SetAttributes(attr);
+            }
+
+            innerRenderer.Write(renderer, obj);
+        }
+    }
 }
