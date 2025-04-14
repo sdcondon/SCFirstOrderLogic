@@ -6,8 +6,6 @@
 @using Markdig.Syntax
 @using System.Reflection
 @inherits ComponentBase
-@inject HttpClient Http
-@inject NavigationManager Nav
 @inject IJSRuntime JS
 
 <div class="markdown-container">
@@ -18,48 +16,22 @@
     private MarkupString markup;
 
     [Parameter]
-    public string? MarkdownUri { get; set; }
-
-    [Parameter]
-    public string? MarkdownResourceName { get; set; }
+    public required string ResourceName { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        string? markdown = null;
-        if (!string.IsNullOrEmpty(MarkdownUri))
-        {
-            markdown = await Http.GetStringAsync(MarkdownUri);
-        }
-        else if (!string.IsNullOrEmpty(MarkdownResourceName))
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream(MarkdownResourceName))
-            {
-                if (stream == null)
-                {
-                    throw new ArgumentException($"Resource '{MarkdownResourceName}' not found");
-                }
-
-                using (var reader = new StreamReader(stream))
-                {
-                    markdown = reader.ReadToEnd();
-                }
-            }
-        }
-        else
-        {
-            throw new InvalidOperationException();
-        }
-
         var pipeline = new MarkdownPipelineBuilder()
-            .Use(new Extension(Nav.Uri))
+            .Use(new Extension())
             .UseAutoIdentifiers()
             .UseTaskLists()
             .UsePipeTables()
             .UseBootstrap()
             .Build();
 
-        markup = new MarkupString(Markdig.Markdown.ToHtml(markdown!, pipeline));
+        using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName) ?? throw new ArgumentException($"Resource '{ResourceName}' not found");
+        using var reader = new StreamReader(stream);
+
+        markup = new MarkupString(Markdig.Markdown.ToHtml(await reader.ReadToEndAsync(), pipeline));
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -69,19 +41,13 @@
 
     public class Extension : IMarkdownExtension
     {
-        private readonly string baseUrl;
-
-        public Extension(string baseUrl) => this.baseUrl = baseUrl;
-
-        public void Setup(MarkdownPipelineBuilder pipeline) { }
+        public void Setup(MarkdownPipelineBuilder pipeline)
+        {
+        }
 
         public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
         {
             var htmlRenderer = renderer as Markdig.Renderers.HtmlRenderer;
-            ////if (htmlRenderer != null)
-            ////{
-            ////  htmlRenderer.BaseUrl = new Uri(baseUrl);
-            ////}
 
             ObjectRendererCollection? objectRenderers = htmlRenderer?.ObjectRenderers;
 
@@ -93,15 +59,8 @@
         }
     }
 
-    private class PrettyPrintCodeBlockRenderer : HtmlObjectRenderer<CodeBlock>
+    private class PrettyPrintCodeBlockRenderer(CodeBlockRenderer innerRenderer) : HtmlObjectRenderer<CodeBlock>
     {
-        private CodeBlockRenderer innerRenderer;
-
-        public PrettyPrintCodeBlockRenderer(CodeBlockRenderer innerRenderer)
-        {
-            this.innerRenderer = innerRenderer;
-        }
-
         protected override void Write(Markdig.Renderers.HtmlRenderer renderer, CodeBlock obj)
         {
             if (obj is FencedCodeBlock fencedCodeBlock)
