@@ -56,7 +56,7 @@ public static class SentenceParserTests
                 Sentence: "F1() = F2(x, y)",
                 ExpectedResult: new Predicate(EqualityIdentifier.Instance, new Function("F1"), new Function("F2", new Function("x"), new Function("y")))),
         ])
-        .When(tc => SentenceParser.BasicParser.Parse(tc.Sentence))
+        .When(tc => new SentenceParser().Parse(tc.Sentence))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.ExpectedResult));
 
@@ -72,11 +72,11 @@ public static class SentenceParserTests
             "∃ P(x)",
             "P()aaa",
         })
-        .When((ctx, tc) => SentenceParser.BasicParser.Parse(tc))
+        .When((ctx, tc) => new SentenceParser().Parse(tc))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
     public static Test Parse_WithCustomIdentifiers => TestThat
-        .Given(() => new SentenceParser(s => $"p.{s}", s => $"f.{s}", s => $"vc.{s}"))
+        .Given(() => new SentenceParser(new(s => $"p.{s}", s => $"f.{s}", s => $"vc.{s}")))
         .When(p => p.Parse("forall x, P(F(x, C))"))
         .ThenReturns()
         .And((_, rv) => rv.Should().Be(new UniversalQuantification(new("vc.x"), new Predicate("p.P", new Function("f.F", new VariableReference("vc.x"), new Function("vc.C"))))));
@@ -116,7 +116,7 @@ public static class SentenceParserTests
                 Sentences: " P() ; Q() ; ",
                 Expectation: [new Predicate("P"), new Predicate("Q")]),
         ])
-        .When(tc => SentenceParser.BasicParser.ParseList(tc.Sentences))
+        .When(tc => new SentenceParser().ParseList(tc.Sentences))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Equal(tc.Expectation));
 
@@ -128,7 +128,7 @@ public static class SentenceParserTests
             "P() Q();aaa",
             "P(); ; Q()",
         ])
-        .When((ctx, tc) => SentenceParser.BasicParser.ParseList(tc))
+        .When((ctx, tc) => new SentenceParser().ParseList(tc))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
     private record ParseTestCase(string Sentence, Sentence ExpectedResult);

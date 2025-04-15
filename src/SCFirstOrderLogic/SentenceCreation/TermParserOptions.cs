@@ -3,7 +3,7 @@
 namespace SCFirstOrderLogic.SentenceCreation;
 
 /// <summary>
-/// Container for configuration options for term parsing.
+/// Container for configuration options for <see cref="TermParser"/> instances.
 /// </summary>
 /// <param name="GetFunctionIdentifier">A delegate to retrieve the identifier for a function, given its symbol text.</param>
 /// <param name="GetVariableOrConstantIdentifier">

@@ -102,7 +102,7 @@ public class TermParser
     public Term[] ParseList(Stream terms, IEnumerable<VariableDeclaration> variablesInScope) => ParseList(new AntlrInputStream(terms), variablesInScope);
 
     /// <summary>
-    /// Parses a text reader containing zero or more terms into a <see cref="term"/> array.
+    /// Parses a text reader containing zero or more terms into a <see cref="Term"/> array.
     /// Terms can be separated by a semi-colon and/or whitespace, but it is not required.
     /// </summary>
     /// <param name="terms">The text reader to parse.</param>

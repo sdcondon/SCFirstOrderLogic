@@ -117,7 +117,7 @@ public static class TermParserTests
         .When((ctx, tc) => new TermParser().ParseList(tc, []))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
-    public static Test ParseDeclarationList => TestThat
+    public static Test ParseVariableDeclarationList_PositiveTestCases => TestThat
         .GivenEachOf<ParseDeclarationListTestCase>(() =>
         [
             new(
@@ -131,6 +131,17 @@ public static class TermParserTests
         .When(tc => new TermParser(new TermParserOptions(s => s, s => $"vc:{s}")).ParseVariableDeclarationList(tc.Text))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Equal(tc.Expected));
+
+    public static Test ParseVariableDeclarationList_NegativeTestCases => TestThat
+        .GivenTestContext()
+        .AndEachOf<string>(() =>
+        [
+            ",",
+            "a,",
+            "a()",
+        ])
+        .When((ctx, tc) => new TermParser().ParseVariableDeclarationList(tc))
+        .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
     private record ParseTestCase(string Text, IEnumerable<VariableDeclaration> Variables, Term Expected);
 

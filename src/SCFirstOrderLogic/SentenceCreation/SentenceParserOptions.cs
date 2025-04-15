@@ -3,7 +3,7 @@
 namespace SCFirstOrderLogic.SentenceCreation;
 
 /// <summary>
-/// Container for options for a sentence parsing.
+/// Container for configuration options for <see cref="SentenceParser"/> instances.
 /// </summary>
 /// <param name="GetPredicateIdentifier">A delegate to retrieve the identifier for a predicate, given its symbol text.</param>
 /// <param name="GetFunctionIdentifier">A delegate to retrieve the identifier for a function, given its symbol text.</param>
