@@ -9,8 +9,8 @@ public static class SentenceParserTests
         .GivenEachOf<ParseTestCase>(() =>
         [
             new(
-                Sentence: "P()",
-                ExpectedResult: new Predicate("P")),
+                Sentence: "Aa_1()",
+                ExpectedResult: new Predicate("Aa_1")),
 
             new(
                 Sentence: " P () ",

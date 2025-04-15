@@ -27,5 +27,5 @@ term: ID                       # VariableOrConstant
     | ID '(' argumentList ')'  # Function
     ;
 
-ID: [a-zA-Z0-9]+;
+ID: [a-zA-Z0-9_]+;
 WS: [ \r\t\n]+ -> skip;
