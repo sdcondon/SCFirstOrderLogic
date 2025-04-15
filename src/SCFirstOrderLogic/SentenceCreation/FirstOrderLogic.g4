@@ -1,8 +1,10 @@
 ﻿grammar FirstOrderLogic;
 
 singleSentence: sentence EOF;
-
 sentenceList: (sentences+=sentence ';'?)* EOF;
+
+singleTerm: term EOF;
+termList: (terms+=term ';'?)* EOF;
 
 sentence: '(' sentence ')'                                                                    # BracketedSentence
         | '[' sentence ']'                                                                    # BracketedSentence

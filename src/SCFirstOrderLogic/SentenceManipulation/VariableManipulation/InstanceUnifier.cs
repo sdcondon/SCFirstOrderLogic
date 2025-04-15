@@ -12,7 +12,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 /// </para>
 /// <para>
 /// NB: Lack of occurs check means this can give substitutions that would infinitely loop if applied (see unit tests for an example).
-/// As it stands, no subtitutions created by this class are actually ever applied, so this isnt a problem - but this is why the type is internal.
+/// As it stands, no substitutions created by this class are actually ever applied, so this isnt a problem - but this is why the type is internal.
 /// </para>
 /// </summary>
 internal static class InstanceUnifier
