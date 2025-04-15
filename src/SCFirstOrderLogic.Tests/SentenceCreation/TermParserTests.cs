@@ -120,6 +120,4 @@ public static class TermParserTests
     private record ParseTestCase(string Text, IEnumerable<VariableDeclaration> Variables, Term Expected);
 
     private record ParseListTestCase(string Text, IEnumerable<VariableDeclaration> Variables, Term[] Expected);
-
-    private record ParseDeclarationListTestCase(string Text, IEnumerable<VariableDeclaration> Expected);
 }
