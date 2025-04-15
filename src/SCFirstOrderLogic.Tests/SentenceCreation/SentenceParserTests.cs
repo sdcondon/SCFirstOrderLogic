@@ -73,7 +73,7 @@ public static class SentenceParserTests
             "P()aaa",
         })
         .When((ctx, tc) => new SentenceParser().Parse(tc))
-        .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
+        .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.ToString()));
 
     public static Test Parse_WithCustomIdentifiers => TestThat
         .Given(() => new SentenceParser(new(s => $"p.{s}", s => $"f.{s}", s => $"vc.{s}")))
@@ -127,9 +127,11 @@ public static class SentenceParserTests
             "P() Q()aaa",
             "P() Q();aaa",
             "P(); ; Q()",
+            $"P()\r\nQ()aaa",
+            $"P()\nQ()aaa",
         ])
         .When((ctx, tc) => new SentenceParser().ParseList(tc))
-        .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
+        .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.ToString()));
 
     private record ParseTestCase(string Sentence, Sentence ExpectedResult);
 

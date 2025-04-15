@@ -1,6 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
 using SCFirstOrderLogic.SentenceManipulation.Normalisation;
-using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 
 namespace SCFirstOrderLogic;
@@ -13,8 +12,8 @@ public class CNFSentenceBenchmarks
     private static Predicate Loves(Term term1, Term term2) => new(nameof(Loves), term1, term2);
 
     private static Sentence NonTrivialSentence { get; } = ForAll(X, If(
-            ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
-            ThereExists(Y, Loves(Y, X))));
+        ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
+        ThereExists(Y, Loves(Y, X))));
 
     // todo: strictly speaking not fair test any more
     [Benchmark(Baseline = true)]

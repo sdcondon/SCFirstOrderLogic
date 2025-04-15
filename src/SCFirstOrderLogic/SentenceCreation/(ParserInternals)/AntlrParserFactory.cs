@@ -5,7 +5,7 @@ namespace SCFirstOrderLogic.SentenceCreation;
 
 internal static class AntlrParserFactory
 {
-    public static FirstOrderLogicParser MakeParser(AntlrInputStream inputStream)
+    public static FirstOrderLogicParser MakeParser(AntlrInputStream inputStream, IAntlrErrorListener<IToken> errorListener)
     {
         // NB: ANTLR apparently adds a listener by default that writes to the console.
         // Which is crazy default behaviour if you ask me, but never mind.
@@ -18,7 +18,7 @@ internal static class AntlrParserFactory
         // Otherwise errors would just be ignored and the method would just return null, which is obviously bad behaviour.
         FirstOrderLogicParser parser = new(tokens);
         parser.RemoveErrorListeners();
-        parser.AddErrorListener(ThrowingErrorListener.Instance);
+        parser.AddErrorListener(errorListener);
 
         return parser;
     }
