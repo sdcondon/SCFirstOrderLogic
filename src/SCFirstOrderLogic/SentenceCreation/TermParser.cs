@@ -117,24 +117,6 @@ public class TermParser
     /// <returns>A new array of terms.</returns>
     public Term[] ParseList(TextReader terms, IEnumerable<VariableDeclaration> variablesInScope) => ParseList(new AntlrInputStream(terms), variablesInScope);
 
-    /// <summary>
-    /// Parse a string containing zero or more comma-separated variable declarations into an array of <see cref="VariableDeclaration"/> instances -
-    /// including invocation of identifier getter from the parser options.
-    /// </summary>
-    /// <param name="declarations">The string to parse.</param>
-    /// <returns>A new array of variable declarations.</returns>
-    public VariableDeclaration[] ParseVariableDeclarationList(string declarations)
-    {
-        if (string.IsNullOrWhiteSpace(declarations))
-        {
-            return Array.Empty<VariableDeclaration>();
-        }
-
-        return AntlrParserFactory.MakeParser(new AntlrInputStream(declarations)).declarationList()._elements
-            .Select(s => new VariableDeclaration(options.GetVariableOrConstantIdentifier(s.Text)))
-            .ToArray();
-    }
-
     private Term Parse(AntlrInputStream inputStream, IEnumerable<VariableDeclaration> variablesInScope)
     {
         return new TermTransformation(options, variablesInScope)
