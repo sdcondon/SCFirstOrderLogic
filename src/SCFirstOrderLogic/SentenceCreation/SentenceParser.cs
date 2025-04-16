@@ -109,13 +109,6 @@ public class SentenceParser
     /// <returns>A new array of sentences.</returns>
     public Sentence[] ParseList(TextReader sentences) => ParseList(new AntlrInputStream(sentences));
 
-
-
-
-
-
-
-
     /// <summary>
     /// Attempts to parse a string containing first-order logic syntax into a <see cref="Sentence"/> object.
     /// </summary>
