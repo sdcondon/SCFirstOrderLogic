@@ -181,8 +181,6 @@
     private IQuery? currentQuery;
     private Task? currentQueryExecution;
 
-    private Task ShowExplanationModal() => explanationModal!.Show();
-
     private async Task HandleFormSubmission(EditContext editContext)
     {
         if (editContext.Validate())

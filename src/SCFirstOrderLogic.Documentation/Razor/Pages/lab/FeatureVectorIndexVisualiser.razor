@@ -84,7 +84,7 @@
                 {
                     foreach (var ((childFeature, childMagnitude), childNode) in a.rootNode.ChildrenAscending)
                     {
-                        Tree(($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode));
+                        @Tree(($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode));
                     }
                 }
                 else

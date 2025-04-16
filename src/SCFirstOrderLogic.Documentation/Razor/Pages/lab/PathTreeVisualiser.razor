@@ -88,7 +88,7 @@
                         _ => throw new ArgumentException(nameof(a.rootNode))
                     };
 
-                    ArgumentTree((childNodeLabel, childNode));
+                    @ArgumentTree((childNodeLabel, childNode));
                 }
             </ul>
         </li>;
@@ -101,7 +101,7 @@
                 {
                     for (int i = 0; i < a.node.Children.Count; i++)
                     {
-                        ParameterTree(($"argument #{i}", a.node.Children[i]));
+                        @ParameterTree(($"argument #{i}", a.node.Children[i]));
                     }
                 }
                 else
