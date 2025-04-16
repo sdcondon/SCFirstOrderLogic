@@ -218,20 +218,13 @@
         return await knowledgeBase.CreateQueryAsync(SentenceParser.BasicParser.Parse(formData.Query), cancellationToken);
     }
 
-    private class FormData : IValidatableObject
+    private class FormData(string knowledgeBaseDescription, string knowledge, string query) : IValidatableObject
     {
-        public FormData(string knowledgeBaseDescription, string knowledge, string query)
-        {
-            this.KnowledgeBaseDescription = knowledgeBaseDescription;
-            this.Knowledge = knowledge;
-            this.Query = query;
-        }
+        public string KnowledgeBaseDescription { get; set; } = knowledgeBaseDescription;
 
-        public string KnowledgeBaseDescription { get; set; }
+        public string Knowledge { get; set; } = knowledge;
 
-        public string Knowledge { get; set; }
-
-        public string Query { get; set; }
+        public string Query { get; set; } = query;
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

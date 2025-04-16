@@ -59,6 +59,8 @@
     </div>
 </EditForm>
 
+<hr/>
+
 <ul class="mt-4">
     @Tree(("(root node)", rootNode))
 </ul>
@@ -120,17 +122,11 @@
         StateHasChanged();
     }
 
-    private class FormData : IValidatableObject
+    private class FormData(string variables, string sentence) : IValidatableObject
     {
-        public FormData(string variables, string sentence)
-        {
-            this.Variables = variables;
-            this.Sentence = sentence;
-        }
+        public string Variables { get; set; } = variables;
 
-        public string Variables { get; set; }
-
-        public string Sentence { get; set; }
+        public string Sentence { get; set; } = sentence;
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
