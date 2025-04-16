@@ -40,7 +40,7 @@
     </ModalContent>
 </Modal>
 
-<EditForm Model=@formData Context="editContext" style="font-family: monospace">
+<EditForm EditContext="editContext" OnValidSubmit="HandleValidTermSubmission" style="font-family: monospace">
     <DataAnnotationsValidator />
     <div class="form-group">
         <label for="variablesText">Variables (comma-separated)</label>
@@ -53,8 +53,8 @@
         <ValidationMessage For="@(() => formData.Term)" />
     </div>
     <div class="form-group mt-2">
-        <button type="submit" @onclick="@(() => HandleAddSubmission(editContext))" class="btn btn-primary">Add</button>
-        <button type="submit" @onclick="@(() => HandleRemoveAllSubmission(editContext))" class="btn btn-primary">Remove All</button>
+        <button type="submit" class="btn btn-primary">Add</button>
+        <button type="button" @onclick="HandleRemoveAllClick" class="btn btn-primary">Remove All</button>
     </div>
 </EditForm>
 
@@ -65,16 +65,23 @@
 </ul>
 
 @code {
-    private Modal? explanationModal;
-    private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
-
     private PathTreeDictionaryNode<Term> pathTreeRootNode;
     private PathTree pathTree;
+
+    private Modal? explanationModal;
+    private FormData formData;
+    private EditContext editContext;
+    private ValidationMessageStore validationMessageStore;
 
     public PathTreeVisualiser()
     {
         pathTreeRootNode = new PathTreeDictionaryNode<Term>();
         pathTree = new PathTree(pathTreeRootNode);
+
+        formData = new FormData("u, v, w, x, y, z", string.Empty);
+        editContext = new(formData);
+        editContext.OnValidationRequested += HandleValidationRequest;
+        validationMessageStore = new(editContext);
     }
 
     private RenderFragment RenderTree((string rootLabel, IPathTreeParameterNode<Term> rootNode) a)
@@ -94,7 +101,7 @@
                     @RenderTree((childNodeLabel, childNode))
                 }
             </ul>
-        </li>;
+        </li>;      
     }
 
     private RenderFragment RenderTree((string label, IPathTreeArgumentNode<Term> node) a)
@@ -117,52 +124,61 @@
                     }
                 }
             </ul>
-        </li>;
+        </li>
+    ;
     }
 
-    private void HandleAddSubmission(EditContext editContext)
+    private void HandleValidationRequest(object? sender, ValidationRequestedEventArgs args)
     {
-        if (editContext.Validate())
+        validationMessageStore.Clear();
+        editContext.Properties.Remove(nameof(formData.Term));
+
+        // TODO: use new termparser here
+        Sentence sentence;
+        try
         {
-            // TODO-FEATURE: probably useful to offer term parsing..
-            var sentence = SentenceParser.BasicParser.Parse($"forall {formData.Variables}, P({formData.Term})");
-            var visitor = new TermExtractor();
-            visitor.Visit(sentence);
-            pathTree.Add(visitor.Term!);
-            StateHasChanged();
+            sentence = SentenceParser.BasicParser.Parse($"forall {formData.Variables}, P({formData.Term})");
         }
+        catch (Exception e)
+        {
+            validationMessageStore.Add(() => formData.Term, e.Message);
+            return;
+        }
+
+        var visitor = new TermExtractor();
+        visitor.Visit(sentence);
+
+        if (visitor.Term == null)
+        {
+            validationMessageStore.Add(() => formData.Term, "Term is required");
+            return;
+        }
+
+        if (pathTree.Contains(visitor.Term))
+        {
+            validationMessageStore.Add(() => formData.Term, "Term already present in tree");
+        }
+
+        editContext.Properties[nameof(formData.Term)] = visitor.Term;
     }
 
-    private void HandleRemoveAllSubmission(EditContext editContext)
+    private void HandleValidTermSubmission(EditContext editContext)
+    {
+        pathTree.Add((Term)editContext.Properties[nameof(formData.Term)]);
+        StateHasChanged();
+    }
+
+    private void HandleRemoveAllClick()
     {
         pathTreeRootNode = new PathTreeDictionaryNode<Term>();
         pathTree = new PathTree(pathTreeRootNode);
         StateHasChanged();
     }
 
-    private class FormData(string variables, string term) : IValidatableObject
+    private class FormData(string variables, string term)
     {
         public string Variables { get; set; } = variables;
-
         public string Term { get; set; } = term;
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            // Yes, could cache the parse results to avoid parsing multiple times, but not worth it for now at least.
-            // TODO-FEATURE: Some "TryParse.." methods might be useful - they'd certainly make this method a bit cleaner.
-            // TODO-FEATURE: If we had a ParseError exception type, we could perhaps highlight the offending text.
-            List<ValidationResult> errors = new();
-            try
-            {
-                var sentence = SentenceParser.BasicParser.Parse($"forall {Variables}, P({Term})");
-            }
-            catch (Exception e)
-            {
-                errors.Add(new ValidationResult(e.Message, new[] { nameof(Term) }));
-            }
-
-            return errors;
-        }
     }
 
     private class TermExtractor : RecursiveSentenceVisitor
@@ -171,7 +187,10 @@
 
         public override void Visit(Predicate predicate)
         {
-            Term = predicate.Arguments.Single();
+            if (predicate.Arguments.Count == 1)
+            {
+                Term = predicate.Arguments[0];
+            }
         }
     }
 }

@@ -159,7 +159,7 @@
     private static Dictionary<string, Func<FormData>> Presets = new()
     {
         ["[Empty]"] = () => new(
-                knowledgeBaseDescription: "Resolution (Linear, Feature Vector Index Clause Storage)",
+            knowledgeBaseDescription: "Resolution (Linear, Feature Vector Index Clause Storage)",
             knowledge: string.Empty,
             query: string.Empty),
 
@@ -229,28 +229,24 @@
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // Yes, could cache the parse results to avoid parsing multiple times, but not worth it for now at least.
-            // TODO-FEATURE: Some "TryParse.." methods might be useful - they'd certainly make this method a bit cleaner.
-            // TODO-FEATURE: If we had a ParseError exception type, we could perhaps highlight the offending text.
-            Sentence[] knowledge;
-            Sentence query;
-
             List<ValidationResult> errors = new();
+
             try
             {
-                knowledge = SentenceParser.BasicParser.ParseList(Knowledge);
+                SentenceParser.BasicParser.ParseList(Knowledge);
             }
             catch (Exception e)
             {
-                errors.Add(new ValidationResult(e.Message, new[] { nameof(Knowledge) }));
+                errors.Add(new ValidationResult(e.Message, [nameof(Knowledge)]));
             }
 
             try
             {
-                query = SentenceParser.BasicParser.Parse(Query);
+                SentenceParser.BasicParser.Parse(Query);
             }
             catch (Exception e)
             {
-                errors.Add(new ValidationResult(e.Message, new[] { nameof(Query) }));
+                errors.Add(new ValidationResult(e.Message, [nameof(Query)]));
             }
 
             return errors;

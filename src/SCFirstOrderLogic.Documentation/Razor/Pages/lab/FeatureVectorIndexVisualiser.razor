@@ -40,7 +40,7 @@
     </ModalContent>
 </Modal>
 
-<EditForm Model=@formData Context="editContext" style="font-family: monospace">
+<EditForm EditContext="editContext" OnValidSubmit="HandleValidClauseSubmission" style=" font-family: monospace">
     <DataAnnotationsValidator />
     (TODO: allow choice of feature set)
     <div class="form-group">
@@ -54,8 +54,8 @@
         <ValidationMessage For="@(() => formData.Sentence)" />
     </div>
     <div class="form-group mt-2">
-        <button type="submit" @onclick="@(() => HandleAddSubmission(editContext))" class="btn btn-primary">Add</button>
-        <button type="submit" @onclick="@(() => HandleRemoveAllSubmission(editContext))" class="btn btn-primary">Remove All</button>
+        <button type="submit" class="btn btn-primary">Add</button>
+        <button type="button" @onclick="HandleRemoveAllClick" class="btn btn-primary">Remove All</button>
     </div>
 </EditForm>
 
@@ -66,16 +66,23 @@
 </ul>
 
 @code {
-    private Modal? explanationModal;
-    private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
-
     private FeatureVectorIndexListNode<MaxDepthFeature, CNFClause> rootNode;
     private FeatureVectorIndex<MaxDepthFeature> index;
+
+    private Modal? explanationModal;
+    private FormData formData;
+    private EditContext editContext;
+    private ValidationMessageStore validationMessageStore;
 
     public FeatureVectorIndexVisualiser()
     {
         rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
         index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
+
+        formData = new FormData("u, v, w, x, y, z", string.Empty);
+        editContext = new(formData);
+        editContext.OnValidationRequested += HandleValidationRequest;
+        validationMessageStore = new(editContext);
     }
 
     private RenderFragment RenderTree((string rootLabel, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> rootNode) a)
@@ -98,59 +105,69 @@
                     }
                 }
             </ul>
-        </li>;
+        </li>
+    ;
     }
 
-    private void HandleAddSubmission(EditContext editContext)
+    private void HandleValidationRequest(object? sender, ValidationRequestedEventArgs args)
     {
-        if (editContext.Validate())
+        validationMessageStore.Clear();
+        editContext.Properties.Remove(nameof(formData.Sentence));
+
+        var variablesPreamble = "forall ";
+        var sentencePreamble = $"{variablesPreamble}{formData.Variables}, ";
+
+        Sentence sentence;
+        try
         {
-            var sentence = SentenceParser.BasicParser.Parse($"forall {formData.Variables}, {formData.Sentence}");
-            var cnfSentence = sentence.ToCNF();
-
-            foreach (var clause in cnfSentence.Clauses)
-            {
-                index.Add(clause);
-            }
-
-            StateHasChanged();
+            sentence = SentenceParser.BasicParser.Parse($"{sentencePreamble}{formData.Sentence}");
         }
+        catch (Exception e)
+        {
+            validationMessageStore.Add(() => formData.Sentence, e.Message);
+            return;
+        }
+
+        var cnfSentence = sentence.ToCNF();
+        var clauseAlreadyPresent = false;
+
+        foreach (var clause in cnfSentence.Clauses)
+        {
+            if (index.Contains(clause))
+            {
+                validationMessageStore.Add(() => formData.Sentence, $"Index already contains clause '{clause}'");
+                clauseAlreadyPresent = true;
+            }
+        }
+
+        if (clauseAlreadyPresent)
+        {
+            return;
+        }
+
+        editContext.Properties[nameof(formData.Sentence)] = cnfSentence;
     }
 
-    private void HandleRemoveAllSubmission(EditContext editContext)
+    private void HandleValidClauseSubmission(EditContext editContext)
+    {
+        foreach (var clause in ((CNFSentence)editContext.Properties[nameof(formData.Sentence)]).Clauses)
+        {
+            index.Add(clause);
+        }
+
+        StateHasChanged();
+    }
+
+    private void HandleRemoveAllClick()
     {
         rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
         index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
         StateHasChanged();
     }
 
-    private class FormData(string variables, string sentence) : IValidatableObject
+    private class FormData(string variables, string sentence)
     {
         public string Variables { get; set; } = variables;
-
         public string Sentence { get; set; } = sentence;
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            // Yes, could cache the parse results to avoid parsing multiple times, but not worth it for now at least.
-            // TODO-FEATURE: Some "TryParse.." methods might be useful - they'd certainly make this method a bit cleaner.
-            // TODO-FEATURE: If we had a ParseError exception type, we could perhaps highlight the offending text.
-            List<ValidationResult> errors = new();
-
-            Sentence sentence;
-            try
-            {
-                sentence = SentenceParser.BasicParser.Parse($"forall {Variables}, {Sentence}");
-            }
-            catch (Exception e)
-            {
-                errors.Add(new ValidationResult(e.Message, new[] { nameof(Sentence) }));
-                return errors;
-            }
-
-            // TODO-ROBUSTNESS: check that each clause is not already present in the index
-
-            return errors;
-        }
     }
 }
