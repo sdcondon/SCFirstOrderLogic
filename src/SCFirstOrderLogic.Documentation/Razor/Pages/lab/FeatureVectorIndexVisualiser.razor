@@ -54,15 +54,15 @@
         <ValidationMessage For="@(() => formData.Sentence)" />
     </div>
     <div class="form-group mt-2">
-        <button type="submit" @onclick="@(() => Add(editContext))" class="btn btn-primary">Add</button>
-        <button type="submit" @onclick="@(() => RemoveAll(editContext))" class="btn btn-primary">Remove All</button>
+        <button type="submit" @onclick="@(() => HandleAddSubmission(editContext))" class="btn btn-primary">Add</button>
+        <button type="submit" @onclick="@(() => HandleRemoveAllSubmission(editContext))" class="btn btn-primary">Remove All</button>
     </div>
 </EditForm>
 
 <hr/>
 
 <ul class="mt-4">
-    @Tree(("(root node)", rootNode))
+    @RenderTree(("(root node)", rootNode))
 </ul>
 
 @code {
@@ -78,15 +78,16 @@
         index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
     }
 
-    private RenderFragment<(string rootLabel, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> rootNode)> Tree => a =>
-        @<li>
+    private RenderFragment RenderTree((string rootLabel, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> rootNode) a)
+    {
+        return @<li>
             @a.rootLabel
             <ul>
                 @if (a.rootNode.ChildrenAscending.Count() > 0)
                 {
                     foreach (var ((childFeature, childMagnitude), childNode) in a.rootNode.ChildrenAscending)
                     {
-                        @Tree(($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode));
+                        @RenderTree(($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode))
                     }
                 }
                 else
@@ -98,8 +99,9 @@
                 }
             </ul>
         </li>;
+    }
 
-    private void Add(EditContext editContext)
+    private void HandleAddSubmission(EditContext editContext)
     {
         if (editContext.Validate())
         {
@@ -115,7 +117,7 @@
         }
     }
 
-    private void RemoveAll(EditContext editContext)
+    private void HandleRemoveAllSubmission(EditContext editContext)
     {
         rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
         index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
