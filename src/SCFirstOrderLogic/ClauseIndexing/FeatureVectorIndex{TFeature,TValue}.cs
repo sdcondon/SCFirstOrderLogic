@@ -451,8 +451,9 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     /// <returns>The feature vector, represented as a read-only list.</returns>
     private IReadOnlyList<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
     {
-        // TODO-PERFORMANCE: if we need a list anyway, probably faster to make the list, then sort it in place? test me
         // TODO-ROBUSTNESS: should probably throw if any distinct pairs have a comparison of zero. could happen efficiently as part of the sort
-        return featureVectorSelector(clause).OrderBy(kvp => kvp.Feature, root.FeatureComparer).ToList();
+        var list = featureVectorSelector(clause).ToList();
+        list.Sort((x, y) => root.FeatureComparer.Compare(x.Feature, y.Feature));
+        return list;
     }
 }
