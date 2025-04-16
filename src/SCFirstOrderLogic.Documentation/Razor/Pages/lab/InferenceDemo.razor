@@ -12,7 +12,7 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Inference Demo <Button Clicked="ShowExplanationModal" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
+<h3>Lab - Inference Demo <Button Clicked="@(() => explanationModal!.Show())" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
 <Modal @ref="explanationModal">
     <ModalContent>

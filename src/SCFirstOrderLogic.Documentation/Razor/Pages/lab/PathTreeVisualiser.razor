@@ -8,7 +8,7 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Path Tree Visualiser <Button Clicked="ShowExplanationModal" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
+<h3>Lab - Path Tree Visualiser <Button Clicked="@(() => explanationModal!.Show())" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
 <Modal @ref="explanationModal">
     <ModalContent>
@@ -60,61 +60,15 @@
 </EditForm>
 
 <ul class="mt-4">
-    @{
-        RenderPathTreeParameterNode("(root node)", pathTreeRootNode);
-    }
+    @ParameterTree(("(root node)", pathTreeRootNode));
 </ul>
-
-@{
-    void RenderPathTreeParameterNode(string label, IPathTreeParameterNode<Term> node)
-    {
-        <li>
-            @label
-            <ul>
-                @foreach (var (childNodeKey, childNode) in node.Children)
-                {
-                    var childNodeLabel = childNodeKey switch
-                    {
-                        PathTreeFunctionNodeKey functionNodeKey => $"function: {functionNodeKey.Identifier} (arity {functionNodeKey.ChildElementCount})",
-                        PathTreeVariableNodeKey variableNodeKey => $"variable: #{variableNodeKey.Ordinal}",
-                        _ => throw new ArgumentException(nameof(node))
-                    };
-
-                    RenderPathTreeArgumentNode(childNodeLabel, childNode);
-                }
-            </ul>
-        </li>
-    }
-
-    void RenderPathTreeArgumentNode(string label, IPathTreeArgumentNode<Term> node)
-    {
-        <li>
-            @label
-            <ul>
-                @if (node.Children.Count > 0)
-                {
-                    for (int i = 0; i < node.Children.Count; i++)
-                    {
-                        RenderPathTreeParameterNode($"argument #{i}", node.Children[i]);
-                    }
-                }
-                else
-                {
-                    foreach (var (key, value) in node.Values)
-                    {
-                        <li>value: @value</li>
-                    }
-                }
-            </ul>
-        </li>
-    }
-}
 
 @code {
     private Modal? explanationModal;
+    private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
+
     private PathTreeDictionaryNode<Term> pathTreeRootNode;
     private PathTree pathTree;
-    private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
 
     public PathTreeVisualiser()
     {
@@ -122,7 +76,44 @@
         pathTree = new PathTree(pathTreeRootNode);
     }
 
-    private Task ShowExplanationModal() => explanationModal!.Show();
+    private RenderFragment<(string rootLabel, IPathTreeParameterNode<Term> rootNode)> ParameterTree => a =>
+        @<li>
+            @a.rootLabel
+            <ul>
+                @foreach (var (childNodeKey, childNode) in a.rootNode.Children)
+                {
+                    var childNodeLabel = childNodeKey switch
+                    {
+                        PathTreeFunctionNodeKey functionNodeKey => $"function: {functionNodeKey.Identifier} (arity {functionNodeKey.ChildElementCount})",
+                        PathTreeVariableNodeKey variableNodeKey => $"variable: #{variableNodeKey.Ordinal}",
+                        _ => throw new ArgumentException(nameof(a.rootNode))
+                    };
+
+                    ArgumentTree((childNodeLabel, childNode));
+                }
+            </ul>
+        </li>;
+
+    private RenderFragment<(string label, IPathTreeArgumentNode<Term> node)> ArgumentTree => a =>
+        @<li>
+            @a.label
+            <ul>
+                @if (a.node.Children.Count > 0)
+                {
+                    for (int i = 0; i < a.node.Children.Count; i++)
+                    {
+                        ParameterTree(($"argument #{i}", a.node.Children[i]));
+                    }
+                }
+                else
+                {
+                    foreach (var (key, value) in a.node.Values)
+                    {
+                        <li>value: @value</li>
+                    }
+                }
+            </ul>
+        </li>;
 
     private void Add(EditContext editContext)
     {

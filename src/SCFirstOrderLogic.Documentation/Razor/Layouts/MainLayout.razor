@@ -71,13 +71,7 @@
         </div>;
 
     private RenderFragment<dynamic> SiteLink => item =>
-        @<DropdownItem @onclick="@(e => NavigateTo(@item.TargetUri))">
+        @<DropdownItem Clicked="@(() => { NavigationManager.NavigateTo(@item.TargetUri); return Task.CompletedTask; })">
             <img src="@item.IconUri" /> @item.Text
         </DropdownItem>;
-
-    private object? NavigateTo(string TargetUri)
-    {
-        NavigationManager.NavigateTo(TargetUri);
-        return null;
-    }
 }

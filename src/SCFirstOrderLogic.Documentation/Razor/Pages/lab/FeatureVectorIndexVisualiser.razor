@@ -11,7 +11,7 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Feature Vector Index Visualiser <Button Clicked="ShowExplanationModal" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
+<h3>Lab - Feature Vector Index Visualiser <Button Clicked="@(() => explanationModal!.Show())" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
 <Modal @ref="explanationModal">
     <ModalContent>
@@ -61,47 +61,42 @@
 </EditForm>
 
 <ul class="mt-4">
-@{
-    RenderFeatureVectorIndexNode("(root node)", rootNode);
-}
+    @Tree(("(root node)", rootNode));
 </ul>
-
-@{
-    void RenderFeatureVectorIndexNode(string label, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> node)
-    {
-        <li>
-            @label
-            <ul>
-                @if (node.ChildrenAscending.Count() > 0)
-                {
-                    @foreach (var ((childFeature, childMagnitude), childNode) in node.ChildrenAscending)
-                    {
-                        RenderFeatureVectorIndexNode($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode);
-                    }
-                }
-                else
-                {
-                    foreach (var (_, clause) in node.KeyValuePairs)
-                    {
-                        <li>Value: @clause</li>
-                    }
-                }
-            </ul>
-        </li>
-    }
-}
 
 @code {
     private Modal? explanationModal;
+    private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
+
     private FeatureVectorIndexListNode<MaxDepthFeature, CNFClause> rootNode;
     private FeatureVectorIndex<MaxDepthFeature> index;
-    private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
 
     public FeatureVectorIndexVisualiser()
     {
         rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
         index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
     }
+
+    private RenderFragment<(string rootLabel, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> rootNode)> Tree => i =>
+        @<li>
+            @i.rootLabel
+            <ul>
+                @if (i.rootNode.ChildrenAscending.Count() > 0)
+                {
+                    @foreach (var ((childFeature, childMagnitude), childNode) in i.rootNode.ChildrenAscending)
+                    {
+                        Tree(($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode));
+                    }
+                }
+                else
+                {
+                    foreach (var (_, clause) in i.rootNode.KeyValuePairs)
+                    {
+                        <li>Value: @clause</li>
+                    }
+                }
+            </ul>
+        </li>;
 
     private Task ShowExplanationModal() => explanationModal!.Show();
 

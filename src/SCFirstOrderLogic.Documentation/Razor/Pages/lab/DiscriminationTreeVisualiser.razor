@@ -8,7 +8,7 @@
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
 @inject IJSRuntime JS
 
-<h3>Lab - Discrimination Tree Visualiser <Button Clicked="ShowExplanationModal" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
+<h3>Lab - Discrimination Tree Visualiser <Button Clicked="@(() => explanationModal!.Show())" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
 <Modal @ref="explanationModal">
     <ModalContent>
@@ -57,29 +57,38 @@
 </EditForm>
 
 <ul class="mt-4">
-    @{
-        RenderDiscriminationTreeNode("(root node)", discriminationTreeRootNode);
-    }
+    @Tree(("(root node)", discriminationTreeRootNode));
 </ul>
 
-@{
-    void RenderDiscriminationTreeNode(string label, IDiscriminationTreeNode<Term> node)
+@code {
+    private Modal? explanationModal;
+    private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
+
+    private DiscriminationTreeDictionaryNode<Term> discriminationTreeRootNode;
+    private DiscriminationTree discriminationTree;
+
+    public DiscriminationTreeVisualiser()
     {
-        <li>
-            @label
+        discriminationTreeRootNode = new DiscriminationTreeDictionaryNode<Term>();
+        discriminationTree = new DiscriminationTree(discriminationTreeRootNode);
+    }
+
+    private RenderFragment<(string rootLabel, IDiscriminationTreeNode<Term> rootNode)> Tree => a =>
+        @<li>
+            @a.rootLabel
             <ul>
-                @if (node.Children.Count > 0)
+                @if (a.rootNode.Children.Count > 0)
                 {
-                    @foreach (var (childNodeKey, childNode) in node.Children)
+                    @foreach (var (childNodeKey, childNode) in a.rootNode.Children)
                     {
                         var childNodeLabel = childNodeKey switch
                         {
                             DiscriminationTreeFunctionNodeKey functionNodeKey => $"function: {functionNodeKey.Identifier} (arity {functionNodeKey.ChildElementCount})",
                             DiscriminationTreeVariableNodeKey variableNodeKey => $"variable: #{variableNodeKey.Ordinal}",
-                            _ => throw new ArgumentException(nameof(node))
+                            _ => throw new ArgumentException(nameof(a.rootNode))
                         };
 
-                        RenderDiscriminationTreeNode(childNodeLabel, childNode);
+                        Tree((childNodeLabel, childNode));
                     }
                 }
                 else
@@ -87,7 +96,7 @@
                     Term value;
                     try
                     {
-                        value = node.Value;
+                        value = a.rootNode.Value;
                         <li>value: @value</li>
                     }
                     catch
@@ -96,21 +105,7 @@
                     }
                 }
             </ul>
-        </li>
-    }
-}
-
-@code {
-    private Modal? explanationModal;
-    private DiscriminationTreeDictionaryNode<Term> discriminationTreeRootNode;
-    private DiscriminationTree discriminationTree;
-    private FormData formData = new FormData("u, v, w, x, y, z", string.Empty);
-
-    public DiscriminationTreeVisualiser()
-    {
-        discriminationTreeRootNode = new DiscriminationTreeDictionaryNode<Term>();
-        discriminationTree = new DiscriminationTree(discriminationTreeRootNode);
-    }
+        </li>;
 
     private Task ShowExplanationModal() => explanationModal!.Show();
 
