@@ -24,7 +24,7 @@ public record TermParserOptions(
     Func<string, object> GetVariableOrConstantIdentifier)
 {
     /// <summary>
-    /// Default options, that just use the symbol text as the identifier for returned functions and variables.
+    /// Default term parser options, that just use the symbol text as the identifier for returned functions and variables.
     /// </summary>
     public static TermParserOptions Default { get; } = new(s => s, s => s);
 }

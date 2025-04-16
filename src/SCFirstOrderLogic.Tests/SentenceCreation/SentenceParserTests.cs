@@ -56,7 +56,7 @@ public static class SentenceParserTests
                 Sentence: "F1() = F2(x, y)",
                 ExpectedResult: new Predicate(EqualityIdentifier.Instance, new Function("F1"), new Function("F2", new Function("x"), new Function("y")))),
         ])
-        .When(tc => new SentenceParser().Parse(tc.Sentence))
+        .When(tc => SentenceParser.Default.Parse(tc.Sentence))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.ExpectedResult));
 
@@ -72,7 +72,7 @@ public static class SentenceParserTests
             "∃ P(x)",
             "P()aaa",
         })
-        .When((ctx, tc) => new SentenceParser().Parse(tc))
+        .When((ctx, tc) => SentenceParser.Default.Parse(tc))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.ToString()));
 
     public static Test Parse_WithCustomIdentifiers => TestThat
@@ -116,7 +116,7 @@ public static class SentenceParserTests
                 Sentences: " P() ; Q() ; ",
                 Expectation: [new Predicate("P"), new Predicate("Q")]),
         ])
-        .When(tc => new SentenceParser().ParseList(tc.Sentences))
+        .When(tc => SentenceParser.Default.ParseList(tc.Sentences))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Equal(tc.Expectation));
 
@@ -130,7 +130,7 @@ public static class SentenceParserTests
             $"P()\r\nQ()aaa",
             $"P()\nQ()aaa",
         ])
-        .When((ctx, tc) => new SentenceParser().ParseList(tc))
+        .When((ctx, tc) => SentenceParser.Default.ParseList(tc))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.ToString()));
 
     private record ParseTestCase(string Sentence, Sentence ExpectedResult);

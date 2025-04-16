@@ -26,7 +26,7 @@ public record SentenceParserOptions(
     Func<string, object> GetVariableOrConstantIdentifier)
 {
     /// <summary>
-    /// Default options, that just use the symbol text as the identifier for returned predicates, functions and variables.
+    /// Default sentence parser options, that just use the symbol text as the identifier for returned predicates, functions and variables.
     /// </summary>
     public static SentenceParserOptions Default { get; } = new(s => s, s => s, s => s);
 }

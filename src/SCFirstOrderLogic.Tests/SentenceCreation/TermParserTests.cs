@@ -29,7 +29,7 @@ public static class TermParserTests
                 Variables: [new("X")],
                 Expected: new Function("F", new Function("G"), new VariableReference("X"))),
         ])
-        .When(tc => new TermParser().Parse(tc.Text, tc.Variables))
+        .When(tc => TermParser.Default.Parse(tc.Text, tc.Variables))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.Expected));
 
@@ -42,7 +42,7 @@ public static class TermParserTests
             "F(,x,y)",
             "F()aaa",
         })
-        .When((ctx, tc) => new TermParser().Parse(tc, []))
+        .When((ctx, tc) => TermParser.Default.Parse(tc, []))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
     public static Test Parse_WithCustomIdentifiers => TestThat
@@ -104,7 +104,7 @@ public static class TermParserTests
                 Variables: [],
                 Expected: [new Function("F"), new Function("G"), new Function("aaa")]),
         ])
-        .When(tc => new TermParser().ParseList(tc.Text, []))
+        .When(tc => TermParser.Default.ParseList(tc.Text, []))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Equal(tc.Expected));
 
@@ -114,7 +114,7 @@ public static class TermParserTests
         [
             "F(); ; G()",
         ])
-        .When((ctx, tc) => new TermParser().ParseList(tc, []))
+        .When((ctx, tc) => TermParser.Default.ParseList(tc, []))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
     private record ParseTestCase(string Text, IEnumerable<VariableDeclaration> Variables, Term Expected);

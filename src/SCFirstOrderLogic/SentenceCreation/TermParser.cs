@@ -15,15 +15,15 @@ public class TermParser
     private readonly TermParserOptions options;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TermParser"/> class that uses <see cref="TermParserOptions.Default"/>.
-    /// </summary>
-    public TermParser() => this.options = TermParserOptions.Default;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="TermParser"/> class.
     /// </summary>
     /// <param name="options">Configuration options for the parser.</param>
     public TermParser(TermParserOptions options) => this.options = options;
+
+    /// <summary>
+    /// Gets an instance of the <see cref="TermParser"/> class that uses <see cref="TermParserOptions.Default"/>.
+    /// </summary>
+    public static TermParser Default { get; } = new(TermParserOptions.Default);
 
     /// <summary>
     /// Parses a string containing first-order logic syntax into a <see cref="Term"/> object.

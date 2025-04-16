@@ -16,11 +16,6 @@ public class SentenceParser
     private readonly SentenceParserOptions options;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SentenceParser"/> class that uses <see cref="SentenceParserOptions.Default"/>.
-    /// </summary>
-    public SentenceParser() => this.options = SentenceParserOptions.Default;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="SentenceParser"/> class.
     /// </summary>
     /// <param name="options">Configuration options for the parser.</param>
@@ -61,8 +56,13 @@ public class SentenceParser
     /// NB: This means that the identifiers for the zero arity functions declared as `f` and as `f()` are identical.
     /// </para>
     /// </summary>
-    [Obsolete("This property will be removed - use `new SentenceParser()` instead.")]
-    public static SentenceParser BasicParser { get; } = new SentenceParser(s => s, s => s, s => s);
+    [Obsolete("This property will be removed - use `SentenceParser.Default` instead.")]
+    public static SentenceParser BasicParser => Default;
+
+    /// <summary>
+    /// Gets an instance of the <see cref="SentenceParser"/> class that uses <see cref="SentenceParserOptions.Default"/>.
+    /// </summary>
+    public static SentenceParser Default { get; } = new(SentenceParserOptions.Default);
 
     /// <summary>
     /// Parses a string containing first-order logic syntax into a <see cref="Sentence"/> object.
