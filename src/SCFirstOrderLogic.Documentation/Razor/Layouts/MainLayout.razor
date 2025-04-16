@@ -63,15 +63,15 @@
 
     private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
 
-    private RenderFragment<dynamic> NavLink => item =>
+    private RenderFragment<dynamic> NavLink => a =>
         @<div class="nav-item px-1">
-            <NavLink class="nav-link px-2" href="@item.Href" Match="@(item.Match ?? NavLinkMatch.Prefix)">
-                <span class="bi @item.IconClass" aria-hidden="true"></span> @item.Text
+            <NavLink class="nav-link px-2" href="@a.Href" Match="@(a.Match ?? NavLinkMatch.Prefix)">
+                <span class="bi @a.IconClass" aria-hidden="true"></span> @a.Text
             </NavLink>
         </div>;
 
-    private RenderFragment<dynamic> SiteLink => item =>
-        @<DropdownItem Clicked="@(() => { NavigationManager.NavigateTo(@item.TargetUri); return Task.CompletedTask; })">
-            <img src="@item.IconUri" /> @item.Text
+    private RenderFragment<dynamic> SiteLink => a =>
+        @<DropdownItem Clicked="@(() => { NavigationManager.NavigateTo(a.TargetUri); return Task.CompletedTask; })">
+            <img src="@a.IconUri" /> @a.Text
         </DropdownItem>;
 }

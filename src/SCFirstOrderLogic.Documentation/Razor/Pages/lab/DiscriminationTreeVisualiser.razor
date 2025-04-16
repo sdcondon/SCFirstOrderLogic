@@ -6,7 +6,6 @@
 @using SCFirstOrderLogic.SentenceManipulation
 @using SCFirstOrderLogic.TermIndexing
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
-@inject IJSRuntime JS
 
 <h3>Lab - Discrimination Tree Visualiser <Button Clicked="@(() => explanationModal!.Show())" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
@@ -57,7 +56,7 @@
 </EditForm>
 
 <ul class="mt-4">
-    @Tree(("(root node)", discriminationTreeRootNode));
+    @Tree(("(root node)", discriminationTreeRootNode))
 </ul>
 
 @code {
@@ -79,7 +78,7 @@
             <ul>
                 @if (a.rootNode.Children.Count > 0)
                 {
-                    @foreach (var (childNodeKey, childNode) in a.rootNode.Children)
+                    foreach (var (childNodeKey, childNode) in a.rootNode.Children)
                     {
                         var childNodeLabel = childNodeKey switch
                         {

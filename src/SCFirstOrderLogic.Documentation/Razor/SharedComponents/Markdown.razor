@@ -21,7 +21,7 @@
     protected override async Task OnInitializedAsync()
     {
         var pipeline = new MarkdownPipelineBuilder()
-            .Use(new Extension())
+            .Use(new HljsExtension())
             .UseAutoIdentifiers()
             .UseTaskLists()
             .UsePipeTables()
@@ -39,7 +39,7 @@
         JS.InvokeVoidAsync("hljs.highlightAll");
     }
 
-    private class Extension : IMarkdownExtension
+    private class HljsExtension : IMarkdownExtension
     {
         public void Setup(MarkdownPipelineBuilder pipeline)
         {

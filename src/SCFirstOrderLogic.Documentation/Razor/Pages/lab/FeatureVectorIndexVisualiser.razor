@@ -9,7 +9,6 @@
 @using SCFirstOrderLogic.SentenceManipulation.Normalisation
 @using SCFirstOrderLogic.TermIndexing
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
-@inject IJSRuntime JS
 
 <h3>Lab - Feature Vector Index Visualiser <Button Clicked="@(() => explanationModal!.Show())" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
@@ -61,7 +60,7 @@
 </EditForm>
 
 <ul class="mt-4">
-    @Tree(("(root node)", rootNode));
+    @Tree(("(root node)", rootNode))
 </ul>
 
 @code {
@@ -77,28 +76,26 @@
         index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
     }
 
-    private RenderFragment<(string rootLabel, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> rootNode)> Tree => i =>
+    private RenderFragment<(string rootLabel, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> rootNode)> Tree => a =>
         @<li>
-            @i.rootLabel
+            @a.rootLabel
             <ul>
-                @if (i.rootNode.ChildrenAscending.Count() > 0)
+                @if (a.rootNode.ChildrenAscending.Count() > 0)
                 {
-                    @foreach (var ((childFeature, childMagnitude), childNode) in i.rootNode.ChildrenAscending)
+                    foreach (var ((childFeature, childMagnitude), childNode) in a.rootNode.ChildrenAscending)
                     {
                         Tree(($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode));
                     }
                 }
                 else
                 {
-                    foreach (var (_, clause) in i.rootNode.KeyValuePairs)
+                    foreach (var (_, clause) in a.rootNode.KeyValuePairs)
                     {
                         <li>Value: @clause</li>
                     }
                 }
             </ul>
         </li>;
-
-    private Task ShowExplanationModal() => explanationModal!.Show();
 
     private void Add(EditContext editContext)
     {

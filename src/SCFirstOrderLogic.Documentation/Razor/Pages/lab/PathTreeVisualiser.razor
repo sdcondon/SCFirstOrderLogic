@@ -6,7 +6,6 @@
 @using SCFirstOrderLogic.SentenceManipulation
 @using SCFirstOrderLogic.TermIndexing
 @using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
-@inject IJSRuntime JS
 
 <h3>Lab - Path Tree Visualiser <Button Clicked="@(() => explanationModal!.Show())" Size="Size.Small" Color="Color.Primary"><Icon Name="@("bi-info-circle")"></Icon></Button></h3>
 
@@ -60,7 +59,7 @@
 </EditForm>
 
 <ul class="mt-4">
-    @ParameterTree(("(root node)", pathTreeRootNode));
+    @ParameterTree(("(root node)", pathTreeRootNode))
 </ul>
 
 @code {
