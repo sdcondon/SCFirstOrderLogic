@@ -212,9 +212,9 @@
     private async Task<IQuery> MakeQueryAsync(FormData formData, CancellationToken cancellationToken)
     {
         IKnowledgeBase knowledgeBase = KnowledgeBaseOptions[formData.KnowledgeBaseDescription].Invoke();
-        await knowledgeBase.TellAsync(SentenceParser.BasicParser.ParseList(formData.Knowledge), cancellationToken);
+        await knowledgeBase.TellAsync(SentenceParser.Default.ParseList(formData.Knowledge), cancellationToken);
 
-        return await knowledgeBase.CreateQueryAsync(SentenceParser.BasicParser.Parse(formData.Query), cancellationToken);
+        return await knowledgeBase.CreateQueryAsync(SentenceParser.Default.Parse(formData.Query), cancellationToken);
     }
 
     private class FormData(string knowledgeBaseDescription, string knowledge, string query) : IValidatableObject
@@ -228,27 +228,25 @@
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // Yes, could cache the parse results to avoid parsing multiple times, but not worth it for now at least.
-            List<ValidationResult> errors = new();
+            List<ValidationResult> validationResults = new();
 
-            try
+            if (!SentenceParser.Default.TryParseList(Knowledge, out var sentences, out var errors))
             {
-                SentenceParser.BasicParser.ParseList(Knowledge);
-            }
-            catch (Exception e)
-            {
-                errors.Add(new ValidationResult(e.Message, [nameof(Knowledge)]));
-            }
-
-            try
-            {
-                SentenceParser.BasicParser.Parse(Query);
-            }
-            catch (Exception e)
-            {
-                errors.Add(new ValidationResult(e.Message, [nameof(Query)]));
+                foreach (var error in errors)
+                {
+                    validationResults.Add(new ValidationResult(error.ToString(), [nameof(Knowledge)]));
+                }
             }
 
-            return errors;
+            if (!SentenceParser.Default.TryParse(Query, out var sentence, out errors))
+            {
+                foreach (var error in errors)
+                {
+                    validationResults.Add(new ValidationResult(error.ToString(), [nameof(Query)]));
+                }
+            }
+
+            return validationResults;
         }
     }
 }

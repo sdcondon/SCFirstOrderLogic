@@ -48,7 +48,7 @@
         <ValidationMessage For="@(() => formData.Variables)" />
     </div>
     <div class="form-group">
-        <label for="queryText">Clause (or clauses - all will be added if it normalises to multi-clause sentence)</label>
+        <label for="queryText">Clause</label>
         <InputText class="form-control" id="queryText" spellcheck="false" @bind-Value=formData.Sentence />
         <ValidationMessage For="@(() => formData.Sentence)" />
     </div>
@@ -93,7 +93,7 @@
                 {
                     foreach (var ((childFeature, childMagnitude), childNode) in a.rootNode.ChildrenAscending)
                     {
-                        @RenderTree(($"Feature: {childFeature}, Magnitude: {childMagnitude}", childNode))
+                        @RenderTree(($"{childFeature}, magnitude: {childMagnitude}", childNode))
                     }
                 }
                 else
@@ -112,47 +112,47 @@
         validationMessageStore.Clear();
         editContext.Properties.Remove(nameof(formData.Sentence));
 
-        var variablesPreamble = "forall ";
-        var sentencePreamble = $"{variablesPreamble}{formData.Variables}, ";
-
-        Sentence sentence;
-        try
+        if (!SentenceParser.Default.TryParseDeclarationList(formData.Variables, out var declarations, out var syntaxErrors))
         {
-            sentence = SentenceParser.BasicParser.Parse($"{sentencePreamble}{formData.Sentence}");
-        }
-        catch (Exception e)
-        {
-            validationMessageStore.Add(() => formData.Sentence, e.Message);
-            return;
-        }
-
-        var cnfSentence = sentence.ToCNF();
-        var clauseAlreadyPresent = false;
-
-        foreach (var clause in cnfSentence.Clauses)
-        {
-            if (index.Contains(clause))
+            foreach (var syntaxError in syntaxErrors)
             {
-                validationMessageStore.Add(() => formData.Sentence, $"Index already contains clause '{clause}'");
-                clauseAlreadyPresent = true;
+                validationMessageStore.Add(() => formData.Variables, syntaxError.ToString());
             }
         }
-
-        if (clauseAlreadyPresent)
+        else if (!SentenceParser.Default.TryParse(formData.Sentence, declarations, out var sentence, out var errors))
         {
-            return;
+            foreach (var error in errors)
+            {
+                validationMessageStore.Add(() => formData.Sentence, error.ToString());
+            }
         }
+        else
+        {
+            CNFClause clause;
+            try
+            {
+                clause = new CNFClause(sentence);
+            }
+            catch (ArgumentException)
+            {
+                validationMessageStore.Add(() => formData.Sentence, "Must be a clause - a disjunction of literals");
+                return;
+            }
 
-        editContext.Properties[nameof(formData.Sentence)] = cnfSentence;
+            if (index.Contains(clause))
+            {
+                validationMessageStore.Add(() => formData.Sentence, "Index already contains clause");
+            }
+            else
+            {
+                editContext.Properties[nameof(formData.Sentence)] = clause;
+            }
+        }
     }
 
     private void HandleValidClauseSubmission(EditContext editContext)
     {
-        foreach (var clause in ((CNFSentence)editContext.Properties[nameof(formData.Sentence)]).Clauses)
-        {
-            index.Add(clause);
-        }
-
+        index.Add((CNFClause)editContext.Properties[nameof(formData.Sentence)]);
         StateHasChanged();
     }
 

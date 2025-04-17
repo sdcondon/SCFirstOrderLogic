@@ -131,33 +131,28 @@
         validationMessageStore.Clear();
         editContext.Properties.Remove(nameof(formData.Term));
 
-        // TODO: use new termparser here
-        Sentence sentence;
-        try
+        if (!SentenceParser.Default.TryParseDeclarationList(formData.Variables, out var declarations, out var syntaxErrors))
         {
-            sentence = SentenceParser.BasicParser.Parse($"forall {formData.Variables}, P({formData.Term})");
+            foreach (var syntaxError in syntaxErrors)
+            {
+                validationMessageStore.Add(() => formData.Variables, syntaxError.ToString());
+            }
         }
-        catch (Exception e)
+        else if (!SentenceParser.Default.TryParseTerm(formData.Term, declarations, out var term, out syntaxErrors))
         {
-            validationMessageStore.Add(() => formData.Term, e.Message);
-            return;
+            foreach (var syntaxError in syntaxErrors)
+            {
+                validationMessageStore.Add(() => formData.Term, syntaxError.ToString());
+            }
         }
-
-        var visitor = new TermExtractor();
-        visitor.Visit(sentence);
-
-        if (visitor.Term == null)
-        {
-            validationMessageStore.Add(() => formData.Term, "Term is required");
-            return;
-        }
-
-        if (pathTree.Contains(visitor.Term))
+        else if (pathTree.Contains(term))
         {
             validationMessageStore.Add(() => formData.Term, "Term already present in tree");
         }
-
-        editContext.Properties[nameof(formData.Term)] = visitor.Term;
+        else
+        {
+            editContext.Properties[nameof(formData.Term)] = term;
+        }
     }
 
     private void HandleValidTermSubmission(EditContext editContext)
@@ -177,18 +172,5 @@
     {
         public string Variables { get; set; } = variables;
         public string Term { get; set; } = term;
-    }
-
-    private class TermExtractor : RecursiveSentenceVisitor
-    {
-        public Term? Term { get; private set; }
-
-        public override void Visit(Predicate predicate)
-        {
-            if (predicate.Arguments.Count == 1)
-            {
-                Term = predicate.Arguments[0];
-            }
-        }
     }
 }
