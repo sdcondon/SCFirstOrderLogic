@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using FlUnit;
+using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.SentenceCreation;
 
@@ -133,7 +134,122 @@ public static class SentenceParserTests
         .When((ctx, tc) => SentenceParser.Default.ParseList(tc))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.ToString()));
 
+    public static Test ParseTerm_PositiveTestCases => TestThat
+        .GivenEachOf<ParseTermTestCase>(() =>
+        [
+            new(
+                Text: "F()",
+                Variables: [new("F")],
+                Expected: new Function("F")),
+
+            new(
+                Text: " F () ",
+                Variables: [new("F")],
+                Expected: new Function("F")),
+
+            new(
+                Text: "F",
+                Variables: [new("F")],
+                Expected: new VariableReference("F")),
+
+            new(
+                Text: "F(G(), X)",
+                Variables: [new("X")],
+                Expected: new Function("F", new Function("G"), new VariableReference("X"))),
+        ])
+        .When(tc => SentenceParser.Default.ParseTerm(tc.Text, tc.Variables))
+        .ThenReturns()
+        .And((tc, rv) => rv.Should().Be(tc.Expected));
+
+    public static Test ParseTerm_NegativeTestCases => TestThat
+        .GivenTestContext()
+        .AndEachOf(() => new[]
+        {
+            string.Empty,
+            "F(x,y,)",
+            "F(,x,y)",
+            "F()aaa",
+        })
+        .When((ctx, tc) => SentenceParser.Default.ParseTerm(tc, []))
+        .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
+
+    public static Test ParseTerm_WithCustomIdentifiers => TestThat
+        .Given(() => new SentenceParser(new SentenceParserOptions(s => $"p:{s}", s => $"f:{s}", s => $"vc:{s}")))
+        .When(p => p.ParseTerm("F(x, C)", [new("vc:x")]))
+        .ThenReturns()
+        .And((_, rv) => rv.Should().Be(new Function("f:F", new VariableReference("vc:x"), new Function("vc:C"))));
+
+    public static Test ParseTermList_PositiveTestCases => TestThat
+        .GivenEachOf<ParseTermListTestCase>(() =>
+        [
+            new(
+                Text: string.Empty,
+                Variables: [],
+                Expected: []),
+
+            new(
+                Text: "   ",
+                Variables: [],
+                Expected: []),
+
+            new(
+                Text: "F()",
+                Variables: [],
+                Expected: [new Function("F")]),
+
+            new(
+                Text: "F()G()",
+                Variables: [],
+                Expected: [new Function("F"), new Function("G")]),
+
+            new(
+                Text: "F() G()",
+                Variables: [],
+                Expected: [new Function("F"), new Function("G")]),
+
+            new(
+                Text: "F()\r\nG()\n",
+                Variables: [],
+                Expected: [new Function("F"), new Function("G")]),
+
+            new(
+                Text: "F(); G()",
+                Variables: [],
+                Expected: [new Function("F"), new Function("G")]),
+
+            new(
+                Text: " F() ; G() ; ",
+                Variables: [],
+                Expected: [new Function("F"), new Function("G")]),
+
+            new(
+                Text: "F() G()aaa",
+                Variables: [],
+                Expected: [new Function("F"), new Function("G"), new Function("aaa")]),
+
+            new(
+                Text: "F() G();aaa",
+                Variables: [],
+                Expected: [new Function("F"), new Function("G"), new Function("aaa")]),
+        ])
+        .When(tc => SentenceParser.Default.ParseTermList(tc.Text, []))
+        .ThenReturns()
+        .And((tc, rv) => rv.Should().Equal(tc.Expected));
+
+    public static Test ParseTermList_NegativeTestCases => TestThat
+        .GivenTestContext()
+        .AndEachOf<string>(() =>
+        [
+            "F(); ; G()",
+        ])
+        .When((ctx, tc) => SentenceParser.Default.ParseTermList(tc, []))
+        .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
+
     private record ParseTestCase(string Sentence, Sentence ExpectedResult);
 
     private record ParseListTestCase(string Sentences, Sentence[] Expectation);
+
+    private record ParseTermTestCase(string Text, IEnumerable<VariableDeclaration> Variables, Term Expected);
+
+    private record ParseTermListTestCase(string Text, IEnumerable<VariableDeclaration> Variables, Term[] Expected);
 }

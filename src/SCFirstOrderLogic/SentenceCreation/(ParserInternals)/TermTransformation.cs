@@ -10,10 +10,10 @@ namespace SCFirstOrderLogic.SentenceCreation;
 /// </summary>
 internal class TermTransformation : FirstOrderLogicBaseVisitor<Term>
 {
-    private readonly TermParserOptions options;
+    private readonly SentenceParserOptions options;
     private readonly IEnumerable<VariableDeclaration> variablesInScope;
 
-    public TermTransformation(TermParserOptions options, IEnumerable<VariableDeclaration> variablesInScope)
+    public TermTransformation(SentenceParserOptions options, IEnumerable<VariableDeclaration> variablesInScope)
     {
         this.options = options;
         this.variablesInScope = variablesInScope;

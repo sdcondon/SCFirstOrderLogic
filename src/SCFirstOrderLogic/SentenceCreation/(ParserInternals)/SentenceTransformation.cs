@@ -20,7 +20,7 @@ internal class SentenceTransformation : FirstOrderLogicBaseVisitor<Sentence>
     {
         this.options = options;
         this.variablesInScope = variablesInScope;
-        termTransformation = new TermTransformation(new TermParserOptions(options.GetFunctionIdentifier, options.GetVariableOrConstantIdentifier), variablesInScope);
+        termTransformation = new TermTransformation(options, variablesInScope);
     }
 
     public override Sentence VisitPredicate([NotNull] FirstOrderLogicParser.PredicateContext context)

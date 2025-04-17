@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using Antlr4.Runtime;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -13,13 +14,13 @@ namespace SCFirstOrderLogic.SentenceCreation;
 /// </summary>
 public class SentenceParser
 {
-    private readonly SentenceParserOptions options;
+    private readonly AntlrParser antlrParser;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SentenceParser"/> class.
     /// </summary>
     /// <param name="options">Configuration options for the parser.</param>
-    public SentenceParser(SentenceParserOptions options) => this.options = options;
+    public SentenceParser(SentenceParserOptions options) => antlrParser = new(options);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SentenceParser"/> class.
@@ -45,7 +46,7 @@ public class SentenceParser
         Func<string, object> getFunctionIdentifier,
         Func<string, object> getVariableOrConstantIdentifier)
     {
-        options = new SentenceParserOptions(getPredicateIdentifier, getFunctionIdentifier, getVariableOrConstantIdentifier);
+        antlrParser = new(new(getPredicateIdentifier, getFunctionIdentifier, getVariableOrConstantIdentifier));
     }
 
     /// <summary>
@@ -69,21 +70,66 @@ public class SentenceParser
     /// </summary>
     /// <param name="sentence">The string to parse.</param>
     /// <returns>The parsed <see cref="Sentence"/>.</returns>
-    public Sentence Parse(string sentence) => Parse(new AntlrInputStream(sentence));
+    public Sentence Parse(string sentence) => antlrParser.ParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>());
+
+    /// <summary>
+    /// Parses a string containing first-order logic syntax into a <see cref="Sentence"/> object.
+    /// </summary>
+    /// <param name="sentence">The string to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentence itself) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>The parsed <see cref="Sentence"/>.</returns>
+    public Sentence Parse(string sentence, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentence(new AntlrInputStream(sentence), extraVariables);
 
     /// <summary>
     /// Parses a stream containing first-order logic syntax into a <see cref="Sentence"/> object.
     /// </summary>
     /// <param name="sentence">The stream to parse.</param>
     /// <returns>The parsed <see cref="Sentence"/>.</returns>
-    public Sentence Parse(Stream sentence) => Parse(new AntlrInputStream(sentence));
+    public Sentence Parse(Stream sentence) => antlrParser.ParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>());
+
+    /// <summary>
+    /// Parses a stream containing first-order logic syntax into a <see cref="Sentence"/> object.
+    /// </summary>
+    /// <param name="sentence">The stream to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentence itself) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>The parsed <see cref="Sentence"/>.</returns>
+    public Sentence Parse(Stream sentence, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentence(new AntlrInputStream(sentence), extraVariables);
 
     /// <summary>
     /// Parses a text reader containing first-order logic syntax into a <see cref="Sentence"/> object.
     /// </summary>
     /// <param name="sentence">The text reader to parse.</param>
     /// <returns>The parsed <see cref="Sentence"/>.</returns>
-    public Sentence Parse(TextReader sentence) => Parse(new AntlrInputStream(sentence));
+    public Sentence Parse(TextReader sentence) => antlrParser.ParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>());
+
+    /// <summary>
+    /// Parses a text reader containing first-order logic syntax into a <see cref="Sentence"/> object.
+    /// </summary>
+    /// <param name="sentence">The text reader to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentence itself) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>The parsed <see cref="Sentence"/>.</returns>
+    public Sentence Parse(TextReader sentence, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentence(new AntlrInputStream(sentence), extraVariables);
 
     /// <summary>
     /// Parses a string containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -91,7 +137,23 @@ public class SentenceParser
     /// </summary>
     /// <param name="sentences">The string to parse.</param>
     /// <returns>A new array of sentences.</returns>
-    public Sentence[] ParseList(string sentences) => ParseList(new AntlrInputStream(sentences));
+    public Sentence[] ParseList(string sentences) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>());
+
+    /// <summary>
+    /// Parses a string containing zero or more sentences into a <see cref="Sentence"/> array.
+    /// Sentences can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="sentences">The string to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentences themsselves) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>A new array of sentences.</returns>
+    public Sentence[] ParseList(string sentences, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), extraVariables);
 
     /// <summary>
     /// Parses a stream containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -99,7 +161,23 @@ public class SentenceParser
     /// </summary>
     /// <param name="sentences">The stream to parse.</param>
     /// <returns>A new array of sentences.</returns>
-    public Sentence[] ParseList(Stream sentences) => ParseList(new AntlrInputStream(sentences));
+    public Sentence[] ParseList(Stream sentences) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>());
+
+    /// <summary>
+    /// Parses a stream containing zero or more sentences into a <see cref="Sentence"/> array.
+    /// Sentences can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="sentences">The stream to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentences themselves) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>A new array of sentences.</returns>
+    public Sentence[] ParseList(Stream sentences, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), extraVariables);
 
     /// <summary>
     /// Parses a text reader containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -107,7 +185,137 @@ public class SentenceParser
     /// </summary>
     /// <param name="sentences">The text reader to parse.</param>
     /// <returns>A new array of sentences.</returns>
-    public Sentence[] ParseList(TextReader sentences) => ParseList(new AntlrInputStream(sentences));
+    public Sentence[] ParseList(TextReader sentences) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>());
+
+    /// <summary>
+    /// Parses a text reader containing zero or more sentences into a <see cref="Sentence"/> array.
+    /// Sentences can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="sentences">The text reader to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentences themselves) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>A new array of sentences.</returns>
+    public Sentence[] ParseList(TextReader sentences, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), extraVariables);
+
+    /// <summary>
+    /// Parses a string containing first-order logic syntax into a <see cref="Term"/> object.
+    /// </summary>
+    /// <param name="term">The string to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>The parsed <see cref="Term"/>.</returns>
+    public Term ParseTerm(string term, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTerm(new AntlrInputStream(term), variables);
+
+    /// <summary>
+    /// Parses a stream containing first-order logic syntax into a <see cref="Term"/> object.
+    /// </summary>
+    /// <param name="term">The stream to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>The parsed <see cref="Term"/>.</returns>
+    public Term ParseTerm(Stream term, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTerm(new AntlrInputStream(term), variables);
+
+    /// <summary>
+    /// Parses a text reader containing first-order logic syntax into a <see cref="Term"/> object.
+    /// </summary>
+    /// <param name="term">The text reader to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>The parsed <see cref="Term"/>.</returns>
+    public Term ParseTerm(TextReader term, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTerm(new AntlrInputStream(term), variables);
+
+    /// <summary>
+    /// Parses a string containing zero or more terms into a <see cref="Term"/> array.
+    /// Terms can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="terms">The string to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>A new array of terms.</returns>
+    public Term[] ParseTermList(string terms, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTermList(new AntlrInputStream(terms), variables);
+
+    /// <summary>
+    /// Parses a stream containing zero or more terms into a <see cref="Term"/> array.
+    /// Terms can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="terms">The stream to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>A new array of terms.</returns>
+    public Term[] ParseTermList(Stream terms, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTermList(new AntlrInputStream(terms), variables);
+
+    /// <summary>
+    /// Parses a text reader containing zero or more terms into a <see cref="Term"/> array.
+    /// Terms can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="terms">The text reader to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <returns>A new array of terms.</returns>
+    public Term[] ParseTermList(TextReader terms, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTermList(new AntlrInputStream(terms), variables);
+
+    /// <summary>
+    /// Parses a string containing one or more (comma-separated) variable declarations into a <see cref="VariableDeclaration"/> array.
+    /// </summary>
+    /// <param name="declarations">The string to parse.</param>
+    /// <returns>A new array of variable declarations.</returns>
+    public VariableDeclaration[] ParseDeclarationList(string declarations) => antlrParser.ParseDeclarationList(new AntlrInputStream(declarations));
+
+    /// <summary>
+    /// Parses a stream containing one or more (comma-separated) variable declarations into a <see cref="VariableDeclaration"/> array.
+    /// </summary>
+    /// <param name="declarations">The stream to parse.</param>
+    /// <returns>A new array of variable declarations.</returns>
+    public VariableDeclaration[] ParseDeclarationList(Stream declarations) => antlrParser.ParseDeclarationList(new AntlrInputStream(declarations));
+
+    /// <summary>
+    /// Parses a text reader containing one or more (comma-separated) variable declarations into a <see cref="VariableDeclaration"/> array.
+    /// </summary>
+    /// <param name="declarations">The text reader to parse.</param>
+    /// <returns>A new array of variable declarations.</returns>
+    public VariableDeclaration[] ParseDeclarationList(TextReader declarations) => antlrParser.ParseDeclarationList(new AntlrInputStream(declarations));
 
     /// <summary>
     /// Attempts to parse a string containing first-order logic syntax into a <see cref="Sentence"/> object.
@@ -121,7 +329,31 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return TryParse(new AntlrInputStream(sentence), out result, out errors);
+        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parse a string containing first-order logic syntax into a <see cref="Sentence"/> object.
+    /// </summary>
+    /// <param name="sentence">The string to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentence itself) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed sentence. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if a sentence was successfully parsed, otherwise false.</returns>
+    public bool TryParse(
+        string sentence,
+        IEnumerable<VariableDeclaration> extraVariables,
+        [MaybeNullWhen(false)] out Sentence result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), extraVariables, out result, out errors);
     }
 
     /// <summary>
@@ -136,7 +368,31 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return TryParse(new AntlrInputStream(sentence), out result, out errors);
+        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parse a stream containing first-order logic syntax into a <see cref="Sentence"/> object.
+    /// </summary>
+    /// <param name="sentence">The stream to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentence itself) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed sentence. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if a sentence was successfully parsed, otherwise false.</returns>
+    public bool TryParse(
+        Stream sentence,
+        IEnumerable<VariableDeclaration> extraVariables,
+        [MaybeNullWhen(false)] out Sentence result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), extraVariables, out result, out errors);
     }
 
     /// <summary>
@@ -151,8 +407,32 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return TryParse(new AntlrInputStream(sentence), out result, out errors);
-    } 
+        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parse a text reader containing first-order logic syntax into a <see cref="Sentence"/> object.
+    /// </summary>
+    /// <param name="sentence">The text reader to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentence itself) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed sentence. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if a sentence was successfully parsed, otherwise false.</returns>
+    public bool TryParse(
+        TextReader sentence,
+        IEnumerable<VariableDeclaration> extraVariables,
+        [MaybeNullWhen(false)] out Sentence result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), extraVariables, out result, out errors);
+    }
 
     /// <summary>
     /// Attempts to parse a string containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -165,9 +445,34 @@ public class SentenceParser
     public bool TryParseList(
         string sentences,
         [MaybeNullWhen(false)] out Sentence[] result,
-        [MaybeNullWhen(true)] out SyntaxError[] errors) 
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return TryParseList(new AntlrInputStream(sentences), out result, out errors);
+        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parse a string containing zero or more sentences into a <see cref="Sentence"/> array.
+    /// Sentences can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="sentences">The string to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentences themselves) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed sentences. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if all sentences were successfully parsed, otherwise false.</returns>
+    public bool TryParseList(
+        string sentences,
+        IEnumerable<VariableDeclaration> extraVariables,
+        [MaybeNullWhen(false)] out Sentence[] result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), extraVariables, out result, out errors);
     }
 
     /// <summary>
@@ -183,7 +488,32 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return TryParseList(new AntlrInputStream(sentences), out result, out errors);
+        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parse a stream containing zero or more sentences into a <see cref="Sentence"/> array.
+    /// Sentences can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="sentences">The stream to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentences themselves) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed sentences. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if all sentences were successfully parsed, otherwise false.</returns>
+    public bool TryParseList(
+        Stream sentences,
+        IEnumerable<VariableDeclaration> extraVariables,
+        [MaybeNullWhen(false)] out Sentence[] result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), extraVariables, out result, out errors);
     }
 
     /// <summary>
@@ -199,67 +529,223 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return TryParseList(new AntlrInputStream(sentences), out result, out errors);
+        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
     }
 
-    private Sentence Parse(AntlrInputStream inputStream)
-    {
-        if (!TryParse(inputStream, out var sentence, out var errors))
-        {
-            throw new SyntaxErrorsException(errors);
-        }
-
-        return sentence;
-    }
-
-    private Sentence[] ParseList(AntlrInputStream inputStream)
-    {
-        if (!TryParseList(inputStream, out var sentences, out var errors))
-        {
-            throw new SyntaxErrorsException(errors);
-        }
-
-        return sentences;
-    }
-
-    private bool TryParse(
-        AntlrInputStream inputStream,
-        [MaybeNullWhen(false)] out Sentence result,
-        [MaybeNullWhen(true)] out SyntaxError[] errors)
-    {
-        var errorListener = new SyntaxErrorListener();
-
-        result = new SentenceTransformation(options, Enumerable.Empty<VariableDeclaration>())
-            .Visit(AntlrParserFactory.MakeParser(inputStream, errorListener).singleSentence().sentence());
-
-        if (errorListener.Errors.Any())
-        {
-            errors = errorListener.Errors.ToArray();
-            return false;
-        }
-
-        errors = null;
-        return true;
-    }
-
-    private bool TryParseList(
-        AntlrInputStream inputStream,
+    /// <summary>
+    /// Attempts to parse a text reader containing zero or more sentences into a <see cref="Sentence"/> array.
+    /// Sentences can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="sentences">The text reader to parse.</param>
+    /// <param name="extraVariables">
+    /// <para>
+    /// Any extra variables (beyond those quantified in the sentences themselves) that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets encountered when a term is expected are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed sentences. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if all sentences were successfully parsed, otherwise false.</returns>
+    public bool TryParseList(
+        TextReader sentences,
+        IEnumerable<VariableDeclaration> extraVariables,
         [MaybeNullWhen(false)] out Sentence[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        var errorListener = new SyntaxErrorListener();
+        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), extraVariables, out result, out errors);
+    }
 
-        result = AntlrParserFactory.MakeParser(inputStream, errorListener).sentenceList()._sentences
-            .Select(s => new SentenceTransformation(options, Enumerable.Empty<VariableDeclaration>()).Visit(s))
-            .ToArray();
+    /// <summary>
+    /// Attempts to parse a string containing first-order logic syntax into a <see cref="Term"/> object.
+    /// </summary>
+    /// <param name="term">The string to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed term. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if a term was successfully parsed, otherwise false.</returns>
+    public bool TryParseTerm(
+        string term,
+        IEnumerable<VariableDeclaration> variables,
+        [MaybeNullWhen(false)] out Term result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseTerm(new AntlrInputStream(term), variables, out result, out errors);
+    }
 
-        if (errorListener.Errors.Any())
-        {
-            errors = errorListener.Errors.ToArray();
-            return false;
-        }
+    /// <summary>
+    /// Attempts to parse a stream containing first-order logic syntax into a <see cref="Term"/> object.
+    /// </summary>
+    /// <param name="term">The stream to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed term. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if a term was successfully parsed, otherwise false.</returns>
+    public bool TryParseTerm(
+        Stream term,
+        IEnumerable<VariableDeclaration> variables,
+        [MaybeNullWhen(false)] out Term result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseTerm(new AntlrInputStream(term), variables, out result, out errors);
+    }
 
-        errors = null;
-        return true;
+    /// <summary>
+    /// Attempts to parse a text reader containing first-order logic syntax into a <see cref="Term"/> object.
+    /// </summary>
+    /// <param name="term">The text reader to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed term. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if a term was successfully parsed, otherwise false.</returns>
+    public bool TryParseTerm(
+        TextReader term,
+        IEnumerable<VariableDeclaration> variables,
+        [MaybeNullWhen(false)] out Term result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseTerm(new AntlrInputStream(term), variables, out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parse a string containing zero or more terms into a <see cref="Term"/> array.
+    /// Terms can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="terms">The string to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed terms. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if all terms were successfully parsed, otherwise false.</returns>
+    public bool TryParseTermList(
+        string terms,
+        IEnumerable<VariableDeclaration> variables,
+        [MaybeNullWhen(false)] out Term[] result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseTermList(new AntlrInputStream(terms), variables, out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parses a stream containing zero or more terms into a <see cref="Term"/> array.
+    /// Terms can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="terms">The stream to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed terms. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if all terms were successfully parsed, otherwise false.</returns>
+    public bool TryParseTermList(
+        Stream terms,
+        IEnumerable<VariableDeclaration> variables,
+        [MaybeNullWhen(false)] out Term[] result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseTermList(new AntlrInputStream(terms), variables, out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parse a text reader containing zero or more terms into a <see cref="Term"/> array.
+    /// Terms can be separated by a semi-colon and/or whitespace, but it is not required.
+    /// </summary>
+    /// <param name="terms">The text reader to parse.</param>
+    /// <param name="variables">
+    /// <para>
+    /// The variables that should be considered in scope while parsing.
+    /// </para>
+    /// <para>
+    /// Affects whether identifiers without trailing brackets are interpreted as variables or zero-arity functions.
+    /// </para>
+    /// </param>
+    /// <param name="result">If parsing succeeds, will be the parsed terms. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if all terms were successfully parsed, otherwise false.</returns>
+    public bool TryParseTermList(
+        TextReader terms,
+        IEnumerable<VariableDeclaration> variables,
+        [MaybeNullWhen(false)] out Term[] result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseTermList(new AntlrInputStream(terms), variables, out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parse a string containing one or more (comma-separated) variable declarations into a <see cref="VariableDeclaration"/> array.
+    /// </summary>
+    /// <param name="declarations">The string to parse.</param>
+    /// <param name="result">If parsing succeeds, will be the parsed variable declarations. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if all declarations were successfully parsed, otherwise false.</returns>
+    public bool TryParseDeclarationList(
+        string declarations,
+        [MaybeNullWhen(false)] out VariableDeclaration[] result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseDeclarationList(new AntlrInputStream(declarations), out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parse a stream containing one or more (comma-separated) variable declarations into a <see cref="VariableDeclaration"/> array.
+    /// </summary>
+    /// <param name="declarations">The stream to parse.</param>
+    /// <param name="result">If parsing succeeds, will be the parsed variable declarations. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if all declarations were successfully parsed, otherwise false.</returns>
+    public bool TryParseDeclarationList(
+        Stream declarations,
+        [MaybeNullWhen(false)] out VariableDeclaration[] result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseDeclarationList(new AntlrInputStream(declarations), out result, out errors);
+    }
+
+    /// <summary>
+    /// Attempts to parse a text reader containing one or more (comma-separated) variable declarations into a <see cref="VariableDeclaration"/> array.
+    /// </summary>
+    /// <param name="declarations">The text reader to parse.</param>
+    /// <param name="result">If parsing succeeds, will be the parsed variable declarations. If parsing fails, will be null.</param>
+    /// <param name="errors">If parsing fails, will be the details of all errors that were detected. If parsing succeeds, will be null.</param>
+    /// <returns>True if all declarations were successfully parsed, otherwise false.</returns>
+    public bool TryParseDeclarationList(
+        TextReader declarations,
+        [MaybeNullWhen(false)] out VariableDeclaration[] result,
+        [MaybeNullWhen(true)] out SyntaxError[] errors)
+    {
+        return antlrParser.TryParseDeclarationList(new AntlrInputStream(declarations), out result, out errors);
     }
 }

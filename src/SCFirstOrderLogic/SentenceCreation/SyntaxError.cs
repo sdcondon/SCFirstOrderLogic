@@ -3,7 +3,7 @@
 namespace SCFirstOrderLogic.SentenceCreation;
 
 /// <summary>
-/// Container for information about a syntax error encountered while attempting to parse 
+/// Container for information about a syntax error encountered while attempting to parse.
 /// </summary>
 /// <param name="LineNumber">The (1-based) line on which the error starts.</param>
 /// <param name="CharacterIndex">The (0-based) character index at which the error starts.</param>
