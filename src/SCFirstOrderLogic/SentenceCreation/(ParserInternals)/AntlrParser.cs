@@ -86,7 +86,7 @@ internal class AntlrParser
         result = new SentenceTransformation(options, variables)
             .Visit(MakeParser(inputStream, errorListener).singleSentence().sentence());
 
-        return HasErrors(errorListener, out errors);
+        return HasNoErrors(errorListener, out errors);
     }
 
     public bool TryParseSentenceList(
@@ -101,7 +101,7 @@ internal class AntlrParser
             .Select(s => new SentenceTransformation(options, variables).Visit(s))
             .ToArray();
 
-        return HasErrors(errorListener, out errors);
+        return HasNoErrors(errorListener, out errors);
     }
 
     public bool TryParseTerm(
@@ -115,7 +115,7 @@ internal class AntlrParser
         result = new TermTransformation(options, variables)
             .Visit(MakeParser(inputStream, errorListener).singleTerm().term());
 
-        return HasErrors(errorListener, out errors);
+        return HasNoErrors(errorListener, out errors);
     }
 
     public bool TryParseTermList(
@@ -130,7 +130,7 @@ internal class AntlrParser
             .Select(s => new TermTransformation(options, variables).Visit(s))
             .ToArray();
 
-        return HasErrors(errorListener, out errors);
+        return HasNoErrors(errorListener, out errors);
     }
 
     public bool TryParseDeclarationList(
@@ -140,11 +140,11 @@ internal class AntlrParser
     {
         var errorListener = new SyntaxErrorListener();
 
-        result = MakeParser(inputStream, errorListener).singleDeclarationList().declarationList()._elements
+        result = MakeParser(inputStream, errorListener).singleDeclarationList()._elements
             .Select(e => new VariableDeclaration(options.GetVariableOrConstantIdentifier(e.Text)))
             .ToArray();
 
-        return HasErrors(errorListener, out errors);
+        return HasNoErrors(errorListener, out errors);
     }
 
     private static FirstOrderLogicParser MakeParser(
@@ -167,7 +167,7 @@ internal class AntlrParser
         return parser;
     }
 
-    private bool HasErrors(
+    private bool HasNoErrors(
         SyntaxErrorListener syntaxErrorListener,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {

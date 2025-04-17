@@ -6,7 +6,7 @@ sentenceList: (sentences+=sentence ';'?)* EOF;
 singleTerm: term EOF;
 termList: (terms+=term ';'?)* EOF;
 
-singleDeclarationList: declarationList EOF;
+singleDeclarationList: (elements+=ID (',' elements+=ID)*)? EOF;
 
 sentence: '(' sentence ')'                                                                    # BracketedSentence
         | '[' sentence ']'                                                                    # BracketedSentence
