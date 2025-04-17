@@ -28,7 +28,7 @@ public class CNFSentence : IEquatable<CNFSentence>
     /// Initialises a new instance of the <see cref="CNFSentence"/> class from a <see cref="Sentence"/> that is a conjunction of disjunctions of literals (a literal being a predicate or a negated predicate).
     /// </summary>
     /// <param name="cnfSentence">
-    /// The sentence, in CNF but represented as a <see cref="Sentence"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a conjunction of disjunctions of literals.
+    /// The sentence, in CNF but represented as a <see cref="Sentence"/>. An <see cref="ArgumentException"/> will be thrown if it is not a conjunction of disjunctions of literals.
     /// In other words, conversion to CNF is NOT carried out by this constructor.
     /// </param>
     public CNFSentence(Sentence cnfSentence)
