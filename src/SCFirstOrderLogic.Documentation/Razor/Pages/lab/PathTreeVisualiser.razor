@@ -63,7 +63,7 @@
 <hr/>
 
 <ul class="mt-4">
-    @RenderTree(("(root node)", pathTreeRootNode))
+    @RenderTree("(root node)", pathTreeRootNode)
 </ul>
 
 @code {
@@ -86,41 +86,41 @@
         validationMessageStore = new(editContext);
     }
 
-    private RenderFragment RenderTree((string rootLabel, IPathTreeParameterNode<Term> rootNode) a)
+    private RenderFragment RenderTree(string rootLabel, IPathTreeParameterNode<Term> rootNode)
     {
         return @<li>
-            @a.rootLabel
+            @rootLabel
             <ul>
-                @foreach (var (childNodeKey, childNode) in a.rootNode.Children)
+                @foreach (var (childNodeKey, childNode) in rootNode.Children)
                 {
                     var childNodeLabel = childNodeKey switch
                     {
                         PathTreeFunctionNodeKey functionNodeKey => $"function: {functionNodeKey.Identifier} (arity {functionNodeKey.ChildElementCount})",
                         PathTreeVariableNodeKey variableNodeKey => $"variable: #{variableNodeKey.Ordinal}",
-                        _ => throw new ArgumentException(nameof(a.rootNode))
+                        _ => throw new ArgumentException(nameof(rootNode))
                     };
 
-                    @RenderTree((childNodeLabel, childNode))
+                    @RenderTree(childNodeLabel, childNode)
                 }
             </ul>
         </li>;      
     }
 
-    private RenderFragment RenderTree((string rootLabel, IPathTreeArgumentNode<Term> rootNode) a)
+    private RenderFragment RenderTree(string rootLabel, IPathTreeArgumentNode<Term> rootNode)
     {
         return @<li>
-            @a.rootLabel
+            @rootLabel
             <ul>
-                @if (a.rootNode.Children.Count > 0)
+                @if (rootNode.Children.Count > 0)
                 {
-                    for (int i = 0; i < a.rootNode.Children.Count; i++)
+                    for (int i = 0; i < rootNode.Children.Count; i++)
                     {
-                        @RenderTree(($"argument #{i}", a.rootNode.Children[i]))
+                        @RenderTree($"argument #{i}", rootNode.Children[i])
                     }
                 }
                 else
                 {
-                    foreach (var (key, value) in a.rootNode.Values)
+                    foreach (var (key, value) in rootNode.Values)
                     {
                         <li>value: @value</li>
                     }

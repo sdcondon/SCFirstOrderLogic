@@ -64,7 +64,7 @@
 <hr/>
 
 <ul class="mt-4">
-    @RenderTree(("(root node)", rootNode))
+    @RenderTree("(root node)", rootNode)
 </ul>
 
 @code {
@@ -87,21 +87,21 @@
         validationMessageStore = new(editContext);
     }
 
-    private RenderFragment RenderTree((string rootLabel, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> rootNode) a)
+    private RenderFragment RenderTree(string rootLabel, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> rootNode)
     {
         return @<li>
-            @a.rootLabel
+            @rootLabel
             <ul>
-                @if (a.rootNode.ChildrenAscending.Count() > 0)
+                @if (rootNode.ChildrenAscending.Count() > 0)
                 {
-                    foreach (var ((childFeature, childMagnitude), childNode) in a.rootNode.ChildrenAscending)
+                    foreach (var ((childFeature, childMagnitude), childNode) in rootNode.ChildrenAscending)
                     {
-                        @RenderTree(($"{childFeature}, magnitude: {childMagnitude}", childNode))
+                        @RenderTree($"{childFeature}, magnitude: {childMagnitude}", childNode)
                     }
                 }
                 else
                 {
-                    foreach (var (_, clause) in a.rootNode.KeyValuePairs)
+                    foreach (var (_, clause) in rootNode.KeyValuePairs)
                     {
                         <li>Value: @clause</li>
                     }

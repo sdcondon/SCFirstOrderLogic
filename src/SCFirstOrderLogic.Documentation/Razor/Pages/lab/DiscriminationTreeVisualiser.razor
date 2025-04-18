@@ -60,7 +60,7 @@
 <hr/>
 
 <ul class="mt-4">
-    @RenderTree(("(root node)", discriminationTreeRootNode))
+    @RenderTree("(root node)", discriminationTreeRootNode)
 </ul>
 
 @code {
@@ -83,30 +83,30 @@
         validationMessageStore = new(editContext);
     }
 
-    private RenderFragment RenderTree((string rootLabel, IDiscriminationTreeNode<Term> rootNode) a)
+    private RenderFragment RenderTree(string rootLabel, IDiscriminationTreeNode<Term> rootNode)
     {
         return @<li>
-            @a.rootLabel
+            @rootLabel
             <ul>
-                @if (a.rootNode.Children.Count > 0)
+                @if (rootNode.Children.Count > 0)
                 {
-                    foreach (var (childNodeKey, childNode) in a.rootNode.Children)
+                    foreach (var (childNodeKey, childNode) in rootNode.Children)
                     {
                         var childNodeLabel = childNodeKey switch
                         {
                             DiscriminationTreeFunctionNodeKey functionNodeKey => $"function: {functionNodeKey.Identifier} (arity {functionNodeKey.ChildElementCount})",
                             DiscriminationTreeVariableNodeKey variableNodeKey => $"variable: #{variableNodeKey.Ordinal}",
-                            _ => throw new ArgumentException(nameof(a.rootNode))
+                            _ => throw new ArgumentException(nameof(rootNode))
                         };
 
-                        @RenderTree((childNodeLabel, childNode))
+                        @RenderTree(childNodeLabel, childNode)
                     }
                 }
                 else
                 {
                     try
                     {
-                        var value = a.rootNode.Value;
+                        var value = rootNode.Value;
                         <li>value: @value</li>
                     }
                     catch
