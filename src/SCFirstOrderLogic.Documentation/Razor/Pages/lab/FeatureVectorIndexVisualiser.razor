@@ -48,7 +48,7 @@
     <DataAnnotationsValidator />
     <div class="form-group">
         <label for="featureSetSelect">Feature Set</label>
-        <InputSelect class="form-control" id="featureSetSelect" disabled="true" @bind-Value=formData.FeatureSetDescription>
+        <InputSelect class="form-control" id="featureSetSelect" disabled="@(index.Any())" @bind-Value=formData.FeatureSetDescription>
             @foreach (var key in FeatureSetOptions.Keys)
             {
                 <option>@key</option>
@@ -66,7 +66,10 @@
         <ValidationMessage For="@(() => formData.Sentence)" />
     </div>
     <div class="form-group mt-2">
-        <button type="submit" class="btn btn-primary">Add</button>
+        <button type="submit" @onclick="@(() => formData.Operation = Operations.Add)" class="btn btn-primary">Add</button>
+        <button type="submit" @onclick="@(() => formData.Operation = Operations.Remove)" class="btn btn-primary">Remove</button>
+        <button type="submit" @onclick="@(() => formData.Operation = Operations.RemoveSubsumed)" class="btn btn-primary">Repmove Subsumed</button>
+        <button type="submit" @onclick="@(() => formData.Operation = Operations.ReplaceSubsumed)" class="btn btn-primary">Replace Subsumed</button>
         <button type="button" @onclick="HandleRemoveAllClick" class="btn btn-primary">Remove All</button>
     </div>
 </EditForm>
@@ -162,7 +165,7 @@
                 return;
             }
 
-            if (index.Contains(clause))
+            if (formData.Operation == Operations.Add && index.Contains(clause))
             {
                 validationMessageStore.Add(() => formData.Sentence, "Index already contains clause");
             }
@@ -175,14 +178,31 @@
 
     private void HandleValidClauseSubmission(EditContext editContext)
     {
-        index.Add((CNFClause)editContext.Properties[nameof(formData.Sentence)]);
+        var clause = (CNFClause)editContext.Properties[nameof(formData.Sentence)];
+
+        if (formData.Operation == Operations.Add)
+        {
+            index.Add(clause);
+        }
+        else if (formData.Operation == Operations.Remove)
+        {
+            index.Remove(clause);
+        }
+        else if (formData.Operation == Operations.RemoveSubsumed)
+        {
+            index.RemoveSubsumed(clause);
+        }
+        else if (formData.Operation == Operations.ReplaceSubsumed)
+        {
+            index.TryReplaceSubsumed(clause);
+        }
+
         StateHasChanged();
     }
 
     private void HandleRemoveAllClick()
     {
-        rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
-        index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
+        (rootNode, index) = FeatureSetOptions[formData.FeatureSetDescription].Invoke();
         StateHasChanged();
     }
 
@@ -191,5 +211,14 @@
         public string FeatureSetDescription { get; set; } = featureSetDescription;
         public string Variables { get; set; } = variables;
         public string Sentence { get; set; } = sentence;
+        public Operations? Operation { get; set; }
+    }
+
+    private enum Operations
+    {
+        Add,
+        Remove,
+        RemoveSubsumed,
+        ReplaceSubsumed
     }
 }
