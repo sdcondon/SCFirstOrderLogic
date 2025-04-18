@@ -92,6 +92,9 @@
         }
     };
 
+    // TODO: make these objects then switch on runtime type when doing stuff. Or 
+    // of course change the lib so that we can have a common type. Likely a
+    // breaking change - generic type design here is a bit clumsy..
     private FeatureVectorIndexListNode<MaxDepthFeature, CNFClause> rootNode;
     private FeatureVectorIndex<MaxDepthFeature> index;
 
