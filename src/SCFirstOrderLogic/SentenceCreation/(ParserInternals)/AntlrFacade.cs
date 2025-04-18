@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace SCFirstOrderLogic.SentenceCreation;
 
-internal class AntlrParser
+internal class AntlrFacade
 {
     private readonly SentenceParserOptions options;
 
-    public AntlrParser(
+    public AntlrFacade(
         SentenceParserOptions options)
     {
         this.options = options;

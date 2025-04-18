@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.SentenceCreation;
 /// </summary>
 public class SentenceParser
 {
-    private readonly AntlrParser antlrParser;
+    private readonly AntlrFacade antlrParser;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SentenceParser"/> class.
@@ -40,6 +40,7 @@ public class SentenceParser
     /// customise this determination logic - which feels overcomplicated.
     /// </para>
     /// </param>
+    // TODO-BREAKING: remove me
     [Obsolete("This constructor will be removed - use `new SentenceParser(SentenceParserOptions)` instead.")]
     public SentenceParser(
         Func<string, object> getPredicateIdentifier,
@@ -57,6 +58,7 @@ public class SentenceParser
     /// NB: This means that the identifiers for the zero arity functions declared as `f` and as `f()` are identical.
     /// </para>
     /// </summary>
+    // TODO-BREAKING: remove me
     [Obsolete("This property will be removed - use `SentenceParser.Default` instead.")]
     public static SentenceParser BasicParser => Default;
 
