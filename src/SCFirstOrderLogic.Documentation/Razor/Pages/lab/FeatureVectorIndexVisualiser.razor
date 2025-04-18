@@ -46,7 +46,15 @@
 
 <EditForm EditContext="editContext" OnValidSubmit="HandleValidClauseSubmission" style="font-family: monospace">
     <DataAnnotationsValidator />
-    (TODO: allow choice of feature set)
+    <div class="form-group">
+        <label for="featureSetSelect">Feature Set</label>
+        <InputSelect class="form-control" id="featureSetSelect" disabled="true" @bind-Value=formData.FeatureSetDescription>
+            @foreach (var key in FeatureSetOptions.Keys)
+            {
+                <option>@key</option>
+            }
+        </InputSelect>
+    </div>
     <div class="form-group">
         <label for="variablesText">Variables (comma-separated)</label>
         <InputText class="form-control" id="variablesText" spellcheck="false" @bind-Value=formData.Variables />
@@ -70,6 +78,17 @@
 </ul>
 
 @code {
+    private static Dictionary<string, Func<(FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>, FeatureVectorIndex<MaxDepthFeature>)>> FeatureSetOptions = new()
+    {
+        ["Max Depth"] = () =>
+        {
+            var rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
+            var index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
+
+            return (rootNode, index);
+        }
+    };
+
     private FeatureVectorIndexListNode<MaxDepthFeature, CNFClause> rootNode;
     private FeatureVectorIndex<MaxDepthFeature> index;
 
@@ -80,10 +99,9 @@
 
     public FeatureVectorIndexVisualiser()
     {
-        rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
-        index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
+        (rootNode, index) = FeatureSetOptions["Max Depth"].Invoke();
 
-        formData = new FormData("u, v, w, x, y, z", string.Empty);
+        formData = new FormData("Max Depth", "u, v, w, x, y, z", string.Empty);
         editContext = new(formData);
         editContext.OnValidationRequested += HandleValidationRequest;
         validationMessageStore = new(editContext);
@@ -168,8 +186,9 @@
         StateHasChanged();
     }
 
-    private class FormData(string variables, string sentence)
+    private class FormData(string featureSetDescription, string variables, string sentence)
     {
+        public string FeatureSetDescription { get; set; } = featureSetDescription;
         public string Variables { get; set; } = variables;
         public string Sentence { get; set; } = sentence;
     }
