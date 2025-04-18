@@ -14,13 +14,13 @@ namespace SCFirstOrderLogic.SentenceCreation;
 /// </summary>
 public class SentenceParser
 {
-    private readonly AntlrFacade antlrParser;
+    private readonly AntlrFacade antlrFacade;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SentenceParser"/> class.
     /// </summary>
     /// <param name="options">Configuration options for the parser.</param>
-    public SentenceParser(SentenceParserOptions options) => antlrParser = new(options);
+    public SentenceParser(SentenceParserOptions options) => antlrFacade = new(options);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SentenceParser"/> class.
@@ -47,7 +47,7 @@ public class SentenceParser
         Func<string, object> getFunctionIdentifier,
         Func<string, object> getVariableOrConstantIdentifier)
     {
-        antlrParser = new(new(getPredicateIdentifier, getFunctionIdentifier, getVariableOrConstantIdentifier));
+        antlrFacade = new(new(getPredicateIdentifier, getFunctionIdentifier, getVariableOrConstantIdentifier));
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public class SentenceParser
     /// </summary>
     /// <param name="sentence">The string to parse.</param>
     /// <returns>The parsed <see cref="Sentence"/>.</returns>
-    public Sentence Parse(string sentence) => antlrParser.ParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>());
+    public Sentence Parse(string sentence) => antlrFacade.ParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>());
 
     /// <summary>
     /// Parses a string containing first-order logic syntax into a <see cref="Sentence"/> object.
@@ -87,14 +87,14 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>The parsed <see cref="Sentence"/>.</returns>
-    public Sentence Parse(string sentence, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentence(new AntlrInputStream(sentence), extraVariables);
+    public Sentence Parse(string sentence, IEnumerable<VariableDeclaration> extraVariables) => antlrFacade.ParseSentence(new AntlrInputStream(sentence), extraVariables);
 
     /// <summary>
     /// Parses a stream containing first-order logic syntax into a <see cref="Sentence"/> object.
     /// </summary>
     /// <param name="sentence">The stream to parse.</param>
     /// <returns>The parsed <see cref="Sentence"/>.</returns>
-    public Sentence Parse(Stream sentence) => antlrParser.ParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>());
+    public Sentence Parse(Stream sentence) => antlrFacade.ParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>());
 
     /// <summary>
     /// Parses a stream containing first-order logic syntax into a <see cref="Sentence"/> object.
@@ -109,14 +109,14 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>The parsed <see cref="Sentence"/>.</returns>
-    public Sentence Parse(Stream sentence, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentence(new AntlrInputStream(sentence), extraVariables);
+    public Sentence Parse(Stream sentence, IEnumerable<VariableDeclaration> extraVariables) => antlrFacade.ParseSentence(new AntlrInputStream(sentence), extraVariables);
 
     /// <summary>
     /// Parses a text reader containing first-order logic syntax into a <see cref="Sentence"/> object.
     /// </summary>
     /// <param name="sentence">The text reader to parse.</param>
     /// <returns>The parsed <see cref="Sentence"/>.</returns>
-    public Sentence Parse(TextReader sentence) => antlrParser.ParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>());
+    public Sentence Parse(TextReader sentence) => antlrFacade.ParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>());
 
     /// <summary>
     /// Parses a text reader containing first-order logic syntax into a <see cref="Sentence"/> object.
@@ -131,7 +131,7 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>The parsed <see cref="Sentence"/>.</returns>
-    public Sentence Parse(TextReader sentence, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentence(new AntlrInputStream(sentence), extraVariables);
+    public Sentence Parse(TextReader sentence, IEnumerable<VariableDeclaration> extraVariables) => antlrFacade.ParseSentence(new AntlrInputStream(sentence), extraVariables);
 
     /// <summary>
     /// Parses a string containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -139,7 +139,7 @@ public class SentenceParser
     /// </summary>
     /// <param name="sentences">The string to parse.</param>
     /// <returns>A new array of sentences.</returns>
-    public Sentence[] ParseList(string sentences) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>());
+    public Sentence[] ParseList(string sentences) => antlrFacade.ParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>());
 
     /// <summary>
     /// Parses a string containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -155,7 +155,7 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>A new array of sentences.</returns>
-    public Sentence[] ParseList(string sentences, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), extraVariables);
+    public Sentence[] ParseList(string sentences, IEnumerable<VariableDeclaration> extraVariables) => antlrFacade.ParseSentenceList(new AntlrInputStream(sentences), extraVariables);
 
     /// <summary>
     /// Parses a stream containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -163,7 +163,7 @@ public class SentenceParser
     /// </summary>
     /// <param name="sentences">The stream to parse.</param>
     /// <returns>A new array of sentences.</returns>
-    public Sentence[] ParseList(Stream sentences) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>());
+    public Sentence[] ParseList(Stream sentences) => antlrFacade.ParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>());
 
     /// <summary>
     /// Parses a stream containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -179,7 +179,7 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>A new array of sentences.</returns>
-    public Sentence[] ParseList(Stream sentences, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), extraVariables);
+    public Sentence[] ParseList(Stream sentences, IEnumerable<VariableDeclaration> extraVariables) => antlrFacade.ParseSentenceList(new AntlrInputStream(sentences), extraVariables);
 
     /// <summary>
     /// Parses a text reader containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -187,7 +187,7 @@ public class SentenceParser
     /// </summary>
     /// <param name="sentences">The text reader to parse.</param>
     /// <returns>A new array of sentences.</returns>
-    public Sentence[] ParseList(TextReader sentences) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>());
+    public Sentence[] ParseList(TextReader sentences) => antlrFacade.ParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>());
 
     /// <summary>
     /// Parses a text reader containing zero or more sentences into a <see cref="Sentence"/> array.
@@ -203,7 +203,7 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>A new array of sentences.</returns>
-    public Sentence[] ParseList(TextReader sentences, IEnumerable<VariableDeclaration> extraVariables) => antlrParser.ParseSentenceList(new AntlrInputStream(sentences), extraVariables);
+    public Sentence[] ParseList(TextReader sentences, IEnumerable<VariableDeclaration> extraVariables) => antlrFacade.ParseSentenceList(new AntlrInputStream(sentences), extraVariables);
 
     /// <summary>
     /// Parses a string containing first-order logic syntax into a <see cref="Term"/> object.
@@ -218,7 +218,7 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>The parsed <see cref="Term"/>.</returns>
-    public Term ParseTerm(string term, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTerm(new AntlrInputStream(term), variables);
+    public Term ParseTerm(string term, IEnumerable<VariableDeclaration> variables) => antlrFacade.ParseTerm(new AntlrInputStream(term), variables);
 
     /// <summary>
     /// Parses a stream containing first-order logic syntax into a <see cref="Term"/> object.
@@ -233,7 +233,7 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>The parsed <see cref="Term"/>.</returns>
-    public Term ParseTerm(Stream term, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTerm(new AntlrInputStream(term), variables);
+    public Term ParseTerm(Stream term, IEnumerable<VariableDeclaration> variables) => antlrFacade.ParseTerm(new AntlrInputStream(term), variables);
 
     /// <summary>
     /// Parses a text reader containing first-order logic syntax into a <see cref="Term"/> object.
@@ -248,7 +248,7 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>The parsed <see cref="Term"/>.</returns>
-    public Term ParseTerm(TextReader term, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTerm(new AntlrInputStream(term), variables);
+    public Term ParseTerm(TextReader term, IEnumerable<VariableDeclaration> variables) => antlrFacade.ParseTerm(new AntlrInputStream(term), variables);
 
     /// <summary>
     /// Parses a string containing zero or more terms into a <see cref="Term"/> array.
@@ -264,7 +264,7 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>A new array of terms.</returns>
-    public Term[] ParseTermList(string terms, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTermList(new AntlrInputStream(terms), variables);
+    public Term[] ParseTermList(string terms, IEnumerable<VariableDeclaration> variables) => antlrFacade.ParseTermList(new AntlrInputStream(terms), variables);
 
     /// <summary>
     /// Parses a stream containing zero or more terms into a <see cref="Term"/> array.
@@ -280,7 +280,7 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>A new array of terms.</returns>
-    public Term[] ParseTermList(Stream terms, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTermList(new AntlrInputStream(terms), variables);
+    public Term[] ParseTermList(Stream terms, IEnumerable<VariableDeclaration> variables) => antlrFacade.ParseTermList(new AntlrInputStream(terms), variables);
 
     /// <summary>
     /// Parses a text reader containing zero or more terms into a <see cref="Term"/> array.
@@ -296,28 +296,28 @@ public class SentenceParser
     /// </para>
     /// </param>
     /// <returns>A new array of terms.</returns>
-    public Term[] ParseTermList(TextReader terms, IEnumerable<VariableDeclaration> variables) => antlrParser.ParseTermList(new AntlrInputStream(terms), variables);
+    public Term[] ParseTermList(TextReader terms, IEnumerable<VariableDeclaration> variables) => antlrFacade.ParseTermList(new AntlrInputStream(terms), variables);
 
     /// <summary>
     /// Parses a string containing one or more (comma-separated) variable declarations into a <see cref="VariableDeclaration"/> array.
     /// </summary>
     /// <param name="declarations">The string to parse.</param>
     /// <returns>A new array of variable declarations.</returns>
-    public VariableDeclaration[] ParseDeclarationList(string declarations) => antlrParser.ParseDeclarationList(new AntlrInputStream(declarations));
+    public VariableDeclaration[] ParseDeclarationList(string declarations) => antlrFacade.ParseDeclarationList(new AntlrInputStream(declarations));
 
     /// <summary>
     /// Parses a stream containing one or more (comma-separated) variable declarations into a <see cref="VariableDeclaration"/> array.
     /// </summary>
     /// <param name="declarations">The stream to parse.</param>
     /// <returns>A new array of variable declarations.</returns>
-    public VariableDeclaration[] ParseDeclarationList(Stream declarations) => antlrParser.ParseDeclarationList(new AntlrInputStream(declarations));
+    public VariableDeclaration[] ParseDeclarationList(Stream declarations) => antlrFacade.ParseDeclarationList(new AntlrInputStream(declarations));
 
     /// <summary>
     /// Parses a text reader containing one or more (comma-separated) variable declarations into a <see cref="VariableDeclaration"/> array.
     /// </summary>
     /// <param name="declarations">The text reader to parse.</param>
     /// <returns>A new array of variable declarations.</returns>
-    public VariableDeclaration[] ParseDeclarationList(TextReader declarations) => antlrParser.ParseDeclarationList(new AntlrInputStream(declarations));
+    public VariableDeclaration[] ParseDeclarationList(TextReader declarations) => antlrFacade.ParseDeclarationList(new AntlrInputStream(declarations));
 
     /// <summary>
     /// Attempts to parse a string containing first-order logic syntax into a <see cref="Sentence"/> object.
@@ -331,7 +331,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+        return antlrFacade.TryParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
     }
 
     /// <summary>
@@ -355,7 +355,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), extraVariables, out result, out errors);
+        return antlrFacade.TryParseSentence(new AntlrInputStream(sentence), extraVariables, out result, out errors);
     }
 
     /// <summary>
@@ -370,7 +370,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+        return antlrFacade.TryParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
     }
 
     /// <summary>
@@ -394,7 +394,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), extraVariables, out result, out errors);
+        return antlrFacade.TryParseSentence(new AntlrInputStream(sentence), extraVariables, out result, out errors);
     }
 
     /// <summary>
@@ -409,7 +409,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+        return antlrFacade.TryParseSentence(new AntlrInputStream(sentence), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
     }
 
     /// <summary>
@@ -433,7 +433,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentence(new AntlrInputStream(sentence), extraVariables, out result, out errors);
+        return antlrFacade.TryParseSentence(new AntlrInputStream(sentence), extraVariables, out result, out errors);
     }
 
     /// <summary>
@@ -449,7 +449,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+        return antlrFacade.TryParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
     }
 
     /// <summary>
@@ -474,7 +474,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), extraVariables, out result, out errors);
+        return antlrFacade.TryParseSentenceList(new AntlrInputStream(sentences), extraVariables, out result, out errors);
     }
 
     /// <summary>
@@ -490,7 +490,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+        return antlrFacade.TryParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
     }
 
     /// <summary>
@@ -515,7 +515,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), extraVariables, out result, out errors);
+        return antlrFacade.TryParseSentenceList(new AntlrInputStream(sentences), extraVariables, out result, out errors);
     }
 
     /// <summary>
@@ -531,7 +531,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
+        return antlrFacade.TryParseSentenceList(new AntlrInputStream(sentences), Enumerable.Empty<VariableDeclaration>(), out result, out errors);
     }
 
     /// <summary>
@@ -556,7 +556,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Sentence[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseSentenceList(new AntlrInputStream(sentences), extraVariables, out result, out errors);
+        return antlrFacade.TryParseSentenceList(new AntlrInputStream(sentences), extraVariables, out result, out errors);
     }
 
     /// <summary>
@@ -580,7 +580,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Term result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseTerm(new AntlrInputStream(term), variables, out result, out errors);
+        return antlrFacade.TryParseTerm(new AntlrInputStream(term), variables, out result, out errors);
     }
 
     /// <summary>
@@ -604,7 +604,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Term result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseTerm(new AntlrInputStream(term), variables, out result, out errors);
+        return antlrFacade.TryParseTerm(new AntlrInputStream(term), variables, out result, out errors);
     }
 
     /// <summary>
@@ -628,7 +628,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Term result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseTerm(new AntlrInputStream(term), variables, out result, out errors);
+        return antlrFacade.TryParseTerm(new AntlrInputStream(term), variables, out result, out errors);
     }
 
     /// <summary>
@@ -653,7 +653,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Term[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseTermList(new AntlrInputStream(terms), variables, out result, out errors);
+        return antlrFacade.TryParseTermList(new AntlrInputStream(terms), variables, out result, out errors);
     }
 
     /// <summary>
@@ -678,7 +678,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Term[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseTermList(new AntlrInputStream(terms), variables, out result, out errors);
+        return antlrFacade.TryParseTermList(new AntlrInputStream(terms), variables, out result, out errors);
     }
 
     /// <summary>
@@ -703,7 +703,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out Term[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseTermList(new AntlrInputStream(terms), variables, out result, out errors);
+        return antlrFacade.TryParseTermList(new AntlrInputStream(terms), variables, out result, out errors);
     }
 
     /// <summary>
@@ -718,7 +718,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out VariableDeclaration[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseDeclarationList(new AntlrInputStream(declarations), out result, out errors);
+        return antlrFacade.TryParseDeclarationList(new AntlrInputStream(declarations), out result, out errors);
     }
 
     /// <summary>
@@ -733,7 +733,7 @@ public class SentenceParser
         [MaybeNullWhen(false)] out VariableDeclaration[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseDeclarationList(new AntlrInputStream(declarations), out result, out errors);
+        return antlrFacade.TryParseDeclarationList(new AntlrInputStream(declarations), out result, out errors);
     }
 
     /// <summary>
@@ -748,6 +748,6 @@ public class SentenceParser
         [MaybeNullWhen(false)] out VariableDeclaration[] result,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {
-        return antlrParser.TryParseDeclarationList(new AntlrInputStream(declarations), out result, out errors);
+        return antlrFacade.TryParseDeclarationList(new AntlrInputStream(declarations), out result, out errors);
     }
 }
