@@ -149,25 +149,25 @@ internal class AntlrFacade
 
     private static FirstOrderLogicParser MakeParser(
         AntlrInputStream inputStream,
-        IAntlrErrorListener<IToken> errorListener)
+        SyntaxErrorListener errorListener)
     {
         // NB: ANTLR apparently adds a listener by default that writes to the console.
         // Which is crazy default behaviour if you ask me, but never mind.
         // We remove it so that consumers of this lib don't get random messages turning up on their console.
+        // We add our own listener instead, that keeps track of errors so that we can check at the end.
         FirstOrderLogicLexer lexer = new(inputStream);
         lexer.RemoveErrorListeners();
+        lexer.AddErrorListener(errorListener);
         CommonTokenStream tokens = new(lexer);
 
-        // NB: In the parser, we add our own error listener that throws an exception.
-        // Otherwise errors would just be ignored and the method would just return null, which is obviously bad behaviour.
+        // ..and same for the parser..
         FirstOrderLogicParser parser = new(tokens);
         parser.RemoveErrorListeners();
         parser.AddErrorListener(errorListener);
-
         return parser;
     }
 
-    private bool HasNoErrors(
+    private static bool HasNoErrors(
         SyntaxErrorListener syntaxErrorListener,
         [MaybeNullWhen(true)] out SyntaxError[] errors)
     {

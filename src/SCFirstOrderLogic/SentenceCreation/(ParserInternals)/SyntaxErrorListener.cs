@@ -5,7 +5,7 @@ using System.IO;
 
 namespace SCFirstOrderLogic.SentenceCreation;
 
-internal class SyntaxErrorListener : BaseErrorListener
+internal class SyntaxErrorListener : IAntlrErrorListener<IToken>, IAntlrErrorListener<int>
 {
     private readonly List<SyntaxError> errors = new();
 
@@ -16,8 +16,13 @@ internal class SyntaxErrorListener : BaseErrorListener
 
     public IReadOnlyCollection<SyntaxError> Errors { get; }
 
-    public override void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+    public void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
     {
         errors.Add(new SyntaxError(line, charPositionInLine, offendingSymbol.Text, msg, e));
+    }
+
+    public void SyntaxError(TextWriter output, IRecognizer recognizer, int offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+    {
+        errors.Add(new SyntaxError(line, charPositionInLine, offendingSymbol.ToString(), msg, e));
     }
 }
