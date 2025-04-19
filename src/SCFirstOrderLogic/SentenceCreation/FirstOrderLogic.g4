@@ -1,33 +1,51 @@
 ﻿grammar FirstOrderLogic;
 
 singleSentence: sentence EOF;
-sentenceList: (sentences+=sentence ';'?)* EOF;
+sentenceList: (sentences+=sentence SEMICOLON?)* EOF;
 
 singleTerm: term EOF;
-termList: (terms+=term ';'?)* EOF;
+termList: (terms+=term SEMICOLON?)* EOF;
 
-singleDeclarationList: (elements+=ID (',' elements+=ID)*)? EOF;
+singleDeclarationList: (elements+=IDENTIFIER (COMMA elements+=IDENTIFIER)*)? EOF;
 
-sentence: '(' sentence ')'                                                                    # BracketedSentence
-        | '[' sentence ']'                                                                    # BracketedSentence
-        | ID '(' argumentList ')'                                                             # Predicate
-        | term '=' term                                                                       # PredicateEquality
-        | ('¬'|'!'|'not'|'NOT') sentence                                                      # Negation
-        | sentence ('∨'|'|'|'or'|'OR') sentence                                              # Disjunction
-        | sentence ('∧'|'&'|'and'|'AND') sentence                                            # Conjunction
-        | sentence ('⇒'|'->'|'=>') sentence                                                  # Implication
-        | sentence ('⇔'|'<->'|'<=>') sentence                                                # Equivalence
-        | ('∀'|'forall'|'FORALL'|'for-all'|'FOR-ALL') declarationList ',' sentence           # UniversalQuantification
-        | ('∃'|'exists'|'EXISTS'|'there-exists'|'THERE-EXISTS') declarationList ',' sentence # ExistentialQuantification
+sentence: LPAREN sentence RPAREN                   # BracketedSentence
+        | LBRACK sentence RBRACK                   # BracketedSentence
+        | IDENTIFIER LPAREN argumentList RPAREN    # Predicate
+        | term OP_EQUAL term                       # PredicateEquality
+        | OP_NOT sentence                          # Negation
+        | sentence OP_OR sentence                  # Disjunction
+        | sentence OP_AND sentence                 # Conjunction
+        | sentence OP_IMPLIES sentence             # Implication
+        | sentence OP_EQUIV sentence               # Equivalence
+        | OP_FORALL declarationList COMMA sentence # UniversalQuantification
+        | OP_EXISTS declarationList COMMA sentence # ExistentialQuantification
         ;
 
-declarationList: (elements+=ID (','? elements+=ID)*)+;
+declarationList: (elements+=IDENTIFIER (COMMA? elements+=IDENTIFIER)*)+;
 
-argumentList: (elements+=term (',' elements+=term)*)?;
+argumentList: (elements+=term (COMMA elements+=term)*)?;
 
-term: ID                       # VariableOrConstant
-    | ID '(' argumentList ')'  # Function
+term: IDENTIFIER                            # VariableOrConstant
+    | IDENTIFIER LPAREN argumentList RPAREN # Function
     ;
 
-ID: [a-zA-Z0-9_]+;
 WS: [ \r\t\n]+ -> skip;
+
+IDENTIFIER: [a-zA-Z0-9_]+;
+
+LPAREN: '(';
+RPAREN: ')';
+LBRACK: '[';
+RBRACK: ']';
+
+COMMA: ',';
+SEMICOLON: ';';
+
+OP_EQUAL: '=';
+OP_NOT: ('¬'|'!'|'not'|'NOT');
+OP_OR: ('∨'|'|'|'or'|'OR');
+OP_AND: ('∧'|'&'|'and'|'AND');
+OP_IMPLIES: ('⇒'|'->'|'=>');
+OP_EQUIV: ('⇔'|'<->'|'<=>');
+OP_FORALL: ('∀'|'forall'|'FORALL'|'for-all'|'FOR-ALL');
+OP_EXISTS: ('∃'|'exists'|'EXISTS'|'there-exists'|'THERE-EXISTS');

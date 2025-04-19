@@ -26,7 +26,7 @@ internal class SentenceTransformation : FirstOrderLogicBaseVisitor<Sentence>
     public override Sentence VisitPredicate([NotNull] FirstOrderLogicParser.PredicateContext context)
     {
         return new Predicate(
-            options.GetPredicateIdentifier(context.ID().Symbol.Text),
+            options.GetPredicateIdentifier(context.IDENTIFIER().Symbol.Text),
             context.argumentList()._elements.Select(e => termTransformation.Visit(e)));
     }
 

@@ -21,7 +21,7 @@ internal class TermTransformation : FirstOrderLogicBaseVisitor<Term>
 
     public override Term VisitVariableOrConstant([NotNull] FirstOrderLogicParser.VariableOrConstantContext context)
     {
-        var identifier = options.GetVariableOrConstantIdentifier(context.ID().Symbol.Text);
+        var identifier = options.GetVariableOrConstantIdentifier(context.IDENTIFIER().Symbol.Text);
         var matchingVariableDeclaration = variablesInScope.SingleOrDefault(v => v.Identifier.Equals(identifier));
         if (matchingVariableDeclaration != null)
         {
@@ -38,7 +38,7 @@ internal class TermTransformation : FirstOrderLogicBaseVisitor<Term>
     public override Term VisitFunction([NotNull] FirstOrderLogicParser.FunctionContext context)
     {
         return new Function(
-            options.GetFunctionIdentifier(context.ID().Symbol.Text),
+            options.GetFunctionIdentifier(context.IDENTIFIER().Symbol.Text),
             context.argumentList()._elements.Select(e => Visit(e)));
     }
 }
