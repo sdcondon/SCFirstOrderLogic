@@ -72,9 +72,7 @@ public static class SentenceParserTests
             "∀ P(x)",
             "∃ P(x)",
             "P()aaa",
-
-            // TODO*: IAntlrErrorStrategy to stop it from recovering from completely unrecognised tokens.
-            ////"A+()",
+            "A+()",
         })
         .When((ctx, tc) => SentenceParser.Default.Parse(tc))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.ToString()));
