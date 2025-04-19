@@ -23,6 +23,6 @@ internal class SyntaxErrorListener : IAntlrErrorListener<IToken>, IAntlrErrorLis
 
     public void SyntaxError(TextWriter output, IRecognizer recognizer, int offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
     {
-        errors.Add(new SyntaxError(line, charPositionInLine, offendingSymbol.ToString(), msg, e));
+        errors.Add(new SyntaxError(line, charPositionInLine, null, msg, e));
     }
 }
