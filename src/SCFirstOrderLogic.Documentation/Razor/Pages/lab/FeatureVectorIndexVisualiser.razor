@@ -76,7 +76,7 @@
 
 <hr/>
 
-<ul class="mt-4">
+<ul class="mt-4" style="list-style-type: disc">
     @RenderTree("(root node)", rootNode)
 </ul>
 
@@ -117,22 +117,24 @@
     {
         return @<li>
             @rootLabel
-            <ul>
-                @if (rootNode.ChildrenAscending.Count() > 0)
-                {
-                    foreach (var ((childFeature, childMagnitude), childNode) in rootNode.ChildrenAscending)
+            @if (rootNode.ChildrenAscending.Count() > 0)
+            {
+                <ul style="list-style-type: disc">
+                    @foreach (var ((childFeature, childMagnitude), childNode) in rootNode.ChildrenAscending)
                     {
                         @RenderTree($"{childFeature}, magnitude: {childMagnitude}", childNode)
                     }
-                }
-                else
-                {
-                    foreach (var (_, clause) in rootNode.KeyValuePairs)
+                </ul>
+            }
+            else
+            {
+                <ul style="list-style-type: square">
+                    @foreach (var (_, clause) in rootNode.KeyValuePairs)
                     {
                         <li>Value: @clause</li>
                     }
-                }
-            </ul>
+                </ul>
+            }
         </li>;
     }
 

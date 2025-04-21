@@ -64,7 +64,7 @@
 
 <hr/>
 
-<ul class="mt-4">
+<ul class="mt-4" style="list-style-type: disc">
     @RenderTree("(root node)", pathTreeRootNode)
 </ul>
 
@@ -92,7 +92,7 @@
     {
         return @<li>
             @rootLabel
-            <ul>
+            <ul style="list-style-type: circle">
                 @foreach (var (childNodeKey, childNode) in rootNode.Children)
                 {
                     var childNodeLabel = childNodeKey switch
@@ -112,22 +112,26 @@
     {
         return @<li>
             @rootLabel
-            <ul>
-                @if (rootNode.Children.Count > 0)
-                {
-                    for (int i = 0; i < rootNode.Children.Count; i++)
+
+            @if (rootNode.Children.Count > 0)
+            {
+                <ul style="list-style-type: disc">
+                    @for (int i = 0; i < rootNode.Children.Count; i++)
                     {
                         @RenderTree($"argument #{i}", rootNode.Children[i])
                     }
-                }
-                else
-                {
-                    foreach (var (key, value) in rootNode.Values)
+                </ul>
+            }
+            else
+            {
+                <ul style="list-style-type: square">
+                    @foreach (var (key, value) in rootNode.Values)
                     {
                         <li>value: @value</li>
                     }
-                }
-            </ul>
+                </ul>
+            }
+
         </li>;
     }
 

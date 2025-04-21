@@ -61,7 +61,7 @@
 
 <hr/>
 
-<ul class="mt-4">
+<ul class="mt-4" style="list-style-type: disc">
     @RenderTree("(root node)", discriminationTreeRootNode)
 </ul>
 
@@ -89,10 +89,10 @@
     {
         return @<li>
             @rootLabel
-            <ul>
-                @if (rootNode.Children.Count > 0)
-                {
-                    foreach (var (childNodeKey, childNode) in rootNode.Children)
+            @if (rootNode.Children.Count > 0)
+            {
+                <ul style="list-style-type: disc">
+                    @foreach (var (childNodeKey, childNode) in rootNode.Children)
                     {
                         var childNodeLabel = childNodeKey switch
                         {
@@ -103,20 +103,22 @@
 
                         @RenderTree(childNodeLabel, childNode)
                     }
-                }
-                else
+                </ul>
+            }
+            else
+            {
+                <ul style="list-style-type: square">
+                @try
                 {
-                    try
-                    {
-                        var value = rootNode.Value;
-                        <li>value: @value</li>
-                    }
-                    catch
-                    {
-                        // root node of empty tree is internal node that has no children
-                    }
+                    var value = rootNode.Value;
+                    <li>value: @value</li>
                 }
-            </ul>
+                catch
+                {
+                    // root node of empty tree is internal node that has no children
+                }
+                </ul>
+            }
         </li>;
     }
 
