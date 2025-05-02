@@ -17,7 +17,7 @@ termList
     ;
 
 singleDeclarationList
-    : (elements += IDENTIFIER (COMMA elements += IDENTIFIER)*)? EOF
+    : (elements+=IDENTIFIER (COMMA elements+=IDENTIFIER)*)? EOF
     ;
 
 sentence
@@ -35,7 +35,7 @@ sentence
     ;
 
 declarationList
-    : (elements += IDENTIFIER (COMMA? elements += IDENTIFIER)*)+
+    : (elements+=IDENTIFIER (COMMA? elements+=IDENTIFIER)*)+
     ;
 
 argumentList
