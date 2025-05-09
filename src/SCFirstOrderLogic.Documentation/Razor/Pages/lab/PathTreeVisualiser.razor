@@ -35,8 +35,16 @@
             </p>
             <ul>
                 <li>You can add terms to the tree by entering them into the Term text box and clicking the 'Add' button.</li>
-                <li>When parsing the term, identifiers not followed by any parentheses (to indicate a function) will be interpreted as variables if they feature in the "variables" text box. Otherwise they will be interpreted as zero-arity functions (i.e. constants).</li>
+                <li>
+                    When parsing the term, identifiers not followed by any parentheses (to indicate a function) will be interpreted as variables if they feature in the "variables" text box.
+                    Otherwise they will be interpreted as zero-arity functions (i.e. constants).
+                </li>
                 <li>Guidance for writing terms as strings can be found on the "getting started" page.</li>
+                <li>
+                    The index itself is rendered as nested bullet lists, with child nodes displayed as sublists beneath their parent.
+                    Parameter nodes (whose children represent all the arguments that have been stored for that parameter) have filled disc bullet points.
+                    Argument nodes have empty circles, and leaf values have squares.
+                </li>
                 <li>The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Razor/Pages/lab/PathTreeVisualiser.razor">here</a>.</li>
             </ul>
         </ModalBody>
@@ -96,9 +104,9 @@
                 {
                     var childNodeLabel = childNodeKey switch
                     {
-                        PathTreeFunctionNodeKey functionNodeKey => $"function: {functionNodeKey.Identifier} (arity {functionNodeKey.ChildElementCount})",
-                        PathTreeVariableNodeKey variableNodeKey => $"variable: #{variableNodeKey.Ordinal}",
-                        _ => throw new ArgumentException(nameof(rootNode))
+                        PathTreeFunctionNodeKey functionNodeKey => $"function '{functionNodeKey.Identifier}' (arity {functionNodeKey.ChildElementCount})",
+                        PathTreeVariableNodeKey variableNodeKey => $"variable #{variableNodeKey.Ordinal}",
+                        _ => "(unrecognised node key type!)"
                     };
 
                     @RenderTree(childNodeLabel, childNode)
@@ -117,7 +125,7 @@
                 <ul style="list-style-type: disc">
                     @for (int i = 0; i < rootNode.Children.Count; i++)
                     {
-                        @RenderTree($"argument #{i}", rootNode.Children[i])
+                        @RenderTree($"parameter #{i}", rootNode.Children[i])
                     }
                 </ul>
             }
@@ -126,7 +134,7 @@
                 <ul style="list-style-type: square">
                     @foreach (var (key, value) in rootNode.Values)
                     {
-                        <li>value: @value</li>
+                        <li><i>Value:</i> @value</li>
                     }
                 </ul>
             }
