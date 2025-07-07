@@ -4,6 +4,7 @@ namespace SCFirstOrderLogic.SentenceCreation.Specialised;
 
 /// <summary>
 /// <para>
+/// Specialised sentence factory intended for use with very simple generic domains, such as those found in tests and basic examples.
 /// Identical to <see cref="OperableSentenceFactory"/>, except that the A-Z variable declaration properties are replaced by:
 /// </para>
 /// <list type="bullet">
@@ -12,9 +13,6 @@ namespace SCFirstOrderLogic.SentenceCreation.Specialised;
 /// <item>Methods 'F', 'G', 'H' &amp; 'I': functions (with an arbitrary number of args, via a Term[]-valued params parameter)</item>
 /// <item>Methods 'P', 'Q', 'R' &amp; 'S': predicates (with an arbitrary number of args, via a Term[]-valued params parameter)</item>
 /// </list>
-/// <para>
-/// Intended for use with very simple generic domains, such as those found in tests and basic examples.
-/// </para>
 /// </summary>
 public static class GenericDomainOperableSentenceFactory
 {
