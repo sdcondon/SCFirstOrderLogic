@@ -24,7 +24,7 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 // TODO-BREAKING: Support for cancellation.
 // TODO-PERFORMANCE: at least on the read side, consider processing nodes in parallel.
 // what are some best practices here (esp re consumers/node implementers being able to control DoP)?
-// e.g allow consumers to pass a scheduler? allow nodes to specify a scheduler? or just expect caller to manage via appropriate context?
+// e.g allow consumers to pass a scheduler? allow nodes to specify a scheduler? or just expect caller to manage via sync context?
 public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyValuePair<CNFClause, TValue>>
     where TFeature : notnull
 {

@@ -28,7 +28,7 @@
             </p>
             <p>
                 Feature vector indices (in this context, at least) are an indexing structure for CNF clauses that enable quick lookup of stored clauses that subsume or are subsumed by a query term.
-                The general idea is that for each stored clause and query clause, we calculate a set of "features" (essentially, metrics) that will always have a greater or equal value for subsumed clauses.
+                The general idea is that for each stored clause and query clause, we calculate a set of "features" (a feature being some non-negative integer value computed from the clause) that will always have a greater or equal value for subsumed clauses.
             </p>
             <p>
                 Note that:
