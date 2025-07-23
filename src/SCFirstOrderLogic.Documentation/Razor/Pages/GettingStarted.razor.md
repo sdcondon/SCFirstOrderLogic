@@ -33,9 +33,9 @@ Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantific
 Notice that:
 
 * This is very "simple" in that it involves nothing other than the sentence types themselves, but is obviously far too verbose to be workable in most scenarios. Hence the alternatives below.
-* There's a `VariableDeclaration` class - it is worth examining the class summary docs for this one. To quickly summarise, we have a `VariableReference` class (which appears in sentence trees -
-  it's a subtype of a `Term` class), and a `VariableDeclaration` class (which is NOT a subtype of `Term` - it appears only in `VariableReference` and quantifications).
-  `VariableDeclaration`s are however implicitly convertible to `VariableReference`s that refer to them (note that we utilise this in the example above), to aid with succinct sentence creation.
+* There's a `VariableDeclaration` class. One of the first things to notice about the sentence model is that we have two classes for variables. First, we have a `VariableReference` class, 
+  which appears in sentence trees - it's a subtype of a `Term` class. We also have a `VariableDeclaration` class, which is NOT a subtype of `Term` - it appears only as a property of quantifications
+  and `VariableReference`s. `VariableDeclaration`s are however implicitly convertible to `VariableReference`s that refer to them (note that we utilise this in the example above), to aid with succinct sentence creation.
 
 ### Writing Sentences as Code - with SentenceFactory
 
