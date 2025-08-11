@@ -10,8 +10,8 @@ namespace SCFirstOrderLogic.SentenceCreation.Specialised;
 /// <list type="bullet">
 /// <item>Properties 'A', 'B', 'C' &amp; 'D': zero-arity functions (i.e. constants)</item>
 /// <item>Properties 'U', 'V', 'W', 'X', 'Y' &amp; 'Z': variable declarations</item>
-/// <item>Methods 'F', 'G', 'H' &amp; 'I': functions (with an arbitrary number of args, via a Term[]-valued params parameter)</item>
-/// <item>Methods 'P', 'Q', 'R' &amp; 'S': predicates (with an arbitrary number of args, via a Term[]-valued params parameter)</item>
+/// <item>Methods 'F', 'G', 'H' &amp; 'I': functions (with arbitrary arity, via a Term[]-valued params parameter)</item>
+/// <item>Methods 'P', 'Q', 'R' &amp; 'S': predicates (with arbitrary arity, via a Term[]-valued params parameter)</item>
 /// </list>
 /// </summary>
 public static class GenericDomainOperableSentenceFactory

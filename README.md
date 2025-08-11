@@ -7,15 +7,15 @@
 [![Commits since latest release](https://img.shields.io/github/commits-since/sdcondon/SCFirstOrderLogic/latest?style=flat-square)](https://github.com/sdcondon/SCFirstOrderLogic/compare/latest-release...main)
 
 This repository contains the source code for the SCFirstOrderLogic NuGet package - along with its tests, performance benchmarks, and documentation website.
-It also contains some example domains and alternative algorithm implementations, which are used in the tests and performance benchmarks. 
+It also contains some test problems and alternative algorithm implementations, which are used in the tests and performance benchmarks. 
 
 ## Package Documentation
 
-For documentation of the NuGet package, see https://sdcondon.net/SCFirstOrderLogic/.
+For documentation on using the NuGet package, see https://sdcondon.net/SCFirstOrderLogic/.
 
 ## Source Documentation
 
-I have not written up any documentation of the source (e.g. repo summary, design discussion, build guidance) - and likely won't unless someone else expresses an interest in contributing.
+I have not written up any documentation of the source (e.g. repo overview, build guidance, contribution guidelines) - and likely won't unless someone else expresses an interest in contributing.
 
 Having said that, once cloned it should "just work" as far as compilation is concerned.
 The only thing perhaps worthy of note is that it uses [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks) to invoke [ANTLR](https://www.antlr.org/) to generate the FoL-parsing code.
