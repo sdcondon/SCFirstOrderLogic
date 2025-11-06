@@ -13,16 +13,24 @@ namespace SCFirstOrderLogic.Inference;
 public abstract class SteppableQuery<TStepResult> : IQuery
 {
     private int executeCount = 0;
+    private bool? result = null;
 
-    // TODO-BREAKING: No real point in making this or Result abstract - only one kind of
-    // implementation makes much sense - e.g. IsComplete returns if result (nullable bool)
-    // has a value. Result throws InvalidOperationEx if not complete. Add protected
-    // SetResult(bool) method.
-    /// <inheritdoc />
-    public abstract bool IsComplete { get; }
+    /// <inheritdoc/>
+    public bool IsComplete => result.HasValue;
 
-    /// <inheritdoc />
-    public abstract bool Result { get; }
+    /// <inheritdoc/>
+    public bool Result
+    {
+        get
+        {
+            if (!result.HasValue)
+            {
+                throw new InvalidOperationException("Query is not yet complete");
+            }
+
+            return result.Value;
+        }
+    }
 
     /// <summary>
     /// <para>
@@ -63,5 +71,14 @@ public abstract class SteppableQuery<TStepResult> : IQuery
 
     /// <inheritdoc />
     public abstract void Dispose();
+
+    /// <summary>
+    /// Sets the result of the query and marks it as complete.
+    /// </summary>
+    /// <param name="result">The result of the query.</param>
+    protected void SetResult(bool result)
+    {
+        this.result = result;
+    }
 }
 

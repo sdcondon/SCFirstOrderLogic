@@ -175,8 +175,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     /// <param name="key">The clause to retrieve the associated value of.</param>
     /// <param name="value">Will be populated with the retrieved value.</param>
     /// <returns>True if and only if a value was successfully retrieved.</returns>
-    // TODO-BREAKING: Should probably be called TryGetValue, for consistency with IDictionary
-    public bool TryGet(CNFClause key, [MaybeNullWhen(false)] out TValue value)
+    public bool TryGetValue(CNFClause key, [MaybeNullWhen(false)] out TValue value)
     {
         ArgumentNullException.ThrowIfNull(key);
 

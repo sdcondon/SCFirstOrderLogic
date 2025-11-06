@@ -98,7 +98,7 @@ public class FeatureVectorIndex<TFeature> : IEnumerable<CNFClause>
     /// </summary>
     /// <param name="key">The clause to check for.</param>
     /// <returns>True if and only if the clause is present in the index.</returns>
-    public bool Contains(CNFClause key) => innerIndex.TryGet(key, out _);
+    public bool Contains(CNFClause key) => innerIndex.TryGetValue(key, out _);
 
     /// <summary>
     /// Returns an enumerable of each stored clause that subsumes a given clause.

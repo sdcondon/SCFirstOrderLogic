@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using Antlr4.Runtime;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -21,46 +20,6 @@ public class SentenceParser
     /// </summary>
     /// <param name="options">Configuration options for the parser.</param>
     public SentenceParser(SentenceParserOptions options) => antlrFacade = new(options);
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SentenceParser"/> class.
-    /// </summary>
-    /// <param name="getPredicateIdentifier">A delegate to retrieve the identifier for a predicate, given its symbol text.</param>
-    /// <param name="getFunctionIdentifier">A delegate to retrieve the identifier for a function, given its symbol text.</param>
-    /// <param name="getVariableOrConstantIdentifier">
-    /// <para>
-    /// A delegate to retrieve the identifier for a variable reference or a constant, given its symbol text.
-    /// </para>
-    /// <para>
-    /// These are combined because we check whether the returned value is among the identifiers of variables
-    /// that are in scope in order to determine whether something is a variable reference or a zero arity function
-    /// without parentheses. If they were separate, you'd end up in the awkward situation where you'd have to bear
-    /// in mind that "getVariableIdentifier" actually gets called for things that are zero arity functions, and for
-    /// zero arity functions two "gets" would end up being performed. Or of course we could offer the ability to 
-    /// customise this determination logic - which feels overcomplicated.
-    /// </para>
-    /// </param>
-    // TODO-BREAKING: remove me
-    [Obsolete("This constructor will be removed - use `new SentenceParser(SentenceParserOptions)` instead.")]
-    public SentenceParser(
-        Func<string, object> getPredicateIdentifier,
-        Func<string, object> getFunctionIdentifier,
-        Func<string, object> getVariableOrConstantIdentifier)
-    {
-        antlrFacade = new(new(getPredicateIdentifier, getFunctionIdentifier, getVariableOrConstantIdentifier));
-    }
-
-    /// <summary>
-    /// <para>
-    /// Retrieves an instance of a parser that just uses the symbol text as the identifier for returned predicates, functions, and variables.
-    /// </para>
-    /// <para>
-    /// NB: This means that the identifiers for the zero arity functions declared as `f` and as `f()` are identical.
-    /// </para>
-    /// </summary>
-    // TODO-BREAKING: remove me
-    [Obsolete("This property will be removed - use `SentenceParser.Default` instead.")]
-    public static SentenceParser BasicParser => Default;
 
     /// <summary>
     /// Gets an instance of the <see cref="SentenceParser"/> class that uses <see cref="SentenceParserOptions.Default"/>.

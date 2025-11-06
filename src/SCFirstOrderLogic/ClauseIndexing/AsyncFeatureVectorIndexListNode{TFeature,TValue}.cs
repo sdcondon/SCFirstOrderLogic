@@ -25,7 +25,7 @@ public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVe
     where TFeature : notnull
 {
     private readonly SortedList<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>> childrenByVectorComponent;
-    private readonly Dictionary<CNFClause, TValue> valuesByKey = new(new VariableIdIgnorantEqualityComparer());
+    private readonly Dictionary<CNFClause, TValue> valuesByKey = new(new VariableIdAgnosticEqualityComparer());
 
     /// <summary>
     /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexListNode{TFeature, TValue}"/> class that

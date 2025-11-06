@@ -4,7 +4,7 @@ using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperabl
 
 namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
 
-public class VariableIdIgnorantEqualityComparerTests
+public class VariableIdAgnosticEqualityComparerTests
 {
     public static Test EqualityBehaviour_Positive => TestThat
         .GivenEachOf<EqualityTestCase>(() =>
@@ -27,7 +27,7 @@ public class VariableIdIgnorantEqualityComparerTests
         ])
         .When(tc =>
         {
-            var comparer = new VariableIdIgnorantEqualityComparer();
+            var comparer = new VariableIdAgnosticEqualityComparer();
             return (
                 XEqualsY: comparer.Equals(tc.X, tc.Y),
                 YEqualsX: comparer.Equals(tc.Y, tc.X),
@@ -83,7 +83,7 @@ public class VariableIdIgnorantEqualityComparerTests
         ])
         .When(tc =>
         {
-            var comparer = new VariableIdIgnorantEqualityComparer();
+            var comparer = new VariableIdAgnosticEqualityComparer();
             return (XEqualsY: comparer.Equals(tc.X, tc.Y), YEqualsX: comparer.Equals(tc.Y, tc.X));
         })
         .ThenReturns()

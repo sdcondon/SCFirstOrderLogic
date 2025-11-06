@@ -35,7 +35,7 @@ public static class SubsumptionFacts
     public static IEnumerable<CNFClause> AllNonEmptyClauses => All
         .SelectMany(f => new[] { f.X, f.Y })
         .Except([CNFClause.Empty])
-        .Distinct(new VariableIdIgnorantEqualityComparer());
+        .Distinct(new VariableIdAgnosticEqualityComparer());
 
     /// <summary>
     /// Given a clause that appears in at least one of the facts in <see cref="All"/>, gets the  (distinct, accounting
@@ -56,7 +56,7 @@ public static class SubsumptionFacts
         return xClauses
             .Concat(yClauses)
             .Except([CNFClause.Empty])
-            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .Distinct(new VariableIdAgnosticEqualityComparer())
             .ToArray();
     }
 
@@ -79,7 +79,7 @@ public static class SubsumptionFacts
         return xClauses
             .Concat(yClauses)
             .Except([CNFClause.Empty])
-            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .Distinct(new VariableIdAgnosticEqualityComparer())
             .ToArray();
     }
 
@@ -102,7 +102,7 @@ public static class SubsumptionFacts
         return xClauses
             .Concat(yClauses)
             .Except([CNFClause.Empty])
-            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .Distinct(new VariableIdAgnosticEqualityComparer())
             .ToArray();
     }
 
@@ -125,7 +125,7 @@ public static class SubsumptionFacts
         return xClauses
             .Concat(yClauses)
             .Except([CNFClause.Empty])
-            .Distinct(new VariableIdIgnorantEqualityComparer())
+            .Distinct(new VariableIdAgnosticEqualityComparer())
             .ToArray();
     }
 }

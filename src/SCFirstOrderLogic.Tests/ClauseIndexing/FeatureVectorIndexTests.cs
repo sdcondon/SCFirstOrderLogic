@@ -107,7 +107,7 @@ public static class FeatureVectorIndexTests
         {
             var content = Enumerable.Range(0, 100)
                 .Select(i => CNFClauseHelper.MakeRandomClause())
-                .Distinct(new VariableIdIgnorantEqualityComparer())
+                .Distinct(new VariableIdAgnosticEqualityComparer())
                 .ToArray();
 
             var index = MakeOccurenceCountFVI(content);
@@ -126,7 +126,7 @@ public static class FeatureVectorIndexTests
         {
             var content = Enumerable.Range(0, 100)
                 .Select(i => CNFClauseHelper.MakeRandomClause())
-                .Distinct(new VariableIdIgnorantEqualityComparer())
+                .Distinct(new VariableIdAgnosticEqualityComparer())
                 .ToArray();
 
             var index = MakeOccurenceCountFVI(content);
