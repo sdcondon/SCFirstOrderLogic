@@ -2,7 +2,7 @@
 using FlUnit;
 using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
 
 public class VariableIdAgnosticEqualityComparerTests
 {

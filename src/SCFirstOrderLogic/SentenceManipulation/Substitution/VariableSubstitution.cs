@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
 
 /// <summary>
 /// Sentence transformation class that makes some substitutions for <see cref="VariableReference"/> instances.

@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
 
 /// <summary>
 /// Useful extension methods for variable manipulation and inspection.

@@ -1,4 +1,4 @@
-﻿using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+﻿using SCFirstOrderLogic.SentenceManipulation.Substitution;
 using System.Collections.Generic;
 using System.Linq;
 using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;

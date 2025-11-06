@@ -1,6 +1,6 @@
 ﻿using SCFirstOrderLogic.Documentation.Types;
 using SCFirstOrderLogic.SentenceManipulation.Normalisation;
-using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Substitution;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 

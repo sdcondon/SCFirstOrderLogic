@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 
-namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
 
 [MemoryDiagnoser]
 [InProcess]

@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using SCFirstOrderLogic.ClauseIndexing.Features;
-using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+using SCFirstOrderLogic.SentenceManipulation.Substitution;
 using SCFirstOrderLogic.TestData;
 using SCFirstOrderLogic.TestUtilities;
 using System;

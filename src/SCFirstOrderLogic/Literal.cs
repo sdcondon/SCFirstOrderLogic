@@ -65,7 +65,6 @@ public sealed class Literal : IEquatable<Literal>
     /// <summary>
     /// Gets a value indicating whether this literal is a negation of the underlying atomic sentence.
     /// </summary>
-    // TODO-BREAKING: IsNegative? Consistency in naming..
     public bool IsNegated { get; }
 
     /// <summary>

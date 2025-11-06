@@ -2,7 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
 
 /// <summary>
 /// A <see cref="VariableSubstitution"/> that can be modified in-place.

@@ -3,61 +3,44 @@ using FlUnit;
 using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
 
-public class UnifierTests
+public class InstanceUnifierTests
 {
     public static Test TryCreateFromPredicates_Positive => TestThat
         .GivenEachOf<TryCreatePositiveTestCase<Predicate>>(() =>
         [
             new (
-                Input1: P(C, X),
-                Input2: P(C, D),
+                Generalisation: P(C, X),
+                Instance: P(C, D),
                 ExpectedBindings: new()
                 {
                     [X] = D,
                 }),
 
             new (
-                Input1: P(C, X),
-                Input2: P(Y, D),
-                ExpectedBindings: new()
-                {
-                    [X] = D,
-                    [Y] = C,
-                }),
-
-            new (
-                Input1: P(C, X),
-                Input2: P(Y, F(Y)),
+                Generalisation: P(C, X),
+                Instance: P(C, F(Y)),
                 ExpectedBindings: new()
                 {
                     [X] = F(Y),
-                    [Y] = C,
                 }),
 
-            new ( // vars matched to vars
-                Input1: P(X, X),
-                Input2: P(Y, C),
+            // NB: at the time of writing this will cause infinite recursion if actually applied - since there's no loop protection.
+            // Need to decide whether I'd prefer to leverage loop protection, or add an occurs check (and thus require standardisation
+            // where needed to use it). In the meantime, this is why the type is internal.
+            new (
+                Generalisation: P(C, X),
+                Instance: P(C, F(X)),
                 ExpectedBindings: new()
                 {
-                    [X] = Y,
-                    [Y] = C,
-                }),
-
-            new ( // vars matched to vars
-                Input1: P(Y, C),
-                Input2: P(X, X),
-                ExpectedBindings: new()
-                {
-                    [X] = C,
-                    [Y] = X,
+                    [X] = F(X),
                 }),
         ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
-            result.returnValue = Unifier.TryCreate(tc.Input1, tc.Input2, out result.unifier);
+            result.returnValue = InstanceUnifier.TryCreate(tc.Generalisation, tc.Instance, out result.unifier);
             return result;
         })
         .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
@@ -67,21 +50,33 @@ public class UnifierTests
         .GivenEachOf<TryCreateNegativeTestCase<Predicate>>(() =>
         [
             new (
-                Input1: P(C, X),
-                Input2: P(X, D)),
+                Generalisation: P(C, X),
+                Instance: P(X, D)),
 
-            new ( // trivial occurs check faiure
-                Input1: P(C, X),
-                Input2: P(C, F(X))),
+            new (
+                Generalisation: P(C, X),
+                Instance: P(Y, D)),
 
-            new ( // non-trivial occurs check failure
-                Input1: P(X, F(X)),
-                Input2: P(G(Y), Y)),
+            new (
+                Generalisation: P(C, X),
+                Instance: P(Y, F(Y))),
+
+            new (
+                Generalisation: P(X, F(X)),
+                Instance: P(G(Y), Y)),
+
+            new ( // vars matched to vars
+                Generalisation: P(X, X),
+                Instance: P(Y, C)),
+
+            new ( // vars matched to vars
+                Generalisation: P(Y, C),
+                Instance: P(X, X)),
         ])
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
-            result.returnValue = Unifier.TryCreate(tc.Input1, tc.Input2, out result.unifier);
+            result.returnValue = InstanceUnifier.TryCreate(tc.Generalisation, tc.Instance, out result.unifier);
             return result;
         })
         .ThenReturns((_, r) => r.returnValue.Should().BeFalse())
@@ -91,8 +86,8 @@ public class UnifierTests
         .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
         [
             new (
-                Input1: P(X, Y),
-                Input2: P(C, D),
+                Generalisation: P(X, Y),
+                Instance: P(C, D),
                 InitialBindings: new()
                 {
                     [X] = C,
@@ -104,8 +99,8 @@ public class UnifierTests
                 }),
 
             new (
-                Input1: P(X, Y),
-                Input2: P(C, D),
+                Generalisation: P(X, Y),
+                Instance: P(C, D),
                 InitialBindings: new()
                 {
                     [Y] = D,
@@ -117,8 +112,8 @@ public class UnifierTests
                 }),
 
             new (
-                Input1: P(X, Y),
-                Input2: P(A, B),
+                Generalisation: P(X, Y),
+                Instance: P(A, B),
                 InitialBindings: new()
                 {
                     [X] = A,
@@ -134,7 +129,7 @@ public class UnifierTests
         {
             (bool returnValue, VariableSubstitution? unifier) result;
             result.unifier = new(tc.InitialBindings);
-            result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, new(tc.InitialBindings), out result.unifier);
+            result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, new(tc.InitialBindings), out result.unifier);
             return result;
         })
         .ThenReturns()
@@ -145,16 +140,16 @@ public class UnifierTests
         .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
         [
             new (
-                Input1: P(X, Y),
-                Input2: P(C, D),
+                Generalisation: P(X, Y),
+                Instance: P(C, D),
                 InitialBindings: new()
                 {
                     [Y] = C,
                 }),
 
             new (
-                Input1: P(X, Y),
-                Input2: P(C, D),
+                Generalisation: P(X, Y),
+                Instance: P(C, D),
                 InitialBindings: new()
                 {
                     [X] = D,
@@ -164,7 +159,7 @@ public class UnifierTests
         {
             (bool returnValue, VariableSubstitution? unifier) result;
             result.unifier = new(tc.InitialBindings);
-            result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, new(tc.InitialBindings), out result.unifier);
+            result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, new(tc.InitialBindings), out result.unifier);
             return result;
         })
         .ThenReturns()
@@ -172,72 +167,72 @@ public class UnifierTests
         .And((_, r) => r.unifier.Should().BeNull());
 
     public static Test TryUpdateRefFromPredicates_Positive => TestThat
-    .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
-    [
-        new (
-            Input1: P(X, Y),
-            Input2: P(C, D),
-            InitialBindings: new()
-            {
-                [X] = C,
-            },
-            ExpectedBindings: new()
-            {
-                [X] = C,
-                [Y] = D,
-            }),
+        .GivenEachOf<TryUpdatePositiveTestCase<Predicate>>(() =>
+        [
+            new (
+                Generalisation: P(X, Y),
+                Instance: P(C, D),
+                InitialBindings: new()
+                {
+                    [X] = C,
+                },
+                ExpectedBindings: new()
+                {
+                    [X] = C,
+                    [Y] = D,
+                }),
 
-        new (
-            Input1: P(X, Y),
-            Input2: P(C, D),
-            InitialBindings: new()
-            {
-                [Y] = D,
-            },
-            ExpectedBindings: new()
-            {
-                [X] = C,
-                [Y] = D,
-            }),
+            new (
+                Generalisation: P(X, Y),
+                Instance: P(C, D),
+                InitialBindings: new()
+                {
+                    [Y] = D,
+                },
+                ExpectedBindings: new()
+                {
+                    [X] = C,
+                    [Y] = D,
+                }),
 
-        new (
-            Input1: P(X, Y),
-            Input2: P(A, B),
-            InitialBindings: new()
-            {
-                [X] = A,
-                [Y] = B,
-            },
-            ExpectedBindings: new()
-            {
-                [X] = A,
-                [Y] = B,
-            }),
-    ])
-    .When(tc =>
-    {
-        (bool returnValue, VariableSubstitution unifier) result;
-        result.unifier = new(tc.InitialBindings);
-        result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, ref result.unifier);
-        return result;
-    })
-    .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
-    .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedBindings));
+            new (
+                Generalisation: P(X, Y),
+                Instance: P(A, B),
+                InitialBindings: new()
+                {
+                    [X] = A,
+                    [Y] = B,
+                },
+                ExpectedBindings: new()
+                {
+                    [X] = A,
+                    [Y] = B,
+                }),
+        ])
+        .When(tc =>
+        {
+            (bool returnValue, VariableSubstitution unifier) result;
+            result.unifier = new(tc.InitialBindings);
+            result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, ref result.unifier);
+            return result;
+        })
+        .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
+        .And((tc, r) => r.unifier.Bindings.Should().Equal(tc.ExpectedBindings));
 
     public static Test TryUpdateRefFromPredicates_Negative => TestThat
         .GivenEachOf<TryUpdateNegativeTestCase<Predicate>>(() =>
         [
             new (
-                Input1: P(X, Y),
-                Input2: P(C, D),
+                Generalisation: P(X, Y),
+                Instance: P(C, D),
                 InitialBindings: new()
                 {
                     [Y] = C,
                 }),
 
             new (
-                Input1: P(X, Y),
-                Input2: P(C, D),
+                Generalisation: P(X, Y),
+                Instance: P(C, D),
                 InitialBindings: new()
                 {
                     [X] = D,
@@ -247,7 +242,7 @@ public class UnifierTests
         {
             (bool returnValue, VariableSubstitution unifier) result;
             result.unifier = new(tc.InitialBindings);
-            result.returnValue = Unifier.TryUpdate(tc.Input1, tc.Input2, ref result.unifier);
+            result.returnValue = InstanceUnifier.TryUpdate(tc.Generalisation, tc.Instance, ref result.unifier);
             return result;
         })
         .ThenReturns()
@@ -258,8 +253,8 @@ public class UnifierTests
         .GivenEachOf<TryCreatePositiveTestCase<Term>>(() =>
         [
             new (
-                Input1: X,
-                Input2: F(C),
+                Generalisation: X,
+                Instance: F(C),
                 ExpectedBindings: new()
                 {
                     [X] = F(C),
@@ -268,29 +263,29 @@ public class UnifierTests
         .When(tc =>
         {
             (bool returnValue, VariableSubstitution? unifier) result;
-            result.returnValue = Unifier.TryCreate(tc.Input1, tc.Input2, out result.unifier);
+            result.returnValue = Unifier.TryCreate(tc.Generalisation, tc.Instance, out result.unifier);
             return result;
         })
         .ThenReturns((_, r) => r.returnValue.Should().BeTrue())
         .And((tc, r) => r.unifier!.Bindings.Should().Equal(tc.ExpectedBindings));
 
     private record TryCreatePositiveTestCase<T>(
-        T Input1,
-        T Input2,
+        T Generalisation,
+        T Instance,
         Dictionary<VariableReference, Term> ExpectedBindings);
 
     private record TryCreateNegativeTestCase<T>(
-        T Input1,
-        T Input2);
+        T Generalisation,
+        T Instance);
 
     private record TryUpdatePositiveTestCase<T>(
-        T Input1,
-        T Input2,
+        T Generalisation,
+        T Instance,
         Dictionary<VariableReference, Term> InitialBindings,
         Dictionary<VariableReference, Term> ExpectedBindings);
 
     private record TryUpdateNegativeTestCase<T>(
-        T Input1,
-        T Input2,
+        T Generalisation,
+        T Instance,
         Dictionary<VariableReference, Term> InitialBindings);
 }

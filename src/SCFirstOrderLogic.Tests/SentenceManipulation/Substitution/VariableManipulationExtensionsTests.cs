@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
 
 public static class VariableManipulationExtensionsTests
 {
