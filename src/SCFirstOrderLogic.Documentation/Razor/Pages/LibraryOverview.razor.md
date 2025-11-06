@@ -11,10 +11,9 @@ Here is a quick overview of the namespaces found within the SCFirstOrderLogic li
   * **`Inference`:** intended as the top-level namespace for actual inference algorithms. Contains `IKnowledgeBase`, an interface for knowledge bases (stores of knowledge that callers can `Tell` and `Ask` things).
     No implementations are included in the core library.
   * **`LanguageIntegration`:** contains classes to create FoL sentences from LINQ expressions (i.e. allowing sentences to be provided as lambda expressions).
-    See [here](beyond-getting-started/language-integration.md) for details.
   * **`SentenceCreation`:** logic to ease the creation of sentences (which the `LanguageIntegration` classes - see above - serve as an alternative to).
   * **`SentenceFormatting`:** logic for creating string representations of sentences. Includes logic for ensuring unique labelling of e.g. standardised variables and Skolem functions across a set of sentences.
-  * **`SentenceManipulation`:** Contains some interfaces and base classes for the manipulation of sentences - sentence visitors and transformations.
+  * **`SentenceManipulation`:** contains some interfaces and base classes for the manipulation of sentences - sentence visitors and transformations.
     * **`Normalisation`:** sentence manipulation & interrogation logic related to normalisation. For example; transformation to CNF, and restandardisation of variables in a sentence already in CNF.
     * **`VariableManipulation`:** sentence manipulation & interrogation logic for working with variables. For example; a variable substitution representation, as well as logic for identifying generalisations, instances, unifications, subsumed clauses etc.
   * **`TermIndexing`:** term indexing data structures, for fast lookup of generalisations and instances of query terms. 
