@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
 /// <summary>
 /// Useful extension methods for variable manipulation and inspection.
 /// </summary>
-public static class VariableManipulationExtensions
+public static class SubstitutionExtensions
 {
     /// <summary>
     /// <para>

@@ -81,4 +81,3 @@ public abstract class SteppableQuery<TStepResult> : IQuery
         this.result = result;
     }
 }
-

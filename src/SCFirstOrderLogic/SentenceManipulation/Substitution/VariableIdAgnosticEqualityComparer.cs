@@ -14,7 +14,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
 /// </para>
 /// <para>
 /// NB: of course, such comparison is costly in terms of performance. When an unambiguous ordering of literals
-/// can be established, instead consider prior transformation via <see cref="VariableManipulationExtensions.Ordinalise(Literal)"/>,
+/// can be established, instead consider prior transformation via <see cref="SubstitutionExtensions.Ordinalise(Literal)"/>,
 /// followed by equality comparison using <see cref="object.Equals(object?)"/>.
 /// </para>
 /// </summary>
