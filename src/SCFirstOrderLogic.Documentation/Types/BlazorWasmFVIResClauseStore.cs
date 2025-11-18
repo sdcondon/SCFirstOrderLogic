@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.ClauseIndexing;
+using SCFirstOrderLogic.Documentation.Types;
 using System.Runtime.CompilerServices;
 
 namespace SCFirstOrderLogic.Inference.Basic.Resolution;
@@ -43,7 +44,7 @@ public class BlazorWasmFVIResClauseStore<TFeature> : IKnowledgeBaseClauseStore
     /// <inheritdoc />
     public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
     {
-        await Task.Delay(1, cancellationToken);
+        await PeriodicYielder.PerhapsYield(cancellationToken);
 
         await foreach(var clause in featureVectorIndex.WithCancellation(cancellationToken))
         {
@@ -99,7 +100,7 @@ public class BlazorWasmFVIResClauseStore<TFeature> : IKnowledgeBaseClauseStore
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
-            await Task.Delay(1, cancellationToken);
+            await PeriodicYielder.PerhapsYield(cancellationToken);
 
             await foreach (var clause in featureVectorIndex.WithCancellation(cancellationToken))
             {

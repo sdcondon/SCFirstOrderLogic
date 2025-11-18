@@ -1,4 +1,5 @@
-﻿using SCFirstOrderLogic.SentenceManipulation.Normalisation;
+﻿using SCFirstOrderLogic.Documentation.Types;
+using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
@@ -55,7 +56,7 @@ public class BlazorWasmResClauseStore : IKnowledgeBaseClauseStore
     /// <inheritdoc />
     public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
     {
-        await Task.Delay(1, cancellationToken);
+        await PeriodicYielder.PerhapsYield(cancellationToken);
 
         foreach (var clause in clauses.Keys)
         {
@@ -98,7 +99,7 @@ public class BlazorWasmResClauseStore : IKnowledgeBaseClauseStore
         /// <inheritdoc />
         public async IAsyncEnumerator<CNFClause> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
-            await Task.Delay(1, cancellationToken);
+            await PeriodicYielder.PerhapsYield(cancellationToken);
 
             foreach (var clause in clauses.Keys)
             {
