@@ -130,7 +130,7 @@
                 Click the "Cancel Query" button to abort.
             </p>
             <p>
-                <button type="button" class="btn btn-secondary" @onclick=HandleCancelButtonPress>Cancel Query</button>
+                <button type="button" class="btn btn-secondary" @onclick=@HandleCancelButtonPress>Cancel Query</button>
             </p>
         </div>
     }
@@ -290,13 +290,17 @@
             var queryObj = await knowledgeBase.CreateQueryAsync(SentenceParser.Default.Parse(query), currentQueryCancellation.Token);
             var queryResult = await queryObj.ExecuteAsync(currentQueryCancellation.Token);
 
-            var details = queryObj! switch
+            string? details = null;
+            if (queryResult)
             {
-                BackwardChainingQuery bcq => bcq.ResultExplanation,
-                ForwardChainingQuery fcq => fcq.ResultExplanation,
-                ResolutionQuery rq => rq.ResultExplanation,
-                _ => "?"
-            };
+                details = queryObj! switch
+                {
+                    BackwardChainingQuery bcq => bcq.ResultExplanation,
+                    ForwardChainingQuery fcq => fcq.ResultExplanation,
+                    ResolutionQuery rq => rq.ResultExplanation,
+                    _ => "?"
+                };
+            }
 
             return new(queryResult, details);
         }
@@ -307,5 +311,5 @@
         }
     }
 
-    public record QueryResult(bool Result, string Explanation);
+    public record QueryResult(bool Result, string? Explanation);
 }
