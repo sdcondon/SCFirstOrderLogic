@@ -13,6 +13,8 @@
 @using SCFirstOrderLogic.SentenceCreation;
 @using System.ComponentModel.DataAnnotations;
 
+@inject IWorkerFactory workerFactory
+
 <PageTitle>Lab - Inference Demo</PageTitle>
 
 <h3>
@@ -173,7 +175,7 @@
             query: CuriousityAndTheCatDomain.UnparsedExampleQuery),
     };
 
-    private readonly Task<IWorkerBackgroundService<QueryService>> queryServiceCreation;
+    private Task<IWorkerBackgroundService<QueryService>> queryServiceCreation;
 
     private Task<QueryResult>? currentQueryExecution;
 
@@ -192,6 +194,7 @@
         queryServiceCreation = workerFactory
             .CreateAsync()
             .ContinueWith(t => t.Result.CreateBackgroundServiceAsync<QueryService>())
+            //.ContinueWith(t => t.Result.)
             .Unwrap();
     }
 
@@ -229,7 +232,7 @@
         try
         {
             var localFormData = formData;
-            currentQueryExecution = (await queryServiceCreation).RunAsync(s => s.ExecuteQueryAsync(formData.KnowledgeBaseDescription, formData.Knowledge, formData.Query));
+            currentQueryExecution = (await queryServiceCreation).RunAsync(s => s.ExecuteQueryAsync(localFormData.KnowledgeBaseDescription, localFormData.Knowledge, localFormData.Query));
 
             // Re-render to disable submit button
             await InvokeAsync(StateHasChanged);
@@ -252,8 +255,16 @@
 
     private async Task HandleCancelButtonPress()
     {
-        // todo: nope - workers are single threaded - will just queue it up.. can i do this with messaging?
-        await (await queryServiceCreation).RunAsync(a => a.CancelCurrentQuery());
+        var backgroundService = await queryServiceCreation;
+
+        queryServiceCreation = workerFactory
+            .CreateAsync()
+            .ContinueWith(t => t.Result.CreateBackgroundServiceAsync<QueryService>())
+            //.ContinueWith(t => t.Result.)
+            .Unwrap();
+
+        await backgroundService.DisposeAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
     public class FormData(string knowledgeBaseDescription, string knowledge, string query)
