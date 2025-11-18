@@ -1,5 +1,8 @@
 ﻿@page "/lab/inference-demo"
 
+@using BlazorWorker.BackgroundServiceFactory;
+@using BlazorWorker.Core
+@using BlazorWorker.WorkerBackgroundService
 @using SCFirstOrderLogic;
 @using SCFirstOrderLogic.ClauseIndexing.Features
 @using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParser;
@@ -89,19 +92,11 @@
     {
         <div class="alert alert-success mt-4" role="alert">
             <h3>Query Complete</h3>
-            <p><pre>Query result: @currentQuery!.Result</pre></p>
+            <p><pre>Query result: @currentQueryExecution!.Result.Result</pre></p>
 
-            @if (currentQuery!.Result)
+            @if (currentQueryExecution!.Result.Result)
             {
-                var details = currentQuery! switch
-                {
-                    BackwardChainingQuery bcq => bcq.ResultExplanation,
-                    ForwardChainingQuery fcq => fcq.ResultExplanation,
-                    ResolutionQuery rq => rq.ResultExplanation,
-                    _ => "?"
-                };
-
-                <p><pre>@details</pre></p>
+                <p><pre>@currentQueryExecution!.Result.Explanation</pre></p>
             }
         </div>
     }
@@ -133,7 +128,7 @@
                 Click the "Cancel Query" button to abort.
             </p>
             <p>
-                <button type="button" class="btn btn-secondary" @onclick=@(() => currentQueryCancellation?.Cancel())>Cancel Query</button>
+                <button type="button" class="btn btn-secondary" @onclick=HandleCancelButtonPress>Cancel Query</button>
             </p>
         </div>
     }
@@ -143,18 +138,18 @@
     private static Dictionary<string, Func<IKnowledgeBase>> KnowledgeBaseOptions = new()
     {
         ["Basic Backward Chaining"] = () => new BackwardChainingKnowledgeBase(
-            new BlazorWasmBCClauseStore()),
+            new DictionaryClauseStore()),
 
         ["Basic Forward Chaining"] = () => new ForwardChainingKnowledgeBase(
-            new BlazorWasmFCClauseStore()),
+            new Inference.Basic.ForwardChaining.HashSetClauseStore()),
 
         ["Resolution (Basic, Unit Preference)"] = () => new ResolutionKnowledgeBase(new DelegateResolutionStrategy(
-            new BlazorWasmResClauseStore(),
+            new Inference.Basic.Resolution.HashSetClauseStore(),
             ClauseResolutionFilters.None,
             ClauseResolutionPriorityComparisons.UnitPreference)),
 
         ["Resolution (Linear, Feature Vector Index Clause Storage)"] = () => new ResolutionKnowledgeBase(new LinearResolutionStrategy(
-            new BlazorWasmFVIResClauseStore<MaxDepthFeature>(
+            new FeatureVectorIndexClauseStore<MaxDepthFeature>(
                 MaxDepthFeature.MakeFeatureVector,
                 new ClauseStoreFVIListNode<MaxDepthFeature>(MaxDepthFeature.MakeFeatureComparer())),
             ClauseResolutionPriorityComparisons.UnitPreference)),
@@ -178,21 +173,26 @@
             query: CuriousityAndTheCatDomain.UnparsedExampleQuery),
     };
 
-    private CancellationTokenSource? currentQueryCancellation;
-    private IQuery? currentQuery;
-    private Task? currentQueryExecution;
+    private readonly Task<IWorkerBackgroundService<QueryService>> queryServiceCreation;
+
+    private Task<QueryResult>? currentQueryExecution;
 
     private Modal? explanationModal;
     private FormData formData;
     private EditContext editContext;
     private ValidationMessageStore validationMessageStore;
 
-    public InferenceDemo()
+    public InferenceDemo(IWorkerFactory workerFactory)
     {
         formData = Presets["Crime"].Invoke();
         editContext = new(formData);
         editContext.OnValidationRequested += HandleValidationRequest;
         validationMessageStore = new(editContext);
+
+        queryServiceCreation = workerFactory
+            .CreateAsync()
+            .ContinueWith(t => t.Result.CreateBackgroundServiceAsync<QueryService>())
+            .Unwrap();
     }
 
     private void HandleValidationRequest(object? sender, ValidationRequestedEventArgs args)
@@ -228,15 +228,8 @@
     {
         try
         {
-            currentQueryCancellation = new CancellationTokenSource();
-
-            // Instantiate knowledge base and tell it all the knowledge.
-            var knowledgeBase = KnowledgeBaseOptions[formData.KnowledgeBaseDescription].Invoke();
-            await knowledgeBase.TellAsync((Sentence[])editContext.Properties[nameof(formData.Knowledge)], currentQueryCancellation.Token);
-
-            // Create and begin new query
-            currentQuery = await knowledgeBase.CreateQueryAsync((Sentence)editContext.Properties[nameof(formData.Query)], currentQueryCancellation.Token);
-            currentQueryExecution = currentQuery.ExecuteAsync(currentQueryCancellation.Token);
+            var localFormData = formData;
+            currentQueryExecution = (await queryServiceCreation).RunAsync(s => s.ExecuteQueryAsync(formData.KnowledgeBaseDescription, formData.Knowledge, formData.Query));
 
             // Re-render to disable submit button
             await InvokeAsync(StateHasChanged);
@@ -252,15 +245,56 @@
             // task state will likely need to change a little, too).
             if (e is not TaskCanceledException)
             {
-                currentQueryExecution = Task.FromException(e);
+                currentQueryExecution = Task.FromException<QueryResult>(e);
             }
         }
     }
 
-    private class FormData(string knowledgeBaseDescription, string knowledge, string query)
+    private async Task HandleCancelButtonPress()
+    {
+        // todo: nope - workers are single threaded - will just queue it up.. can i do this with messaging?
+        await (await queryServiceCreation).RunAsync(a => a.CancelCurrentQuery());
+    }
+
+    public class FormData(string knowledgeBaseDescription, string knowledge, string query)
     {
         public string KnowledgeBaseDescription { get; set; } = knowledgeBaseDescription;
         public string Knowledge { get; set; } = knowledge;
         public string Query { get; set; } = query;
     }
+
+    public class QueryService
+    {
+        private CancellationTokenSource? currentQueryCancellation;
+
+        public async Task<QueryResult> ExecuteQueryAsync(string knowledgeBaseDescription, string knowledge, string query)
+        {
+            currentQueryCancellation = new CancellationTokenSource();
+
+            // Instantiate knowledge base and tell it all the knowledge.
+            var knowledgeBase = KnowledgeBaseOptions[knowledgeBaseDescription].Invoke();
+            await knowledgeBase.TellAsync(SentenceParser.Default.ParseList(knowledge), currentQueryCancellation.Token);
+
+            // Create and execute query
+            var queryObj = await knowledgeBase.CreateQueryAsync(SentenceParser.Default.Parse(query), currentQueryCancellation.Token);
+            var queryResult = await queryObj.ExecuteAsync(currentQueryCancellation.Token);
+
+            var details = queryObj! switch
+            {
+                BackwardChainingQuery bcq => bcq.ResultExplanation,
+                ForwardChainingQuery fcq => fcq.ResultExplanation,
+                ResolutionQuery rq => rq.ResultExplanation,
+                _ => "?"
+            };
+
+            return new(queryResult, details);
+        }
+
+        public void CancelCurrentQuery()
+        {
+            currentQueryCancellation?.Cancel();
+        }
+    }
+
+    public record QueryResult(bool Result, string Explanation);
 }
