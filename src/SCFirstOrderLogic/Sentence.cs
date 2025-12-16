@@ -24,6 +24,8 @@ namespace SCFirstOrderLogic;
 /// (and thus flexible) as possible.
 /// </para>
 /// </summary>
+// TODO-BREAKING-MAJOR-CHANGE: I should have called this class "Formula" - wasn't aware of the strict distinction between formulae and sentences
+// when writing this in the first place. And of course instances of this class can include free variables, so don't necessarily represent sentences.
 public abstract class Sentence
 {
     /// <summary>
