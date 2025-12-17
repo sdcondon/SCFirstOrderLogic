@@ -4,7 +4,7 @@ using System;
 
 namespace SCFirstOrderLogic;
 
-public static class CNFSentenceTests
+public static class CNFFormulaTests
 {
     private static Formula P => new Predicate("P");
     private static Formula Q => new Predicate("Q");

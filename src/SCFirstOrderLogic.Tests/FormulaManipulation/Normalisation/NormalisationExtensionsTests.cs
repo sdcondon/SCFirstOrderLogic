@@ -15,7 +15,7 @@ public static class NormalisationExtensionsTests
         {
             new
             {
-                Sentence = P,
+                Formula = P,
                 ExpectedCNF = new
                 {
                     Clauses = new[]
@@ -36,7 +36,7 @@ public static class NormalisationExtensionsTests
             },
             new
             {
-                Sentence = Not(P),
+                Formula = Not(P),
                 ExpectedCNF = new
                 {
                     Clauses = new[]
@@ -57,7 +57,7 @@ public static class NormalisationExtensionsTests
             },
             new
             {
-                Sentence = Iff(P, Not(And(Not(Q), Not(R)))),
+                Formula = Iff(P, Not(And(Not(Q), Not(R)))),
                 ExpectedCNF = new
                 {
                     Clauses = new[]
@@ -110,7 +110,7 @@ public static class NormalisationExtensionsTests
                 // and checking for trivially true clauses would come at a performance cost that could well outweigh
                 // the cost of having trivially true ones in there. So, leaving behaviour like this for the mo - would
                 // least need to do some perf testing before changing this.
-                Sentence = Or(And(P, Q), And(Not(P), Not(Q))),
+                Formula = Or(And(P, Q), And(Not(P), Not(Q))),
                 ExpectedCNF = new
                 {
                     Clauses = new[]
@@ -167,6 +167,6 @@ public static class NormalisationExtensionsTests
                 }
             },
         })
-        .When(tc => tc.Sentence.ToCNF())
+        .When(tc => tc.Formula.ToCNF())
         .ThenReturns((tc, retVal) => retVal.Should().BeEquivalentTo(tc.ExpectedCNF));
 }

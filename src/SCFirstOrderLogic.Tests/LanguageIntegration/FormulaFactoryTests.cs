@@ -9,7 +9,7 @@ using static SCFirstOrderLogic.LanguageIntegration.Operators;
 
 namespace SCFirstOrderLogic.LanguageIntegration;
 
-public class SentenceFactoryTests
+public class FormulaFactoryTests
 {
     private interface IDomain : IEnumerable<IElement>
     {
@@ -29,39 +29,39 @@ public class SentenceFactoryTests
     private static readonly MemberInfo parent = typeof(IElement).GetProperty(nameof(IElement.Parent))!;
     private static readonly IList<Term> emptyArgList = Array.Empty<Term>();
 
-    private record TestCase(Expression<Predicate<IDomain>> Expression, Formula ExpectedSentence);
+    private record TestCase(Expression<Predicate<IDomain>> Expression, Formula ExpectedFormula);
 
     public static Test Creation => TestThat
         .GivenEachOf(() => new[]
         {
             new TestCase(
                 Expression: d => d.GroundPredicate1 && d.GroundPredicate2,
-                ExpectedSentence: new Conjunction(
+                ExpectedFormula: new Conjunction(
                     new Predicate(new MemberPredicateIdentifier(groundPredicate1), emptyArgList),
                     new Predicate(new MemberPredicateIdentifier(groundPredicate2), emptyArgList))),
 
             new TestCase(
                 Expression: d => d.GroundPredicate1 || d.GroundPredicate2,
-                ExpectedSentence: new Disjunction(
+                ExpectedFormula: new Disjunction(
                     new Predicate(new MemberPredicateIdentifier(groundPredicate1), emptyArgList),
                     new Predicate(new MemberPredicateIdentifier(groundPredicate2), emptyArgList))),
 
             new TestCase(
                 Expression: d => d.Constant1.Parent == d.Constant1,
-                ExpectedSentence: new Predicate(
+                ExpectedFormula: new Predicate(
                     EqualityIdentifier.Instance,
                     new Function(new MemberFunctionIdentifier(parent), [new Function(new MemberFunctionIdentifier(constant1))]),
                     new Function(new MemberFunctionIdentifier(constant1)))),
 
             new TestCase(
                 Expression: d => Iff(d.GroundPredicate1, d.GroundPredicate2),
-                ExpectedSentence: new Equivalence(
+                ExpectedFormula: new Equivalence(
                     new Predicate(new MemberPredicateIdentifier(groundPredicate1), emptyArgList),
                     new Predicate(new MemberPredicateIdentifier(groundPredicate2), emptyArgList))),
 
             new TestCase(
                 Expression: d => d.Any(x => x.Parent == d.Constant1),
-                ExpectedSentence: new ExistentialQuantification(
+                ExpectedFormula: new ExistentialQuantification(
                     new VariableDeclaration("x"),
                     new Predicate(
                         EqualityIdentifier.Instance,
@@ -70,18 +70,18 @@ public class SentenceFactoryTests
 
             new TestCase(
                 Expression: d => If(d.GroundPredicate1, d.GroundPredicate2),
-                ExpectedSentence: new Implication(
+                ExpectedFormula: new Implication(
                     new Predicate(new MemberPredicateIdentifier(groundPredicate1), emptyArgList),
                     new Predicate(new MemberPredicateIdentifier(groundPredicate2), emptyArgList))),
 
             new TestCase(
                 Expression: d => !d.GroundPredicate1,
-                ExpectedSentence: new Negation(
+                ExpectedFormula: new Negation(
                     new Predicate(new MemberPredicateIdentifier(groundPredicate1), emptyArgList))),
 
             new TestCase(
                 Expression: d => d.All(x => x.Parent == d.Constant1),
-                ExpectedSentence: new UniversalQuantification(
+                ExpectedFormula: new UniversalQuantification(
                     new VariableDeclaration("x"),
                     new Predicate(
                         EqualityIdentifier.Instance,
@@ -89,8 +89,8 @@ public class SentenceFactoryTests
                         new Function(new MemberFunctionIdentifier(constant1))))),
         })
         .When(tc => FormulaFactory.Create<IDomain, IElement>(tc.Expression))
-        .ThenReturns((tc, sentence) =>
+        .ThenReturns((tc, formula) =>
         {
-            sentence.Should().BeEquivalentTo(tc.ExpectedSentence, o => o.RespectingRuntimeTypes());
+            formula.Should().BeEquivalentTo(tc.ExpectedFormula, o => o.RespectingRuntimeTypes());
         });
 }

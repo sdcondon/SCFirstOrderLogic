@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic;
 
 [MemoryDiagnoser]
 [InProcess]
-public class CNFSentenceBenchmarks
+public class CNFFormulaBenchmarks
 {
     private static Predicate IsAnimal(Term term) => new(nameof(IsAnimal), term);
     private static Predicate Loves(Term term1, Term term2) => new(nameof(Loves), term1, term2);

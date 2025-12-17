@@ -22,7 +22,7 @@ public static class DisjunctionTests
 
     // Disjunction is commutative - so it would make sense if A ∨ B is considered equal to B ∨ A
     // And this would be relatively easy to achieve (order operands by hashcode then compare, for example).
-    // However, By the same logic, disjunction sentences with different order of evaluation - e.g. (A ∨ B) ∨ C versus A ∨ (B ∨ C) - should also be considered equal.
+    // However, By the same logic, disjunction formulas with different order of evaluation - e.g. (A ∨ B) ∨ C versus A ∨ (B ∨ C) - should also be considered equal.
     // This is however more difficult to achieve (without normalisation), so we don't (see below).
     // Given that, it probably doesn't make sense for commutations (only) to be considered equal - and doing so would be expensive. Hence the false expectation here.
     public static Test CommutationComparison => TestThat

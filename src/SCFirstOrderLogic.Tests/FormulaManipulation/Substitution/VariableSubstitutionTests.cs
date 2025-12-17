@@ -7,8 +7,8 @@ namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 
 public static class VariableSubstitutionTests
 {
-    public static Test ApplyToSentenceBehaviour => TestThat
-        .GivenEachOf<ApplyToSentenceTestCase>(() =>
+    public static Test ApplyToFormulaBehaviour => TestThat
+        .GivenEachOf<ApplyToFormulaTestCase>(() =>
         [
             new(
                 Bindings: [],
@@ -72,8 +72,8 @@ public static class VariableSubstitutionTests
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.Expected));
 
-    public static Test ApplyToCNFSentenceBehaviour => TestThat
-        .GivenEachOf<ApplyToSentenceTestCase>(() =>
+    public static Test ApplyToCNFFormulaBehaviour => TestThat
+        .GivenEachOf<ApplyToFormulaTestCase>(() =>
         [
             new(
                 Bindings: [],
@@ -196,12 +196,12 @@ public static class VariableSubstitutionTests
         .And((tc, rv) => rv.Equality.Should().Be(tc.ExpectedEquality))
         .And((tc, rv) => rv.HashCodeEquality.Should().Be(tc.ExpectedEquality));
 
-    private record ApplyToSentenceTestCase(
+    private record ApplyToFormulaTestCase(
         Dictionary<VariableReference, Term> Bindings,
         Formula Input,
         Formula Expected);
 
-    private record ApplyToCNFSentenceTestCase(
+    private record ApplyToCNFFormulaTestCase(
         Dictionary<VariableReference, Term> Bindings,
         CNFFormula Input,
         CNFFormula Expected);

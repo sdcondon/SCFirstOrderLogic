@@ -5,9 +5,9 @@ using static SCFirstOrderLogic.FormulaCreation.OperableFormulaFactory;
 
 namespace SCFirstOrderLogic.FormulaCreation;
 
-public class OperableSentenceFactoryTests
+public class OperableFormulaFactoryTests
 {
-    private record TestCase(OperableFormula SentenceSurrogate, Formula ExpectedSentence);
+    private record TestCase(OperableFormula FormulaSurrogate, Formula ExpectedFormula);
 
     private static OperableFunction Constant1 => new Function(nameof(Constant1));
     private static OperableFunction Constant2 => new Function(nameof(Constant2));
@@ -20,33 +20,33 @@ public class OperableSentenceFactoryTests
         .GivenEachOf<TestCase>(() =>
         [
             new(
-                SentenceSurrogate: GroundPredicate1 & UnaryPredicate(Constant1),
-                ExpectedSentence: new Conjunction(
+                FormulaSurrogate: GroundPredicate1 & UnaryPredicate(Constant1),
+                ExpectedFormula: new Conjunction(
                     new Predicate(nameof(GroundPredicate1), []),
                     new Predicate(nameof(UnaryPredicate), new Function(nameof(Constant1))))),
 
             new(
-                SentenceSurrogate: GroundPredicate1 | GroundPredicate2,
-                ExpectedSentence: new Disjunction(
+                FormulaSurrogate: GroundPredicate1 | GroundPredicate2,
+                ExpectedFormula: new Disjunction(
                     new Predicate(nameof(GroundPredicate1), []),
                     new Predicate(nameof(GroundPredicate2), []))),
 
             new(
-                SentenceSurrogate: Constant1 == Constant2,
-                ExpectedSentence: new Predicate(
+                FormulaSurrogate: Constant1 == Constant2,
+                ExpectedFormula: new Predicate(
                     EqualityIdentifier.Instance,
                     new Function(nameof(Constant1)),
                     new Function(nameof(Constant2)))),
 
             new(
-                SentenceSurrogate: Iff(GroundPredicate1, GroundPredicate2),
-                ExpectedSentence: new Equivalence(
+                FormulaSurrogate: Iff(GroundPredicate1, GroundPredicate2),
+                ExpectedFormula: new Equivalence(
                     new Predicate(nameof(GroundPredicate1), []),
                     new Predicate(nameof(GroundPredicate2), []))),
 
             new(
-                SentenceSurrogate: ThereExists(X, UnaryFunction(X) == Constant1),
-                ExpectedSentence: new ExistentialQuantification(
+                FormulaSurrogate: ThereExists(X, UnaryFunction(X) == Constant1),
+                ExpectedFormula: new ExistentialQuantification(
                     new VariableDeclaration("X"),
                     new Predicate(
                         EqualityIdentifier.Instance,
@@ -54,28 +54,28 @@ public class OperableSentenceFactoryTests
                         new Function(nameof(Constant1))))),
 
             new(
-                SentenceSurrogate: If(GroundPredicate1, GroundPredicate2),
-                ExpectedSentence: new Implication(
+                FormulaSurrogate: If(GroundPredicate1, GroundPredicate2),
+                ExpectedFormula: new Implication(
                     new Predicate(nameof(GroundPredicate1), []),
                     new Predicate(nameof(GroundPredicate2), []))),
 
             new(
-                SentenceSurrogate: !GroundPredicate1,
-                ExpectedSentence: new Negation(
+                FormulaSurrogate: !GroundPredicate1,
+                ExpectedFormula: new Negation(
                     new Predicate(nameof(GroundPredicate1), []))),
 
             new(
-                SentenceSurrogate: ForAll(X, UnaryFunction(X) == Constant1),
-                ExpectedSentence: new UniversalQuantification(
+                FormulaSurrogate: ForAll(X, UnaryFunction(X) == Constant1),
+                ExpectedFormula: new UniversalQuantification(
                     new VariableDeclaration("X"),
                     new Predicate(
                         EqualityIdentifier.Instance,
                         new Function(nameof(UnaryFunction), [ new VariableReference(new VariableDeclaration("X")) ]),
                         new Function(nameof(Constant1))))),
         ])
-        .When(tc => (Formula)tc.SentenceSurrogate)
-        .ThenReturns((tc, sentence) =>
+        .When(tc => (Formula)tc.FormulaSurrogate)
+        .ThenReturns((tc, formula) =>
         {
-            sentence.Should().BeEquivalentTo(tc.ExpectedSentence, o => o.RespectingRuntimeTypes());
+            formula.Should().BeEquivalentTo(tc.ExpectedFormula, o => o.RespectingRuntimeTypes());
         });
 }

@@ -4,60 +4,60 @@ using System.Collections.Generic;
 
 namespace SCFirstOrderLogic.FormulaCreation;
 
-public static class SentenceParserTests
+public static class FormulaParserTests
 {
     public static Test Parse_PositiveTestCases => TestThat
         .GivenEachOf<ParseTestCase>(() =>
         [
             new(
-                Sentence: "Aa_1()",
+                Formula: "Aa_1()",
                 ExpectedResult: new Predicate("Aa_1")),
 
             new(
-                Sentence: " P () ",
+                Formula: " P () ",
                 ExpectedResult: new Predicate("P")),
 
             new(
-                Sentence: "∀x, P(x)",
+                Formula: "∀x, P(x)",
                 ExpectedResult: new UniversalQuantification(new("x"), new Predicate("P", new VariableReference("x")))),
 
             new(
-                Sentence: "∀x, P(F(x))",
+                Formula: "∀x, P(F(x))",
                 ExpectedResult: new UniversalQuantification(new("x"), new Predicate("P", new Function("F", new VariableReference("x"))))),
 
             new(
-                Sentence: "∃x, y, P(x, y)",
+                Formula: "∃x, y, P(x, y)",
                 ExpectedResult: new ExistentialQuantification(new("x"), new ExistentialQuantification(new("y"), new Predicate("P", new VariableReference("x"), new VariableReference("y"))))),
 
             new(
-                Sentence: "∃x y, P(x, y)",
+                Formula: "∃x y, P(x, y)",
                 ExpectedResult: new ExistentialQuantification(new("x"), new ExistentialQuantification(new("y"), new Predicate("P", new VariableReference("x"), new VariableReference("y"))))),
 
             new(
-                Sentence: "P(x) ∧ Q(y)",
+                Formula: "P(x) ∧ Q(y)",
                 ExpectedResult: new Conjunction(new Predicate("P", new Function("x")), new Predicate("Q", new Function("y")))),
 
             new(
-                Sentence: "P(x) ∨ ¬Q(y)",
+                Formula: "P(x) ∨ ¬Q(y)",
                 ExpectedResult: new Disjunction(new Predicate("P", new Function("x")), new Negation(new Predicate("Q", new Function("y"))))),
 
             new(
-                Sentence: "P() ∨ ¬[Q() ∧ R()]",
+                Formula: "P() ∨ ¬[Q() ∧ R()]",
                 ExpectedResult: new Disjunction(new Predicate("P"), new Negation(new Conjunction(new Predicate("Q"), new Predicate("R"))))),
 
             new(
-                Sentence: "P(x) ⇒ Q(y)",
+                Formula: "P(x) ⇒ Q(y)",
                 ExpectedResult: new Implication(new Predicate("P", new Function("x")), new Predicate("Q", new Function("y")))),
 
             new(
-                Sentence: "P(x) ⇔ Q(y)",
+                Formula: "P(x) ⇔ Q(y)",
                 ExpectedResult: new Equivalence(new Predicate("P", new Function("x")), new Predicate("Q", new Function("y")))),
 
             new(
-                Sentence: "F1() = F2(x, y)",
+                Formula: "F1() = F2(x, y)",
                 ExpectedResult: new Predicate(EqualityIdentifier.Instance, new Function("F1"), new Function("F2", new Function("x"), new Function("y")))),
         ])
-        .When(tc => FormulaParser.Default.Parse(tc.Sentence))
+        .When(tc => FormulaParser.Default.Parse(tc.Formula))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.ExpectedResult));
 
@@ -66,7 +66,7 @@ public static class SentenceParserTests
         .AndEachOf(() => new[]
         {
             string.Empty,
-            "couldBeATermButNotASentence",
+            "couldBeATermButNotAFormula",
             "P(x,y,)",
             "P(,x,y)",
             "∀ P(x)",
@@ -87,38 +87,38 @@ public static class SentenceParserTests
         .GivenEachOf<ParseListTestCase>(() =>
         [
             new(
-                Sentences: string.Empty,
+                Formulas: string.Empty,
                 Expectation: []),
 
             new(
-                Sentences: "   ",
+                Formulas: "   ",
                 Expectation: []),
 
             new(
-                Sentences: "P()",
+                Formulas: "P()",
                 Expectation: [new Predicate("P")]),
 
             new(
-                Sentences: "P()Q()",
+                Formulas: "P()Q()",
                 Expectation: [new Predicate("P"), new Predicate("Q")]),
 
             new(
-                Sentences: "P() Q()",
+                Formulas: "P() Q()",
                 Expectation: [new Predicate("P"), new Predicate("Q")]),
 
             new(
-                Sentences: "P()\r\nQ()\n",
+                Formulas: "P()\r\nQ()\n",
                 Expectation: [new Predicate("P"), new Predicate("Q")]),
 
             new(
-                Sentences: "P(); Q()",
+                Formulas: "P(); Q()",
                 Expectation: [new Predicate("P"), new Predicate("Q")]),
 
             new(
-                Sentences: " P() ; Q() ; ",
+                Formulas: " P() ; Q() ; ",
                 Expectation: [new Predicate("P"), new Predicate("Q")]),
         ])
-        .When(tc => FormulaParser.Default.ParseList(tc.Sentences))
+        .When(tc => FormulaParser.Default.ParseList(tc.Formulas))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Equal(tc.Expectation));
 
@@ -246,9 +246,9 @@ public static class SentenceParserTests
         .When((ctx, tc) => FormulaParser.Default.ParseTermList(tc, []))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
-    private record ParseTestCase(string Sentence, Formula ExpectedResult);
+    private record ParseTestCase(string Formula, Formula ExpectedResult);
 
-    private record ParseListTestCase(string Sentences, Formula[] Expectation);
+    private record ParseListTestCase(string Formulas, Formula[] Expectation);
 
     private record ParseTermTestCase(string Text, IEnumerable<VariableDeclaration> Variables, Term Expected);
 

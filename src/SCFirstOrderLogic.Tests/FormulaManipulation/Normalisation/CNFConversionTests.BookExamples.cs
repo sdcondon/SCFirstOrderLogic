@@ -22,11 +22,11 @@ public static partial class CNFConversionTests
             ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
             ThereExists(Y, Loves(Y, X)))))
         // When converted to CNF..
-        .When(sentence => CNFConversion.ApplyTo(sentence))
+        .When(formula => CNFConversion.ApplyTo(formula))
         // Then gives [Animal(F(x)) ∨ Loves(G(x), x)] ∧ [¬Loves(x, F(x)) ∨ Loves(G(x), x)]
-        .ThenReturns((_, sentence) =>
+        .ThenReturns((_, formula) =>
         {
-            sentence.Should().BeEquivalentTo(
+            formula.Should().BeEquivalentTo(
                 expectation: And(
                     Or(IsAnimal(F(StdX)), Loves(G(StdX), StdX)),
                     Or(Not(Loves(StdX, F(StdX))), Loves(G(StdX), StdX))),
