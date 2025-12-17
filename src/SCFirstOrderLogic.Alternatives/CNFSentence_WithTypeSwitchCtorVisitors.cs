@@ -1,12 +1,12 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceManipulation;
-using SCFirstOrderLogic.SentenceManipulation.Normalisation;
+using SCFirstOrderLogic.FormulaManipulation;
+using SCFirstOrderLogic.FormulaManipulation.Normalisation;
 
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of a <see cref="Sentence"/> in conjunctive normal form (CNF).
+/// Representation of a <see cref="Formula"/> in conjunctive normal form (CNF).
 /// </summary>
 public class CNFSentence_WithTypeSwitchCtorVisitors
 {
@@ -14,7 +14,7 @@ public class CNFSentence_WithTypeSwitchCtorVisitors
     /// Initialises a new instance of the <see cref="CNFSentence_WithTypeSwitchCtorVisitors"/> class, implicitly converting the provided sentence to CNF in the process.
     /// </summary>
     /// <param name="sentence">The sentence to (convert and) represent.</param>
-    public CNFSentence_WithTypeSwitchCtorVisitors(Sentence sentence)
+    public CNFSentence_WithTypeSwitchCtorVisitors(Formula sentence)
     {
         var cnfSentence = CNFConversion.ApplyTo(sentence);
         var clauses = new List<CNFClause_WithTypeSwitchCtorVisitors>();
@@ -29,7 +29,7 @@ public class CNFSentence_WithTypeSwitchCtorVisitors
     public IReadOnlyCollection<CNFClause_WithTypeSwitchCtorVisitors> Clauses { get; }
 
     /// <summary>
-    /// Defines the (implicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFSentence_WithoutTypeSwitch"/> instance.
+    /// Defines the (implicit) conversion of a <see cref="Formula"/> instance to a <see cref="CNFSentence_WithoutTypeSwitch"/> instance.
     /// </summary>
     /// <param name="sentence">The sentence to convert.</param>
     /// <remarks>
@@ -37,19 +37,19 @@ public class CNFSentence_WithTypeSwitchCtorVisitors
     /// we'll be wanting to deal with CNF - but the "raw" sentence tree structure still has value.. This conversion
     /// operator helps, but there's almost certainly more that could be done.
     /// </remarks>
-    public static implicit operator CNFSentence_WithTypeSwitchCtorVisitors(Sentence sentence) => new(sentence);
+    public static implicit operator CNFSentence_WithTypeSwitchCtorVisitors(Formula sentence) => new(sentence);
 
     /// <summary>
-    /// Sentence visitor that constructs a set of <see cref="CNFClause_WithoutTypeSwitch"/> objects from a <see cref="Sentence"/> in CNF.
+    /// Sentence visitor that constructs a set of <see cref="CNFClause_WithoutTypeSwitch"/> objects from a <see cref="Formula"/> in CNF.
     /// </summary>
-    private class CNFClauseFinder : RecursiveSentenceVisitor
+    private class CNFClauseFinder : RecursiveFormulaVisitor
     {
         private readonly ICollection<CNFClause_WithTypeSwitchCtorVisitors> clauses;
 
         public CNFClauseFinder(ICollection<CNFClause_WithTypeSwitchCtorVisitors> clauses) => this.clauses = clauses;
 
         /// <inheritdoc />
-        public override void Visit(Sentence sentence)
+        public override void Visit(Formula sentence)
         {
             if (sentence is Conjunction conjunction)
             {

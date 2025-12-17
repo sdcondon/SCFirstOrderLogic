@@ -27,12 +27,12 @@ public class LinqKnowledgeBase<TElement> : ILinqKnowledgeBase<TElement>
     /// <inheritdoc/>
     public async Task<bool> AskAsync(Expression<Predicate<IEnumerable<TElement>>> query, CancellationToken cancellationToken = default)
     {
-        return await innerKnowledgeBase.AskAsync(SentenceFactory.Create(query), cancellationToken);
+        return await innerKnowledgeBase.AskAsync(FormulaFactory.Create(query), cancellationToken);
     }
 
     /// <inheritdoc/>
     public async Task TellAsync(Expression<Predicate<IEnumerable<TElement>>> sentence, CancellationToken cancellationToken = default)
     {
-        await innerKnowledgeBase.TellAsync(SentenceFactory.Create(sentence), cancellationToken);
+        await innerKnowledgeBase.TellAsync(FormulaFactory.Create(sentence), cancellationToken);
     }
 }

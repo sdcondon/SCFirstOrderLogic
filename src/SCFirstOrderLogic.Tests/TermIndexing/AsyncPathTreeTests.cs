@@ -3,7 +3,7 @@ using FlUnit;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainOperableFormulaFactory;
 
 namespace SCFirstOrderLogic.TermIndexing;
 

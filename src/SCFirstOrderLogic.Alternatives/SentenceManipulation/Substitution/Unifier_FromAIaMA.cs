@@ -2,7 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System.Diagnostics.CodeAnalysis;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
+namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 
 /// <summary>
 /// Most general unifier logic implemented as close as possible to the way it
@@ -135,12 +135,12 @@ public static class Unifier_FromAIaMA
             Conjunction c => new List<object> { c.Left, c.Right },
             Disjunction d => new List<object> { d.Left, d.Right },
             Equivalence e => new List<object> { e.Left, e.Right },
-            ExistentialQuantification eq => eq.Sentence,
+            ExistentialQuantification eq => eq.Formula,
             Function f => f.Arguments.ToList<object>(),
             Implication i => new List<object> { i.Antecedent, i.Consequent },
-            Negation n => n.Sentence,
+            Negation n => n.Formula,
             Predicate p => p.Arguments.ToList<object>(),
-            UniversalQuantification uq => uq.Sentence,
+            UniversalQuantification uq => uq.Formula,
             _ => throw new ArgumentException("Arg is not a compound", nameof(x)) // e.g. VariableReference or List<object>..
         };
     }

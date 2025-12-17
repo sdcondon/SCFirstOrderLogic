@@ -12,7 +12,7 @@ public interface IKnowledgeBase
 {
     /// <summary>
     /// <para>
-    /// Tells the knowledge base that a given <see cref="Sentence"/> can be assumed to hold true when answering queries.
+    /// Tells the knowledge base that a given <see cref="Formula"/> can be assumed to hold true when answering queries.
     /// </para>
     /// <para>
     /// NB: This is an asynchronous method ultimately because "real" knowledge bases will often need to do IO to store knowledge.
@@ -20,7 +20,7 @@ public interface IKnowledgeBase
     /// </summary>
     /// <param name="sentence">A sentence that can be assumed to hold true when answering queries.</param>
     /// <param name="cancellationToken">A cancellation token for the operation.</param>
-    Task TellAsync(Sentence sentence, CancellationToken cancellationToken = default);
+    Task TellAsync(Formula sentence, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// <para>
@@ -42,5 +42,5 @@ public interface IKnowledgeBase
     /// <param name="query">The query sentence.</param>
     /// <param name="cancellationToken">A cancellation token for the operation.</param>
     /// <returns>A task that returns an <see cref="IQuery"/> implementation that can be used to execute the query.</returns>
-    Task<IQuery> CreateQueryAsync(Sentence query, CancellationToken cancellationToken = default);
+    Task<IQuery> CreateQueryAsync(Formula query, CancellationToken cancellationToken = default);
 }

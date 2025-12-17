@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainOperableFormulaFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
+namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 
 public class VariableIdAgnosticEqualityComparerTests
 {
@@ -92,13 +92,13 @@ public class VariableIdAgnosticEqualityComparerTests
 
     private record EqualityTestCase(CNFClause X, CNFClause Y)
     {
-        public EqualityTestCase(Sentence X, Sentence Y)
+        public EqualityTestCase(Formula X, Formula Y)
             : this(new CNFClause(X), new CNFClause(Y)) { }
 
-        public EqualityTestCase(CNFClause X, Sentence Y)
+        public EqualityTestCase(CNFClause X, Formula Y)
             : this(X, new CNFClause(Y)) { }
 
-        public EqualityTestCase(Sentence X, CNFClause Y)
+        public EqualityTestCase(Formula X, CNFClause Y)
             : this(new CNFClause(X), Y) { }
     }
 }

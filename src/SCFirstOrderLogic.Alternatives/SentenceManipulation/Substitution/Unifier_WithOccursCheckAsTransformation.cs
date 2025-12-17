@@ -2,7 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System.Diagnostics.CodeAnalysis;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
+namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 
 /// <summary>
 /// <para>
@@ -121,7 +121,7 @@ public static class Unifier_WithOccursCheckAsTransformation
         return occursCheck.IsFound;
     }
 
-    private class OccursCheck : RecursiveSentenceVisitor
+    private class OccursCheck : RecursiveFormulaVisitor
     {
         private readonly VariableReference variableReference;
 

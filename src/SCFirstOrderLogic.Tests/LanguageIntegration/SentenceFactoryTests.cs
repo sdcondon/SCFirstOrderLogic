@@ -29,7 +29,7 @@ public class SentenceFactoryTests
     private static readonly MemberInfo parent = typeof(IElement).GetProperty(nameof(IElement.Parent))!;
     private static readonly IList<Term> emptyArgList = Array.Empty<Term>();
 
-    private record TestCase(Expression<Predicate<IDomain>> Expression, Sentence ExpectedSentence);
+    private record TestCase(Expression<Predicate<IDomain>> Expression, Formula ExpectedSentence);
 
     public static Test Creation => TestThat
         .GivenEachOf(() => new[]
@@ -88,7 +88,7 @@ public class SentenceFactoryTests
                         new Function(new MemberFunctionIdentifier(parent), [new VariableReference(new VariableDeclaration("x"))]),
                         new Function(new MemberFunctionIdentifier(constant1))))),
         })
-        .When(tc => SentenceFactory.Create<IDomain, IElement>(tc.Expression))
+        .When(tc => FormulaFactory.Create<IDomain, IElement>(tc.Expression))
         .ThenReturns((tc, sentence) =>
         {
             sentence.Should().BeEquivalentTo(tc.ExpectedSentence, o => o.RespectingRuntimeTypes());

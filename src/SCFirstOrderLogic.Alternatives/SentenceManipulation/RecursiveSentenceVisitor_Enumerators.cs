@@ -1,19 +1,19 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic.FormulaManipulation;
 
 /// <summary>
-/// Base class for recursive visitors of <see cref="Sentence"/> instances.
+/// Base class for recursive visitors of <see cref="Formula"/> instances.
 /// </summary>
-public abstract class RecursiveSentenceVisitor_Enumerators : ISentenceVisitor, ITermVisitor
+public abstract class RecursiveSentenceVisitor_Enumerators : IFormulaVisitor, ITermVisitor
 {
     /// <summary>
-    /// Visits a <see cref="Sentence"/> instance.
-    /// The default implementation just invokes the Visit method appropriate to the type of the sentence (via <see cref="Sentence.Accept(ISentenceVisitor)"/>).
+    /// Visits a <see cref="Formula"/> instance.
+    /// The default implementation just invokes the Visit method appropriate to the type of the sentence (via <see cref="Formula.Accept(IFormulaVisitor)"/>).
     /// </summary>
     /// <param name="sentence">The sentence to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual void Visit(Sentence sentence) => sentence.Accept(this);
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual void Visit(Formula sentence) => sentence.Accept(this);
 
     /// <summary>
     /// Visits a <see cref="Conjunction"/> instance.
@@ -56,7 +56,7 @@ public abstract class RecursiveSentenceVisitor_Enumerators : ISentenceVisitor, I
     public virtual void Visit(ExistentialQuantification existentialQuantification)
     {
         Visit(existentialQuantification.Variable);
-        Visit(existentialQuantification.Sentence);
+        Visit(existentialQuantification.Formula);
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public abstract class RecursiveSentenceVisitor_Enumerators : ISentenceVisitor, I
     /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
     public virtual void Visit(Negation negation)
     {
-        Visit(negation.Sentence);
+        Visit(negation.Formula);
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public abstract class RecursiveSentenceVisitor_Enumerators : ISentenceVisitor, I
     public virtual void Visit(UniversalQuantification universalQuantification)
     {
         Visit(universalQuantification.Variable);
-        Visit(universalQuantification.Sentence);
+        Visit(universalQuantification.Formula);
     }
 
     /// <summary>

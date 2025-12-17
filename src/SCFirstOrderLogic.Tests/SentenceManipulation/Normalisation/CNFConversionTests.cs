@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainFormulaFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Normalisation;
+namespace SCFirstOrderLogic.FormulaManipulation.Normalisation;
 
 public static partial class CNFConversionTests
 {

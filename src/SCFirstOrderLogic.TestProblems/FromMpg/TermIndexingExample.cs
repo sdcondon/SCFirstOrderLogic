@@ -1,4 +1,4 @@
-﻿using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainSentenceFactory;
+﻿using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainFormulaFactory;
 
 namespace SCFirstOrderLogic.TestProblems.FromMpg;
 

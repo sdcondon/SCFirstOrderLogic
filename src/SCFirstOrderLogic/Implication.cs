@@ -1,54 +1,54 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.FormulaManipulation;
 using System;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of a material implication sentence of first order logic. In typical FOL syntax, this is written as:
-/// <code>{sentence} ⇒ {sentence}</code>
+/// Representation of a material implication formula of first order logic. In typical FOL syntax, this is written as:
+/// <code>{formula} ⇒ {formula}</code>
 /// </summary>
-public sealed class Implication : Sentence
+public sealed class Implication : Formula
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Implication"/> class.
     /// </summary>
-    /// <param name="antecedent">The antecedent sentence.</param>
-    /// <param name="consequent">The consequent sentence.</param>
-    public Implication(Sentence antecedent, Sentence consequent) => (Antecedent, Consequent) = (antecedent, consequent);
+    /// <param name="antecedent">The antecedent formula.</param>
+    /// <param name="consequent">The consequent formula.</param>
+    public Implication(Formula antecedent, Formula consequent) => (Antecedent, Consequent) = (antecedent, consequent);
 
     /// <summary>
-    /// Gets the antecedent sentence.
+    /// Gets the antecedent formula.
     /// </summary>
-    public Sentence Antecedent { get; }
+    public Formula Antecedent { get; }
 
     /// <summary>
-    /// Gets the consequent sentence.
+    /// Gets the consequent formula.
     /// </summary>
-    public Sentence Consequent { get; }
+    public Formula Consequent { get; }
 
     /// <inheritdoc />
-    public override void Accept(ISentenceVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IFormulaVisitor visitor) => visitor.Visit(this);
 
     /// <inheritdoc />
-    public override void Accept<T>(ISentenceVisitor<T> visitor, T state) => visitor.Visit(this, state);
+    public override void Accept<T>(IFormulaVisitor<T> visitor, T state) => visitor.Visit(this, state);
 
     /// <inheritdoc />
-    public override void Accept<T>(ISentenceVisitorR<T> visitor, ref T state) => visitor.Visit(this, ref state);
+    public override void Accept<T>(IFormulaVisitorR<T> visitor, ref T state) => visitor.Visit(this, ref state);
 
     /// <inheritdoc />
-    public override TOut Accept<TOut>(ISentenceTransformation<TOut> transformation) => transformation.ApplyTo(this);
+    public override TOut Accept<TOut>(IFormulaTransformation<TOut> transformation) => transformation.ApplyTo(this);
 
     /// <inheritdoc />
-    public override TOut Accept<TOut, TState>(ISentenceTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
+    public override TOut Accept<TOut, TState>(IFormulaTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
 
     /// <inheritdoc />
-    public override Task AcceptAsync(IAsyncSentenceVisitor visitor) => visitor.VisitAsync(this);
+    public override Task AcceptAsync(IAsyncFormulaVisitor visitor) => visitor.VisitAsync(this);
 
     /// <inheritdoc />
-    public override Task AcceptAsync<T>(IAsyncSentenceVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
+    public override Task AcceptAsync<T>(IAsyncFormulaVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is Implication otherImplication

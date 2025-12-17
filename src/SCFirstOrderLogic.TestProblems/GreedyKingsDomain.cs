@@ -1,4 +1,4 @@
-﻿using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+﻿using static SCFirstOrderLogic.FormulaCreation.OperableFormulaFactory;
 
 namespace SCFirstOrderLogic.TestProblems;
 
@@ -11,10 +11,10 @@ internal static class GreedyKingsDomain
     public static OperableFunction Richard { get; } = new Function(nameof(Richard));
     public static OperableFunction Mary { get; } = new Function(nameof(Mary));
 
-    public static OperableSentence AllGreedyAreEvil { get; } = ForAll(X, If(IsGreedy(X), IsEvil(X)));
-    public static OperableSentence AllGreedyKingsAreEvil { get; } = ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X)));
-    public static OperableSentence AllGreedyQueensAreEvil { get; } = ForAll(X, If(IsQueen(X) & IsGreedy(X), IsEvil(X)));
-    public static OperableSentence AllEvilKnowEachOther { get; } = ForAll(X, Y, If(IsEvil(X) & IsEvil(Y), Knows(X, Y)));
+    public static OperableFormula AllGreedyAreEvil { get; } = ForAll(X, If(IsGreedy(X), IsEvil(X)));
+    public static OperableFormula AllGreedyKingsAreEvil { get; } = ForAll(X, If(IsKing(X) & IsGreedy(X), IsEvil(X)));
+    public static OperableFormula AllGreedyQueensAreEvil { get; } = ForAll(X, If(IsQueen(X) & IsGreedy(X), IsEvil(X)));
+    public static OperableFormula AllEvilKnowEachOther { get; } = ForAll(X, Y, If(IsEvil(X) & IsEvil(Y), Knows(X, Y)));
 
     public static OperablePredicate IsKing(OperableTerm term) => new Predicate(nameof(IsKing), term);
     public static OperablePredicate IsQueen(OperableTerm term) => new Predicate(nameof(IsQueen), term);

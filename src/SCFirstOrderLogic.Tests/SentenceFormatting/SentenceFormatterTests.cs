@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.SentenceCreation;
+using SCFirstOrderLogic.FormulaCreation;
 
-namespace SCFirstOrderLogic.SentenceFormatting;
+namespace SCFirstOrderLogic.FormulaFormatting;
 
 public static class SentenceFormatterTests
 {
@@ -28,7 +28,7 @@ public static class SentenceFormatterTests
             new(Sentence: "∀ x, ∀ y, P(x, y)", Expected: "∀ x, y, P(x, y)"),
             new(Sentence: "∃ x, ∃ y, P(x, y)", Expected: "∃ x, y, P(x, y)"),
         ])
-        .When(tc => new SentenceFormatter().Format(SentenceParser.Default.Parse(tc.Sentence)))
+        .When(tc => new FormulaFormatter().Format(FormulaParser.Default.Parse(tc.Sentence)))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.Expected));
 

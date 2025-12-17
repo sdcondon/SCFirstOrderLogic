@@ -1,13 +1,13 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.FormulaManipulation;
 using System;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of a variable term within a sentence of first order logic. These are declared in quantifier sentences.
+/// Representation of a variable term within a formula of first order logic. These are declared in quantifier formulas.
 /// </summary>
 public sealed class VariableReference : Term
 {

@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainOperableFormulaFactory;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
+namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 
 public class InstanceUnifierTests
 {

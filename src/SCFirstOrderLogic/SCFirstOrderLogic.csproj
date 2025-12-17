@@ -8,7 +8,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Basic but fully functional and documented first-order logic implementations. Includes models for raw and CNF sentences, as well as extensible logic for creating, manipulating, formatting and indexing them.</Description>
+    <Description>Basic but fully functional and documented first-order logic implementations. Includes models for raw and CNF formulas, as well as extensible logic for creating, manipulating, formatting and indexing them.</Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>first order predicate logic quantificational calculus</PackageTags>
     <Product>SCFirstOrderLogic</Product>
@@ -29,13 +29,13 @@
   </ItemGroup>
 
     <ItemGroup>
-        <None Remove="SentenceCreation\FirstOrderLogic.g4" />
+        <None Remove="FormulaCreation\FirstOrderLogic.g4" />
     </ItemGroup>
 
     <ItemGroup>
-        <Antlr4 Include="SentenceCreation\FirstOrderLogic.g4">
-            <Package>SCFirstOrderLogic.SentenceCreation.Antlr</Package>
-            <AntOutDir>SentenceCreation\Antlr</AntOutDir>
+        <Antlr4 Include="FormulaCreation\FirstOrderLogic.g4">
+            <Package>SCFirstOrderLogic.FormulaCreation.Antlr</Package>
+            <AntOutDir>FormulaCreation\Antlr</AntOutDir>
             <Listener>false</Listener>
             <DOptions>language=CSharp;accessLevel=internal</DOptions>
         </Antlr4>
@@ -56,7 +56,6 @@
 
   <ItemGroup>
     <Folder Include="InternalUtilities\" />
-    <Folder Include="SentenceCreation\Antlr\" />
   </ItemGroup>
 
 </Project>

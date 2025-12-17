@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using System.Collections.Generic;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainOperableFormulaFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
+namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 
 public static class VariableSubstitutionTests
 {
@@ -133,9 +133,9 @@ public static class VariableSubstitutionTests
             ////    InputTerm: P(C, X),
             ////    Expected: P(C, F(F(X)))),
         ])
-        .When(tc => new VariableSubstitution(tc.Bindings).ApplyTo(new CNFSentence(tc.Input)))
+        .When(tc => new VariableSubstitution(tc.Bindings).ApplyTo(new CNFFormula(tc.Input)))
         .ThenReturns()
-        .And((tc, rv) => rv.Should().Be(new CNFSentence(tc.Expected)));
+        .And((tc, rv) => rv.Should().Be(new CNFFormula(tc.Expected)));
 
     public static Test EqualityBehaviour => TestThat
         .GivenEachOf<EqualityTestCase>(() =>
@@ -198,13 +198,13 @@ public static class VariableSubstitutionTests
 
     private record ApplyToSentenceTestCase(
         Dictionary<VariableReference, Term> Bindings,
-        Sentence Input,
-        Sentence Expected);
+        Formula Input,
+        Formula Expected);
 
     private record ApplyToCNFSentenceTestCase(
         Dictionary<VariableReference, Term> Bindings,
-        CNFSentence Input,
-        CNFSentence Expected);
+        CNFFormula Input,
+        CNFFormula Expected);
 
     private record EqualityTestCase(
         VariableSubstitution X,

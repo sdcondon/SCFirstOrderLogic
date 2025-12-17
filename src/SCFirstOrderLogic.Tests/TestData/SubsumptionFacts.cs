@@ -1,7 +1,7 @@
-﻿using SCFirstOrderLogic.SentenceManipulation.Substitution;
+﻿using SCFirstOrderLogic.FormulaManipulation.Substitution;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainOperableFormulaFactory;
 
 namespace SCFirstOrderLogic.TestData;
 

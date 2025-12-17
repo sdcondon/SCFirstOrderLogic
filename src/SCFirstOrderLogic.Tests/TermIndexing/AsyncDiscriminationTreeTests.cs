@@ -2,7 +2,7 @@
 using FlUnit;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainOperableFormulaFactory;
 using FunctionNodeKey = SCFirstOrderLogic.TermIndexing.DiscriminationTreeFunctionNodeKey;
 using INodeKey = SCFirstOrderLogic.TermIndexing.IDiscriminationTreeNodeKey;
 using VariableNodeKey = SCFirstOrderLogic.TermIndexing.DiscriminationTreeVariableNodeKey;

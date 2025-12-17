@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using System.Collections.Generic;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainOperableFormulaFactory;
 
 namespace SCFirstOrderLogic.TermIndexing;
 

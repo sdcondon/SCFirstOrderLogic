@@ -1,8 +1,8 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic;
-using SCFirstOrderLogic.SentenceFormatting;
-using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.FormulaFormatting;
+using SCFirstOrderLogic.FormulaManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +17,8 @@ public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTyp
     /// <summary>
     /// Initialises a new instance of the <see cref="AltCNFClause_WithTypeSwitch"/> class from a sentence that is a disjunction of literals (a literal being a predicate or a negated predicate).
     /// </summary>
-    /// <param name="sentence">The clause, represented as a <see cref="Sentence"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a disjunction of literals.</param>
-    public CNFClause_WithTypeSwitchCtorVisitors(Sentence sentence)
+    /// <param name="sentence">The clause, represented as a <see cref="Formula"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a disjunction of literals.</param>
+    public CNFClause_WithTypeSwitchCtorVisitors(Formula sentence)
     {
         var ctor = new ClauseConstructor();
         ctor.Visit(sentence);
@@ -90,10 +90,10 @@ public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTyp
     /// Returns a string that represents the current object.
     /// </para>
     /// <para>
-    /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to format the clause.
+    /// NB: The implementation of this override creates a <see cref="FormulaFormatter"/> object and uses it to format the clause.
     /// Note that this will not guarantee unique labelling of normalisation terms (standardised variables or Skolem functions)
     /// across multiple calls, or provide any choice as to the sets of labels used for normalisation terms. If you want either
-    /// of these things, instantiate your own <see cref="SentenceFormatter"/> instance.
+    /// of these things, instantiate your own <see cref="FormulaFormatter"/> instance.
     /// </para>
     /// </summary>
     /// <returns>A string that represents the current object.</returns>
@@ -143,7 +143,7 @@ public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTyp
     {
         public HashSet<Literal_WithTypeSwitchCtorVisitors> Literals { get; } = new();
 
-        public override void Visit(Sentence sentence)
+        public override void Visit(Formula sentence)
         {
             if (sentence is Disjunction disjunction)
             {

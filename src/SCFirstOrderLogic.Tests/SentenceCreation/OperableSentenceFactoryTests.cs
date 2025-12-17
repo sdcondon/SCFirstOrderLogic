@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using System;
-using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.OperableFormulaFactory;
 
-namespace SCFirstOrderLogic.SentenceCreation;
+namespace SCFirstOrderLogic.FormulaCreation;
 
 public class OperableSentenceFactoryTests
 {
-    private record TestCase(OperableSentence SentenceSurrogate, Sentence ExpectedSentence);
+    private record TestCase(OperableFormula SentenceSurrogate, Formula ExpectedSentence);
 
     private static OperableFunction Constant1 => new Function(nameof(Constant1));
     private static OperableFunction Constant2 => new Function(nameof(Constant2));
@@ -73,7 +73,7 @@ public class OperableSentenceFactoryTests
                         new Function(nameof(UnaryFunction), [ new VariableReference(new VariableDeclaration("X")) ]),
                         new Function(nameof(Constant1))))),
         ])
-        .When(tc => (Sentence)tc.SentenceSurrogate)
+        .When(tc => (Formula)tc.SentenceSurrogate)
         .ThenReturns((tc, sentence) =>
         {
             sentence.Should().BeEquivalentTo(tc.ExpectedSentence, o => o.RespectingRuntimeTypes());

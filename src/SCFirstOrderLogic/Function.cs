@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.FormulaManipulation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of a function term within a sentence of first order logic. In typical FOL syntax, this is written as:
+/// Representation of a function term within a formula of first order logic. In typical FOL syntax, this is written as:
 /// <code>{function identifier}({term}, ..)</code>
 /// Or, for functions with arity zero (that is, constants), sometimes just:
 /// <code>{function identifier}</code>

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceFormatting;
-using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.FormulaFormatting;
+using SCFirstOrderLogic.FormulaManipulation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Linq;
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of an individual clause (i.e. a disjunction of <see cref="Literal"/>s) of a first-order logic sentence in conjunctive normal form.
+/// Representation of an individual clause (i.e. a disjunction of <see cref="Literal"/>s) of a first-order logic formula in conjunctive normal form.
 /// </summary>
 public class CNFClause : IEquatable<CNFClause>
 {
@@ -26,10 +26,10 @@ public class CNFClause : IEquatable<CNFClause>
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="CNFClause"/> class from a sentence that is a disjunction of literals (a literal being a predicate or a negated predicate).
+    /// Initialises a new instance of the <see cref="CNFClause"/> class from a formula that is a disjunction of literals (a literal being a predicate or a negated predicate).
     /// </summary>
-    /// <param name="cnfClause">The clause, represented as a <see cref="Sentence"/>. An <see cref="ArgumentException"/> will be thrown if it is not a disjunction of literals.</param>
-    public CNFClause(Sentence cnfClause)
+    /// <param name="cnfClause">The clause, represented as a <see cref="Formula"/>. An <see cref="ArgumentException"/> will be thrown if it is not a disjunction of literals.</param>
+    public CNFClause(Formula cnfClause)
         : this(ConstructionVisitor.GetLiterals(cnfClause))
     {
     }
@@ -102,14 +102,14 @@ public class CNFClause : IEquatable<CNFClause>
     /// Returns a string that represents the current object.
     /// </para>
     /// <para>
-    /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to format the clause.
+    /// NB: The implementation of this override creates a <see cref="FormulaFormatter"/> object and uses it to format the clause.
     /// Note that this will not guarantee unique labelling of normalisation terms (standardised variables or Skolem functions)
     /// across multiple calls, or provide any choice as to the sets of labels used for normalisation terms. If you want either
-    /// of these things, instantiate your own <see cref="SentenceFormatter"/> instance.
+    /// of these things, instantiate your own <see cref="FormulaFormatter"/> instance.
     /// </para>
     /// </summary>
     /// <returns>A string that represents the current object.</returns>
-    public override string ToString() => new SentenceFormatter().Format(this);
+    public override string ToString() => new FormulaFormatter().Format(this);
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is CNFClause clause && Equals(clause);
@@ -132,22 +132,22 @@ public class CNFClause : IEquatable<CNFClause>
         return LiteralsEqualityComparer.GetHashCode(literals);
     }
 
-    private class ConstructionVisitor : RecursiveSentenceVisitor
+    private class ConstructionVisitor : RecursiveFormulaVisitor
     {
         private readonly HashSet<Literal> literals = new();
 
-        public static HashSet<Literal> GetLiterals(Sentence sentence)
+        public static HashSet<Literal> GetLiterals(Formula formula)
         {
             var visitor = new ConstructionVisitor();
-            visitor.Visit(sentence);
+            visitor.Visit(formula);
             return visitor.literals;
         }
 
-        public override void Visit(Sentence sentence)
+        public override void Visit(Formula formula)
         {
-            if (sentence is Disjunction disjunction)
+            if (formula is Disjunction disjunction)
             {
-                // The sentence is assumed to be a clause (i.e. a disjunction of literals) - so just skip past all the disjunctions at the root.
+                // The formula is assumed to be a clause (i.e. a disjunction of literals) - so just skip past all the disjunctions at the root.
                 base.Visit(disjunction);
             }
             else
@@ -155,7 +155,7 @@ public class CNFClause : IEquatable<CNFClause>
                 // Assume we've hit a literal. NB will throw if its not actually a literal.
                 // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the Literal ctor that
                 // we invoke here does so to figure out the details of the literal). So we can just return rather than invoking base.Visit.
-                literals.Add(new Literal(sentence));
+                literals.Add(new Literal(formula));
             }
         }
     }

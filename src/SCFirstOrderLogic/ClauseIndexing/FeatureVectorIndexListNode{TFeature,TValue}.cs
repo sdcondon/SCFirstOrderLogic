@@ -1,6 +1,6 @@
 // Copyright © 2023-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceManipulation.Substitution;
+using SCFirstOrderLogic.FormulaManipulation.Substitution;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;

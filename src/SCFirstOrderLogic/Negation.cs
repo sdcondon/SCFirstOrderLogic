@@ -1,52 +1,52 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.FormulaManipulation;
 using System;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of a negation sentence of first order logic. In typical FOL syntax, this is written as:
-/// <code>¬{sentence}</code>
+/// Representation of a negation formula of first order logic. In typical FOL syntax, this is written as:
+/// <code>¬{formula}</code>
 /// </summary>
-public sealed class Negation : Sentence
+public sealed class Negation : Formula
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Negation"/> class.
     /// </summary>
-    /// <param name="sentence">The sentence that is negated.</param>
-    public Negation(Sentence sentence) => Sentence = sentence;
+    /// <param name="formula">The formula that is negated.</param>
+    public Negation(Formula formula) => Formula = formula;
 
     /// <summary>
-    /// Gets the sentence that is negated.
+    /// Gets the formula that is negated.
     /// </summary>
-    public Sentence Sentence { get; }
+    public Formula Formula { get; }
 
     /// <inheritdoc />
-    public override void Accept(ISentenceVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IFormulaVisitor visitor) => visitor.Visit(this);
 
     /// <inheritdoc />
-    public override void Accept<T>(ISentenceVisitor<T> visitor, T state) => visitor.Visit(this, state);
+    public override void Accept<T>(IFormulaVisitor<T> visitor, T state) => visitor.Visit(this, state);
 
     /// <inheritdoc />
-    public override void Accept<T>(ISentenceVisitorR<T> visitor, ref T state) => visitor.Visit(this, ref state);
+    public override void Accept<T>(IFormulaVisitorR<T> visitor, ref T state) => visitor.Visit(this, ref state);
 
     /// <inheritdoc />
-    public override TOut Accept<TOut>(ISentenceTransformation<TOut> transformation) => transformation.ApplyTo(this);
+    public override TOut Accept<TOut>(IFormulaTransformation<TOut> transformation) => transformation.ApplyTo(this);
 
     /// <inheritdoc />
-    public override TOut Accept<TOut, TState>(ISentenceTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
+    public override TOut Accept<TOut, TState>(IFormulaTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
 
     /// <inheritdoc />
-    public override Task AcceptAsync(IAsyncSentenceVisitor visitor) => visitor.VisitAsync(this);
+    public override Task AcceptAsync(IAsyncFormulaVisitor visitor) => visitor.VisitAsync(this);
 
     /// <inheritdoc />
-    public override Task AcceptAsync<T>(IAsyncSentenceVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
+    public override Task AcceptAsync<T>(IAsyncFormulaVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is Negation negation && Sentence.Equals(negation.Sentence);
+    public override bool Equals(object? obj) => obj is Negation negation && Formula.Equals(negation.Formula);
 
     /// <inheritdoc />
-    public override int GetHashCode() => HashCode.Combine(Sentence);
+    public override int GetHashCode() => HashCode.Combine(Formula);
 }

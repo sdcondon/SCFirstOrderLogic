@@ -2,9 +2,9 @@
 using FluentAssertions.Equivalency;
 using FlUnit;
 using SCFirstOrderLogic.TestUtilities;
-using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.FormulaFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Normalisation;
+namespace SCFirstOrderLogic.FormulaManipulation.Normalisation;
 
 public static partial class CNFConversionTests
 {
@@ -33,7 +33,7 @@ public static partial class CNFConversionTests
                 config: EquivalencyOptions.UsingOnlyConsistencyForVariablesAndSkolemFunctions);
         });
 
-    private static EquivalencyAssertionOptions<Sentence> CNFEquivalencyOpts(EquivalencyAssertionOptions<Sentence> opts)
+    private static EquivalencyAssertionOptions<Formula> CNFEquivalencyOpts(EquivalencyAssertionOptions<Formula> opts)
     {
         // We don't particularly care about the details (i.e. identifiers) of the
         // actual skolem functions and standardised variables, but they should
@@ -57,7 +57,7 @@ public static partial class CNFConversionTests
 
         return opts
             .RespectingRuntimeTypes()
-            .ComparingByMembers<Sentence>()
+            .ComparingByMembers<Formula>()
             .Using<Function>(ctx =>
             {
                 if (ctx.Expectation.Identifier.Equals("Skm:F"))

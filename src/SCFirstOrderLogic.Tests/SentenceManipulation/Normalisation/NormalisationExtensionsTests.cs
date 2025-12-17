@@ -1,14 +1,14 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.FormulaFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Normalisation;
+namespace SCFirstOrderLogic.FormulaManipulation.Normalisation;
 
 public static class NormalisationExtensionsTests
 {
-    private static Sentence P => new Predicate("P");
-    private static Sentence Q => new Predicate("Q");
-    private static Sentence R => new Predicate("R");
+    private static Formula P => new Predicate("P");
+    private static Formula Q => new Predicate("Q");
+    private static Formula R => new Predicate("R");
 
     public static Test ToCNFBehaviour => TestThat
         .GivenEachOf(() => new[]

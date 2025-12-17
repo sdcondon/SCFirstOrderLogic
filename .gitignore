@@ -4,7 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # ANTLR auto-generated files
-/src/SCFirstOrderLogic/SentenceCreation/Antlr/
+/src/SCFirstOrderLogic/FormulaCreation/Antlr/
 
 # Documentation libman libs
 /src/SCFirstOrderLogic.Documentation/wwwroot/lib/

@@ -5,16 +5,16 @@ using System;
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of a quantification sentence of first order logic.
+/// Representation of a quantification formula of first order logic.
 /// </summary>
-public abstract class Quantification : Sentence
+public abstract class Quantification : Formula
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Quantification"/> class.
     /// </summary>
     /// <param name="variable">The variable declared by this quantification.</param>
-    /// <param name="sentence">The sentence that this quantification applies to.</param>
-    protected Quantification(VariableDeclaration variable, Sentence sentence) => (Variable, Sentence) = (variable, sentence);
+    /// <param name="formula">The formula that this quantification applies to.</param>
+    protected Quantification(VariableDeclaration variable, Formula formula) => (Variable, Formula) = (variable, formula);
 
     /// <summary>
     /// Gets the variable declared by this quantification.
@@ -22,18 +22,18 @@ public abstract class Quantification : Sentence
     public VariableDeclaration Variable { get; }
 
     /// <summary>
-    /// Gets the sentence that this quantification applies to.
+    /// Gets the formula that this quantification applies to.
     /// </summary>
-    public Sentence Sentence { get; }
+    public Formula Formula { get; }
 
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
         return obj is Quantification quantification
             && Variable.Equals(quantification.Variable)
-            && Sentence.Equals(quantification.Sentence);
+            && Formula.Equals(quantification.Formula);
     }
 
     /// <inheritdoc />
-    public override int GetHashCode() => HashCode.Combine(Variable, Sentence);
+    public override int GetHashCode() => HashCode.Combine(Variable, Formula);
 }

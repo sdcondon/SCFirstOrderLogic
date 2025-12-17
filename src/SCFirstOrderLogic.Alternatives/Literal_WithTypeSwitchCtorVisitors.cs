@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceFormatting;
+using SCFirstOrderLogic.FormulaFormatting;
 using System;
 
 namespace SCFirstOrderLogic;
@@ -16,13 +16,13 @@ public class Literal_WithTypeSwitchCtorVisitors : IEquatable<Literal_WithTypeSwi
     /// <summary>
     /// Initialises a new instance of the <see cref="AltCNFLiteral_WithTypeSwitchCtorVisitors"/> class.
     /// </summary>
-    /// <param name="sentence">The literal, represented as a <see cref="Sentence"/> object. An exception will be thrown if it is neither a predicate nor a negated predicate.</param>
-    public Literal_WithTypeSwitchCtorVisitors(Sentence sentence)
+    /// <param name="sentence">The literal, represented as a <see cref="Formula"/> object. An exception will be thrown if it is neither a predicate nor a negated predicate.</param>
+    public Literal_WithTypeSwitchCtorVisitors(Formula sentence)
     {
         if (sentence is Negation negation)
         {
             IsNegated = true;
-            sentence = negation.Sentence;
+            sentence = negation.Formula;
         }
 
         if (sentence is Predicate predicate)
@@ -72,10 +72,10 @@ public class Literal_WithTypeSwitchCtorVisitors : IEquatable<Literal_WithTypeSwi
     /// Returns a string that represents the current object.
     /// </para>
     /// <para>
-    /// NB: The implementation of this override creates a <see cref="SentenceFormatter"/> object and uses it to format the literal.
+    /// NB: The implementation of this override creates a <see cref="FormulaFormatter"/> object and uses it to format the literal.
     /// Note that this will not guarantee unique labelling of normalisation terms (standardised variables or Skolem functions)
     /// across multiple calls, or provide any choice as to the sets of labels used for normalisation terms. If you want either
-    /// of these things, instantiate your own <see cref="SentenceFormatter"/> instance.
+    /// of these things, instantiate your own <see cref="FormulaFormatter"/> instance.
     /// </para>
     /// </summary>
     /// <returns>A string that represents the current object.</returns>
@@ -91,10 +91,10 @@ public class Literal_WithTypeSwitchCtorVisitors : IEquatable<Literal_WithTypeSwi
     }
 
     /// <summary>
-    /// Converts the literal to a <see cref="Sentence"/>
+    /// Converts the literal to a <see cref="Formula"/>
     /// </summary>
-    /// <returns>A representation of this literal as a <see cref="Sentence"/>.</returns>
-    public Sentence ToSentence()
+    /// <returns>A representation of this literal as a <see cref="Formula"/>.</returns>
+    public Formula ToSentence()
     {
         return IsNegated ? new Negation(Predicate) : Predicate;
     }
@@ -103,10 +103,10 @@ public class Literal_WithTypeSwitchCtorVisitors : IEquatable<Literal_WithTypeSwi
     public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
 
     /// <summary>
-    /// Defines the (explicit) conversion of a <see cref="Sentence"/> instance to a <see cref="CNFLiteral_WithoutTypeSwitch"/>. NB: This conversion is explicit because it can fail (if the sentence isn't actually a literal).
+    /// Defines the (explicit) conversion of a <see cref="Formula"/> instance to a <see cref="CNFLiteral_WithoutTypeSwitch"/>. NB: This conversion is explicit because it can fail (if the sentence isn't actually a literal).
     /// </summary>
     /// <param name="sentence">The sentence to convert.</param>
-    public static explicit operator Literal_WithTypeSwitchCtorVisitors(Sentence sentence)
+    public static explicit operator Literal_WithTypeSwitchCtorVisitors(Formula sentence)
     {
         try
         {

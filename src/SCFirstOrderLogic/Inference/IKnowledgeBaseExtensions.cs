@@ -17,7 +17,7 @@ public static class IKnowledgeBaseExtensions
     /// <param name="knowledgeBase">The knowledge base to tell.</param>
     /// <param name="sentences">The sentences that can be assumed to hold true when answering queries.</param>
     /// <param name="cancellationToken">A cancellation token for the operation.</param>
-    public static async Task TellAsync(this IKnowledgeBase knowledgeBase, IEnumerable<Sentence> sentences, CancellationToken cancellationToken = default)
+    public static async Task TellAsync(this IKnowledgeBase knowledgeBase, IEnumerable<Formula> sentences, CancellationToken cancellationToken = default)
     {
         foreach (var sentence in sentences)
         {
@@ -34,7 +34,7 @@ public static class IKnowledgeBaseExtensions
     /// </summary>
     /// <param name="knowledgeBase">The knowledge base to tell.</param>
     /// <param name="sentences">The sentences that can be assumed to hold true when answering queries.</param>
-    public static void Tell(this IKnowledgeBase knowledgeBase, IEnumerable<Sentence> sentences)
+    public static void Tell(this IKnowledgeBase knowledgeBase, IEnumerable<Formula> sentences)
     {
         knowledgeBase.TellAsync(sentences).GetAwaiter().GetResult();
     }
@@ -44,7 +44,7 @@ public static class IKnowledgeBaseExtensions
     /// </summary>
     /// <param name="knowledgeBase">The knowledge base to tell.</param>
     /// <param name="sentence">The sentence that can be assumed to hold true when answering queries.</param>
-    public static void Tell(this IKnowledgeBase knowledgeBase, Sentence sentence)
+    public static void Tell(this IKnowledgeBase knowledgeBase, Formula sentence)
     {
         knowledgeBase.TellAsync(sentence).GetAwaiter().GetResult();
     }
@@ -63,7 +63,7 @@ public static class IKnowledgeBaseExtensions
     /// <param name="knowledgeBase">The knowledge base to create the query of.</param>
     /// <param name="sentence">The query sentence.</param>
     /// <returns>An <see cref="IQuery"/> implementation that can be used to execute the query.</returns>
-    public static IQuery CreateQuery(this IKnowledgeBase knowledgeBase, Sentence sentence)
+    public static IQuery CreateQuery(this IKnowledgeBase knowledgeBase, Formula sentence)
     {
         return knowledgeBase.CreateQueryAsync(sentence).GetAwaiter().GetResult();
     }
@@ -75,7 +75,7 @@ public static class IKnowledgeBaseExtensions
     /// <param name="sentence">The query sentence.</param>
     /// <param name="cancellationToken">A cancellation token for the operation.</param>
     /// <returns>True if the sentence is known to be true, false if it is known to be false or cannot be determined.</returns>
-    public static async Task<bool> AskAsync(this IKnowledgeBase knowledgeBase, Sentence sentence, CancellationToken cancellationToken = default)
+    public static async Task<bool> AskAsync(this IKnowledgeBase knowledgeBase, Formula sentence, CancellationToken cancellationToken = default)
     {
         using var query = await knowledgeBase.CreateQueryAsync(sentence, cancellationToken);
         return await query.ExecuteAsync(cancellationToken);
@@ -86,7 +86,7 @@ public static class IKnowledgeBaseExtensions
     /// </summary>
     /// <param name="knowledgeBase">The knowledge base to ask.</param>
     /// <param name="sentence">The query sentence.</param>
-    public static bool Ask(this IKnowledgeBase knowledgeBase, Sentence sentence)
+    public static bool Ask(this IKnowledgeBase knowledgeBase, Formula sentence)
     {
         using var query = knowledgeBase.CreateQueryAsync(sentence).GetAwaiter().GetResult();
         return query.ExecuteAsync().GetAwaiter().GetResult();

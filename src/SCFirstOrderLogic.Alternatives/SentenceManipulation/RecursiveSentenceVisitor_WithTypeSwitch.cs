@@ -2,19 +2,19 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System;
 
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic.FormulaManipulation;
 
 /// <summary>
-/// Base class for recursive visitors of <see cref="Sentence"/> instances.
+/// Base class for recursive visitors of <see cref="Formula"/> instances.
 /// </summary>
-public abstract class RecursiveSentenceVisitor_WithTypeSwitch : ISentenceVisitor, ITermVisitor
+public abstract class RecursiveSentenceVisitor_WithTypeSwitch : IFormulaVisitor, ITermVisitor
 {
     /// <summary>
-    /// Visits a <see cref="Sentence"/> instance.
+    /// Visits a <see cref="Formula"/> instance.
     /// </summary>
     /// <param name="sentence">The sentence to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual void Visit(Sentence sentence)
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual void Visit(Formula sentence)
     {
         switch (sentence)
         {
@@ -85,7 +85,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : ISentenceVisitor
     public virtual void Visit(ExistentialQuantification existentialQuantification)
     {
         Visit(existentialQuantification.Variable);
-        Visit(existentialQuantification.Sentence);
+        Visit(existentialQuantification.Formula);
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : ISentenceVisitor
     /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
     public virtual void Visit(Negation negation)
     {
-        Visit(negation.Sentence);
+        Visit(negation.Formula);
     }
 
     /// <summary>
@@ -150,7 +150,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : ISentenceVisitor
     public virtual void Visit(UniversalQuantification universalQuantification)
     {
         Visit(universalQuantification.Variable);
-        Visit(universalQuantification.Sentence);
+        Visit(universalQuantification.Formula);
     }
 
     /// <summary>

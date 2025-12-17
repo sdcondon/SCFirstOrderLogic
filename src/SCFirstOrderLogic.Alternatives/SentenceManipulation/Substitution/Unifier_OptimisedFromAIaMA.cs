@@ -2,7 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System.Diagnostics.CodeAnalysis;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
+namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 
 /// <summary>
 /// Most general unifier logic - optimised from the version presented in the source material,
@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
 /// </summary>
 public static class Unifier_OptimisedFromAIaMA
 {
-    public static bool TryUnify(Sentence x, Sentence y, [NotNullWhen(returnValue: true)] out IDictionary<VariableReference, Term>? unifier)
+    public static bool TryUnify(Formula x, Formula y, [NotNullWhen(returnValue: true)] out IDictionary<VariableReference, Term>? unifier)
     {
         unifier = new Dictionary<VariableReference, Term>();
 
@@ -24,7 +24,7 @@ public static class Unifier_OptimisedFromAIaMA
         return true;
     }
 
-    private static bool TryUnify(Sentence x, Sentence y, IDictionary<VariableReference, Term> unifier)
+    private static bool TryUnify(Formula x, Formula y, IDictionary<VariableReference, Term> unifier)
     {
         // NB: type switch likely to be slower than using visitor pattern
         return (x, y) switch
@@ -81,7 +81,7 @@ public static class Unifier_OptimisedFromAIaMA
 
     private static bool TryUnify(Negation x, Negation y, IDictionary<VariableReference, Term> unifier)
     {
-        return TryUnify(x.Sentence, y.Sentence, unifier);
+        return TryUnify(x.Formula, y.Formula, unifier);
     }
 
     private static bool TryUnify(Predicate x, Predicate y, IDictionary<VariableReference, Term> unifier)
@@ -176,7 +176,7 @@ public static class Unifier_OptimisedFromAIaMA
     }
 
     // NB: Doesn't stop as soon as IsFound is true.
-    private class VariableFinder : RecursiveSentenceVisitor
+    private class VariableFinder : RecursiveFormulaVisitor
     {
         private readonly VariableReference variableReference;
 
@@ -193,7 +193,7 @@ public static class Unifier_OptimisedFromAIaMA
         }
     }
 
-    private class VariableSubstituter : RecursiveSentenceTransformation
+    private class VariableSubstituter : RecursiveFormulaTransformation
     {
         private readonly IDictionary<VariableReference, Term> variableSubstitutions;
 

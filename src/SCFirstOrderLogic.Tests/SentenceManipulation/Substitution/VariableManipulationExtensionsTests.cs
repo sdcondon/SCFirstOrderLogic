@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using FlUnit;
-using SCFirstOrderLogic.SentenceManipulation.Normalisation;
+using SCFirstOrderLogic.FormulaManipulation.Normalisation;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainOperableFormulaFactory;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
+namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 
 public static class VariableManipulationExtensionsTests
 {
@@ -119,7 +119,7 @@ public static class VariableManipulationExtensionsTests
         .When(tc => tc.Clause.ToCNF().Clauses.Single().UnifiesWithAnyOf(tc.Clauses.Select(s => s.ToCNF().Clauses.Single())))
         .ThenReturns((tc, rv) => rv.Should().Be(tc.ExpectedResult));
 
-    private record UnifiesWithAnyOfTestCase(Sentence Clause, IEnumerable<Sentence> Clauses, bool ExpectedResult);
+    private record UnifiesWithAnyOfTestCase(Formula Clause, IEnumerable<Formula> Clauses, bool ExpectedResult);
 
     private record OrdinaliseTestCase(Term Input, Term Expected);
 
@@ -127,13 +127,13 @@ public static class VariableManipulationExtensionsTests
 
     private record SubsumptionTestCase(CNFClause X, CNFClause Y, bool Expected)
     {
-        public SubsumptionTestCase(Sentence X, Sentence Y, bool Expected)
+        public SubsumptionTestCase(Formula X, Formula Y, bool Expected)
             : this(new CNFClause(X), new CNFClause(Y), Expected) { }
 
-        public SubsumptionTestCase(CNFClause X, Sentence Y, bool Expected)
+        public SubsumptionTestCase(CNFClause X, Formula Y, bool Expected)
             : this(X, new CNFClause(Y), Expected) { }
 
-        public SubsumptionTestCase(Sentence X, CNFClause Y, bool Expected)
+        public SubsumptionTestCase(Formula X, CNFClause Y, bool Expected)
             : this(new CNFClause(X), Y, Expected) { }
     }
 }

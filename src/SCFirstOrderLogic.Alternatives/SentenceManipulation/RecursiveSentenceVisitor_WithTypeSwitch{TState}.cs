@@ -1,18 +1,18 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic.FormulaManipulation;
 
 /// <summary>
-/// Base class for recursive visitors of <see cref="Sentence"/> instances that reference external state.
+/// Base class for recursive visitors of <see cref="Formula"/> instances that reference external state.
 /// </summary>
-public abstract class RecursiveSentenceVisitor_WithTypeSwitch<TState> : ISentenceVisitorR<TState>, ITermVisitorR<TState>
+public abstract class RecursiveSentenceVisitor_WithTypeSwitch<TState> : IFormulaVisitorR<TState>, ITermVisitorR<TState>
 {
     /// <summary>
-    /// Applies this transformation to a <see cref="Sentence"/> instance.
+    /// Applies this transformation to a <see cref="Formula"/> instance.
     /// </summary>
     /// <param name="sentence">The sentence to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual void Visit(Sentence sentence, ref TState state)
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual void Visit(Formula sentence, ref TState state)
     {
         switch (sentence)
         {
@@ -83,7 +83,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch<TState> : ISentenc
     public virtual void Visit(ExistentialQuantification existentialQuantification, ref TState state)
     {
         Visit(existentialQuantification.Variable, ref state);
-        Visit(existentialQuantification.Sentence, ref state);
+        Visit(existentialQuantification.Formula, ref state);
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch<TState> : ISentenc
     /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
     public virtual void Visit(Negation negation, ref TState state)
     {
-        Visit(negation.Sentence, ref state);
+        Visit(negation.Formula, ref state);
     }
 
     /// <summary>
@@ -148,7 +148,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch<TState> : ISentenc
     public virtual void Visit(UniversalQuantification universalQuantification, ref TState state)
     {
         Visit(universalQuantification.Variable, ref state);
-        Visit(universalQuantification.Sentence, ref state);
+        Visit(universalQuantification.Formula, ref state);
     }
 
     /// <summary>

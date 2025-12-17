@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Normalisation;
+namespace SCFirstOrderLogic.FormulaManipulation.Normalisation;
 
 public static class CNFConversion_WithoutTypeSwitch
 {
@@ -13,7 +13,7 @@ public static class CNFConversion_WithoutTypeSwitch
     private static readonly DisjunctionDistribution disjunctionDistribution = new();
 
     /// <inheritdoc />
-    public static Sentence ApplyTo(Sentence sentence)
+    public static Formula ApplyTo(Formula sentence)
     {
         // We do variable standardisation first, before altering the sentence in any
         // other way, so that we can easily store the context of the original variable in the new identifier. This
@@ -49,14 +49,14 @@ public static class CNFConversion_WithoutTypeSwitch
     public class VariableStandardisation : RecursiveSentenceTransformation_WithoutTypeSwitch
     {
         private readonly Dictionary<VariableDeclaration, VariableDeclaration> mapping = new();
-        private readonly Sentence rootSentence;
+        private readonly Formula rootSentence;
 
-        public VariableStandardisation(Sentence rootSentence)
+        public VariableStandardisation(Formula rootSentence)
         {
             this.rootSentence = rootSentence;
         }
 
-        public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
+        public override Formula ApplyTo(ExistentialQuantification existentialQuantification)
         {
             /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
             /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
@@ -64,7 +64,7 @@ public static class CNFConversion_WithoutTypeSwitch
             return base.ApplyTo(existentialQuantification);
         }
 
-        public override Sentence ApplyTo(UniversalQuantification universalQuantification)
+        public override Formula ApplyTo(UniversalQuantification universalQuantification)
         {
             /// Should we throw if the variable being standardised is already standardised? Or return it unchanged?
             /// Just thinking about robustness in the face of weird usages potentially resulting in stuff being normalised twice?
@@ -84,7 +84,7 @@ public static class CNFConversion_WithoutTypeSwitch
     public class ImplicationElimination : RecursiveSentenceTransformation_WithoutTypeSwitch
     {
         /// <inheritdoc />
-        public override Sentence ApplyTo(Implication implication)
+        public override Formula ApplyTo(Implication implication)
         {
             // Convert  P ⇒ Q to ¬P ∨ Q 
             var replacement = new Disjunction(new Negation(implication.Antecedent), implication.Consequent);
@@ -92,7 +92,7 @@ public static class CNFConversion_WithoutTypeSwitch
         }
 
         /// <inheritdoc />
-        public override Sentence ApplyTo(Equivalence equivalence)
+        public override Formula ApplyTo(Equivalence equivalence)
         {
             // Convert P ⇔ Q to (¬P ∨ Q) ∧ (P ∨ ¬Q)
             var replacement = new Conjunction(
@@ -101,7 +101,7 @@ public static class CNFConversion_WithoutTypeSwitch
             return replacement.Accept(this);
         }
 
-        public override Sentence ApplyTo(Predicate predicate)
+        public override Formula ApplyTo(Predicate predicate)
         {
             // There can't be any more implications once we've hit an atomic sentence, so just return.
             return predicate;
@@ -115,14 +115,14 @@ public static class CNFConversion_WithoutTypeSwitch
     public class NNFConversion : RecursiveSentenceTransformation_WithoutTypeSwitch
     {
         /// <inheritdoc />
-        public override Sentence ApplyTo(Negation negation)
+        public override Formula ApplyTo(Negation negation)
         {
-            if (negation.Sentence is Negation n)
+            if (negation.Formula is Negation n)
             {
                 // Eliminate double negative: ¬(¬P) ≡ P
-                return n.Sentence.Accept(this);
+                return n.Formula.Accept(this);
             }
-            else if (negation.Sentence is Conjunction c)
+            else if (negation.Formula is Conjunction c)
             {
                 // Apply de Morgan: ¬(P ∧ Q) ≡ (¬P ∨ ¬Q)
                 var replacement = new Disjunction(
@@ -130,7 +130,7 @@ public static class CNFConversion_WithoutTypeSwitch
                     new Negation(c.Right));
                 return replacement.Accept(this);
             }
-            else if (negation.Sentence is Disjunction d)
+            else if (negation.Formula is Disjunction d)
             {
                 // Apply de Morgan: ¬(P ∨ Q) ≡ (¬P ∧ ¬Q)
                 var replacement = new Conjunction(
@@ -138,20 +138,20 @@ public static class CNFConversion_WithoutTypeSwitch
                     new Negation(d.Right));
                 return replacement.Accept(this);
             }
-            else if (negation.Sentence is UniversalQuantification u)
+            else if (negation.Formula is UniversalQuantification u)
             {
                 // Apply ¬∀x, p ≡ ∃x, ¬p
                 var replacement = new ExistentialQuantification(
                     u.Variable,
-                    new Negation(u.Sentence));
+                    new Negation(u.Formula));
                 return replacement.Accept(this);
             }
-            else if (negation.Sentence is ExistentialQuantification e)
+            else if (negation.Formula is ExistentialQuantification e)
             {
                 // Apply ¬∃x, p ≡ ∀x, ¬p
                 var replacement = new UniversalQuantification(
                     e.Variable,
-                    new Negation(e.Sentence));
+                    new Negation(e.Formula));
                 return replacement.Accept(this);
             }
             else
@@ -160,7 +160,7 @@ public static class CNFConversion_WithoutTypeSwitch
             }
         }
 
-        public override Sentence ApplyTo(Predicate predicate)
+        public override Formula ApplyTo(Predicate predicate)
         {
             // There can't be any more negations once we've hit an atomic sentence, so just return.
             return predicate;
@@ -175,7 +175,7 @@ public static class CNFConversion_WithoutTypeSwitch
     // Would feel a bit uncomfortable publicly exposing a transformation class that can only be applied once.
     private class Skolemisation : RecursiveSentenceTransformation_WithoutTypeSwitch
     {
-        private readonly Sentence rootSentence;
+        private readonly Formula rootSentence;
         private readonly IEnumerable<VariableDeclaration> universalVariablesInScope;
         private readonly Dictionary<VariableDeclaration, Function> existentialVariableMap;
 
@@ -183,13 +183,13 @@ public static class CNFConversion_WithoutTypeSwitch
         /// Initializes a new instance of the <see cref="ScopedSkolemisation"/> class.
         /// </summary>
         /// <param name="rootSentence">The root sentence being transformed. Stored against the resulting Skolem function identifiers - for later explanations and the like.</param>
-        public Skolemisation(Sentence rootSentence)
+        public Skolemisation(Formula rootSentence)
             : this(rootSentence, Enumerable.Empty<VariableDeclaration>(), new Dictionary<VariableDeclaration, Function>())
         {
         }
 
         private Skolemisation(
-            Sentence rootSentence,
+            Formula rootSentence,
             IEnumerable<VariableDeclaration> universalVariablesInScope,
             Dictionary<VariableDeclaration, Function> existentialVariableMap)
         {
@@ -198,22 +198,22 @@ public static class CNFConversion_WithoutTypeSwitch
             this.existentialVariableMap = existentialVariableMap;
         }
 
-        public override Sentence ApplyTo(UniversalQuantification universalQuantification)
+        public override Formula ApplyTo(UniversalQuantification universalQuantification)
         {
-            Sentence sentence = universalQuantification.Sentence.Accept(new Skolemisation(
+            Formula sentence = universalQuantification.Formula.Accept(new Skolemisation(
                 rootSentence,
                 universalVariablesInScope.Append(universalQuantification.Variable), existentialVariableMap));
 
             return new UniversalQuantification(universalQuantification.Variable, sentence);
         }
 
-        public override Sentence ApplyTo(ExistentialQuantification existentialQuantification)
+        public override Formula ApplyTo(ExistentialQuantification existentialQuantification)
         {
             existentialVariableMap[existentialQuantification.Variable] = new Function(
                 new SkolemFunctionIdentifier((StandardisedVariableIdentifier)existentialQuantification.Variable.Identifier, rootSentence),
                 universalVariablesInScope.Select(a => new VariableReference(a)).ToList<Term>());
 
-            return existentialQuantification.Sentence.Accept(this);
+            return existentialQuantification.Formula.Accept(this);
         }
 
         public override Term ApplyTo(VariableReference variable)
@@ -236,12 +236,12 @@ public static class CNFConversion_WithoutTypeSwitch
     /// </summary>
     public class UniversalQuantifierElimination : RecursiveSentenceTransformation_WithoutTypeSwitch
     {
-        public override Sentence ApplyTo(UniversalQuantification universalQuantification)
+        public override Formula ApplyTo(UniversalQuantification universalQuantification)
         {
-            return universalQuantification.Sentence.Accept(this);
+            return universalQuantification.Formula.Accept(this);
         }
 
-        public override Sentence ApplyTo(Predicate predicate)
+        public override Formula ApplyTo(Predicate predicate)
         {
             // There can't be any more quantifications once we've hit an atomic sentence, so just return.
             return predicate;
@@ -253,9 +253,9 @@ public static class CNFConversion_WithoutTypeSwitch
     /// </summary>
     public class DisjunctionDistribution : RecursiveSentenceTransformation_WithoutTypeSwitch
     {
-        public override Sentence ApplyTo(Disjunction disjunction)
+        public override Formula ApplyTo(Disjunction disjunction)
         {
-            Sentence sentence;
+            Formula sentence;
 
             if (disjunction.Right is Conjunction cRight)
             {
@@ -282,7 +282,7 @@ public static class CNFConversion_WithoutTypeSwitch
             return sentence.Accept(this);
         }
 
-        public override Sentence ApplyTo(Predicate predicate)
+        public override Formula ApplyTo(Predicate predicate)
         {
             // There can't be any more disjunctions once we've hit an atomic sentence, so just return.
             return predicate;

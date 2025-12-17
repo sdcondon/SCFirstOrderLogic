@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainOperableFormulaFactory;
 
 namespace SCFirstOrderLogic.TestUtilities;
 
@@ -12,7 +12,7 @@ public static class CNFClauseHelper
             .Range(0, Random.Shared.Next(1, 2))
             .Select(i => new Literal(MakeRandomLiteral())));
 
-        Sentence MakeRandomLiteral()
+        Formula MakeRandomLiteral()
         {
             return Random.Shared.Next(1, 12) switch
             {

@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 
-namespace SCFirstOrderLogic.SentenceManipulation.Substitution;
+namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 
 [MemoryDiagnoser]
 [InProcess]
@@ -13,10 +13,10 @@ public class UnificationBenchmarks
     private static readonly VariableDeclaration x = new("x");
     private static readonly VariableDeclaration y = new("y");
 
-    private static readonly Sentence JohnKnowsX = Knows(john, x);
-    private static readonly Sentence JohnKnowsJane = Knows(john, jane);
-    private static readonly Sentence YKnowsJane = Knows(john, jane);
-    private static readonly Sentence YKnowsMotherOfY = Knows(john, jane);
+    private static readonly Formula JohnKnowsX = Knows(john, x);
+    private static readonly Formula JohnKnowsJane = Knows(john, jane);
+    private static readonly Formula YKnowsJane = Knows(john, jane);
+    private static readonly Formula YKnowsMotherOfY = Knows(john, jane);
 
     private static readonly Literal JohnKnowsX_Literal = new(Knows(john, x));
     private static readonly Literal JohnKnowsJane_Literal = new(Knows(john, jane));

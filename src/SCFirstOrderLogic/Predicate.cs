@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceManipulation;
+using SCFirstOrderLogic.FormulaManipulation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of an predicate sentence of first order logic, In typical FOL syntax, this is written as:
+/// Representation of an predicate formula of first order logic, In typical FOL syntax, this is written as:
 /// <code>{predicate identifier}({term}, ..)</code>
 /// </summary>
-public sealed class Predicate : Sentence
+public sealed class Predicate : Formula
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Predicate"/> class.
@@ -69,25 +69,25 @@ public sealed class Predicate : Sentence
     public ReadOnlyCollection<Term> Arguments { get; }
 
     /// <inheritdoc />
-    public override void Accept(ISentenceVisitor visitor) => visitor.Visit(this);
+    public override void Accept(IFormulaVisitor visitor) => visitor.Visit(this);
 
     /// <inheritdoc />
-    public override void Accept<T>(ISentenceVisitor<T> visitor, T state) => visitor.Visit(this, state);
+    public override void Accept<T>(IFormulaVisitor<T> visitor, T state) => visitor.Visit(this, state);
 
     /// <inheritdoc />
-    public override void Accept<T>(ISentenceVisitorR<T> visitor, ref T state) => visitor.Visit(this, ref state);
+    public override void Accept<T>(IFormulaVisitorR<T> visitor, ref T state) => visitor.Visit(this, ref state);
 
     /// <inheritdoc />
-    public override TOut Accept<TOut>(ISentenceTransformation<TOut> transformation) => transformation.ApplyTo(this);
+    public override TOut Accept<TOut>(IFormulaTransformation<TOut> transformation) => transformation.ApplyTo(this);
 
     /// <inheritdoc />
-    public override TOut Accept<TOut, TState>(ISentenceTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
+    public override TOut Accept<TOut, TState>(IFormulaTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
 
     /// <inheritdoc />
-    public override Task AcceptAsync(IAsyncSentenceVisitor visitor) => visitor.VisitAsync(this);
+    public override Task AcceptAsync(IAsyncFormulaVisitor visitor) => visitor.VisitAsync(this);
 
     /// <inheritdoc />
-    public override Task AcceptAsync<T>(IAsyncSentenceVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
+    public override Task AcceptAsync<T>(IAsyncFormulaVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
 
     /// <inheritdoc />
     public override bool Equals(object? obj)

@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using FlUnit;
 using SCFirstOrderLogic.ClauseIndexing.Features;
-using SCFirstOrderLogic.SentenceManipulation.Substitution;
+using SCFirstOrderLogic.FormulaManipulation.Substitution;
 using SCFirstOrderLogic.TestData;
 using SCFirstOrderLogic.TestUtilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainOperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainOperableFormulaFactory;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
 

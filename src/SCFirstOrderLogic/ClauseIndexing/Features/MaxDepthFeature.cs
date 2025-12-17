@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-using SCFirstOrderLogic.SentenceManipulation;
-using SCFirstOrderLogic.SentenceManipulation.Normalisation;
+using SCFirstOrderLogic.FormulaManipulation;
+using SCFirstOrderLogic.FormulaManipulation.Normalisation;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -119,7 +119,7 @@ public record MaxDepthFeature(object Identifier, bool IsInPositiveLiteral)
         });
     }
 
-    private class CreationVisitor : RecursiveSentenceVisitor<int>
+    private class CreationVisitor : RecursiveFormulaVisitor<int>
     {
         private readonly IDictionary<MaxDepthFeature, int> featureVector;
         private readonly bool forPositiveLiterals;

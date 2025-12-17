@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using FluentAssertions.Equivalency;
-using SCFirstOrderLogic.SentenceManipulation.Normalisation;
+using SCFirstOrderLogic.FormulaManipulation.Normalisation;
 using System;
 using System.Collections.Generic;
 
@@ -17,14 +17,14 @@ public static class EquivalencyOptions
     /// </summary>
     /// <param name="opts">The options instance to apply the equivalency rules to.</param>
     /// <returns>the updated options instance.</returns>
-    public static EquivalencyAssertionOptions<Sentence> UsingOnlyConsistencyForVariables(this EquivalencyAssertionOptions<Sentence> opts)
+    public static EquivalencyAssertionOptions<Formula> UsingOnlyConsistencyForVariables(this EquivalencyAssertionOptions<Formula> opts)
     {
         return opts
             .RespectingRuntimeTypes()
-            .ComparingByMembers<Sentence>()
+            .ComparingByMembers<Formula>()
             .ComparingByMembers<Term>()
-            .UsingJustAConsistencyCheckFor<Sentence, VariableDeclaration>()
-            .UsingJustAConsistencyCheckFor<Sentence, VariableReference>();
+            .UsingJustAConsistencyCheckFor<Formula, VariableDeclaration>()
+            .UsingJustAConsistencyCheckFor<Formula, VariableReference>();
     }
 
     /// <summary>
@@ -34,15 +34,15 @@ public static class EquivalencyOptions
     /// </summary>
     /// <param name="opts">The options instance to apply the equivalency rules to.</param>
     /// <returns>the updated options instance.</returns>
-    public static EquivalencyAssertionOptions<Sentence> UsingOnlyConsistencyForVariablesAndSkolemFunctions(this EquivalencyAssertionOptions<Sentence> opts)
+    public static EquivalencyAssertionOptions<Formula> UsingOnlyConsistencyForVariablesAndSkolemFunctions(this EquivalencyAssertionOptions<Formula> opts)
     {
         return opts
             .RespectingRuntimeTypes()
-            .ComparingByMembers<Sentence>()
+            .ComparingByMembers<Formula>()
             .ComparingByMembers<Term>()
-            .UsingJustAConsistencyCheckFor<Sentence, VariableDeclaration>()
-            .UsingJustAConsistencyCheckFor<Sentence, VariableReference>()
-            .UsingJustAConsistencyCheckFor<Sentence, Function>(isSkolemFunction)
+            .UsingJustAConsistencyCheckFor<Formula, VariableDeclaration>()
+            .UsingJustAConsistencyCheckFor<Formula, VariableReference>()
+            .UsingJustAConsistencyCheckFor<Formula, Function>(isSkolemFunction)
             .WithTracing();
     }
 

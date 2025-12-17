@@ -6,11 +6,11 @@ namespace SCFirstOrderLogic;
 
 public static class CNFSentenceTests
 {
-    private static Sentence P => new Predicate("P");
-    private static Sentence Q => new Predicate("Q");
-    private static Sentence R => new Predicate("R");
+    private static Formula P => new Predicate("P");
+    private static Formula Q => new Predicate("Q");
+    private static Formula R => new Predicate("R");
 
-    private record EqualityTestCase(CNFSentence X, CNFSentence Y, bool ExpectedEquality);
+    private record EqualityTestCase(CNFFormula X, CNFFormula Y, bool ExpectedEquality);
 
     public static Test EqualityBehaviour => TestThat
         .GivenEachOf<EqualityTestCase>(() =>

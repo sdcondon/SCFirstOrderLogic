@@ -2,7 +2,7 @@
 using FlUnit;
 using System.Collections.Generic;
 
-namespace SCFirstOrderLogic.SentenceCreation;
+namespace SCFirstOrderLogic.FormulaCreation;
 
 public static class SentenceParserTests
 {
@@ -57,7 +57,7 @@ public static class SentenceParserTests
                 Sentence: "F1() = F2(x, y)",
                 ExpectedResult: new Predicate(EqualityIdentifier.Instance, new Function("F1"), new Function("F2", new Function("x"), new Function("y")))),
         ])
-        .When(tc => SentenceParser.Default.Parse(tc.Sentence))
+        .When(tc => FormulaParser.Default.Parse(tc.Sentence))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.ExpectedResult));
 
@@ -74,11 +74,11 @@ public static class SentenceParserTests
             "P()aaa",
             "A+()",
         })
-        .When((ctx, tc) => SentenceParser.Default.Parse(tc))
+        .When((ctx, tc) => FormulaParser.Default.Parse(tc))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.ToString()));
 
     public static Test Parse_WithCustomIdentifiers => TestThat
-        .Given(() => new SentenceParser(new(s => $"p.{s}", s => $"f.{s}", s => $"vc.{s}")))
+        .Given(() => new FormulaParser(new(s => $"p.{s}", s => $"f.{s}", s => $"vc.{s}")))
         .When(p => p.Parse("forall x, P(F(x, C))"))
         .ThenReturns()
         .And((_, rv) => rv.Should().Be(new UniversalQuantification(new("vc.x"), new Predicate("p.P", new Function("f.F", new VariableReference("vc.x"), new Function("vc.C"))))));
@@ -118,7 +118,7 @@ public static class SentenceParserTests
                 Sentences: " P() ; Q() ; ",
                 Expectation: [new Predicate("P"), new Predicate("Q")]),
         ])
-        .When(tc => SentenceParser.Default.ParseList(tc.Sentences))
+        .When(tc => FormulaParser.Default.ParseList(tc.Sentences))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Equal(tc.Expectation));
 
@@ -132,7 +132,7 @@ public static class SentenceParserTests
             $"P()\r\nQ()aaa",
             $"P()\nQ()aaa",
         ])
-        .When((ctx, tc) => SentenceParser.Default.ParseList(tc))
+        .When((ctx, tc) => FormulaParser.Default.ParseList(tc))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.ToString()));
 
     public static Test ParseTerm_PositiveTestCases => TestThat
@@ -158,7 +158,7 @@ public static class SentenceParserTests
                 Variables: [new("X")],
                 Expected: new Function("F", new Function("G"), new VariableReference("X"))),
         ])
-        .When(tc => SentenceParser.Default.ParseTerm(tc.Text, tc.Variables))
+        .When(tc => FormulaParser.Default.ParseTerm(tc.Text, tc.Variables))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Be(tc.Expected));
 
@@ -171,11 +171,11 @@ public static class SentenceParserTests
             "F(,x,y)",
             "F()aaa",
         })
-        .When((ctx, tc) => SentenceParser.Default.ParseTerm(tc, []))
+        .When((ctx, tc) => FormulaParser.Default.ParseTerm(tc, []))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
     public static Test ParseTerm_WithCustomIdentifiers => TestThat
-        .Given(() => new SentenceParser(new SentenceParserOptions(s => $"p:{s}", s => $"f:{s}", s => $"vc:{s}")))
+        .Given(() => new FormulaParser(new FormulaParserOptions(s => $"p:{s}", s => $"f:{s}", s => $"vc:{s}")))
         .When(p => p.ParseTerm("F(x, C)", [new("vc:x")]))
         .ThenReturns()
         .And((_, rv) => rv.Should().Be(new Function("f:F", new VariableReference("vc:x"), new Function("vc:C"))));
@@ -233,7 +233,7 @@ public static class SentenceParserTests
                 Variables: [],
                 Expected: [new Function("F"), new Function("G"), new Function("aaa")]),
         ])
-        .When(tc => SentenceParser.Default.ParseTermList(tc.Text, []))
+        .When(tc => FormulaParser.Default.ParseTermList(tc.Text, []))
         .ThenReturns()
         .And((tc, rv) => rv.Should().Equal(tc.Expected));
 
@@ -243,12 +243,12 @@ public static class SentenceParserTests
         [
             "F(); ; G()",
         ])
-        .When((ctx, tc) => SentenceParser.Default.ParseTermList(tc, []))
+        .When((ctx, tc) => FormulaParser.Default.ParseTermList(tc, []))
         .ThenThrows((ctx, _, e) => ctx.WriteOutput(e.Message));
 
-    private record ParseTestCase(string Sentence, Sentence ExpectedResult);
+    private record ParseTestCase(string Sentence, Formula ExpectedResult);
 
-    private record ParseListTestCase(string Sentences, Sentence[] Expectation);
+    private record ParseListTestCase(string Sentences, Formula[] Expectation);
 
     private record ParseTermTestCase(string Text, IEnumerable<VariableDeclaration> Variables, Term Expected);
 

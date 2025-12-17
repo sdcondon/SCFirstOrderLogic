@@ -2,30 +2,30 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System;
 
-namespace SCFirstOrderLogic.SentenceManipulation;
+namespace SCFirstOrderLogic.FormulaManipulation;
 
 /// <summary>
-/// Alternative version of <see cref="RecursiveSentenceTransformation_LinqIterateTwice"/> that calls <see cref="Sentence.Accept{TOut}(ISentenceTransformation{TOut})"/> instead of using a pattern-matching type switch.
+/// Alternative version of <see cref="RecursiveSentenceTransformation_LinqIterateTwice"/> that calls <see cref="Formula.Accept{TOut}(IFormulaTransformation{TOut})"/> instead of using a pattern-matching type switch.
 /// </summary>
-public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransformation<Sentence>, ITermTransformation<Term>
+public class RecursiveSentenceTransformation_WithoutTypeSwitch : IFormulaTransformation<Formula>, ITermTransformation<Term>
 {
     /// <summary>
-    /// Applies this transformation to a <see cref="Sentence"/> instance.
+    /// Applies this transformation to a <see cref="Formula"/> instance.
     /// </summary>
     /// <param name="sentence">The sentence to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual Sentence ApplyTo(Sentence sentence) => sentence.Accept(this);
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual Formula ApplyTo(Formula sentence) => sentence.Accept(this);
 
     /// <summary>
     /// Applies this transformation to a <see cref="Conjunction"/> instance.
     /// The default implementation returns a <see cref="Conjunction"/> of the result of calling <see cref="ApplyTo"/> on both of the existing sub-sentences.
     /// </summary>
     /// <param name="conjunction">The conjunction instance to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual Sentence ApplyTo(Conjunction conjunction)
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual Formula ApplyTo(Conjunction conjunction)
     {
-        Sentence left = conjunction.Left.Accept(this);
-        Sentence right = conjunction.Right.Accept(this);
+        Formula left = conjunction.Left.Accept(this);
+        Formula right = conjunction.Right.Accept(this);
         if (left != conjunction.Left || right != conjunction.Right)
         {
             return new Conjunction(left, right);
@@ -41,11 +41,11 @@ public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransf
     /// The default implementation returns a <see cref="Disjunction"/> of the result of calling <see cref="ApplyTo"/> on both of the existing sub-sentences.
     /// </summary>
     /// <param name="disjunction">The <see cref="Disjunction"/> instance to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual Sentence ApplyTo(Disjunction disjunction)
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual Formula ApplyTo(Disjunction disjunction)
     {
-        Sentence left = disjunction.Left.Accept(this);
-        Sentence right = disjunction.Right.Accept(this);
+        Formula left = disjunction.Left.Accept(this);
+        Formula right = disjunction.Right.Accept(this);
         if (left != disjunction.Left || right != disjunction.Right)
         {
             return new Disjunction(left, right);
@@ -61,11 +61,11 @@ public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransf
     /// The default implementation returns an <see cref="Equivalence"/> of the result of calling <see cref="ApplyTo"/> on both of the existing sub-sentences.
     /// </summary>
     /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual Sentence ApplyTo(Equivalence equivalence)
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual Formula ApplyTo(Equivalence equivalence)
     {
-        Sentence left = equivalence.Left.Accept(this);
-        Sentence right = equivalence.Right.Accept(this);
+        Formula left = equivalence.Left.Accept(this);
+        Formula right = equivalence.Right.Accept(this);
         if (left != equivalence.Left || right != equivalence.Right)
         {
             return new Equivalence(left, right);
@@ -81,12 +81,12 @@ public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransf
     /// The default implementation returns an <see cref="ExistentialQuantification"/> for which the variable declaration is the result of <see cref="ApplyTo"/> on the existing declaration, and the sentence is the result of <see cref="ApplyTo"/> on the existing sentence.
     /// </summary>
     /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual Sentence ApplyTo(ExistentialQuantification existentialQuantification)
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual Formula ApplyTo(ExistentialQuantification existentialQuantification)
     {
         VariableDeclaration variableDeclaration = ApplyTo(existentialQuantification.Variable);
-        Sentence sentence = existentialQuantification.Sentence.Accept(this);
-        if (variableDeclaration != existentialQuantification.Variable || sentence != existentialQuantification.Sentence)
+        Formula sentence = existentialQuantification.Formula.Accept(this);
+        if (variableDeclaration != existentialQuantification.Variable || sentence != existentialQuantification.Formula)
         {
             return new ExistentialQuantification(variableDeclaration, sentence);
         }
@@ -101,11 +101,11 @@ public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransf
     /// The default implementation returns an <see cref="Implication"/> of the result of calling <see cref="ApplyTo"/> on both of the existing sub-sentences.
     /// </summary>
     /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual Sentence ApplyTo(Implication implication)
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual Formula ApplyTo(Implication implication)
     {
-        Sentence antecedent = implication.Antecedent.Accept(this);
-        Sentence consequent = implication.Consequent.Accept(this);
+        Formula antecedent = implication.Antecedent.Accept(this);
+        Formula consequent = implication.Consequent.Accept(this);
 
         if (antecedent != implication.Antecedent || consequent != implication.Consequent)
         {
@@ -122,8 +122,8 @@ public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransf
     /// The default implementation returns a <see cref="Predicate"/> with the same identifier and with an argument list that is the result of calling <see cref="ApplyTo"/> on all of the existing arguments.
     /// </summary>
     /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual Sentence ApplyTo(Predicate predicate)
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual Formula ApplyTo(Predicate predicate)
     {
         var isChanged = false;
         var transformed = new Term[predicate.Arguments.Count];
@@ -153,12 +153,12 @@ public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransf
     /// The default implementation returns a <see cref="Negation"/> of the result of calling <see cref="ApplyTo"/> on the current sub-sentence.
     /// </summary>
     /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual Sentence ApplyTo(Negation negation)
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual Formula ApplyTo(Negation negation)
     {
-        Sentence sentence = negation.Sentence.Accept(this);
+        Formula sentence = negation.Formula.Accept(this);
 
-        if (sentence != negation.Sentence)
+        if (sentence != negation.Formula)
         {
             return new Negation(sentence);
         }
@@ -173,12 +173,12 @@ public class RecursiveSentenceTransformation_WithoutTypeSwitch : ISentenceTransf
     /// The default implementation returns a <see cref="UniversalQuantification"/> for which the variable declaration is the result of <see cref="ApplyTo"/> on the existing declaration, and the sentence is the result of <see cref="ApplyTo"/> on the existing sentence.
     /// </summary>
     /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to visit.</param>
-    /// <returns>The transformed <see cref="Sentence"/>.</returns>
-    public virtual Sentence ApplyTo(UniversalQuantification universalQuantification)
+    /// <returns>The transformed <see cref="Formula"/>.</returns>
+    public virtual Formula ApplyTo(UniversalQuantification universalQuantification)
     {
         VariableDeclaration variableDeclaration = ApplyTo(universalQuantification.Variable);
-        Sentence sentence = universalQuantification.Sentence.Accept(this);
-        if (variableDeclaration != universalQuantification.Variable || sentence != universalQuantification.Sentence)
+        Formula sentence = universalQuantification.Formula.Accept(this);
+        if (variableDeclaration != universalQuantification.Variable || sentence != universalQuantification.Formula)
         {
             return new UniversalQuantification(variableDeclaration, sentence);
         }

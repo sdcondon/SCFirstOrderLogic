@@ -2,7 +2,7 @@
 using FlUnit;
 using SCFirstOrderLogic.TestUtilities;
 using System;
-using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.OperableFormulaFactory;
 
 namespace SCFirstOrderLogic;
 

@@ -2,7 +2,7 @@
 using BenchmarkDotNet.Engines;
 using System.Collections.Generic;
 using System.Linq;
-using static SCFirstOrderLogic.SentenceCreation.Specialised.GenericDomainSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.Specialised.GenericDomainFormulaFactory;
 using static SCFirstOrderLogic.TestProblems.FromMpg.TermIndexingExample;
 
 namespace SCFirstOrderLogic.TermIndexing;
