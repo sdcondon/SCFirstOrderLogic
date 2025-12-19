@@ -6,40 +6,37 @@ using System;
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of a literal (i.e. an atomic sentence or a negated atomic sentence) of first-order logic within a sentence in conjunctive normal form.
+/// Representation of a literal (i.e. an atomic formula or a negated atomic formula) of first-order logic within a formula in conjunctive normal form.
 /// </summary>
-/// <remarks>
-/// NB: Yes, literals are a meaningful notion regardless of CNF, but we only use THIS type within our CNF representation. Hence this type being called CNFLiteral and residing in this namespace.
-/// </remarks>
 public class Literal_WithTypeSwitchCtorVisitors : IEquatable<Literal_WithTypeSwitchCtorVisitors>
 {
     /// <summary>
     /// Initialises a new instance of the <see cref="AltCNFLiteral_WithTypeSwitchCtorVisitors"/> class.
     /// </summary>
-    /// <param name="sentence">The literal, represented as a <see cref="Formula"/> object. An exception will be thrown if it is neither a predicate nor a negated predicate.</param>
-    public Literal_WithTypeSwitchCtorVisitors(Formula sentence)
+    /// <param name="formula">The literal, represented as a <see cref="Formula"/> object. An exception will be thrown if it is neither a predicate nor a negated predicate.</param>
+    public Literal_WithTypeSwitchCtorVisitors(Formula formula)
     {
-        if (sentence is Negation negation)
+        if (formula is Negation negation)
         {
             IsNegated = true;
-            sentence = negation.Formula;
+            formula = negation.Formula;
         }
 
-        if (sentence is Predicate predicate)
+        if (formula is Predicate predicate)
         {
             Predicate = predicate;
         }
         else
         {
-            throw new ArgumentException($"Provided sentence must be either a predicate or a negated predicate. {sentence} is neither.", nameof(sentence));
+            throw new ArgumentException($"Provided formula must be either a predicate or a negated predicate. {formula} is neither.", nameof(formula));
         }
     }
 
     /// <summary>
     /// Initialises a new instance of the <see cref="CNFLiteral_WithoutTypeSwitch"/> class.
     /// </summary>
-    /// <param name="predicate">The atomic sentence to which this literal refers.</param>
-    /// <param name="isNegated">A value indicating whether the atomic sentence is negated.</param>
+    /// <param name="predicate">The atomic formula to which this literal refers.</param>
+    /// <param name="isNegated">A value indicating whether the atomic formula is negated.</param>
     public Literal_WithTypeSwitchCtorVisitors(Predicate predicate, bool isNegated)
     {
         Predicate = predicate;
@@ -47,17 +44,17 @@ public class Literal_WithTypeSwitchCtorVisitors : IEquatable<Literal_WithTypeSwi
     }
 
     /// <summary>
-    /// Gets a value indicating whether this literal is a negation of the underlying atomic sentence.
+    /// Gets a value indicating whether this literal is a negation of the underlying atomic formula.
     /// </summary>
     public bool IsNegated { get; }
 
     /// <summary>
-    /// Gets a value indicating whether this literal is not a negation of the underlying atomic sentence.
+    /// Gets a value indicating whether this literal is not a negation of the underlying atomic formula.
     /// </summary>
     public bool IsPositive => !IsNegated;
 
     /// <summary>
-    /// Gets the underlying atomic sentence of this literal.
+    /// Gets the underlying atomic formula of this literal.
     /// </summary>
     public Predicate Predicate { get; }
 
@@ -79,7 +76,7 @@ public class Literal_WithTypeSwitchCtorVisitors : IEquatable<Literal_WithTypeSwi
     /// </para>
     /// </summary>
     /// <returns>A string that represents the current object.</returns>
-    ////public override string ToString() => new SentenceFormatter().Print(this);
+    ////public override string ToString() => new FormulaFormatter().Print(this);
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is Literal_WithTypeSwitchCtorVisitors literal && Equals(literal);
@@ -94,7 +91,7 @@ public class Literal_WithTypeSwitchCtorVisitors : IEquatable<Literal_WithTypeSwi
     /// Converts the literal to a <see cref="Formula"/>
     /// </summary>
     /// <returns>A representation of this literal as a <see cref="Formula"/>.</returns>
-    public Formula ToSentence()
+    public Formula ToFormula()
     {
         return IsNegated ? new Negation(Predicate) : Predicate;
     }
@@ -103,24 +100,24 @@ public class Literal_WithTypeSwitchCtorVisitors : IEquatable<Literal_WithTypeSwi
     public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
 
     /// <summary>
-    /// Defines the (explicit) conversion of a <see cref="Formula"/> instance to a <see cref="CNFLiteral_WithoutTypeSwitch"/>. NB: This conversion is explicit because it can fail (if the sentence isn't actually a literal).
+    /// Defines the (explicit) conversion of a <see cref="Formula"/> instance to a <see cref="CNFLiteral_WithoutTypeSwitch"/>. NB: This conversion is explicit because it can fail (if the formula isn't actually a literal).
     /// </summary>
-    /// <param name="sentence">The sentence to convert.</param>
-    public static explicit operator Literal_WithTypeSwitchCtorVisitors(Formula sentence)
+    /// <param name="formula">The formula to convert.</param>
+    public static explicit operator Literal_WithTypeSwitchCtorVisitors(Formula formula)
     {
         try
         {
-            return new Literal_WithTypeSwitchCtorVisitors(sentence);
+            return new Literal_WithTypeSwitchCtorVisitors(formula);
         }
         catch (ArgumentException e)
         {
-            throw new InvalidCastException($"To be converted to a literal, sentences must be either a predicate or a negated predicate. {sentence} is neither.", e);
+            throw new InvalidCastException($"To be converted to a literal, formulas must be either a predicate or a negated predicate. {formula} is neither.", e);
         }
     }
 
     /// <summary>
     /// Defines the (implicit) conversion of a <see cref="Predicate"/> instance to a <see cref="Literal"/>. NB: This conversion is implicit because it is always valid.
     /// </summary>
-    /// <param name="sentence">The predicate to convert.</param>
+    /// <param name="predicate">The predicate to convert.</param>
     public static implicit operator Literal_WithTypeSwitchCtorVisitors(Predicate predicate) => new(predicate);
 }

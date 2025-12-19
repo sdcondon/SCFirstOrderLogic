@@ -7,16 +7,16 @@ namespace SCFirstOrderLogic.FormulaManipulation;
 /// <summary>
 /// Base class for recursive visitors of <see cref="Formula"/> instances.
 /// </summary>
-public abstract class RecursiveSentenceVisitor_WithTypeSwitch : IFormulaVisitor, ITermVisitor
+public abstract class RecursiveFormulaVisitor_WithTypeSwitch : IFormulaVisitor, ITermVisitor
 {
     /// <summary>
     /// Visits a <see cref="Formula"/> instance.
     /// </summary>
-    /// <param name="sentence">The sentence to visit.</param>
+    /// <param name="formula">The formula to visit.</param>
     /// <returns>The transformed <see cref="Formula"/>.</returns>
-    public virtual void Visit(Formula sentence)
+    public virtual void Visit(Formula formula)
     {
-        switch (sentence)
+        switch (formula)
         {
             case Conjunction conjunction:
                 Visit(conjunction);
@@ -40,13 +40,13 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : IFormulaVisitor,
                 Visit(quantification);
                 break;
             default:
-                throw new ArgumentException($"Unsupported sentence type '{sentence.GetType()}'", nameof(sentence));
+                throw new ArgumentException($"Unsupported formula type '{formula.GetType()}'", nameof(formula));
         };
     }
 
     /// <summary>
     /// Visits a <see cref="Conjunction"/> instance.
-    /// The default implementation just visits both of the sub-sentences.
+    /// The default implementation just visits both of the sub-formulas.
     /// </summary>
     /// <param name="conjunction">The conjunction instance to visit.</param>
     public virtual void Visit(Conjunction conjunction)
@@ -57,7 +57,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : IFormulaVisitor,
 
     /// <summary>
     /// Visits a <see cref="Disjunction"/> instance.
-    /// The default implementation just visits the both of the sub-sentences.
+    /// The default implementation just visits the both of the sub-formulas.
     /// </summary>
     /// <param name="disjunction">The <see cref="Disjunction"/> instance to visit.</param>
     public virtual void Visit(Disjunction disjunction)
@@ -68,7 +68,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : IFormulaVisitor,
 
     /// <summary>
     /// Visits an <see cref="Equivalence"/> instance. 
-    /// The default implementation just visits both of the sub-sentences.
+    /// The default implementation just visits both of the sub-formulas.
     /// </summary>
     /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
     public virtual void Visit(Equivalence equivalence)
@@ -79,7 +79,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : IFormulaVisitor,
 
     /// <summary>
     /// Visits an <see cref="ExistentialQuantification"/> instance. 
-    /// The default implementation just visits the variable declaration and sentence.
+    /// The default implementation just visits the variable declaration and sub-formula.
     /// </summary>
     /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to visit.</param>
     public virtual void Visit(ExistentialQuantification existentialQuantification)
@@ -90,7 +90,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : IFormulaVisitor,
 
     /// <summary>
     /// Visits an <see cref="Implication"/> instance. 
-    /// The default implementation just visits both of the sub-sentences.
+    /// The default implementation just visits both of the sub-formulas.
     /// </summary>
     /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
     public virtual void Visit(Implication implication)
@@ -114,7 +114,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : IFormulaVisitor,
 
     /// <summary>
     /// Visits a <see cref="Negation"/> instance. 
-    /// The default implementation just visits the sub-sentence.
+    /// The default implementation just visits the sub-formula.
     /// </summary>
     /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
     public virtual void Visit(Negation negation)
@@ -144,7 +144,7 @@ public abstract class RecursiveSentenceVisitor_WithTypeSwitch : IFormulaVisitor,
 
     /// <summary>
     /// Visits a <see cref="UniversalQuantification"/> instance. 
-    /// The default implementation just visits the variable declaration and sentence.
+    /// The default implementation just visits the variable declaration and sub-formula.
     /// </summary>
     /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to visit.</param>
     public virtual void Visit(UniversalQuantification universalQuantification)

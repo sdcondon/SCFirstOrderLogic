@@ -6,16 +6,16 @@ namespace SCFirstOrderLogic.FormulaManipulation;
 
 [MemoryDiagnoser]
 [InProcess]
-public class RecursiveSentenceTransformationBenchmarks
+public class RecursiveFormulaTransformationBenchmarks
 {
     private static Predicate IsAnimal(Term term) => new(nameof(IsAnimal), term);
     private static Predicate Loves(Term term1, Term term2) => new(nameof(Loves), term1, term2);
 
-    private static Formula NonTrivialSentence { get; } = ForAll(X, If(
+    private static Formula NonTrivialFormula { get; } = ForAll(X, If(
             ForAll(Y, If(IsAnimal(Y), Loves(X, Y))),
             ThereExists(Y, Loves(Y, X))));
 
-    public record TestCase(string Label, bool DoSomething, Formula Sentence)
+    public record TestCase(string Label, bool DoSomething, Formula Formula)
     {
         public override string ToString() => Label;
     }
@@ -25,27 +25,27 @@ public class RecursiveSentenceTransformationBenchmarks
         new(
             Label: "Non-Trivial NO-OP",
             DoSomething: false,
-            Sentence: NonTrivialSentence),
+            Formula: NonTrivialFormula),
 
         new(
             Label: "Non-Trivial ALL-LEAFS-OP",
             DoSomething: true,
-            Sentence: NonTrivialSentence),
+            Formula: NonTrivialFormula),
     };
 
     [ParamsSource(nameof(TestCases))]
     public TestCase? CurrentTestCase { get; set; }
 
     [Benchmark(Baseline = true)]
-    public Formula CurrentImpl() => new VarTransform(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Sentence);
+    public Formula CurrentImpl() => new VarTransform(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Formula);
 
     [Benchmark]
-    public Formula Linq() => new VarTransform_Linq(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Sentence);
+    public Formula Linq() => new VarTransform_Linq(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Formula);
 
     [Benchmark]
-    public Formula LinqIterateTwice() => new VarTransform_LinqIterateTwice(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Sentence);
+    public Formula LinqIterateTwice() => new VarTransform_LinqIterateTwice(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Formula);
 
-    private class VarTransform_LinqIterateTwice : RecursiveSentenceTransformation_LinqIterateTwice
+    private class VarTransform_LinqIterateTwice : RecursiveFormulaTransformation_LinqIterateTwice
     {
         private readonly bool doSomething;
 
@@ -57,7 +57,7 @@ public class RecursiveSentenceTransformationBenchmarks
         }
     }
 
-    private class VarTransform_Linq : RecursiveSentenceTransformation_Linq
+    private class VarTransform_Linq : RecursiveFormulaTransformation_Linq
     {
         private readonly bool doSomething;
 

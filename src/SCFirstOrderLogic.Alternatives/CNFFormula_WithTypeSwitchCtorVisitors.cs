@@ -8,39 +8,34 @@ namespace SCFirstOrderLogic;
 /// <summary>
 /// Representation of a <see cref="Formula"/> in conjunctive normal form (CNF).
 /// </summary>
-public class CNFSentence_WithTypeSwitchCtorVisitors
+public class CNFFormula_WithTypeSwitchCtorVisitors
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="CNFSentence_WithTypeSwitchCtorVisitors"/> class, implicitly converting the provided sentence to CNF in the process.
+    /// Initialises a new instance of the <see cref="CNFFormula_WithTypeSwitchCtorVisitors"/> class, implicitly converting the provided formula to CNF in the process.
     /// </summary>
-    /// <param name="sentence">The sentence to (convert and) represent.</param>
-    public CNFSentence_WithTypeSwitchCtorVisitors(Formula sentence)
+    /// <param name="formula">The formula to (convert and) represent.</param>
+    public CNFFormula_WithTypeSwitchCtorVisitors(Formula formula)
     {
-        var cnfSentence = CNFConversion.ApplyTo(sentence);
+        var cnfFormula = CNFConversion.ApplyTo(formula);
         var clauses = new List<CNFClause_WithTypeSwitchCtorVisitors>();
-        new CNFClauseFinder(clauses).Visit(cnfSentence);
+        new CNFClauseFinder(clauses).Visit(cnfFormula);
         // WOULD-BE-A-BUG-IF-THIS-WERE-PROD-CODE: Potential equality bug on hash code collision..
         Clauses = clauses.OrderBy(c => c.GetHashCode()).ToArray();
     }
 
     /// <summary>
-    /// Gets the collection of clauses that comprise this CNF sentence.
+    /// Gets the collection of clauses that comprise this CNF formula.
     /// </summary>
     public IReadOnlyCollection<CNFClause_WithTypeSwitchCtorVisitors> Clauses { get; }
 
     /// <summary>
-    /// Defines the (implicit) conversion of a <see cref="Formula"/> instance to a <see cref="CNFSentence_WithoutTypeSwitch"/> instance.
+    /// Defines the (implicit) conversion of a <see cref="Formula"/> instance to a <see cref="CNFFormula_WithoutTypeSwitch"/> instance.
     /// </summary>
-    /// <param name="sentence">The sentence to convert.</param>
-    /// <remarks>
-    /// I'm still not 100% happy with exactly how the CNFSentence / Sentence dichotomy is handled. Almost all of the time
-    /// we'll be wanting to deal with CNF - but the "raw" sentence tree structure still has value.. This conversion
-    /// operator helps, but there's almost certainly more that could be done.
-    /// </remarks>
-    public static implicit operator CNFSentence_WithTypeSwitchCtorVisitors(Formula sentence) => new(sentence);
+    /// <param name="formula">The formula to convert.</param>
+    public static implicit operator CNFFormula_WithTypeSwitchCtorVisitors(Formula formula) => new(formula);
 
     /// <summary>
-    /// Sentence visitor that constructs a set of <see cref="CNFClause_WithoutTypeSwitch"/> objects from a <see cref="Formula"/> in CNF.
+    /// Formula visitor that constructs a set of <see cref="CNFClause_WithoutTypeSwitch"/> objects from a <see cref="Formula"/> in CNF.
     /// </summary>
     private class CNFClauseFinder : RecursiveFormulaVisitor
     {
@@ -49,9 +44,9 @@ public class CNFSentence_WithTypeSwitchCtorVisitors
         public CNFClauseFinder(ICollection<CNFClause_WithTypeSwitchCtorVisitors> clauses) => this.clauses = clauses;
 
         /// <inheritdoc />
-        public override void Visit(Formula sentence)
+        public override void Visit(Formula formula)
         {
-            if (sentence is Conjunction conjunction)
+            if (formula is Conjunction conjunction)
             {
                 // The expression is already in CNF - so the root down until the individual clauses will all be Conjunctions - we just skip past those.
                 Visit(conjunction);
@@ -61,7 +56,7 @@ public class CNFSentence_WithTypeSwitchCtorVisitors
                 // We've hit a clause.
                 // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFClause ctor that
                 // we invoke here does so to figure out the details of the clause). So we can just return rather than invoking base.Visit. 
-                clauses.Add(new CNFClause_WithTypeSwitchCtorVisitors(sentence));
+                clauses.Add(new CNFClause_WithTypeSwitchCtorVisitors(formula));
             }
         }
     }

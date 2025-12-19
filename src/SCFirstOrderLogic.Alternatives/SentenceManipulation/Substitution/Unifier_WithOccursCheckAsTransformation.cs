@@ -10,7 +10,7 @@ namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 /// See §9.2.2 ("Unification") of 'Artificial Intelligence: A Modern Approach' for an explanation of this algorithm.
 /// </para>
 /// <para>
-/// Differs from production version by using an occurs check that is a SentenceTransformation.
+/// Differs from production version by using an occurs check that is a FormulaTransformation.
 /// </para>
 /// </summary>
 public static class Unifier_WithOccursCheckAsTransformation
@@ -115,7 +115,7 @@ public static class Unifier_WithOccursCheckAsTransformation
 
     private static bool Occurs(VariableReference variable, Term term)
     {
-        // Unlike the real version of this class (that uses a type switch), here we use a SentenceTransformation to carry out the occurs check:
+        // Unlike the real version of this class (that uses a type switch), here we use a FormulaTransformation to carry out the occurs check:
         var occursCheck = new OccursCheck(variable);
         occursCheck.Visit(term);
         return occursCheck.IsFound;

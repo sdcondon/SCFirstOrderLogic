@@ -10,18 +10,18 @@ using System.Linq;
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of an individual clause (i.e. a disjunction of <see cref="Literal"/>s) of a first-order logic sentence in conjunctive normal form.
+/// Representation of an individual clause (i.e. a disjunction of <see cref="Literal"/>s) of a first-order logic formula in conjunctive normal form.
 /// </summary>
 public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTypeSwitchCtorVisitors>
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="AltCNFClause_WithTypeSwitch"/> class from a sentence that is a disjunction of literals (a literal being a predicate or a negated predicate).
+    /// Initialises a new instance of the <see cref="AltCNFClause_WithTypeSwitch"/> class from a formula that is a disjunction of literals (a literal being a predicate or a negated predicate).
     /// </summary>
-    /// <param name="sentence">The clause, represented as a <see cref="Formula"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a disjunction of literals.</param>
-    public CNFClause_WithTypeSwitchCtorVisitors(Formula sentence)
+    /// <param name="formula">The clause, represented as a <see cref="Formula"/>. An <see cref="ArgumentException"/> exception will be thrown if it is not a disjunction of literals.</param>
+    public CNFClause_WithTypeSwitchCtorVisitors(Formula formula)
     {
         var ctor = new ClauseConstructor();
-        ctor.Visit(sentence);
+        ctor.Visit(formula);
 
         // We *could* actually use an immutable type to stop unscrupulous users from making it mutable by casting, but
         // its a super low-level class and I'd rather err on the side of using the smallest & simplest implementation possible.
@@ -97,7 +97,7 @@ public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTyp
     /// </para>
     /// </summary>
     /// <returns>A string that represents the current object.</returns>
-    ////public override string ToString() => new SentenceFormatter().Print(this);
+    ////public override string ToString() => new FormulaFormatter().Print(this);
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is CNFClause_WithTypeSwitchCtorVisitors clause && Equals(clause);
@@ -139,15 +139,15 @@ public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTyp
         return hash.ToHashCode();
     }
 
-    private class ClauseConstructor : RecursiveSentenceVisitor_WithTypeSwitch
+    private class ClauseConstructor : RecursiveFormulaVisitor_WithTypeSwitch
     {
         public HashSet<Literal_WithTypeSwitchCtorVisitors> Literals { get; } = new();
 
-        public override void Visit(Formula sentence)
+        public override void Visit(Formula formula)
         {
-            if (sentence is Disjunction disjunction)
+            if (formula is Disjunction disjunction)
             {
-                // The sentence is assumed to be a clause (i.e. a disjunction of literals) - so just skip past all the disjunctions at the root.
+                // The formula is assumed to be a clause (i.e. a disjunction of literals) - so just skip past all the disjunctions at the root.
                 base.Visit(disjunction);
             }
             else
@@ -155,7 +155,7 @@ public class CNFClause_WithTypeSwitchCtorVisitors : IEquatable<CNFClause_WithTyp
                 // Assume we've hit a literal. NB will throw if its not actually a literal.
                 // Afterwards, we don't need to look any further down the tree for the purposes of this class (though the CNFLiteral ctor that
                 // we invoke here does so to figure out the details of the literal). So we can just return rather than invoking base.Visit.
-                Literals.Add(new Literal_WithTypeSwitchCtorVisitors(sentence));
+                Literals.Add(new Literal_WithTypeSwitchCtorVisitors(formula));
             }
         }
     }

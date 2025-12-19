@@ -30,10 +30,10 @@ public class UnificationBenchmarks
     public static bool Unify1_OccursCheckTransform() => Unifier_WithOccursCheckAsTransformation.TryCreate(JohnKnowsX_Literal, JohnKnowsJane_Literal, out _);
 
     [Benchmark]
-    public static bool Unify1_Sentence() => Unifier_OptimisedFromAIaMA.TryUnify(JohnKnowsX, JohnKnowsJane, out _);
+    public static bool Unify1_Formula() => Unifier_OptimisedFromAIaMA.TryUnify(JohnKnowsX, JohnKnowsJane, out _);
 
     [Benchmark]
-    public static Unifier_FromAIaMA.Substitution Unify1_SentenceRaw() => Unifier_FromAIaMA.Unify(JohnKnowsX, JohnKnowsJane, null);
+    public static Unifier_FromAIaMA.Substitution Unify1_FormulaRaw() => Unifier_FromAIaMA.Unify(JohnKnowsX, JohnKnowsJane, null);
 
     [Benchmark]
     public static bool Unify2_Actual() => Unifier.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
@@ -42,10 +42,10 @@ public class UnificationBenchmarks
     public static bool Unify2_OccursCheckTransform() => Unifier_WithOccursCheckAsTransformation.TryCreate(JohnKnowsX_Literal, YKnowsJane_Literal, out _);
 
     [Benchmark]
-    public static bool Unify2_Sentence() => Unifier_OptimisedFromAIaMA.TryUnify(JohnKnowsX, YKnowsJane, out _);
+    public static bool Unify2_Formula() => Unifier_OptimisedFromAIaMA.TryUnify(JohnKnowsX, YKnowsJane, out _);
 
     [Benchmark]
-    public static Unifier_FromAIaMA.Substitution Unify2_SentenceRaw() => Unifier_FromAIaMA.Unify(JohnKnowsX, YKnowsJane, null);
+    public static Unifier_FromAIaMA.Substitution Unify2_FormulaRaw() => Unifier_FromAIaMA.Unify(JohnKnowsX, YKnowsJane, null);
 
     [Benchmark]
     public static bool Unify3_Actual() => Unifier.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);
@@ -54,8 +54,8 @@ public class UnificationBenchmarks
     public static bool Unify3_OccursCheckTransform() => Unifier_WithOccursCheckAsTransformation.TryCreate(JohnKnowsX_Literal, YKnowsMotherOfY_Literal, out _);
 
     [Benchmark]
-    public static bool Unify3_Sentence() => Unifier_OptimisedFromAIaMA.TryUnify(JohnKnowsX, YKnowsMotherOfY, out _);
+    public static bool Unify3_Formula() => Unifier_OptimisedFromAIaMA.TryUnify(JohnKnowsX, YKnowsMotherOfY, out _);
 
     [Benchmark]
-    public static Unifier_FromAIaMA.Substitution Unify3_SentenceRaw() => Unifier_FromAIaMA.Unify(JohnKnowsX, YKnowsMotherOfY, null);
+    public static Unifier_FromAIaMA.Substitution Unify3_FormulaRaw() => Unifier_FromAIaMA.Unify(JohnKnowsX, YKnowsMotherOfY, null);
 }

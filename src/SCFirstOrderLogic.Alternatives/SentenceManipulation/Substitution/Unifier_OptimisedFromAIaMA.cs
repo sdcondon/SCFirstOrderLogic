@@ -6,7 +6,7 @@ namespace SCFirstOrderLogic.FormulaManipulation.Substitution;
 
 /// <summary>
 /// Most general unifier logic - optimised from the version presented in the source material,
-/// but operating on entire sentences, as opposed to literals. More powerful, but slower.
+/// but operating on entire formulas, as opposed to literals. More powerful, but slower.
 /// This class is intended as a more realistic baseline than <see cref="Unifier_FromAIaMA"/>.
 /// </summary>
 public static class Unifier_OptimisedFromAIaMA
@@ -62,13 +62,13 @@ public static class Unifier_OptimisedFromAIaMA
         return TryUnify(x.Left, y.Left, unifier) && TryUnify(x.Right, y.Right, unifier);
     }
 
-    ////private Sentence TryUnify(ExistentialQuantification x, ExistentialQuantification y, IDictionary<Variable, Term> unifier)
+    ////private Formula TryUnify(ExistentialQuantification x, ExistentialQuantification y, IDictionary<Variable, Term> unifier)
     ////{
     ////    var variable = ApplyToVariableDeclaration(existentialQuantification.Variable);
-    ////    var sentence = ApplyToSentence(existentialQuantification.Sentence);
-    ////    if (variable != existentialQuantification.Variable || sentence != existentialQuantification.Sentence)
+    ////    var formula = ApplyToFormula(existentialQuantification.Formula);
+    ////    if (variable != existentialQuantification.Variable || formula != existentialQuantification.Formula)
     ////    {
-    ////        return new ExistentialQuantification(variable, sentence);
+    ////        return new ExistentialQuantification(variable, formula);
     ////    }
     ////
     ////    return existentialQuantification;
@@ -105,10 +105,10 @@ public static class Unifier_OptimisedFromAIaMA
     ////private static bool TryUnify(UniversalQuantification x, UniversalQuantification y, IDictionary<Variable, Term> unifier)
     ////{
     ////    var variable = ApplyToVariableDeclaration(universalQuantification.Variable);
-    ////    var sentence = ApplyToSentence(universalQuantification.Sentence);
-    ////    if (variable != universalQuantification.Variable || sentence != universalQuantification.Sentence)
+    ////    var formula = ApplyToFormula(universalQuantification.Formula);
+    ////    if (variable != universalQuantification.Variable || formula != universalQuantification.Formula)
     ////    {
-    ////        return new UniversalQuantification(variable, sentence);
+    ////        return new UniversalQuantification(variable, formula);
     ////    }
     ////
     ////    return universalQuantification;
