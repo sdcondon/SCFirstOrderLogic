@@ -142,7 +142,7 @@ public static class SentenceFactory
         return TryCreateSentence<TDomain, TElement>(lambda.Body, out sentence);
     }
 
-    // TODO-ZZ-QOL: might be nice to return more info than just "false" on failure. that is, return an InstantiationOutcome or somesuch instead of a bool
+    // TODO-ZZ-FEATURE: might be nice to return more info than just "false" on failure. that is, return an InstantiationOutcome or somesuch instead of a bool
     private static bool TryCreateSentence<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
         where TDomain : IEnumerable<TElement>
     {
@@ -205,7 +205,7 @@ public static class SentenceFactory
     private static bool TryCreateEquality<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
         where TDomain : IEnumerable<TElement>
     {
-        // TODO-ZZ-QOL: ..and Object.Equals invocation? And others? How to think about map of different types of .NET equality to FOL "equals"?
+        // TODO-ZZ-FEATURE: ..and Object.Equals invocation? And others? How to think about map of different types of .NET equality to FOL "equals"?
         if (expression is BinaryExpression binaryExpr && binaryExpr.NodeType == ExpressionType.Equal
             && TryCreateTerm<TDomain, TElement>(binaryExpr.Left, out var left)
             && TryCreateTerm<TDomain, TElement>(binaryExpr.Right, out var right))
@@ -245,7 +245,7 @@ public static class SentenceFactory
     private static bool TryCreateExistentialQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
         where TDomain : IEnumerable<TElement>
     {
-        // TODO-ZZ-QOL: would be nice to have better errors if they've e.g. attempted to use something other than a lambda..
+        // TODO-ZZ-FEATURE: would be nice to have better errors if they've e.g. attempted to use something other than a lambda..
         if (expression is MethodCallExpression methodCallExpr)
         {
             if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AnyMethod)
@@ -476,7 +476,7 @@ public static class SentenceFactory
     private static bool TryCreateUniversalQuantification<TDomain, TElement>(Expression expression, [NotNullWhen(returnValue: true)] out Sentence? sentence)
         where TDomain : IEnumerable<TElement>
     {
-        // TODO-ZZ-QOL: also would be nice to have better errors if they've e.g. attempted to use something other than a lambda..
+        // TODO-ZZ-FEATURE: also would be nice to have better errors if they've e.g. attempted to use something other than a lambda..
         if (expression is MethodCallExpression methodCallExpr)
         {
             if (MemberInfoEqualityComparer.Instance.Equals(methodCallExpr.Method, AllMethod)

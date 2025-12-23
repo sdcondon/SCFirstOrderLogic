@@ -391,7 +391,7 @@ internal static class PathTreeLeafMatchExtensions
 
     private class VariableBindings
     {
-        // TODO-ZZ: does this need to be a dictionary - we should always encounter variables in ordinal order, i think?
+        // TODO-ZZ-PERFORMANCE: does this need to be a dictionary - we should always encounter variables in ordinal order, i think?
         private readonly Dictionary<int, Term> map = new();
 
         public VariableBindings(KeyValuePair<int, Term>? firstBinding)
