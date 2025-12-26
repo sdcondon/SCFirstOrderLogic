@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing;
@@ -51,7 +52,8 @@ public class AsyncDiscriminationTree<TValue>
     /// </summary>
     /// <param name="term">The term to add.</param>
     /// <param name="value">The value to associate with the added term.</param>
-    public async Task AddAsync(Term term, TValue value)
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
+    public async Task AddAsync(Term term, TValue value, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(term);
         var queryElements = new DiscriminationTreeNodeKeyTransformation().ApplyTo(term).GetEnumerator();
@@ -66,11 +68,11 @@ public class AsyncDiscriminationTree<TValue>
 
                 if (nextQueryElement != null)
                 {
-                    currentNode = await currentNode.GetOrAddInternalChildAsync(currentQueryElement);
+                    currentNode = await currentNode.GetOrAddInternalChildAsync(currentQueryElement, cancellationToken);
                 }
                 else
                 {
-                    await currentNode.AddLeafChildAsync(currentQueryElement, value);
+                    await currentNode.AddLeafChildAsync(currentQueryElement, value, cancellationToken);
                 }
 
                 currentQueryElement = nextQueryElement;
@@ -86,15 +88,16 @@ public class AsyncDiscriminationTree<TValue>
     /// Attempts to retrieve the value associated with a specific term.
     /// </summary>
     /// <param name="term">The term to retrieve the associated value of.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>A value tuple indicated whether or not the query found a matching term, and if so, what the value associated with that term is.</returns>
-    public async Task<(bool isSucceeded, TValue? value)> TryGetExactAsync(Term term)
+    public async Task<(bool isSucceeded, TValue? value)> TryGetExactAsync(Term term, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(term);
 
         IAsyncDiscriminationTreeNode<TValue> currentNode = root;
         foreach (var queryElement in new DiscriminationTreeNodeKeyTransformation().ApplyTo(term))
         {
-            var child = await currentNode.TryGetChildAsync(queryElement);
+            var child = await currentNode.TryGetChildAsync(queryElement, cancellationToken);
 
             if (child == null)
             {
@@ -115,8 +118,12 @@ public class AsyncDiscriminationTree<TValue>
     /// Determines whether an exact match to a given term is contained within the tree.
     /// </summary>
     /// <param name="term">The term to query for.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>True if and only if the term is contained within the tree.</returns>
-    public async Task<bool> ContainsAsync(Term term) => (await TryGetExactAsync(term)).isSucceeded;
+    public async Task<bool> ContainsAsync(Term term, CancellationToken cancellationToken = default)
+    {
+        return (await TryGetExactAsync(term, cancellationToken)).isSucceeded;
+    }
 
     /// <summary>
     /// Retrieves all values associated with instances of a given term. That is, all values associated with

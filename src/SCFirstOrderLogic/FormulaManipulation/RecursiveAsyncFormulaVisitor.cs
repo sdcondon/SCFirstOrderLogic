@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.FormulaManipulation;
@@ -21,9 +22,10 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just invokes the VisitAsync method appropriate to the type of the formula (via <see cref="Formula.Accept(IFormulaVisitor)"/>).
     /// </summary>
     /// <param name="formula">The formula to visit.</param>
-    public virtual async Task VisitAsync(Formula formula)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(Formula formula, CancellationToken cancellationToken = default)
     {
-        await formula.AcceptAsync(this);
+        await formula.AcceptAsync(this, cancellationToken);
     }
 
     /// <summary>
@@ -31,11 +33,12 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just visits both of the sub-formulas.
     /// </summary>
     /// <param name="conjunction">The <see cref="Conjunction"/> instance to visit.</param>
-    public virtual async Task VisitAsync(Conjunction conjunction)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(Conjunction conjunction, CancellationToken cancellationToken = default)
     {
         await Task.WhenAll(
-            VisitAsync(conjunction.Left),
-            VisitAsync(conjunction.Right));
+            VisitAsync(conjunction.Left, cancellationToken),
+            VisitAsync(conjunction.Right, cancellationToken));
     }
 
     /// <summary>
@@ -43,11 +46,12 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just visits the both of the sub-formulas.
     /// </summary>
     /// <param name="disjunction">The <see cref="Disjunction"/> instance to visit.</param>
-    public virtual async Task VisitAsync(Disjunction disjunction)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(Disjunction disjunction, CancellationToken cancellationToken = default)
     {
         await Task.WhenAll(
-            VisitAsync(disjunction.Left),
-            VisitAsync(disjunction.Right));
+            VisitAsync(disjunction.Left, cancellationToken),
+            VisitAsync(disjunction.Right, cancellationToken));
     }
 
     /// <summary>
@@ -55,11 +59,12 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just visits both of the sub-formulas.
     /// </summary>
     /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
-    public virtual async Task VisitAsync(Equivalence equivalence)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(Equivalence equivalence, CancellationToken cancellationToken = default)
     {
         await Task.WhenAll(
-            VisitAsync(equivalence.Left),
-            VisitAsync(equivalence.Right));
+            VisitAsync(equivalence.Left, cancellationToken),
+            VisitAsync(equivalence.Right, cancellationToken));
     }
 
     /// <summary>
@@ -67,11 +72,12 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just visits the variable declaration and formula.
     /// </summary>
     /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to visit.</param>
-    public virtual async Task VisitAsync(ExistentialQuantification existentialQuantification)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(ExistentialQuantification existentialQuantification, CancellationToken cancellationToken = default)
     {
         await Task.WhenAll(
-            VisitAsync(existentialQuantification.Variable),
-            VisitAsync(existentialQuantification.Formula));
+            VisitAsync(existentialQuantification.Variable, cancellationToken),
+            VisitAsync(existentialQuantification.Formula, cancellationToken));
     }
 
     /// <summary>
@@ -79,11 +85,12 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just visits both of the sub-formulas.
     /// </summary>
     /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
-    public virtual async Task VisitAsync(Implication implication)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(Implication implication, CancellationToken cancellationToken = default)
     {
         await Task.WhenAll(
-            VisitAsync(implication.Antecedent),
-            VisitAsync(implication.Consequent));
+            VisitAsync(implication.Antecedent, cancellationToken),
+            VisitAsync(implication.Consequent, cancellationToken));
     }
 
     /// <summary>
@@ -91,9 +98,10 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just visits each of the arguments.
     /// </summary>
     /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
-    public virtual async Task VisitAsync(Predicate predicate)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(Predicate predicate, CancellationToken cancellationToken = default)
     {
-        await Task.WhenAll(predicate.Arguments.Select(a => VisitAsync(a)));
+        await Task.WhenAll(predicate.Arguments.Select(a => VisitAsync(a, cancellationToken)));
     }
 
     /// <summary>
@@ -101,9 +109,10 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just visits the sub-formula.
     /// </summary>
     /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
-    public virtual async Task VisitAsync(Negation negation)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(Negation negation, CancellationToken cancellationToken = default)
     {
-        await VisitAsync(negation.Formula);
+        await VisitAsync(negation.Formula, cancellationToken);
     }
 
     /// <summary>
@@ -111,11 +120,12 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just visits the variable declaration and formula.
     /// </summary>
     /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to visit.</param>
-    public virtual async Task VisitAsync(UniversalQuantification universalQuantification)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(UniversalQuantification universalQuantification, CancellationToken cancellationToken = default)
     {
         await Task.WhenAll(
-            VisitAsync(universalQuantification.Variable),
-            VisitAsync(universalQuantification.Formula));
+            VisitAsync(universalQuantification.Variable, cancellationToken),
+            VisitAsync(universalQuantification.Formula, cancellationToken));
     }
 
     /// <summary>
@@ -123,9 +133,10 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just invokes the Visit method appropriate to the type of the term (via <see cref="Term.Accept(ITermVisitor)"/>).
     /// </summary>
     /// <param name="term">The term to visit.</param>
-    public virtual async Task VisitAsync(Term term)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(Term term, CancellationToken cancellationToken = default)
     {
-        await term.AcceptAsync(this);
+        await term.AcceptAsync(this, cancellationToken);
     }
 
     /// <summary>
@@ -133,9 +144,10 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just visits the variable declaration.
     /// </summary>
     /// <param name="variable">The variable reference to visit.</param>
-    public virtual async Task VisitAsync(VariableReference variable)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(VariableReference variable, CancellationToken cancellationToken = default)
     {
-        await VisitAsync(variable.Declaration);
+        await VisitAsync(variable.Declaration, cancellationToken);
     }
 
     /// <summary>
@@ -143,9 +155,10 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation just visits each of the arguments.
     /// </summary>
     /// <param name="function">The function to visit.</param>
-    public virtual async Task VisitAsync(Function function)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual async Task VisitAsync(Function function, CancellationToken cancellationToken = default)
     {
-        await Task.WhenAll(function.Arguments.Select(a => VisitAsync(a)));
+        await Task.WhenAll(function.Arguments.Select(a => VisitAsync(a, cancellationToken)));
     }
 
     /// <summary>
@@ -153,7 +166,8 @@ public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyn
     /// The default implementation doesn't do anything.
     /// </summary>
     /// <param name="variableDeclaration">The <see cref="VariableDeclaration"/> instance to visit.</param>
-    public virtual Task VisitAsync(VariableDeclaration variableDeclaration)
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public virtual Task VisitAsync(VariableDeclaration variableDeclaration, CancellationToken cancellationToken = default)
     {
         return Task.CompletedTask;
     }

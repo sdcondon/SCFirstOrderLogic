@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.FormulaManipulation;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
@@ -45,10 +46,10 @@ public sealed class Conjunction : Formula
     public override TOut Accept<TOut, TState>(IFormulaTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
 
     /// <inheritdoc />
-    public override Task AcceptAsync(IAsyncFormulaVisitor visitor) => visitor.VisitAsync(this);
+    public override Task AcceptAsync(IAsyncFormulaVisitor visitor, CancellationToken cancellationToken = default) => visitor.VisitAsync(this, cancellationToken);
 
     /// <inheritdoc />
-    public override Task AcceptAsync<T>(IAsyncFormulaVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
+    public override Task AcceptAsync<T>(IAsyncFormulaVisitor<T> visitor, T state, CancellationToken cancellationToken = default) => visitor.VisitAsync(this, state, cancellationToken);
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is Conjunction otherConjunction && Left.Equals(otherConjunction.Left) && Right.Equals(otherConjunction.Right);

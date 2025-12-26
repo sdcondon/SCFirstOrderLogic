@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace SCFirstOrderLogic.TermIndexing;
 
@@ -59,30 +60,32 @@ public class AsyncPathTree<TValue>
     /// </summary>
     /// <param name="term">The term to add.</param>
     /// <param name="value">The value to associate with the added term.</param>
-    public async Task AddAsync(Term term, TValue value)
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
+    public async Task AddAsync(Term term, TValue value, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(term);
 
         term = term.Ordinalise();
-        await term.Accept(new TermAdditionVisitor(term, value), root);
+        await term.AcceptAsync(new TermAdditionVisitor(term, value), root, cancellationToken);
     }
 
     /// <summary>
     /// Attempts to retrieve the value associated with a specific term.
     /// </summary>
     /// <param name="term">The term to retrieve the associated value of.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>True if and only if a value was successfully retrieved.</returns>
-    public async Task<(bool isSucceeded, TValue? value)> TryGetExactAsync(Term term)
+    public async Task<(bool isSucceeded, TValue? value)> TryGetExactAsync(Term term, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(term);
 
         term = term.Ordinalise();
-        var (isSucceeded, (_, value)) = await ExpandParameterNode(root, term).TryGetCommonValueAsync();
+        var (isSucceeded, (_, value)) = await ExpandParameterNode(root, term).TryGetCommonValueAsync(cancellationToken);
         return (isSucceeded, value);
 
-        static async IAsyncEnumerable<IAsyncEnumerable<KeyValuePair<Term, TValue>>> ExpandParameterNode(IAsyncPathTreeParameterNode<TValue> node, Term term)
+        async IAsyncEnumerable<IAsyncEnumerable<KeyValuePair<Term, TValue>>> ExpandParameterNode(IAsyncPathTreeParameterNode<TValue> node, Term term)
         {
-            var child = await node.TryGetChildAsync(term.ToNodeKey());
+            var child = await node.TryGetChildAsync(term.ToNodeKey(), cancellationToken);
 
             if (child != null)
             {
@@ -97,13 +100,13 @@ public class AsyncPathTree<TValue>
             }
         }
 
-        static async IAsyncEnumerable<IAsyncEnumerable<KeyValuePair<Term, TValue>>> ExpandArgumentNode(IAsyncPathTreeArgumentNode<TValue> node, Term term)
+        async IAsyncEnumerable<IAsyncEnumerable<KeyValuePair<Term, TValue>>> ExpandArgumentNode(IAsyncPathTreeArgumentNode<TValue> node, Term term)
         {
             if (term is Function function && function.Arguments.Count > 0)
             {
                 for (var i = 0; i < function.Arguments.Count; i++)
                 {
-                    await foreach (var values in ExpandParameterNode(await node.GetChildAsync(i), function.Arguments[i]))
+                    await foreach (var values in ExpandParameterNode(await node.GetChildAsync(i, cancellationToken), function.Arguments[i]))
                     {
                         yield return values;
                     }
@@ -250,35 +253,35 @@ public class AsyncPathTree<TValue>
     /// <summary>
     /// Term visitor that adds the term as descendents of the path tree parameter node passed as visitation state.
     /// </summary>
-    private class TermAdditionVisitor : ITermTransformation<ValueTask, IAsyncPathTreeParameterNode<TValue>>
+    private class TermAdditionVisitor : IAsyncTermVisitor<IAsyncPathTreeParameterNode<TValue>>
     {
         private readonly TValue value;
         private readonly Term term;
 
         public TermAdditionVisitor(Term term, TValue value) => (this.term, this.value) = (term, value);
 
-        public async ValueTask ApplyTo(Function function, IAsyncPathTreeParameterNode<TValue> state)
+        public async Task VisitAsync(Function function, IAsyncPathTreeParameterNode<TValue> state, CancellationToken cancellationToken)
         {
             var functionArgCount = function.Arguments.Count;
-            var node = await state.GetOrAddChildAsync(new PathTreeFunctionNodeKey(function.Identifier, functionArgCount));
+            var node = await state.GetOrAddChildAsync(new PathTreeFunctionNodeKey(function.Identifier, functionArgCount), cancellationToken);
             if (functionArgCount > 0)
             {
                 for (int i = 0; i < function.Arguments.Count; i++)
                 {
-                    var parameterNode = await node.GetOrAddChildAsync(i);
-                    await function.Arguments[i].Accept(this, parameterNode);
+                    var parameterNode = await node.GetOrAddChildAsync(i, cancellationToken);
+                    await function.Arguments[i].AcceptAsync(this, parameterNode, cancellationToken);
                 }
             }
             else
             {
-                await node.AddValueAsync(term, value);
+                await node.AddValueAsync(term, value, cancellationToken);
             }
         }
 
-        public async ValueTask ApplyTo(VariableReference variable, IAsyncPathTreeParameterNode<TValue> state)
+        public async Task VisitAsync(VariableReference variable, IAsyncPathTreeParameterNode<TValue> state, CancellationToken cancellationToken)
         {
-            var node = await state.GetOrAddChildAsync(new PathTreeVariableNodeKey((int)variable.Identifier));
-            await node.AddValueAsync(term, value);
+            var node = await state.GetOrAddChildAsync(new PathTreeVariableNodeKey((int)variable.Identifier), cancellationToken);
+            await node.AddValueAsync(term, value, cancellationToken);
         }
     }
 }

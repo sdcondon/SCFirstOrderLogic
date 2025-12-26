@@ -53,11 +53,10 @@ public static class SubsumptionFacts
             .Where(f => f.Y.Equals(subsumingClause) && f.IsXSubsumedByY)
             .Select(f => f.X);
 
-        return xClauses
+        return [.. xClauses
             .Concat(yClauses)
             .Except([CNFClause.Empty])
-            .Distinct(new VariableIdAgnosticEqualityComparer())
-            .ToArray();
+            .Distinct(new VariableIdAgnosticEqualityComparer())];
     }
 
     /// <summary>
@@ -76,11 +75,10 @@ public static class SubsumptionFacts
             .Where(f => f.Y.Equals(subsumingClause) && !f.IsXSubsumedByY)
             .Select(f => f.X);
 
-        return xClauses
+        return [.. xClauses
             .Concat(yClauses)
             .Except([CNFClause.Empty])
-            .Distinct(new VariableIdAgnosticEqualityComparer())
-            .ToArray();
+            .Distinct(new VariableIdAgnosticEqualityComparer())];
     }
 
     /// <summary>
@@ -99,11 +97,10 @@ public static class SubsumptionFacts
             .Where(f => f.Y.Equals(subsumedClause) && f.IsYSubsumedByX)
             .Select(f => f.X);
 
-        return xClauses
+        return [.. xClauses
             .Concat(yClauses)
             .Except([CNFClause.Empty])
-            .Distinct(new VariableIdAgnosticEqualityComparer())
-            .ToArray();
+            .Distinct(new VariableIdAgnosticEqualityComparer())];
     }
 
     /// <summary>
@@ -122,10 +119,9 @@ public static class SubsumptionFacts
             .Where(f => f.Y.Equals(subsumedClause) && !f.IsYSubsumedByX)
             .Select(f => f.X);
 
-        return xClauses
+        return [.. xClauses
             .Concat(yClauses)
             .Except([CNFClause.Empty])
-            .Distinct(new VariableIdAgnosticEqualityComparer())
-            .ToArray();
+            .Distinct(new VariableIdAgnosticEqualityComparer())];
     }
 }

@@ -3,6 +3,7 @@
 using SCFirstOrderLogic.FormulaManipulation.Substitution;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -112,14 +113,14 @@ public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVe
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(FeatureVectorComponent<TFeature> vectorComponent)
+    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(FeatureVectorComponent<TFeature> vectorComponent, CancellationToken cancellationToken = default)
     {
         childrenByVectorComponent.TryGetValue(vectorComponent, out var child);
         return ValueTask.FromResult(child);
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(FeatureVectorComponent<TFeature> vectorComponent)
+    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(FeatureVectorComponent<TFeature> vectorComponent, CancellationToken cancellationToken = default)
     {
         IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexListNode<TFeature, TValue>(FeatureComparer, childrenByVectorComponent.Comparer);
         if (!childrenByVectorComponent.TryAdd(vectorComponent, node))
@@ -131,14 +132,14 @@ public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVe
     }
 
     /// <inheritdoc/>
-    public ValueTask DeleteChildAsync(FeatureVectorComponent<TFeature> vectorComponent)
+    public ValueTask DeleteChildAsync(FeatureVectorComponent<TFeature> vectorComponent, CancellationToken cancellationToken = default)
     {
         childrenByVectorComponent.Remove(vectorComponent, out _);
         return ValueTask.CompletedTask;
     }
 
     /// <inheritdoc/>
-    public ValueTask AddValueAsync(CNFClause clause, TValue value)
+    public ValueTask AddValueAsync(CNFClause clause, TValue value, CancellationToken cancellationToken = default)
     {
         if (!valuesByKey.TryAdd(clause, value))
         {
@@ -149,13 +150,13 @@ public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVe
     }
 
     /// <inheritdoc/>
-    public ValueTask<bool> RemoveValueAsync(CNFClause clause)
+    public ValueTask<bool> RemoveValueAsync(CNFClause clause, CancellationToken cancellationToken = default)
     {
         return ValueTask.FromResult(valuesByKey.Remove(clause));
     }
 
     /// <inheritdoc/>
-    public ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause)
+    public ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause, CancellationToken cancellationToken = default)
     {
         var isSucceeded = valuesByKey.TryGetValue(clause, out var value);
         return ValueTask.FromResult((isSucceeded, value));

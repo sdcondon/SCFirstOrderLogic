@@ -4,9 +4,9 @@
 @using SCFirstOrderLogic;
 @using SCFirstOrderLogic.ClauseIndexing
 @using SCFirstOrderLogic.ClauseIndexing.Features
-@using SCFirstOrderLogic.FormulaCreation
-@using SCFirstOrderLogic.FormulaManipulation
-@using SCFirstOrderLogic.FormulaManipulation.Normalisation
+@using SCFirstOrderLogic.SentenceCreation
+@using SCFirstOrderLogic.SentenceManipulation
+@using SCFirstOrderLogic.SentenceManipulation.Normalisation
 @using SCFirstOrderLogic.TermIndexing
 
 <PageTitle>Lab - Feature Vector Index Visualiser</PageTitle>
@@ -91,7 +91,7 @@
         }
     };
 
-    // TODO: make these objects then switch on runtime type when doing stuff. Or 
+    // TODO*-BREAKING-V8: make these objects then switch on runtime type when doing stuff. Or 
     // of course change the lib so that we can have a common type. Likely a
     // breaking change - generic type design here is a bit clumsy..
     private FeatureVectorIndexListNode<MaxDepthFeature, CNFClause> rootNode;

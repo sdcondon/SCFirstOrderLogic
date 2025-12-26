@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
@@ -84,10 +85,10 @@ public sealed class Predicate : Formula
     public override TOut Accept<TOut, TState>(IFormulaTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
 
     /// <inheritdoc />
-    public override Task AcceptAsync(IAsyncFormulaVisitor visitor) => visitor.VisitAsync(this);
+    public override Task AcceptAsync(IAsyncFormulaVisitor visitor, CancellationToken cancellationToken = default) => visitor.VisitAsync(this, cancellationToken);
 
     /// <inheritdoc />
-    public override Task AcceptAsync<T>(IAsyncFormulaVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
+    public override Task AcceptAsync<T>(IAsyncFormulaVisitor<T> visitor, T state, CancellationToken cancellationToken = default) => visitor.VisitAsync(this, state, cancellationToken);
 
     /// <inheritdoc />
     public override bool Equals(object? obj)

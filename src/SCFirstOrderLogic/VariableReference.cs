@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.FormulaManipulation;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
@@ -55,10 +56,10 @@ public sealed class VariableReference : Term
     public override TOut Accept<TOut, TState>(ITermTransformation<TOut, TState> transformation, TState state) => transformation.ApplyTo(this, state);
 
     /// <inheritdoc />
-    public override Task AcceptAsync(IAsyncTermVisitor visitor) => visitor.VisitAsync(this);
+    public override Task AcceptAsync(IAsyncTermVisitor visitor, CancellationToken cancellationToken = default) => visitor.VisitAsync(this, cancellationToken);
 
     /// <inheritdoc />
-    public override Task AcceptAsync<T>(IAsyncTermVisitor<T> visitor, T state) => visitor.VisitAsync(this, state);
+    public override Task AcceptAsync<T>(IAsyncTermVisitor<T> visitor, T state, CancellationToken cancellationToken = default) => visitor.VisitAsync(this, state, cancellationToken);
 
     /// <inheritdoc />
     public override bool Equals(object? obj)

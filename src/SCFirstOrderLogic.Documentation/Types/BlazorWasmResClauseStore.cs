@@ -1,5 +1,5 @@
 ﻿using SCFirstOrderLogic.Documentation.Types;
-using SCFirstOrderLogic.FormulaManipulation.Normalisation;
+using SCFirstOrderLogic.SentenceManipulation.Normalisation;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 

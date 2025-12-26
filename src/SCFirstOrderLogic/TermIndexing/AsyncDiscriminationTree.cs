@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing;
@@ -36,14 +37,16 @@ public class AsyncDiscriminationTree
     /// Adds a <see cref="Term"/> to the tree.
     /// </summary>
     /// <param name="term">The term to add.</param>
-    public Task AddAsync(Term term) => actualTree.AddAsync(term, term);
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
+    public Task AddAsync(Term term, CancellationToken cancellationToken = default) => actualTree.AddAsync(term, term, cancellationToken);
 
     /// <summary>
     /// Determines whether an exact match to a given term is contained within the tree.
     /// </summary>
     /// <param name="term">The term to query for.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>True if and only if the term is contained within the tree.</returns>
-    public Task<bool> ContainsAsync(Term term) => actualTree.ContainsAsync(term);
+    public Task<bool> ContainsAsync(Term term, CancellationToken cancellationToken = default) => actualTree.ContainsAsync(term, cancellationToken);
 
     /// <summary>
     /// Retrieves all instances of a given term. That is, all terms that can be

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing;
@@ -20,14 +21,12 @@ public interface IAsyncPathTreeArgumentNode<TValue>
     /// <summary>
     /// 
     /// </summary>
-    ValueTask<IAsyncPathTreeParameterNode<TValue>> GetChildAsync(int index);
+    ValueTask<IAsyncPathTreeParameterNode<TValue>> GetChildAsync(int index, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
-    ValueTask<IAsyncPathTreeParameterNode<TValue>> GetOrAddChildAsync(int index);
+    ValueTask<IAsyncPathTreeParameterNode<TValue>> GetOrAddChildAsync(int index, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the values attached to a leaf node. Throws an exception for internal nodes.
@@ -37,7 +36,5 @@ public interface IAsyncPathTreeArgumentNode<TValue>
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="term"></param>
-    /// <param name="value"></param>
-    ValueTask AddValueAsync(Term term, TValue value);
+    ValueTask AddValueAsync(Term term, TValue value, CancellationToken cancellationToken = default);
 }

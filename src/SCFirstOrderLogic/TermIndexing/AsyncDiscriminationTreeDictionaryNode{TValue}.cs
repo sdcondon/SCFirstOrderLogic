@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing;
@@ -36,14 +37,14 @@ public class AsyncDiscriminationTreeDictionaryNode<TValue> : IAsyncDiscriminatio
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeNodeKey elementInfo)
+    public ValueTask<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeNodeKey elementInfo, CancellationToken cancellationToken = default)
     {
         children.TryGetValue(elementInfo, out var child);
         return ValueTask.FromResult(child);
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeNodeKey elementInfo)
+    public ValueTask<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeNodeKey elementInfo, CancellationToken cancellationToken = default)
     {
         IAsyncDiscriminationTreeNode<TValue> node = new AsyncDiscriminationTreeDictionaryNode<TValue>();
         if (!children.TryAdd(elementInfo, node))
@@ -55,7 +56,7 @@ public class AsyncDiscriminationTreeDictionaryNode<TValue> : IAsyncDiscriminatio
     }
 
     /// <inheritdoc/>
-    public ValueTask AddLeafChildAsync(IDiscriminationTreeNodeKey elementInfo, TValue value)
+    public ValueTask AddLeafChildAsync(IDiscriminationTreeNodeKey elementInfo, TValue value, CancellationToken cancellationToken = default)
     {
         if (!children.TryAdd(elementInfo, new LeafNode(value)))
         {
@@ -76,17 +77,17 @@ public class AsyncDiscriminationTreeDictionaryNode<TValue> : IAsyncDiscriminatio
             yield break;
         }
 
-        public ValueTask<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeNodeKey elementInfo)
+        public ValueTask<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeNodeKey elementInfo, CancellationToken cancellationToken = default)
         {
             return ValueTask.FromResult<IAsyncDiscriminationTreeNode<TValue>?>(null);
         }
 
-        public ValueTask<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeNodeKey elementInfo)
+        public ValueTask<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeNodeKey elementInfo, CancellationToken cancellationToken = default)
         {
             return ValueTask.FromException<IAsyncDiscriminationTreeNode<TValue>>(new NotSupportedException("Leaf node - cannot have children"));
         }
 
-        public ValueTask AddLeafChildAsync(IDiscriminationTreeNodeKey elementInfo, TValue value)
+        public ValueTask AddLeafChildAsync(IDiscriminationTreeNodeKey elementInfo, TValue value, CancellationToken cancellationToken = default)
         {
             return ValueTask.FromException(new NotSupportedException("Leaf node - cannot have children"));
         }

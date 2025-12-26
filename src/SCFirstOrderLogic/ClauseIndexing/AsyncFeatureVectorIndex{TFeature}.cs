@@ -57,24 +57,34 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
     /// Adds a clause to the index.
     /// </summary>
     /// <param name="key">The clause to add.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>A task representing completion of the operation.</returns>
-    public Task AddAsync(CNFClause key) => innerIndex.AddAsync(key, key);
+    public Task AddAsync(CNFClause key, CancellationToken cancellationToken = default)
+    {
+        return innerIndex.AddAsync(key, key, cancellationToken);
+    }
 
     /// <summary>
     /// Removes a clause from the index.
     /// </summary>
     /// <param name="key">The clause to remove.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>A value indicating whether the clause was present prior to this operation.</returns>
-    public Task<bool> RemoveAsync(CNFClause key) => innerIndex.RemoveAsync(key);
+    public Task<bool> RemoveAsync(CNFClause key, CancellationToken cancellationToken = default)
+    {
+        return innerIndex.RemoveAsync(key, cancellationToken);
+    }
 
     /// <summary>
     /// Removes all values keyed by a clause that is subsumed by a given clause.
     /// </summary>
     /// <param name="clause">The subsuming clause.</param>
     /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
-    public async Task RemoveSubsumedAsync(CNFClause clause, Func<CNFClause, Task>? clauseRemovedCallback = null)
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
+    /// <returns>A task indicating completion of the operation.</returns>
+    public async Task RemoveSubsumedAsync(CNFClause clause, Func<CNFClause, Task>? clauseRemovedCallback = null, CancellationToken cancellationToken = default)
     {
-        await innerIndex.RemoveSubsumedAsync(clause, clauseRemovedCallback);
+        await innerIndex.RemoveSubsumedAsync(clause, clauseRemovedCallback, cancellationToken);
     }
 
     /// <summary>
@@ -83,18 +93,23 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
     /// </summary>
     /// <param name="clause">The clause to add.</param>
     /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>True if and only if the clause was added.</returns>
-    public async Task<bool> TryReplaceSubsumedAsync(CNFClause clause, Func<CNFClause, Task>? clauseRemovedCallback = null)
+    public async Task<bool> TryReplaceSubsumedAsync(CNFClause clause, Func<CNFClause, Task>? clauseRemovedCallback = null, CancellationToken cancellationToken = default)
     {
-        return await innerIndex.TryReplaceSubsumedAsync(clause, clause, clauseRemovedCallback);
+        return await innerIndex.TryReplaceSubsumedAsync(clause, clause, clauseRemovedCallback, cancellationToken);
     }
 
     /// <summary>
     /// Determines whether a given clause (matched exactly) is present in the index.
     /// </summary>
     /// <param name="key">The clause to check for.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>True if and only if the clause is present in the index.</returns>
-    public async Task<bool> ContainsAsync(CNFClause key) => (await innerIndex.TryGetAsync(key)).isSucceeded;
+    public async Task<bool> ContainsAsync(CNFClause key, CancellationToken cancellationToken = default)
+    {
+        return (await innerIndex.TryGetAsync(key, cancellationToken)).isSucceeded;
+    }
 
     /// <summary>
     /// Returns an enumerable of each stored clause that subsumes a given clause.

@@ -4,11 +4,20 @@ using SCFirstOrderLogic.FormulaFormatting;
 using SCFirstOrderLogic.FormulaManipulation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of a <see cref="Formula"/> in conjunctive normal form (CNF).
+/// <para>
+/// Streamlined representation of a <see cref="Formula"/> in conjunctive normal form (CNF).
+/// Consists of a set of <see cref="CNFClause"/>s.
+/// </para>
+/// <para>
+/// Note that this type is NOT a subtype of <see cref="Formula"/>. To represent CNF as a <see cref="Formula"/>, 
+/// <see cref="Conjunction"/>, <see cref="Disjunction"/>, <see cref="Predicate"/> and <see cref="Negation"/> 
+/// should be used  as appropriate.
+/// </para>
 /// </summary>
 public class CNFFormula : IEquatable<CNFFormula>
 {
@@ -44,6 +53,23 @@ public class CNFFormula : IEquatable<CNFFormula>
     /// Gets the collection of clauses that comprise this CNF formula.
     /// </summary>
     public IReadOnlySet<CNFClause> Clauses => clauses;
+
+    /// <summary>
+    /// Converts this object to a <see cref="Formula"/>.
+    /// </summary>
+    /// <returns>A representation of this formula as a <see cref="Formula"/>.</returns>
+    // TODO*: test coverage - you're getting lazy
+    // TODO*: would this ever be useful? would still include standardised vars and skolem fns..
+    public Formula ToFormula()
+    {
+        Formula formula = Clauses.First().ToFormula();
+        foreach (var clause in Clauses.Skip(1))
+        {
+            formula = new Conjunction(formula, clause.ToFormula());
+        }
+
+        return formula;
+    }
 
     /// <summary>
     /// <para>

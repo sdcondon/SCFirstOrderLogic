@@ -9,7 +9,14 @@ using System.Linq;
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// Representation of an individual clause (i.e. a disjunction of <see cref="Literal"/>s) of a first-order logic formula in conjunctive normal form.
+/// <para>
+/// Streamlined representation of an individual clause (i.e. a disjunction of <see cref="Literal"/>s) of a first-order logic formula in conjunctive normal form.
+/// Consists of a set of <see cref="Literal"/>s.
+/// </para>
+/// <para>
+/// Note that this type is NOT a subtype of <see cref="Formula"/>. To represent a clause as a <see cref="Formula"/>, 
+/// <see cref="Disjunction"/>, <see cref="Predicate"/> and <see cref="Negation"/> should be used as appropriate.
+/// </para>
 /// </summary>
 public class CNFClause : IEquatable<CNFClause>
 {
@@ -96,6 +103,28 @@ public class CNFClause : IEquatable<CNFClause>
     /// Gets a value indicating whether this is an empty clause (that by convention evaluates to false). Can occur as a result of resolution.
     /// </summary>
     public bool IsEmpty => Literals.Count == 0;
+
+    /// <summary>
+    /// Converts the clause to a <see cref="Formula"/>
+    /// </summary>
+    /// <returns>A representation of this clause as a <see cref="Formula"/>.</returns>
+    // TODO*: test coverage - you're getting lazy
+    // TODO*: would this ever be useful? would still include standardised vars and skolem fns..
+    public Formula ToFormula()
+    {
+        if (IsEmpty)
+        {
+            throw new InvalidOperationException("Cannot convert empty clause to a formula.");
+        }
+
+        Formula formula = Literals.First().ToFormula();
+        foreach (var literal in Literals.Skip(1))
+        {
+            formula = new Disjunction(formula, literal.ToFormula());
+        }
+
+        return formula;
+    }
 
     /// <summary>
     /// <para>

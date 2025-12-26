@@ -12,13 +12,39 @@ namespace SCFirstOrderLogic;
 public class CNFDefiniteClause : CNFClause
 {
     /// <summary>
+    /// Initialises a new instance of the <see cref="CNFDefiniteClause"/> class from an enumerable of literals.
+    /// </summary>
+    /// <param name="literals">The set of literals to be included in the clause. An <see cref="ArgumentException"/> will be thrown if there is not exactly one literal.</param>
+    public CNFDefiniteClause(IEnumerable<Literal> literals)
+        : base(new HashSet<Literal>(literals))
+    {
+        if (!IsDefiniteClause)
+        {
+            throw new ArgumentException($"Definite clauses have exactly one positive literal. Provided literals collection contains {Literals.Count(l => l.IsPositive)}.", nameof(literals));
+        }
+    }
+
+    /// <summary>
+    /// Initialises a new instance of the <see cref="CNFDefiniteClause"/> class from a formula.
+    /// </summary>
+    /// <param name="cnfClause">The clause, represented as a <see cref="Formula"/>. An <see cref="ArgumentException"/> will be thrown if it is not a disjunction of literals (a literal being a predicate or a negated predicate).</param>
+    public CNFDefiniteClause(Formula cnfClause)
+        : base(cnfClause)
+    {
+        if (!IsDefiniteClause)
+        {
+            throw new ArgumentException($"Definite clauses have exactly one positive literal. Provided literals collection contains {Literals.Count(l => l.IsPositive)}.", nameof(cnfClause));
+        }
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="CNFDefiniteClause"/> class that is a copy of an existing <see cref="CNFClause"/>.
     /// </summary>
     /// <param name="definiteClause">The definite clause.</param>
     public CNFDefiniteClause(CNFClause definiteClause)
         : base(definiteClause.Literals)
     {
-        if (!definiteClause.IsDefiniteClause)
+        if (!IsDefiniteClause)
         {
             throw new ArgumentException($"Provided clause must be a definite clause. {definiteClause} is not.", nameof(definiteClause));
         }

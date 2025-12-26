@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.FormulaManipulation;
@@ -13,47 +14,55 @@ public interface IAsyncFormulaVisitor
     /// Visits a <see cref="Conjunction"/> instance.
     /// </summary>
     /// <param name="conjunction">The conjunction instance to visit.</param>
-    Task VisitAsync(Conjunction conjunction);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Conjunction conjunction, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits a <see cref="Disjunction"/> instance.
     /// </summary>
     /// <param name="disjunction">The <see cref="Disjunction"/> instance to visit.</param>
-    Task VisitAsync(Disjunction disjunction);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Disjunction disjunction, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits a <see cref="Equivalence"/> instance. 
     /// </summary>
     /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
-    Task VisitAsync(Equivalence equivalence);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Equivalence equivalence, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits an <see cref="ExistentialQuantification"/> instance. 
     /// </summary>
     /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to visit.</param>
-    Task VisitAsync(ExistentialQuantification existentialQuantification);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(ExistentialQuantification existentialQuantification, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits an <see cref="Implication"/> instance. 
     /// </summary>
     /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
-    Task VisitAsync(Implication implication);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Implication implication, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits a <see cref="Negation"/> instance. 
     /// </summary>
     /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
-    Task VisitAsync(Negation negation);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Negation negation, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits a <see cref="Predicate"/> instance. 
     /// </summary>
     /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
-    Task VisitAsync(Predicate predicate);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Predicate predicate, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits a <see cref="UniversalQuantification"/> instance. 
     /// </summary>
     /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to visit.</param>
-    Task VisitAsync(UniversalQuantification universalQuantification);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(UniversalQuantification universalQuantification, CancellationToken cancellationToken = default);
 }

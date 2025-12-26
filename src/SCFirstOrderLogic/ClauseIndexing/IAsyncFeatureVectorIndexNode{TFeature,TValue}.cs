@@ -1,6 +1,7 @@
 // Copyright © 2023-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.ClauseIndexing;
@@ -36,38 +37,45 @@ public interface IAsyncFeatureVectorIndexNode<TFeature, TValue>
     /// Attempts to retrieve a child node by the vector component it represents.
     /// </summary>
     /// <param name="vectorComponent">The vector component represented by the child node to retrieve.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>The child node, or <see langword="null"/> if no matching node was found.</returns>
-    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(FeatureVectorComponent<TFeature> vectorComponent);
+    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(FeatureVectorComponent<TFeature> vectorComponent, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets or adds a child of this node.
     /// </summary>
     /// <param name="vectorComponent">The vector component represented by the retrieved or added node.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>The retrieved or added node.</returns>
-    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(FeatureVectorComponent<TFeature> vectorComponent);
+    ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(FeatureVectorComponent<TFeature> vectorComponent, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Deletes a child of this node.
     /// </summary>
     /// <param name="vectorComponent">The vector component represented by the node to be removed.</param>
-    ValueTask DeleteChildAsync(FeatureVectorComponent<TFeature> vectorComponent);
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
+    ValueTask DeleteChildAsync(FeatureVectorComponent<TFeature> vectorComponent, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Adds a value to this node.
     /// </summary>
-    /// <param name="clause"></param>
+    /// <param name="clause">The clause to add the value for.</param>
     /// <param name="value">The value to store.</param>
-    ValueTask AddValueAsync(CNFClause clause, TValue value);
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
+    ValueTask AddValueAsync(CNFClause clause, TValue value, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Removes the value from this node.
     /// </summary>
-    ValueTask<bool> RemoveValueAsync(CNFClause clause);
+    /// <param name="clause">The clause to add the value for.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
+    ValueTask<bool> RemoveValueAsync(CNFClause clause, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="clause"></param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns></returns>
-    ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause);
+    ValueTask<(bool isSucceeded, TValue? value)> TryGetValueAsync(CNFClause clause, CancellationToken cancellationToken = default);
 }

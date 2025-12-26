@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing;
@@ -20,13 +21,15 @@ public interface IAsyncPathTreeParameterNode<TValue>
     /// Attempts to retrieve a child node by its <see cref="IPathTreeArgumentNodeKey"/>.
     /// </summary>
     /// <param name="key">The key of the child to retrieve.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>The child node, or <see langword="null"/> if no matching node was found.</returns>
-    ValueTask<IAsyncPathTreeArgumentNode<TValue>?> TryGetChildAsync(IPathTreeArgumentNodeKey key);
+    ValueTask<IAsyncPathTreeArgumentNode<TValue>?> TryGetChildAsync(IPathTreeArgumentNodeKey key, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets or adds a child of this node - dependent on whether or not a child node with a given key is already present.
     /// </summary>
     /// <param name="key">The key for the retrieved or added node.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>The retrieved or added node.</returns>
-    ValueTask<IAsyncPathTreeArgumentNode<TValue>> GetOrAddChildAsync(IPathTreeArgumentNodeKey key);
+    ValueTask<IAsyncPathTreeArgumentNode<TValue>> GetOrAddChildAsync(IPathTreeArgumentNodeKey key, CancellationToken cancellationToken = default);
 }

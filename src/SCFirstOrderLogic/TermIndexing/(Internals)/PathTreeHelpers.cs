@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing;
@@ -53,19 +55,19 @@ internal static class PathTreeHelpers
     /// <summary>
     /// Gets the set of values that appear in all of the inner async enumerables.
     /// </summary>
-    public static async IAsyncEnumerable<T> IntersectAll<T>(this IAsyncEnumerable<IAsyncEnumerable<T>> values)
+    public static async IAsyncEnumerable<T> IntersectAll<T>(this IAsyncEnumerable<IAsyncEnumerable<T>> values, [EnumeratorCancellation]CancellationToken cancellationToken = default)
     {
-        await using var valuesEnumerator = values.GetAsyncEnumerator();
+        await using var valuesEnumerator = values.GetAsyncEnumerator(cancellationToken);
 
         if (!await valuesEnumerator.MoveNextAsync())
         {
             yield break;
         }
 
-        var commonValues = new HashSet<T>(await valuesEnumerator.Current.ToListAsync());
+        var commonValues = new HashSet<T>(await valuesEnumerator.Current.ToListAsync(cancellationToken));
         while (commonValues.Count > 0 && await valuesEnumerator.MoveNextAsync())
         {
-            commonValues.IntersectWith(await valuesEnumerator.Current.ToListAsync());
+            commonValues.IntersectWith(await valuesEnumerator.Current.ToListAsync(cancellationToken));
         }
 
         foreach (var value in commonValues)
@@ -107,9 +109,9 @@ internal static class PathTreeHelpers
     /// <summary>
     /// Tries to find a singular common value in all of the inner async enumerables.
     /// </summary>
-    public static async Task<(bool isSucceeded, T? value)> TryGetCommonValueAsync<T>(this IAsyncEnumerable<IAsyncEnumerable<T>> values)
+    public static async Task<(bool isSucceeded, T? value)> TryGetCommonValueAsync<T>(this IAsyncEnumerable<IAsyncEnumerable<T>> values, CancellationToken cancellationToken = default)
     {
-        var enumerator = IntersectAll(values).GetAsyncEnumerator();
+        var enumerator = IntersectAll(values, cancellationToken).GetAsyncEnumerator(cancellationToken);
         try
         {
             if (!await enumerator.MoveNextAsync())

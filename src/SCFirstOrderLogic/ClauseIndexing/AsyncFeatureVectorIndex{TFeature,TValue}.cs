@@ -21,7 +21,6 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// </summary>
 /// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
-// TODO-BREAKING: Support for cancellation.
 // TODO-PERFORMANCE: at least on the read side, consider processing nodes in parallel.
 // what are some best practices here (esp re consumers/node implementers being able to control DoP)?
 // e.g allow consumers to pass a scheduler? allow nodes to specify a scheduler? or just expect caller to manage via sync context?
@@ -80,7 +79,8 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
     /// </summary>
     /// <param name="key">The clause to add.</param>
     /// <param name="value">The value to associate with the clause.</param>
-    public async Task AddAsync(CNFClause key, TValue value)
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
+    public async Task AddAsync(CNFClause key, TValue value, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
 
@@ -89,15 +89,16 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
             throw new ArgumentException("The empty clause is not a valid key", nameof(key));
         }
 
-        await AddAsync(key, MakeAndSortFeatureVector(key), value);
+        await AddAsync(key, MakeAndSortFeatureVector(key), value, cancellationToken);
     }
 
     /// <summary>
     /// Removes a clause from the index.
     /// </summary>
     /// <param name="key">The clause to remove.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>A value indicating whether the clause was present prior to this operation.</returns>
-    public async Task<bool> RemoveAsync(CNFClause key)
+    public async Task<bool> RemoveAsync(CNFClause key, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
 
@@ -110,21 +111,21 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
             if (componentIndex < featureVector.Count)
             {
                 var component = featureVector[componentIndex];
-                var childNode = await node.TryGetChildAsync(component);
+                var childNode = await node.TryGetChildAsync(component, cancellationToken);
 
                 if (childNode == null || !await ExpandNodeAsync(childNode, componentIndex + 1))
                 {
                     return false;
                 }
 
-                if (!await childNode.ChildrenAscending.AnyAsync() && !await childNode.KeyValuePairs.AnyAsync())
+                if (!await childNode.ChildrenAscending.AnyAsync(cancellationToken) && !await childNode.KeyValuePairs.AnyAsync(cancellationToken))
                 {
-                    await node.DeleteChildAsync(component);
+                    await node.DeleteChildAsync(component, cancellationToken);
                 }
 
                 return true;
             }
-            else if (await node.RemoveValueAsync(key))
+            else if (await node.RemoveValueAsync(key, cancellationToken))
             {
                 return true;
             }
@@ -140,10 +141,11 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
     /// </summary>
     /// <param name="clause">The subsuming clause.</param>
     /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
-    public async Task RemoveSubsumedAsync(CNFClause clause, Func<CNFClause, Task>? clauseRemovedCallback = null)
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
+    public async Task RemoveSubsumedAsync(CNFClause clause, Func<CNFClause, Task>? clauseRemovedCallback = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(clause);
-        await RemoveSubsumedAsync(root, clause, MakeAndSortFeatureVector(clause), 0, clauseRemovedCallback);
+        await RemoveSubsumedAsync(root, clause, MakeAndSortFeatureVector(clause), 0, clauseRemovedCallback, cancellationToken);
     }
 
     /// <summary>
@@ -153,8 +155,9 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
     /// <param name="clause">The clause to add.</param>
     /// <param name="value">The value to associate with the clause.</param>
     /// <param name="clauseRemovedCallback">Optional callback to be invoked for each removed key.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>True if and only if the clause was added.</returns>
-    public async Task<bool> TryReplaceSubsumedAsync(CNFClause clause, TValue value, Func<CNFClause, Task>? clauseRemovedCallback = null)
+    public async Task<bool> TryReplaceSubsumedAsync(CNFClause clause, TValue value, Func<CNFClause, Task>? clauseRemovedCallback = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(clause);
 
@@ -165,13 +168,13 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
 
         var featureVector = MakeAndSortFeatureVector(clause);
 
-        if (await GetSubsuming(root, clause, featureVector, 0).AnyAsync())
+        if (await GetSubsuming(root, clause, featureVector, 0).AnyAsync(cancellationToken))
         {
             return false;
         }
 
-        await RemoveSubsumedAsync(root, clause, featureVector, 0, clauseRemovedCallback);
-        await AddAsync(clause, featureVector, value);
+        await RemoveSubsumedAsync(root, clause, featureVector, 0, clauseRemovedCallback, cancellationToken);
+        await AddAsync(clause, featureVector, value, cancellationToken);
 
         return true;
     }
@@ -180,15 +183,16 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
     /// Attempts to retrieve the value associated with a clause.
     /// </summary>
     /// <param name="key">The clause to retrieve the associated value of.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>A task that returns a value indicating whether it was successful, and if so what the retrieved value is.</returns>
-    public async Task<(bool isSucceeded, TValue? value)> TryGetAsync(CNFClause key)
+    public async Task<(bool isSucceeded, TValue? value)> TryGetAsync(CNFClause key, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(key);
 
         var currentNode = root;
         foreach (var element in MakeAndSortFeatureVector(key))
         {
-            var childNode = await currentNode.TryGetChildAsync(element);
+            var childNode = await currentNode.TryGetChildAsync(element, cancellationToken);
             if (childNode != null)
             {
                 currentNode = childNode;
@@ -199,7 +203,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
             }
         }
 
-        return await currentNode.TryGetValueAsync(key);
+        return await currentNode.TryGetValueAsync(key, cancellationToken);
     }
 
     /// <summary>
@@ -358,7 +362,8 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
         CNFClause clause,
         IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
         int componentIndex,
-        Func<CNFClause, Task>? clauseRemovedCallback)
+        Func<CNFClause, Task>? clauseRemovedCallback,
+        CancellationToken cancellationToken)
     {
         if (componentIndex < featureVector.Count)
         {
@@ -369,7 +374,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
             // And there shouldn't be any duplicate features in the path from root to leaf - so only need to look at feature here.
             var matchingChildNodes = componentIndex == 0
                 ? node.ChildrenDescending
-                : node.ChildrenDescending.TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0);
+                : node.ChildrenDescending.TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0, cancellationToken);
 
             var toRemove = new List<FeatureVectorComponent<TFeature>>();
             await foreach (var (childComponent, childNode) in matchingChildNodes)
@@ -379,8 +384,8 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
                 if (childFeatureVsCurrent <= 0)
                 {
                     var componentIndexOffset = childFeatureVsCurrent == 0 && childComponent.Magnitude >= component.Magnitude ? 1 : 0;
-                    await RemoveSubsumedAsync(childNode, clause, featureVector, componentIndex + componentIndexOffset, clauseRemovedCallback);
-                    if (!await childNode.ChildrenAscending.AnyAsync() && !await childNode.KeyValuePairs.AnyAsync())
+                    await RemoveSubsumedAsync(childNode, clause, featureVector, componentIndex + componentIndexOffset, clauseRemovedCallback, cancellationToken);
+                    if (!await childNode.ChildrenAscending.AnyAsync(cancellationToken) && !await childNode.KeyValuePairs.AnyAsync(cancellationToken))
                     {
                         toRemove.Add(childComponent);
                     }
@@ -389,7 +394,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
 
             foreach (var childComponent in toRemove)
             {
-                await node.DeleteChildAsync(childComponent);
+                await node.DeleteChildAsync(childComponent, cancellationToken);
             }
         }
         else
@@ -401,9 +406,9 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
         {
             // NB: note that we need to filter the values to those keyed by clauses that are
             // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
-            await foreach (var (key, _) in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key)))
+            await foreach (var (key, _) in node.KeyValuePairs.Where(kvp => clause.Subsumes(kvp.Key), cancellationToken))
             {
-                await node.RemoveValueAsync(key);
+                await node.RemoveValueAsync(key, cancellationToken);
 
                 if (clauseRemovedCallback != null)
                 {
@@ -416,7 +421,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
             {
                 await RemoveAllDescendentSubsumed(childNode, clauseRemovedCallback);
 
-                if (!await childNode.ChildrenAscending.AnyAsync() && !await childNode.KeyValuePairs.AnyAsync())
+                if (!await childNode.ChildrenAscending.AnyAsync(cancellationToken) && !await childNode.KeyValuePairs.AnyAsync(cancellationToken))
                 {
                     toRemove.Add(childComponent);
                 }
@@ -424,7 +429,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
 
             foreach (var childComponent in toRemove)
             {
-                await node.DeleteChildAsync(childComponent);
+                await node.DeleteChildAsync(childComponent, cancellationToken);
             }
         }
     }
@@ -432,15 +437,16 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
     private async Task AddAsync(
         CNFClause key,
         IEnumerable<FeatureVectorComponent<TFeature>> featureVector,
-        TValue value)
+        TValue value,
+        CancellationToken cancellationToken)
     {
         var currentNode = root;
         foreach (var vectorComponent in featureVector)
         {
-            currentNode = await currentNode.GetOrAddChildAsync(vectorComponent);
+            currentNode = await currentNode.GetOrAddChildAsync(vectorComponent, cancellationToken);
         }
 
-        await currentNode.AddValueAsync(key, value);
+        await currentNode.AddValueAsync(key, value, cancellationToken);
     }
 
     /// <summary>

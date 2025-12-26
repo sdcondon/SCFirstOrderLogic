@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.FormulaFormatting;
 using SCFirstOrderLogic.FormulaManipulation;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
@@ -59,15 +60,17 @@ public abstract class Term
     /// Accepts a <see cref="IAsyncTermVisitor"/> instance.
     /// </summary>
     /// <param name="visitor">The visitor to be visited by.</param>
-    public abstract Task AcceptAsync(IAsyncTermVisitor visitor);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public abstract Task AcceptAsync(IAsyncTermVisitor visitor, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Accepts a <see cref="IAsyncTermVisitor{TState}"/> instance.
-    /// </summary>
+    /// </summary>#
+    /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
     /// <param name="visitor">The visitor to be visited by.</param>
     /// <param name="state">A reference to the state that the visitor is working with.</param>
-    /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
-    public abstract Task AcceptAsync<TState>(IAsyncTermVisitor<TState> visitor, TState state);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public abstract Task AcceptAsync<TState>(IAsyncTermVisitor<TState> visitor, TState state, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// <para>

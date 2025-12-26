@@ -2,27 +2,13 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.FormulaFormatting;
 using SCFirstOrderLogic.FormulaManipulation;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic;
 
 /// <summary>
-/// <para>
 /// Representation of a formula of first order logic.
-/// </para>
-/// <para>
-/// NB: There are no "intuitive" operator definitions (&amp; for conjunctions, | for disjunctions etc) here,
-/// to keep the core formula classes as lean and mean as possible. C# / FoL syntax mapping
-/// is better achieved with LINQ - see the types in the LanguageIntegration namespace. Or, if you're
-/// really desperate for formula operators, also see the <see cref="FormulaCreation.OperableFormulaFactory"/> class,
-/// which is something of a compromise.
-/// </para>
-/// <para>
-/// Also, note that there's no validation method (for e.g. catching of variable declaration the
-/// identifier of which is equal to one already in scope, or of references to non-declared variables).
-/// This is better left to the normalisation process. Again, this is to keep the core classes as dumb
-/// (and thus flexible) as possible.
-/// </para>
 /// </summary>
 public abstract class Formula
 {
@@ -69,7 +55,8 @@ public abstract class Formula
     /// Accepts a <see cref="IAsyncFormulaVisitor"/> instance.
     /// </summary>
     /// <param name="visitor">The visitor to be visited by.</param>
-    public abstract Task AcceptAsync(IAsyncFormulaVisitor visitor);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public abstract Task AcceptAsync(IAsyncFormulaVisitor visitor, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Accepts a <see cref="IAsyncFormulaVisitor{TState}"/> instance.
@@ -77,7 +64,8 @@ public abstract class Formula
     /// <typeparam name="TState">The type of state that the visitor works with.</typeparam>
     /// <param name="visitor">The visitor to be visited by.</param>
     /// <param name="state">The state that the visitor is to work with.</param>
-    public abstract Task AcceptAsync<TState>(IAsyncFormulaVisitor<TState> visitor, TState state);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    public abstract Task AcceptAsync<TState>(IAsyncFormulaVisitor<TState> visitor, TState state, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// <para>

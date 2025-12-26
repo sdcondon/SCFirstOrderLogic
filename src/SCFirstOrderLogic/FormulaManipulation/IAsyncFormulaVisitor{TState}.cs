@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.FormulaManipulation;
@@ -21,54 +22,62 @@ public interface IAsyncFormulaVisitor<in TState>
     /// </summary>
     /// <param name="conjunction">The conjunction instance to visit.</param>
     /// <param name="state">The state of this visitation.</param>
-    Task VisitAsync(Conjunction conjunction, TState state);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Conjunction conjunction, TState state, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits a <see cref="Disjunction"/> instance.
     /// </summary>
     /// <param name="disjunction">The <see cref="Disjunction"/> instance to visit.</param>
     /// <param name="state">The state of this visitation.</param>
-    Task VisitAsync(Disjunction disjunction, TState state);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Disjunction disjunction, TState state, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits a <see cref="Equivalence"/> instance. 
     /// </summary>
     /// <param name="equivalence">The <see cref="Equivalence"/> instance to visit.</param>
     /// <param name="state">The state of this visitation.</param>
-    Task VisitAsync(Equivalence equivalence, TState state);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Equivalence equivalence, TState state, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits an <see cref="ExistentialQuantification"/> instance. 
     /// </summary>
     /// <param name="existentialQuantification">The <see cref="ExistentialQuantification"/> instance to visit.</param>
     /// <param name="state">The state of this visitation.</param>
-    Task VisitAsync(ExistentialQuantification existentialQuantification, TState state);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(ExistentialQuantification existentialQuantification, TState state, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits an <see cref="Implication"/> instance. 
     /// </summary>
     /// <param name="implication">The <see cref="Implication"/> instance to visit.</param>
     /// <param name="state">The state of this visitation.</param>
-    Task VisitAsync(Implication implication, TState state);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Implication implication, TState state, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits a <see cref="Negation"/> instance. 
     /// </summary>
     /// <param name="negation">The <see cref="Negation"/> instance to visit.</param>
     /// <param name="state">The state of this visitation.</param>
-    Task VisitAsync(Negation negation, TState state);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Negation negation, TState state, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits a <see cref="Predicate"/> instance. 
     /// </summary>
     /// <param name="predicate">The <see cref="Predicate"/> instance to visit.</param>
     /// <param name="state">The state of this visitation.</param>
-    Task VisitAsync(Predicate predicate, TState state);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(Predicate predicate, TState state, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Visits a <see cref="UniversalQuantification"/> instance. 
     /// </summary>
     /// <param name="universalQuantification">The <see cref="UniversalQuantification"/> instance to visit.</param>
     /// <param name="state">The state of this visitation.</param>
-    Task VisitAsync(UniversalQuantification universalQuantification, TState state);
+    /// <param name="cancellationToken">The cancellation token for the visitation.</param>
+    Task VisitAsync(UniversalQuantification universalQuantification, TState state, CancellationToken cancellationToken = default);
 }

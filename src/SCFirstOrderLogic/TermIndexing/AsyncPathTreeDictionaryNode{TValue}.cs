@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing;
@@ -33,14 +34,14 @@ public sealed class AsyncPathTreeDictionaryNode<TValue> : IAsyncPathTreeParamete
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncPathTreeArgumentNode<TValue>?> TryGetChildAsync(IPathTreeArgumentNodeKey key)
+    public ValueTask<IAsyncPathTreeArgumentNode<TValue>?> TryGetChildAsync(IPathTreeArgumentNodeKey key, CancellationToken cancellationToken = default)
     {
         children.TryGetValue(key, out var child);
         return ValueTask.FromResult(child);
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncPathTreeArgumentNode<TValue>> GetOrAddChildAsync(IPathTreeArgumentNodeKey key)
+    public ValueTask<IAsyncPathTreeArgumentNode<TValue>> GetOrAddChildAsync(IPathTreeArgumentNodeKey key, CancellationToken cancellationToken = default)
     {
         IAsyncPathTreeArgumentNode<TValue> node = key.ChildElementCount > 0 ? new InternalNode() : new LeafNode();
         if (!children.TryAdd(key, node))
@@ -67,7 +68,7 @@ public sealed class AsyncPathTreeDictionaryNode<TValue> : IAsyncPathTreeParamete
             }
         }
 
-        public ValueTask<IAsyncPathTreeParameterNode<TValue>> GetChildAsync(int index)
+        public ValueTask<IAsyncPathTreeParameterNode<TValue>> GetChildAsync(int index, CancellationToken cancellationToken = default)
         {
             return ValueTask.FromResult(children[index]);
         }
@@ -77,7 +78,7 @@ public sealed class AsyncPathTreeDictionaryNode<TValue> : IAsyncPathTreeParamete
             throw new NotSupportedException("Internal node - has no values");
         }
 
-        public ValueTask<IAsyncPathTreeParameterNode<TValue>> GetOrAddChildAsync(int index)
+        public ValueTask<IAsyncPathTreeParameterNode<TValue>> GetOrAddChildAsync(int index, CancellationToken cancellationToken = default)
         {
             while (children.Count <= index)
             {
@@ -87,7 +88,7 @@ public sealed class AsyncPathTreeDictionaryNode<TValue> : IAsyncPathTreeParamete
             return ValueTask.FromResult(children[index]);
         }
 
-        public ValueTask AddValueAsync(Term term, TValue value)
+        public ValueTask AddValueAsync(Term term, TValue value, CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException("Internal node - cannot have value");
         }
@@ -110,7 +111,7 @@ public sealed class AsyncPathTreeDictionaryNode<TValue> : IAsyncPathTreeParamete
             }
         }
 
-        public ValueTask<IAsyncPathTreeParameterNode<TValue>> GetChildAsync(int index)
+        public ValueTask<IAsyncPathTreeParameterNode<TValue>> GetChildAsync(int index, CancellationToken cancellationToken = default)
         {
             return ValueTask.FromResult(emptyChildren[index]);
         }
@@ -123,12 +124,12 @@ public sealed class AsyncPathTreeDictionaryNode<TValue> : IAsyncPathTreeParamete
             }
         }
 
-        public ValueTask<IAsyncPathTreeParameterNode<TValue>> GetOrAddChildAsync(int index)
+        public ValueTask<IAsyncPathTreeParameterNode<TValue>> GetOrAddChildAsync(int index, CancellationToken cancellationToken = default)
         {
             throw new NotSupportedException("Leaf node - cannot have children");
         }
 
-        public async ValueTask AddValueAsync(Term term, TValue value)
+        public async ValueTask AddValueAsync(Term term, TValue value, CancellationToken cancellationToken = default)
         {
             if (!values.TryAdd(term, value))
             {

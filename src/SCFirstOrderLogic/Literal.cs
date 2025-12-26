@@ -8,11 +8,11 @@ namespace SCFirstOrderLogic;
 /// <summary>
 /// <para>
 /// Streamlined representation of a literal (that is, a predicate or a negated predicate) of first-order logic.
+/// Consists of the <see cref="SCFirstOrderLogic.Predicate"/> and a <see cref="Boolean"/> that indicates positivity/negativity.
 /// </para>
 /// <para>
-/// Note that this type is NOT a subtype of <see cref="Formula"/>. To represent literals as <see cref="Formula"/>s, 
-/// <see cref="SCFirstOrderLogic.Predicate"/> and <see cref="Negation"/> should be used as appropriate. This type is used within
-/// our <see cref="CNFClause"/> type, and may also be of use to consumers who want a streamlined literal representation.
+/// Note that this type is NOT a subtype of <see cref="Formula"/>. To represent a literal as a <see cref="Formula"/>, 
+/// <see cref="SCFirstOrderLogic.Predicate"/> and <see cref="Negation"/> should be used as appropriate.
 /// </para>
 /// </summary>
 public sealed class Literal : IEquatable<Literal>
@@ -44,7 +44,7 @@ public sealed class Literal : IEquatable<Literal>
     /// </summary>
     /// <param name="predicate">The atomic formula to which this literal refers.</param>
     /// <param name="isNegated">A value indicating whether the atomic formula is negated.</param>
-    // TODO-BREAKING: looking at this with fresh eyes, its really counterintuitive - new Literal(MyPredicate, false)
+    // TODO*-BREAKING: looking at this with fresh eyes, its really counterintuitive - new Literal(MyPredicate, false)
     // would make more intuitive sense to be negated. That is, this should probably be Literal(predicate, isPositive)
     // This is unfortunately a really dangerous breaking change (because it'll still compile..)
     public Literal(Predicate predicate, bool isNegated)
@@ -65,6 +65,7 @@ public sealed class Literal : IEquatable<Literal>
     /// <summary>
     /// Gets a value indicating whether this literal is a negation of the underlying atomic formula.
     /// </summary>
+    // TODO*-BREAKING-V8: IsNegative - for consistency with IsPositive
     public bool IsNegated { get; }
 
     /// <summary>
@@ -82,6 +83,15 @@ public sealed class Literal : IEquatable<Literal>
     /// </summary>
     /// <returns>A literal that is the negation of this one.</returns>
     public Literal Negate() => new(Predicate, !IsNegated);
+
+    /// <summary>
+    /// Converts the literal to a <see cref="Formula"/>
+    /// </summary>
+    /// <returns>A representation of this literal as a <see cref="Formula"/>.</returns>
+    public Formula ToFormula()
+    {
+        return IsNegated ? new Negation(Predicate) : Predicate;
+    }
 
     /// <summary>
     /// <para>
@@ -104,15 +114,6 @@ public sealed class Literal : IEquatable<Literal>
     public bool Equals(Literal? other)
     {
         return other != null && other.Predicate.Equals(Predicate) && other.IsNegated.Equals(IsNegated);
-    }
-
-    /// <summary>
-    /// Converts the literal to a <see cref="Formula"/>
-    /// </summary>
-    /// <returns>A representation of this literal as a <see cref="Formula"/>.</returns>
-    public Formula ToFormula()
-    {
-        return IsNegated ? new Negation(Predicate) : Predicate;
     }
 
     /// <inheritdoc />

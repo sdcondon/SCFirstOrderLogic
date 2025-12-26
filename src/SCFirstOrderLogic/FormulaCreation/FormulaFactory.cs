@@ -7,7 +7,7 @@ namespace SCFirstOrderLogic.FormulaCreation;
 /// Shorthand static factory methods for <see cref="Formula"/> instances. Intended to be used with a 'using static' directive to make method invocations acceptably succinct.
 /// </para>
 /// <para>
-/// For domain-specific formula elements (i.e. predicates &amp; functions), the recommendation is to create appropriate methods and properties to create them. For example:
+/// For domain-specific formula elements (i.e. predicates &amp; functions), the recommendation is to create appropriate methods and properties to create them, thus avoiding repetition of identifiers. For example:
 /// <code>Predicate MyBinaryPredicate(Term arg1, Term arg2) => new Predicate(nameof(MyBinaryPredicate), arg1, arg2);</code>
 /// ..which means that (if you include an appropriate 'using static' directive) you can then write things like:
 /// <code>ForAll(X, ThereExists(Y, MyBinaryPredicate(X, Y)));</code>

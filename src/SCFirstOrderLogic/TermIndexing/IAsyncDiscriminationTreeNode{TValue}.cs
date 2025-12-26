@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SCFirstOrderLogic.TermIndexing;
@@ -24,21 +25,24 @@ public interface IAsyncDiscriminationTreeNode<TValue>
     /// Attempts to retrieve a child node by its <see cref="IDiscriminationTreeNodeKey"/> key.
     /// </summary>
     /// <param name="elementInfo">The element info of the child to retrieve.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>The child node, or <see langword="null"/> if no matching node was found.</returns>
-    ValueTask<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeNodeKey elementInfo);
+    ValueTask<IAsyncDiscriminationTreeNode<TValue>?> TryGetChildAsync(IDiscriminationTreeNodeKey elementInfo, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets or adds an internal child of this node.
     /// </summary>
     /// <param name="elementInfo">The element info for the retrieved or added node.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>A task, the result of which is the retrieved or added node.</returns>
-    ValueTask<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeNodeKey elementInfo);
+    ValueTask<IAsyncDiscriminationTreeNode<TValue>> GetOrAddInternalChildAsync(IDiscriminationTreeNodeKey elementInfo, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Adds a child node of this node that is a leaf.
     /// </summary>
     /// <param name="elementInfo">The element info for the added node.</param>
     /// <param name="value">The value to be attached to the new node.</param>
+    /// <param name="cancellationToken">Cancellation token for the operation.</param>
     /// <returns>A task representing the completion of this operation.</returns>
-    ValueTask AddLeafChildAsync(IDiscriminationTreeNodeKey elementInfo, TValue value);
+    ValueTask AddLeafChildAsync(IDiscriminationTreeNodeKey elementInfo, TValue value, CancellationToken cancellationToken = default);
 }
