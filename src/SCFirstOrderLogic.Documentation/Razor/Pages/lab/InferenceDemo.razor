@@ -150,9 +150,9 @@
             ClauseResolutionPriorityComparisons.UnitPreference)),
 
         ["Resolution (Linear, Feature Vector Index Clause Storage)"] = () => new ResolutionKnowledgeBase(new LinearResolutionStrategy(
-            new BlazorWasmFVIResClauseStore<MaxDepthFeature>(
+            new BlazorWasmFVIResClauseStore(
                 MaxDepthFeature.MakeFeatureVector,
-                new ClauseStoreFVIListNode<MaxDepthFeature>(MaxDepthFeature.MakeFeatureComparer())),
+                new ClauseStoreFVIListNode(MaxDepthFeature.MakeFeatureComparer())),
             ClauseResolutionPriorityComparisons.UnitPreference)),
     };
 
