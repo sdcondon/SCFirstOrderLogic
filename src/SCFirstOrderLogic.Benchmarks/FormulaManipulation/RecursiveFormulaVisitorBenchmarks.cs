@@ -20,12 +20,12 @@ public class RecursiveFormulaVisitorBenchmarks
         public override string ToString() => Label;
     }
 
-    public static IEnumerable<TestCase> TestCases { get; } = new TestCase[]
-    {
+    public static IEnumerable<TestCase> TestCases { get; } =
+    [
         new(
             Label: "Non-Trivial Formula",
             Formula: NonTrivialFormula),
-    };
+    ];
 
     [ParamsSource(nameof(TestCases))]
     public TestCase? CurrentTestCase { get; set; }

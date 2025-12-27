@@ -20,8 +20,8 @@ public class RecursiveFormulaTransformationBenchmarks
         public override string ToString() => Label;
     }
 
-    public static IEnumerable<TestCase> TestCases { get; } = new TestCase[]
-    {
+    public static IEnumerable<TestCase> TestCases { get; } =
+    [
         new(
             Label: "Non-Trivial NO-OP",
             DoSomething: false,
@@ -31,7 +31,7 @@ public class RecursiveFormulaTransformationBenchmarks
             Label: "Non-Trivial ALL-LEAFS-OP",
             DoSomething: true,
             Formula: NonTrivialFormula),
-    };
+    ];
 
     [ParamsSource(nameof(TestCases))]
     public TestCase? CurrentTestCase { get; set; }
@@ -45,11 +45,9 @@ public class RecursiveFormulaTransformationBenchmarks
     [Benchmark]
     public Formula LinqIterateTwice() => new VarTransform_LinqIterateTwice(CurrentTestCase!.DoSomething).ApplyTo(CurrentTestCase!.Formula);
 
-    private class VarTransform_LinqIterateTwice : RecursiveFormulaTransformation_LinqIterateTwice
+    private class VarTransform_LinqIterateTwice(bool doSomething) : RecursiveFormulaTransformation_LinqIterateTwice
     {
-        private readonly bool doSomething;
-
-        public VarTransform_LinqIterateTwice(bool doSomething) => this.doSomething = doSomething;
+        private readonly bool doSomething = doSomething;
 
         public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
         {
@@ -57,11 +55,9 @@ public class RecursiveFormulaTransformationBenchmarks
         }
     }
 
-    private class VarTransform_Linq : RecursiveFormulaTransformation_Linq
+    private class VarTransform_Linq(bool doSomething) : RecursiveFormulaTransformation_Linq
     {
-        private readonly bool doSomething;
-
-        public VarTransform_Linq(bool doSomething) => this.doSomething = doSomething;
+        private readonly bool doSomething = doSomething;
 
         public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
         {
@@ -69,11 +65,9 @@ public class RecursiveFormulaTransformationBenchmarks
         }
     }
 
-    private class VarTransform : RecursiveFormulaTransformation
+    private class VarTransform(bool doSomething) : RecursiveFormulaTransformation
     {
-        private readonly bool doSomething;
-
-        public VarTransform(bool doSomething) => this.doSomething = doSomething;
+        private readonly bool doSomething = doSomething;
 
         public override VariableDeclaration ApplyTo(VariableDeclaration variableDeclaration)
         {

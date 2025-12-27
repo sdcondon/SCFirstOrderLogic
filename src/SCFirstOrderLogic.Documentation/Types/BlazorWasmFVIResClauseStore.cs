@@ -10,30 +10,20 @@ namespace SCFirstOrderLogic.Inference.Basic.Resolution;
 /// An implementation of <see cref="IKnowledgeBaseClauseStore"/> that maintains all known clauses in
 /// a <see cref="AsyncFeatureVectorIndex{TFeature}"/>.
 /// </summary>
+/// <remarks>
+/// Initializes a new instance of the <see cref="FeatureVectorIndexClauseStore{TFeature}"/> class.
+/// </remarks>
+/// <param name="featureVectorMaker">Delegate that makes the feature vector for a given clause.</param>
+/// <param name="featureVectorIndexRoot">The root node to use for the feature vector index.</param>
 // TODO-MAINTAINABILITY/PERFORMANCE: Remove as soon as possible, keep in sync with real implementation until then
-public class BlazorWasmFVIResClauseStore<TFeature> : IKnowledgeBaseClauseStore
+public class BlazorWasmFVIResClauseStore<TFeature>(
+    Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorMaker,
+    IClauseStoreFVINode<TFeature> featureVectorIndexRoot) : IKnowledgeBaseClauseStore
     where TFeature : notnull
 {
-    private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorMaker;
-    private readonly IClauseStoreFVINode<TFeature> featureVectorIndexRoot;
-    private readonly AsyncFeatureVectorIndex<TFeature> featureVectorIndex;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndexClauseStore{TFeature}"/> class.
-    /// </summary>
-    /// <param name="featureVectorMaker">Delegate that makes the feature vector for a given clause.</param>
-    /// <param name="featureVectorIndexRoot">The root node to use for the feature vector index.</param>
-    public BlazorWasmFVIResClauseStore(
-        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorMaker,
-        IClauseStoreFVINode<TFeature> featureVectorIndexRoot)
-    {
-        this.featureVectorMaker = featureVectorMaker;
-        this.featureVectorIndexRoot = featureVectorIndexRoot;
-
-        featureVectorIndex = new AsyncFeatureVectorIndex<TFeature>(
-            featureVectorMaker,
-            featureVectorIndexRoot);
-    }
+    private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorMaker = featureVectorMaker;
+    private readonly IClauseStoreFVINode<TFeature> featureVectorIndexRoot = featureVectorIndexRoot;
+    private readonly AsyncFeatureVectorIndex<TFeature> featureVectorIndex = new(featureVectorMaker, featureVectorIndexRoot);
 
     /// <inheritdoc />
     public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
@@ -63,21 +53,12 @@ public class BlazorWasmFVIResClauseStore<TFeature> : IKnowledgeBaseClauseStore
     /// <summary>
     /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="HashSetClauseStore"/>.
     /// </summary>
-    private class QueryStore : IQueryClauseStore
+    private class QueryStore(
+        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
+        IClauseStoreFVINode<TFeature> featureVectorIndexRoot) : IQueryClauseStore
     {
-        private readonly IClauseStoreFVINode<TFeature> featureVectorIndexRoot;
-        private readonly AsyncFeatureVectorIndex<TFeature> featureVectorIndex;
-
-        public QueryStore(
-            Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
-            IClauseStoreFVINode<TFeature> featureVectorIndexRoot)
-        {
-            this.featureVectorIndexRoot = featureVectorIndexRoot;
-
-            featureVectorIndex = new AsyncFeatureVectorIndex<TFeature>(
-                featureVectorSelector,
-                featureVectorIndexRoot);
-        }
+        private readonly IClauseStoreFVINode<TFeature> featureVectorIndexRoot = featureVectorIndexRoot;
+        private readonly AsyncFeatureVectorIndex<TFeature> featureVectorIndex = new(featureVectorSelector, featureVectorIndexRoot);
 
         /// <inheritdoc />
         public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
