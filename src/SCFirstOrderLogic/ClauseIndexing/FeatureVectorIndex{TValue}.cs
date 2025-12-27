@@ -18,43 +18,41 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// That is, feature vector indices can be used to store clauses in such a way that we can quickly look up the stored clauses that subsume or are subsumed by a query clause.
 /// </para>
 /// </summary>
-/// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
-public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNFClause, TValue>>
-    where TFeature : notnull
+public class FeatureVectorIndex<TValue> : IEnumerable<KeyValuePair<CNFClause, TValue>>
 {
     /// <summary>
     /// The delegate used to retrieve the feature vector for any given clause.
     /// </summary>
-    private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector;
+    private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorSelector;
 
     /// <summary>
     /// The root node of the index.
     /// </summary>
-    private readonly IFeatureVectorIndexNode<TFeature, TValue> root;
+    private readonly IFeatureVectorIndexNode<TValue> root;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature,TValue}"/> class.
+    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TValue}"/> class.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the index.</param>
     public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
-        IFeatureVectorIndexNode<TFeature, TValue> root)
+        Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorSelector,
+        IFeatureVectorIndexNode<TValue> root)
         : this(featureVectorSelector, root, Enumerable.Empty<KeyValuePair<CNFClause, TValue>>())
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TFeature,TValue}"/> class, 
+    /// Initializes a new instance of the <see cref="FeatureVectorIndex{TValue}"/> class, 
     /// and adds some additional initial content (beyond any already attached to the provided root node).
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the index.</param>
     /// <param name="content">The additional content to be added.</param>
     public FeatureVectorIndex(
-        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
-        IFeatureVectorIndexNode<TFeature, TValue> root,
+        Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorSelector,
+        IFeatureVectorIndexNode<TValue> root,
         IEnumerable<KeyValuePair<CNFClause, TValue>> content)
     {
         ArgumentNullException.ThrowIfNull(featureVectorSelector);
@@ -100,7 +98,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
 
         return ExpandNode(root, 0);
 
-        bool ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
+        bool ExpandNode(IFeatureVectorIndexNode<TValue> node, int componentIndex)
         {
             if (componentIndex < featureVector.Count)
             {
@@ -223,7 +221,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
         // NB: subsumed clauses will have equal or higher vector elements.
         // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
         // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
-        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
+        IEnumerable<TValue> ExpandNode(IFeatureVectorIndexNode<TValue> node, int componentIndex)
         {
             if (componentIndex < featureVector.Count)
             {
@@ -260,7 +258,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
             }
         }
 
-        IEnumerable<TValue> GetAllDescendentValues(IFeatureVectorIndexNode<TFeature, TValue> node)
+        IEnumerable<TValue> GetAllDescendentValues(IFeatureVectorIndexNode<TValue> node)
         {
             // NB: note that we need to filter the values to those keyed by clauses that are
             // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
@@ -287,7 +285,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
             yield return kvp;
         }
 
-        static IEnumerable<KeyValuePair<CNFClause, TValue>> GetAllKeyValuePairs(IFeatureVectorIndexNode<TFeature, TValue> node)
+        static IEnumerable<KeyValuePair<CNFClause, TValue>> GetAllKeyValuePairs(IFeatureVectorIndexNode<TValue> node)
         {
             foreach (var kvp in node.KeyValuePairs)
             {
@@ -308,9 +306,9 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     private static IEnumerable<TValue> GetSubsuming(
-        IFeatureVectorIndexNode<TFeature, TValue> node,
+        IFeatureVectorIndexNode<TValue> node,
         CNFClause clause,
-        IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
+        IReadOnlyList<FeatureVectorComponent> featureVector,
         int componentIndex)
     {
         if (componentIndex < featureVector.Count)
@@ -355,9 +353,9 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
     // TODO-ZZZ-PERFORMANCE: replace individual unchanging things (clause, FV, callback) with single ref for smaller stack frame?
     private static void RemoveSubsumed(
-        IFeatureVectorIndexNode<TFeature, TValue> node,
+        IFeatureVectorIndexNode<TValue> node,
         CNFClause clause,
-        IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
+        IReadOnlyList<FeatureVectorComponent> featureVector,
         int componentIndex,
         Action<CNFClause>? clauseRemovedCallback)
     {
@@ -372,7 +370,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
                 ? node.ChildrenDescending
                 : node.ChildrenDescending.TakeWhile(kvp => node.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0);
 
-            var toRemove = new List<FeatureVectorComponent<TFeature>>();
+            var toRemove = new List<FeatureVectorComponent>();
             foreach (var (childComponent, childNode) in matchingChildNodes)
             {
                 var childFeatureVsCurrent = node.FeatureComparer.Compare(childComponent.Feature, component.Feature);
@@ -399,7 +397,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
         }
 
         void RemoveAllDescendentSubsumed(
-            IFeatureVectorIndexNode<TFeature, TValue> node,
+            IFeatureVectorIndexNode<TValue> node,
             CNFClause clause,
             Action<CNFClause>? clauseRemovedCallback)
         {
@@ -411,7 +409,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
                 clauseRemovedCallback?.Invoke(key);
             }
 
-            var toRemove = new List<FeatureVectorComponent<TFeature>>();
+            var toRemove = new List<FeatureVectorComponent>();
             foreach (var (childComponent, childNode) in node.ChildrenAscending)
             {
                 RemoveAllDescendentSubsumed(childNode, clause, clauseRemovedCallback);
@@ -431,7 +429,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
 
     private void Add(
         CNFClause key,
-        IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
+        IReadOnlyList<FeatureVectorComponent> featureVector,
         TValue value)
     {
         var currentNode = root;
@@ -448,7 +446,7 @@ public class FeatureVectorIndex<TFeature, TValue> : IEnumerable<KeyValuePair<CNF
     /// </summary>
     /// <param name="clause">The clause to retrieve the feature vector for.</param>
     /// <returns>The feature vector, represented as a read-only list.</returns>
-    private IReadOnlyList<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
+    private IReadOnlyList<FeatureVectorComponent> MakeAndSortFeatureVector(CNFClause clause)
     {
         // TODO-ROBUSTNESS: should probably throw if any distinct pairs have a comparison of zero. could happen efficiently as part of the sort
         var list = featureVectorSelector(clause).ToList();

@@ -17,14 +17,12 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// That is, feature vector indices can be used to store clauses in such a way that we can quickly look up the stored clauses that subsume or are subsumed by a query clause.
 /// </para>
 /// </summary>
-/// <typeparam name="TFeature">The type of each key of the feature vectors.</typeparam>
-public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
-    where TFeature : notnull
+public class AsyncFeatureVectorIndex : IAsyncEnumerable<CNFClause>
 {
     /// <summary>
     /// The inner <see cref="CNFClause"/>-valued index that this one merely wraps.
     /// </summary>
-    private readonly AsyncFeatureVectorIndex<TFeature, CNFClause> innerIndex;
+    private readonly AsyncFeatureVectorIndex<CNFClause> innerIndex;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature}"/> class.
@@ -32,8 +30,8 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the index.</param>
     public AsyncFeatureVectorIndex(
-        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
-        IAsyncFeatureVectorIndexNode<TFeature, CNFClause> root)
+        Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorSelector,
+        IAsyncFeatureVectorIndexNode<CNFClause> root)
         : this(featureVectorSelector, root, Enumerable.Empty<CNFClause>())
     {
     }
@@ -46,8 +44,8 @@ public class AsyncFeatureVectorIndex<TFeature> : IAsyncEnumerable<CNFClause>
     /// <param name="root">The root node of the tree.</param>
     /// <param name="content">The additional content to be added.</param>
     public AsyncFeatureVectorIndex(
-        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
-        IAsyncFeatureVectorIndexNode<TFeature, CNFClause> root,
+        Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorSelector,
+        IAsyncFeatureVectorIndexNode<CNFClause> root,
         IEnumerable<CNFClause> content)
     {
         innerIndex = new(featureVectorSelector, root, content.Select(a => KeyValuePair.Create(a, a)));

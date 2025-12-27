@@ -19,46 +19,44 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// That is, feature vector indices can be used to store clauses in such a way that we can quickly look up the stored clauses that subsume or are subsumed by a query clause.
 /// </para>
 /// </summary>
-/// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
 // TODO-PERFORMANCE: at least on the read side, consider processing nodes in parallel.
 // what are some best practices here (esp re consumers/node implementers being able to control DoP)?
 // e.g allow consumers to pass a scheduler? allow nodes to specify a scheduler? or just expect caller to manage via sync context?
-public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyValuePair<CNFClause, TValue>>
-    where TFeature : notnull
+public class AsyncFeatureVectorIndex<TValue> : IAsyncEnumerable<KeyValuePair<CNFClause, TValue>>
 {
     /// <summary>
     /// The delegate used to retrieve the feature vector for any given clause.
     /// </summary>
-    private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector;
+    private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorSelector;
 
     /// <summary>
     /// The root node of the index.
     /// </summary>
-    private readonly IAsyncFeatureVectorIndexNode<TFeature, TValue> root;
+    private readonly IAsyncFeatureVectorIndexNode<TValue> root;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature,TValue}"/> class.
+    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TValue}"/> class.
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the index.</param>
     public AsyncFeatureVectorIndex(
-        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
-        IAsyncFeatureVectorIndexNode<TFeature, TValue> root)
+        Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorSelector,
+        IAsyncFeatureVectorIndexNode<TValue> root)
         : this(featureVectorSelector, root, Enumerable.Empty<KeyValuePair<CNFClause, TValue>>())
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TFeature,TValue}"/> class,
+    /// Initializes a new instance of the <see cref="AsyncFeatureVectorIndex{TValue}"/> class,
     /// and adds some additional initial content (beyond any already attached to the provided root node).
     /// </summary>
     /// <param name="featureVectorSelector">The delegate to use to retrieve the feature vector for any given clause.</param>
     /// <param name="root">The root node of the index.</param>
     /// <param name="content">The additional content to be added.</param>
     public AsyncFeatureVectorIndex(
-        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
-        IAsyncFeatureVectorIndexNode<TFeature, TValue> root,
+        Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorSelector,
+        IAsyncFeatureVectorIndexNode<TValue> root,
         IEnumerable<KeyValuePair<CNFClause, TValue>> content)
     {
         ArgumentNullException.ThrowIfNull(featureVectorSelector);
@@ -106,7 +104,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
 
         return await ExpandNodeAsync(root, 0);
 
-        async ValueTask<bool> ExpandNodeAsync(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
+        async ValueTask<bool> ExpandNodeAsync(IAsyncFeatureVectorIndexNode<TValue> node, int componentIndex)
         {
             if (componentIndex < featureVector.Count)
             {
@@ -230,7 +228,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
 
         return ExpandNode(root, 0);
 
-        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, int componentIndex)
+        async IAsyncEnumerable<TValue> ExpandNode(IAsyncFeatureVectorIndexNode<TValue> node, int componentIndex)
         {
             if (componentIndex < featureVector.Count)
             {
@@ -267,7 +265,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
             }
         }
 
-        async IAsyncEnumerable<TValue> GetAllDescendentValues(IAsyncFeatureVectorIndexNode<TFeature, TValue> node)
+        async IAsyncEnumerable<TValue> GetAllDescendentValues(IAsyncFeatureVectorIndexNode<TValue> node)
         {
             // NB: note that we need to filter the values to those keyed by clauses that are
             // actually subsumed by the query clause. The node values are just the *candidate* set.
@@ -294,7 +292,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
             yield return kvp;
         }
 
-        static async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetAllKeyValuePairs(IAsyncFeatureVectorIndexNode<TFeature, TValue> node)
+        static async IAsyncEnumerable<KeyValuePair<CNFClause, TValue>> GetAllKeyValuePairs(IAsyncFeatureVectorIndexNode<TValue> node)
         {
             await foreach (var kvp in node.KeyValuePairs)
             {
@@ -312,9 +310,9 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
     }
 
     private static async IAsyncEnumerable<TValue> GetSubsuming(
-        IAsyncFeatureVectorIndexNode<TFeature, TValue> node,
+        IAsyncFeatureVectorIndexNode<TValue> node,
         CNFClause clause,
-        IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
+        IReadOnlyList<FeatureVectorComponent> featureVector,
         int componentIndex)
     {
         if (componentIndex < featureVector.Count)
@@ -358,9 +356,9 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
     // We allow zero-valued elements to be omitted from the vectors (so that we don't have to know what features are possible ahead of time).
     // This makes the logic here a little similar to what you'd find in a set trie when querying for supersets.
     private async Task RemoveSubsumedAsync(
-        IAsyncFeatureVectorIndexNode<TFeature, TValue> node,
+        IAsyncFeatureVectorIndexNode<TValue> node,
         CNFClause clause,
-        IReadOnlyList<FeatureVectorComponent<TFeature>> featureVector,
+        IReadOnlyList<FeatureVectorComponent> featureVector,
         int componentIndex,
         Func<CNFClause, Task>? clauseRemovedCallback,
         CancellationToken cancellationToken)
@@ -376,7 +374,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
                 ? node.ChildrenDescending
                 : node.ChildrenDescending.TakeWhile(kvp => root.FeatureComparer.Compare(kvp.Key.Feature, featureVector[componentIndex - 1].Feature) > 0, cancellationToken);
 
-            var toRemove = new List<FeatureVectorComponent<TFeature>>();
+            var toRemove = new List<FeatureVectorComponent>();
             await foreach (var (childComponent, childNode) in matchingChildNodes)
             {
                 var childFeatureVsCurrent = root.FeatureComparer.Compare(childComponent.Feature, component.Feature);
@@ -402,7 +400,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
             await RemoveAllDescendentSubsumed(node, clauseRemovedCallback);
         }
 
-        async Task RemoveAllDescendentSubsumed(IAsyncFeatureVectorIndexNode<TFeature, TValue> node, Func<CNFClause, Task>? clauseRemovedCallback)
+        async Task RemoveAllDescendentSubsumed(IAsyncFeatureVectorIndexNode<TValue> node, Func<CNFClause, Task>? clauseRemovedCallback)
         {
             // NB: note that we need to filter the values to those keyed by clauses that are
             // actually subsumed by the query clause. The values of the matching nodes are just the *candidate* set.
@@ -416,7 +414,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
                 }
             }
 
-            var toRemove = new List<FeatureVectorComponent<TFeature>>();
+            var toRemove = new List<FeatureVectorComponent>();
             await foreach (var (childComponent, childNode) in node.ChildrenAscending)
             {
                 await RemoveAllDescendentSubsumed(childNode, clauseRemovedCallback);
@@ -436,7 +434,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
 
     private async Task AddAsync(
         CNFClause key,
-        IEnumerable<FeatureVectorComponent<TFeature>> featureVector,
+        IEnumerable<FeatureVectorComponent> featureVector,
         TValue value,
         CancellationToken cancellationToken)
     {
@@ -454,7 +452,7 @@ public class AsyncFeatureVectorIndex<TFeature, TValue> : IAsyncEnumerable<KeyVal
     /// </summary>
     /// <param name="clause">The clause to retrieve the feature vector for.</param>
     /// <returns>The feature vector, represented as a read-only list.</returns>
-    private IReadOnlyList<FeatureVectorComponent<TFeature>> MakeAndSortFeatureVector(CNFClause clause)
+    private IReadOnlyList<FeatureVectorComponent> MakeAndSortFeatureVector(CNFClause clause)
     {
         // TODO-ROBUSTNESS: should probably throw if any distinct pairs have a comparison of zero. could happen efficiently as part of the sort
         var list = featureVectorSelector(clause).ToList();

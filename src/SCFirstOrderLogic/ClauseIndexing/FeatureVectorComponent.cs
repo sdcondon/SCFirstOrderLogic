@@ -5,7 +5,6 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 /// <summary>
 /// An individual component of a feature vector - a feature-magnitude pair.
 /// </summary>
-/// <typeparam name="TFeature"></typeparam>
 /// <param name="Feature">The feature that is essentially the key of this component.</param>
 /// <param name="Magnitude">The magnitude of this component.</param>
-public record struct FeatureVectorComponent<TFeature>(TFeature Feature, int Magnitude);
+public record struct FeatureVectorComponent(object Feature, int Magnitude);

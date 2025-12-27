@@ -140,11 +140,11 @@ public static class FeatureVectorIndexTests
         .ThenReturns()
         .And((tc, rv) => rv.Should().BeEquivalentTo(tc.Expected));
 
-    private static FeatureVectorIndex<OccurenceCountFeature> MakeOccurenceCountFVI(IEnumerable<CNFClause> content)
+    private static FeatureVectorIndex MakeOccurenceCountFVI(IEnumerable<CNFClause> content)
     {
-        return new FeatureVectorIndex<OccurenceCountFeature>(
+        return new FeatureVectorIndex(
             OccurenceCountFeature.MakeFeatureVector,
-            new FeatureVectorIndexListNode<OccurenceCountFeature, CNFClause>(OccurenceCountFeature.MakeFeatureComparer()),
+            new FeatureVectorIndexListNode<CNFClause>(OccurenceCountFeature.MakeFeatureComparer()),
             content);
     }
 
@@ -159,13 +159,13 @@ public static class FeatureVectorIndexTests
         CNFClause[] ExpectedContent);
 
     private record GetTestCase(
-        FeatureVectorIndex<OccurenceCountFeature> Index,
+        FeatureVectorIndex Index,
         CNFClause Query,
         IEnumerable<CNFClause> ExpectedPresent,
         IEnumerable<CNFClause> ExpectedAbsent);
 
     private record GetTestCaseExact(
-        FeatureVectorIndex<OccurenceCountFeature> Index,
+        FeatureVectorIndex Index,
         CNFClause Query,
         IEnumerable<CNFClause> Expected);
 }

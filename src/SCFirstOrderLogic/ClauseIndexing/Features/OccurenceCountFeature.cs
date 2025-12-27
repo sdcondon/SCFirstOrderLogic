@@ -18,7 +18,7 @@ namespace SCFirstOrderLogic.ClauseIndexing.Features;
 public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral)
 {
     private static readonly Func<object, bool> DefaultIdentifierFilter = i => i is not SkolemFunctionIdentifier;
-    private static readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<OccurenceCountFeature>>> DefaultFeatureVectorSelector = MakeFeatureVectorSelector(DefaultIdentifierFilter);
+    private static readonly Func<CNFClause, IEnumerable<FeatureVectorComponent>> DefaultFeatureVectorSelector = MakeFeatureVectorSelector(DefaultIdentifierFilter);
 
     /// <summary>
     /// <para>
@@ -32,7 +32,7 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     /// </summary>
     /// <param name="clause">The clause to retrieve a feature vector for.</param>
     /// <returns>A feature vector.</returns>
-    public static IEnumerable<FeatureVectorComponent<OccurenceCountFeature>> MakeFeatureVector(CNFClause clause)
+    public static IEnumerable<FeatureVectorComponent> MakeFeatureVector(CNFClause clause)
     {
         return DefaultFeatureVectorSelector(clause);
     }
@@ -49,7 +49,7 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     /// </summary>
     /// <param name="identifierFilter">The filter to use to determine whether identifiers should be included in a vector.</param>
     /// <returns>A delegate for creating feature vectors.</returns>
-    public static Func<CNFClause, IEnumerable<FeatureVectorComponent<OccurenceCountFeature>>> MakeFeatureVectorSelector(Func<object, bool> identifierFilter)
+    public static Func<CNFClause, IEnumerable<FeatureVectorComponent>> MakeFeatureVectorSelector(Func<object, bool> identifierFilter)
     {
         return clause =>
         {
@@ -64,7 +64,7 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
                 literal.Predicate.Accept(new CreationVisitor(featureVector, literal.IsPositive, identifierFilter));
             }
 
-            return featureVector.Select(kvp => new FeatureVectorComponent<OccurenceCountFeature>(kvp.Key, kvp.Value));
+            return featureVector.Select(kvp => new FeatureVectorComponent(kvp.Key, kvp.Value));
         };
     }
 
@@ -90,8 +90,8 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     /// </item>
     /// </list>
     /// </summary>
-    /// <returns>A new <see cref="IComparer{T}"/>.</returns>
-    public static IComparer<OccurenceCountFeature> MakeFeatureComparer()
+    /// <returns>A new <see cref="Comparer{T}"/>.</returns>
+    public static Comparer<OccurenceCountFeature> MakeFeatureComparer()
     {
         return MakeFeatureComparer(Comparer<object>.Create((x, y) => (x, y) switch
         {
@@ -106,8 +106,8 @@ public record OccurenceCountFeature(object? Identifier, bool IsInPositiveLiteral
     /// Makes a comparer of <see cref="MaxDepthFeature"/>s that can be used to determine the ordering of nodes in a feature vector index.
     /// </summary>
     /// <param name="identifierComparer">The comparer to use to compare identifiers.</param>
-    /// <returns>A new <see cref="IComparer{T}"/>.</returns>
-    public static IComparer<OccurenceCountFeature> MakeFeatureComparer(IComparer identifierComparer)
+    /// <returns>A new <see cref="Comparer{T}"/>.</returns>
+    public static Comparer<OccurenceCountFeature> MakeFeatureComparer(IComparer identifierComparer)
     {
         return Comparer<OccurenceCountFeature>.Create((x, y) =>
         {

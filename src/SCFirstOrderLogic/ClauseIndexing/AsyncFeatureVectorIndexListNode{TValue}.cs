@@ -2,6 +2,7 @@
 // You may use this file in accordance with the terms of the MIT license.
 using SCFirstOrderLogic.FormulaManipulation.Substitution;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,62 +12,60 @@ namespace SCFirstOrderLogic.ClauseIndexing;
 #pragma warning disable CS1998 // async lacks await. See 'NB' in class summary.
 /// <summary>
 /// <para>
-/// An implementation of <see cref="IAsyncFeatureVectorIndexNode{TFeature, TValue}"/> that just stores its content in memory.
+/// An implementation of <see cref="IAsyncFeatureVectorIndexNode{TValue}"/> that just stores its content in memory.
 /// Uses a <see cref="SortedList{TKey, TValue}"/> for child nodes, and a <see cref="Dictionary{TKey, TValue}"/> for leaf values.
 /// </para>
 /// <para>
-/// NB: If you are using this type, you should consider using <see cref="FeatureVectorIndex{TFeature, TValue}"/> instead, to avoid the overhead of asynchronicity.
-/// <see cref="AsyncFeatureVectorIndex{TFeature, TValue}"/> is intended for use with node implementations that interact with external (i.e. I/O-requiring) storage.
+/// NB: If you are using this type, you should consider using <see cref="FeatureVectorIndex{TValue}"/> instead, to avoid the overhead of asynchronicity.
+/// <see cref="AsyncFeatureVectorIndex{TValue}"/> is intended for use with node implementations that interact with external (i.e. I/O-requiring) storage.
 /// This type is intended only as an example implementation to base real implementations on.
 /// </para>
 /// </summary>
-/// <typeparam name="TFeature">The type of the keys of the feature vectors.</typeparam>
 /// <typeparam name="TValue">The type of the value associated with each stored clause.</typeparam>
-public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVectorIndexNode<TFeature, TValue>
-    where TFeature : notnull
+public class AsyncFeatureVectorIndexListNode<TValue> : IAsyncFeatureVectorIndexNode<TValue>
 {
-    private readonly SortedList<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>> childrenByVectorComponent;
+    private readonly SortedList<FeatureVectorComponent, IAsyncFeatureVectorIndexNode<TValue>> childrenByVectorComponent;
     private readonly Dictionary<CNFClause, TValue> valuesByKey = new(new VariableIdAgnosticEqualityComparer());
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexListNode{TFeature, TValue}"/> class that
+    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexListNode{TValue}"/> class that
     /// uses the default comparer of the feature type to determine the ordering of nodes. Note that this comparer will
     /// throw if the runtime type of a feature object does not implement <see cref="IComparable{T}"/>.
     /// </summary>
     public AsyncFeatureVectorIndexListNode()
-        : this(Comparer<TFeature>.Default)
+        : this(Comparer.Default)
     {
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexListNode{TFeature, TValue}"/> class.
+    /// Initialises a new instance of the <see cref="AsyncFeatureVectorIndexListNode{TValue}"/> class.
     /// </summary>
     /// <param name="featureComparer">
     /// The comparer to use to determine the ordering of nodes. NB: For correct behaviour, the index must be able to
     /// unambiguously order the components of a feature vector. As such, this comparer must only return zero for equal 
     /// features (and of course duplicates shouldn't occur in any given vector).
     /// </param>
-    public AsyncFeatureVectorIndexListNode(IComparer<TFeature> featureComparer)
+    public AsyncFeatureVectorIndexListNode(IComparer featureComparer)
     {
         FeatureComparer = featureComparer;
-        childrenByVectorComponent = new(new FeatureVectorComponentComparer<TFeature>(featureComparer));
+        childrenByVectorComponent = new(new FeatureVectorComponentComparer(featureComparer));
     }
 
-    private AsyncFeatureVectorIndexListNode(IComparer<TFeature> featureComparer, IComparer<FeatureVectorComponent<TFeature>> vectorComponentComparer)
+    private AsyncFeatureVectorIndexListNode(IComparer featureComparer, IComparer<FeatureVectorComponent> vectorComponentComparer)
     {
         FeatureComparer = featureComparer;
         childrenByVectorComponent = new(vectorComponentComparer);
     }
 
     /// <inheritdoc/>
-    public IComparer<TFeature> FeatureComparer { get; }
+    public IComparer FeatureComparer { get; }
 
     /// <inheritdoc/>
-    public IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> ChildrenAscending
+    public IAsyncEnumerable<KeyValuePair<FeatureVectorComponent, IAsyncFeatureVectorIndexNode<TValue>>> ChildrenAscending
     {
         get
         {
-            async IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> GetReturnValue()
+            async IAsyncEnumerable<KeyValuePair<FeatureVectorComponent, IAsyncFeatureVectorIndexNode<TValue>>> GetReturnValue()
             {
                 foreach (var kvp in childrenByVectorComponent)
                 {
@@ -79,15 +78,15 @@ public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVe
     }
 
     /// <inheritdoc/>
-    public IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> ChildrenDescending
+    public IAsyncEnumerable<KeyValuePair<FeatureVectorComponent, IAsyncFeatureVectorIndexNode<TValue>>> ChildrenDescending
     {
         get
         {
-            async IAsyncEnumerable<KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>> GetReturnValue()
+            async IAsyncEnumerable<KeyValuePair<FeatureVectorComponent, IAsyncFeatureVectorIndexNode<TValue>>> GetReturnValue()
             {
                 for (int i = childrenByVectorComponent.Count - 1; i >= 0; i--)
                 {
-                    yield return new KeyValuePair<FeatureVectorComponent<TFeature>, IAsyncFeatureVectorIndexNode<TFeature, TValue>>(childrenByVectorComponent.Keys[i], childrenByVectorComponent.Values[i]);
+                    yield return new KeyValuePair<FeatureVectorComponent, IAsyncFeatureVectorIndexNode<TValue>>(childrenByVectorComponent.Keys[i], childrenByVectorComponent.Values[i]);
                 }
             }
 
@@ -113,16 +112,16 @@ public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVe
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>?> TryGetChildAsync(FeatureVectorComponent<TFeature> vectorComponent, CancellationToken cancellationToken = default)
+    public ValueTask<IAsyncFeatureVectorIndexNode<TValue>?> TryGetChildAsync(FeatureVectorComponent vectorComponent, CancellationToken cancellationToken = default)
     {
         childrenByVectorComponent.TryGetValue(vectorComponent, out var child);
         return ValueTask.FromResult(child);
     }
 
     /// <inheritdoc/>
-    public ValueTask<IAsyncFeatureVectorIndexNode<TFeature, TValue>> GetOrAddChildAsync(FeatureVectorComponent<TFeature> vectorComponent, CancellationToken cancellationToken = default)
+    public ValueTask<IAsyncFeatureVectorIndexNode<TValue>> GetOrAddChildAsync(FeatureVectorComponent vectorComponent, CancellationToken cancellationToken = default)
     {
-        IAsyncFeatureVectorIndexNode<TFeature, TValue> node = new AsyncFeatureVectorIndexListNode<TFeature, TValue>(FeatureComparer, childrenByVectorComponent.Comparer);
+        IAsyncFeatureVectorIndexNode<TValue> node = new AsyncFeatureVectorIndexListNode<TValue>(FeatureComparer, childrenByVectorComponent.Comparer);
         if (!childrenByVectorComponent.TryAdd(vectorComponent, node))
         {
             node = childrenByVectorComponent[vectorComponent];
@@ -132,7 +131,7 @@ public class AsyncFeatureVectorIndexListNode<TFeature, TValue> : IAsyncFeatureVe
     }
 
     /// <inheritdoc/>
-    public ValueTask DeleteChildAsync(FeatureVectorComponent<TFeature> vectorComponent, CancellationToken cancellationToken = default)
+    public ValueTask DeleteChildAsync(FeatureVectorComponent vectorComponent, CancellationToken cancellationToken = default)
     {
         childrenByVectorComponent.Remove(vectorComponent, out _);
         return ValueTask.CompletedTask;
