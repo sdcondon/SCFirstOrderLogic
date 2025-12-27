@@ -1,6 +1,6 @@
 ﻿using SCFirstOrderLogic.Documentation.Types;
-using SCFirstOrderLogic.SentenceManipulation.Normalisation;
-using SCFirstOrderLogic.SentenceManipulation.VariableManipulation;
+using SCFirstOrderLogic.FormulaManipulation.Normalisation;
+using SCFirstOrderLogic.FormulaManipulation.Substitution;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
@@ -36,16 +36,16 @@ public class BlazorWasmFCClauseStore : IKnowledgeBaseClauseStore
     /// We only include it here because of (the in-memory nature of this implementation and) its usefulness for tests.
     /// </para>
     /// </summary>
-    /// <param name="sentences">The initial content of the store.</param>
-    public BlazorWasmFCClauseStore(IEnumerable<Sentence> sentences)
+    /// <param name="formulas">The initial content of the store.</param>
+    public BlazorWasmFCClauseStore(IEnumerable<Formula> formulas)
     {
-        foreach (var sentence in sentences)
+        foreach (var formula in formulas)
         {
-            foreach (var clause in sentence.ToCNF().Clauses)
+            foreach (var clause in formula.ToCNF().Clauses)
             {
                 if (!clause.IsDefiniteClause)
                 {
-                    throw new ArgumentException($"All forward chaining knowledge must be expressable as definite clauses. The normalisation of {sentence} includes {clause}, which is not a definite clause");
+                    throw new ArgumentException($"All forward chaining knowledge must be expressable as definite clauses. The normalisation of {formula} includes {clause}, which is not a definite clause");
                 }
 
                 clauses.TryAdd(new CNFDefiniteClause(clause), 0);

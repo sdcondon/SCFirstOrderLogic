@@ -9,17 +9,17 @@ Having said all that, some hopefully useful notes do follow here.
 ### `SCFirstOrderLogic`
 
 * **CNF:** While it wasn't explicity mentioned in "getting started", the knowledge bases referenced in that document do of course make use of conjunctive normal form where appropriate.
-  Classes for representation of CNF can be found alongside the "raw" sentence types in the SCFirstOrderLogic namespace.
+  Classes for representation of CNF can be found alongside the "raw" formula types in the SCFirstOrderLogic namespace.
 * **Equality:** The SCFirstOrderLogic namespace includes EqualityIdentifier, intended to be used as the identifier for the equality predicate.
-  The various sentence creation methods make use of this in created sentences where appropriate.
+  The various formula creation methods make use of this in created formulas where appropriate.
 
 ### `SCFirstOrderLogic.LanguageIntegration`
 
-As mentioned briefly in 'getting started', a language-integrated approach to sentence creation is available. See [here](beyond-getting-started/language-integration.md) for details.
+As mentioned briefly in 'getting started', a language-integrated approach to formula creation is available. See [here](beyond-getting-started/language-integration.md) for details.
 
-### `SCFirstOrderLogic.SentenceFormatting`
+### `SCFirstOrderLogic.FormulaFormatting`
 
-There is some sentence formatting logic to be found in the SentenceFormatting namespace - which includes support for ensuring unique labelling of identifiers for standardised variables and Skolem functions across a set of sentences.
+There is some formula formatting logic to be found in the FormulaFormatting namespace - which includes support for ensuring unique labelling of identifiers for standardised variables and Skolem functions across a set of formulas.
 The sets of labels used can be specified by the caller (but defaults do exist).
 
 ### `SCFirstOrderLogic.TermIndexing`
