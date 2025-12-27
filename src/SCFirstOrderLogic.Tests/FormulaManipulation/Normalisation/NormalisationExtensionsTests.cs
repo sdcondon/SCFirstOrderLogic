@@ -28,7 +28,7 @@ public static class NormalisationExtensionsTests
                             IsUnitClause = true,
                             Literals = new[]
                             {
-                                new { Predicate = P, IsNegated = false },
+                                new { Predicate = P, IsPositive = true },
                             }
                         }
                     }
@@ -49,7 +49,7 @@ public static class NormalisationExtensionsTests
                             IsUnitClause = true,
                             Literals = new[]
                             {
-                                new { Predicate = P, IsNegated = true },
+                                new { Predicate = P, IsPositive = false },
                             }
                         }
                     }
@@ -70,9 +70,9 @@ public static class NormalisationExtensionsTests
                             IsUnitClause = false,
                             Literals = new[]
                             {
-                                new { Predicate = P, IsNegated = true },
-                                new { Predicate = Q, IsNegated = false },
-                                new { Predicate = R, IsNegated = false },
+                                new { Predicate = P, IsPositive = false },
+                                new { Predicate = Q, IsPositive = true },
+                                new { Predicate = R, IsPositive = true },
                             }
                         },
                         new
@@ -83,8 +83,8 @@ public static class NormalisationExtensionsTests
                             IsUnitClause = false,
                             Literals = new[]
                             {
-                                new { Predicate = P, IsNegated = false },
-                                new { Predicate = Q, IsNegated = true }
+                                new { Predicate = P, IsPositive = true },
+                                new { Predicate = Q, IsPositive = false }
                             }
                         },
                         new
@@ -95,8 +95,8 @@ public static class NormalisationExtensionsTests
                             IsUnitClause = false,
                             Literals = new[]
                             {
-                                new { Predicate = P, IsNegated = false },
-                                new { Predicate = R, IsNegated = true }
+                                new { Predicate = P, IsPositive = true },
+                                new { Predicate = R, IsPositive = false }
                             }
                         }
                     }
@@ -123,8 +123,8 @@ public static class NormalisationExtensionsTests
                             IsUnitClause = false,
                             Literals = new[]
                             {
-                                new { Predicate = P, IsNegated = false },
-                                new { Predicate = P, IsNegated = true },
+                                new { Predicate = P, IsPositive = true },
+                                new { Predicate = P, IsPositive = false },
                             }
                         },
                         new
@@ -135,8 +135,8 @@ public static class NormalisationExtensionsTests
                             IsUnitClause = false,
                             Literals = new[]
                             {
-                                new { Predicate = P, IsNegated = false },
-                                new { Predicate = Q, IsNegated = true },
+                                new { Predicate = P, IsPositive = true },
+                                new { Predicate = Q, IsPositive = false },
                             }
                         },
                         new
@@ -147,8 +147,8 @@ public static class NormalisationExtensionsTests
                             IsUnitClause = false,
                             Literals = new[]
                             {
-                                new { Predicate = Q, IsNegated = false },
-                                new { Predicate = P, IsNegated = true }
+                                new { Predicate = Q, IsPositive = true },
+                                new { Predicate = P, IsPositive = false }
                             }
                         },
                         new
@@ -159,8 +159,8 @@ public static class NormalisationExtensionsTests
                             IsUnitClause = false,
                             Literals = new[]
                             {
-                                new { Predicate = Q, IsNegated = false },
-                                new { Predicate = Q, IsNegated = true }
+                                new { Predicate = Q, IsPositive = true },
+                                new { Predicate = Q, IsPositive = false }
                             }
                         }
                     }
