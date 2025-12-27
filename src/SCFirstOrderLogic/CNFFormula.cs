@@ -63,7 +63,6 @@ public class CNFFormula : IEquatable<CNFFormula>
     /// Converts this object to a <see cref="Formula"/>.
     /// </summary>
     /// <returns>A representation of this formula as a <see cref="Formula"/>.</returns>
-    // TODO*: test coverage - you're getting lazy
     public Formula ToFormula()
     {
         Formula formula = Clauses.First().ToFormula();

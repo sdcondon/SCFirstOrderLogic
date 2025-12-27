@@ -108,7 +108,6 @@ public class CNFClause : IEquatable<CNFClause>
     /// Converts the clause to a <see cref="Formula"/>
     /// </summary>
     /// <returns>A representation of this clause as a <see cref="Formula"/>.</returns>
-    // TODO*: test coverage - you're getting lazy
     public Formula ToFormula()
     {
         if (IsEmpty)
