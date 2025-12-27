@@ -25,7 +25,7 @@ public sealed class Literal : IEquatable<Literal>
     {
         if (formula is Negation negation)
         {
-            IsNegative = true;
+            IsPositive = false;
             formula = negation.Formula;
         }
 
@@ -50,7 +50,7 @@ public sealed class Literal : IEquatable<Literal>
     public Literal(Predicate predicate, bool isNegative)
     {
         Predicate = predicate;
-        IsNegative = isNegative;
+        IsPositive = !isNegative;
     }
 
     /// <summary>
@@ -65,12 +65,12 @@ public sealed class Literal : IEquatable<Literal>
     /// <summary>
     /// Gets a value indicating whether this literal is a negation of the underlying atomic formula.
     /// </summary>
-    public bool IsNegative { get; }
+    public bool IsNegative => !IsPositive;
 
     /// <summary>
     /// Gets a value indicating whether this literal is not a negation of the underlying atomic formula.
     /// </summary>
-    public bool IsPositive => !IsNegative;
+    public bool IsPositive { get; }
 
     /// <summary>
     /// Gets the underlying atomic formula of this literal.

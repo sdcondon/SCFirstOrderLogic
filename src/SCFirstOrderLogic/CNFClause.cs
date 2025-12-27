@@ -109,7 +109,6 @@ public class CNFClause : IEquatable<CNFClause>
     /// </summary>
     /// <returns>A representation of this clause as a <see cref="Formula"/>.</returns>
     // TODO*: test coverage - you're getting lazy
-    // TODO*: would this ever be useful? would still include standardised vars and skolem fns..
     public Formula ToFormula()
     {
         if (IsEmpty)

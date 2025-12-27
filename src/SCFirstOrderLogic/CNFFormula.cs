@@ -28,9 +28,14 @@ public class CNFFormula : IEquatable<CNFFormula>
     /// Initialises a new instance of the <see cref="CNFFormula"/> class from an enumerable of clauses.
     /// </summary>
     /// <param name="clauses">The set of clauses to be included in the formula.</param>
+    // todo-bug?: allows creation of an empty formula
     public CNFFormula(IEnumerable<CNFClause> clauses)
         : this(new HashSet<CNFClause>(clauses))
     {
+        if (Clauses.Count == 0)
+        {
+            throw new ArgumentException($"CNF formulas must have at least one clause.", nameof(clauses));
+        }
     }
 
     /// <summary>
@@ -59,7 +64,6 @@ public class CNFFormula : IEquatable<CNFFormula>
     /// </summary>
     /// <returns>A representation of this formula as a <see cref="Formula"/>.</returns>
     // TODO*: test coverage - you're getting lazy
-    // TODO*: would this ever be useful? would still include standardised vars and skolem fns..
     public Formula ToFormula()
     {
         Formula formula = Clauses.First().ToFormula();
