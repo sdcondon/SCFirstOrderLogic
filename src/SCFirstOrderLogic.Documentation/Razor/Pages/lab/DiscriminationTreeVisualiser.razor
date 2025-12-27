@@ -2,8 +2,8 @@
 
 @using System.ComponentModel.DataAnnotations;
 @using SCFirstOrderLogic;
-@using SCFirstOrderLogic.SentenceCreation
-@using SCFirstOrderLogic.SentenceManipulation
+@using SCFirstOrderLogic.FormulaCreation
+@using SCFirstOrderLogic.FormulaManipulation
 @using SCFirstOrderLogic.TermIndexing
 
 <PageTitle>Lab - Discrimination Tree Visualiser</PageTitle>
@@ -126,14 +126,14 @@
         validationMessageStore.Clear();
         editContext.Properties.Remove(nameof(formData.Term));
 
-        if (!SentenceParser.Default.TryParseDeclarationList(formData.Variables, out var declarations, out var syntaxErrors))
+        if (!FormulaParser.Default.TryParseDeclarationList(formData.Variables, out var declarations, out var syntaxErrors))
         {
             foreach (var syntaxError in syntaxErrors)
             {
                 validationMessageStore.Add(() => formData.Variables, syntaxError.ToString());
             }
         }
-        else if (!SentenceParser.Default.TryParseTerm(formData.Term, declarations, out var term, out syntaxErrors))
+        else if (!FormulaParser.Default.TryParseTerm(formData.Term, declarations, out var term, out syntaxErrors))
         {
             foreach (var syntaxError in syntaxErrors)
             {
