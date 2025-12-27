@@ -228,7 +228,7 @@ public static class SubstitutionExtensions
 
         public Literal ApplyTo(Literal literal)
         {
-            return new((Predicate)ApplyTo(literal.Predicate), literal.IsNegated);
+            return new((Predicate)ApplyTo(literal.Predicate), literal.IsNegative);
         }
 
         /// <inheritdoc/>

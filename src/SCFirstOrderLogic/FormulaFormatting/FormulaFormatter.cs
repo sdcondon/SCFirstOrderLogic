@@ -122,7 +122,7 @@ public class FormulaFormatter
     /// <param name="literal">The literal to be formatted.</param>
     /// <returns>A string representation of the given literal.</returns>
     public string Format(Literal literal) =>
-        $"{(literal.IsNegated ? "¬" : "")}{Format(literal.Predicate)}";
+        $"{(literal.IsNegative ? "¬" : "")}{Format(literal.Predicate)}";
 
     /// <summary>
     /// Returns a string representation of a given <see cref="Formula"/> instance.

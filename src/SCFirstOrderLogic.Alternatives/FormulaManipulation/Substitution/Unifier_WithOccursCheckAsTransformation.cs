@@ -38,7 +38,7 @@ public static class Unifier_WithOccursCheckAsTransformation
 
     private static bool TryUnify(Literal x, Literal y, MutableVariableSubstitution unifier)
     {
-        if (x.IsNegated != y.IsNegated || !x.Predicate.Identifier.Equals(y.Predicate.Identifier))
+        if (x.IsNegative != y.IsNegative || !x.Predicate.Identifier.Equals(y.Predicate.Identifier))
         {
             return false;
         }

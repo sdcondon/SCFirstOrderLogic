@@ -283,7 +283,7 @@ internal static class InstanceUnifier
     // NB: 'unsafe' in that it can partially update the unifier on failure
     private static bool TryUpdateUnsafe(Literal generalisation, Literal instance, MutableVariableSubstitution unifier)
     {
-        if (generalisation.IsNegated != instance.IsNegated)
+        if (generalisation.IsNegative != instance.IsNegative)
         {
             return false;
         }

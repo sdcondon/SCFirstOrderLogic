@@ -67,5 +67,5 @@ public class CNFDefiniteClause : CNFClause
     /// <summary>
     /// Gets the conjuncts that combine to form the antecedent of this clause (that is, the P₁, .. Pₙ in P₁ ∧ P₂ ∧ .. ∧ Pₙ ⇒ Q).
     /// </summary>
-    public IEnumerable<Predicate> Conjuncts => Literals.Where(l => l.IsNegated).Select(l => l.Predicate);
+    public IEnumerable<Predicate> Conjuncts => Literals.Where(l => l.IsNegative).Select(l => l.Predicate);
 }

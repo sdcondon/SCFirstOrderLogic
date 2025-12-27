@@ -146,7 +146,7 @@ public class VariableIdAgnosticEqualityComparer : IEqualityComparer<CNFClause>, 
         Dictionary<VariableReference, VariableReference> xToY,
         Dictionary<VariableReference, VariableReference> yToX)
     {
-        if (x.IsNegated != y.IsNegated)
+        if (x.IsNegative != y.IsNegative)
         {
             return false;
         }
@@ -272,7 +272,7 @@ public class VariableIdAgnosticEqualityComparer : IEqualityComparer<CNFClause>, 
             return literal;
         }
 
-        return new(transformedPredicate, literal.IsNegated);
+        return new(transformedPredicate, literal.IsNegative);
     }
 
     private static Predicate TransformForHashCode(Predicate predicate)

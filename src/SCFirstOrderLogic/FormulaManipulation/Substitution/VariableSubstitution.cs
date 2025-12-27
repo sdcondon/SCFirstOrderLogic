@@ -257,7 +257,7 @@ public class VariableSubstitution : RecursiveFormulaTransformation
 
         if (transformedPredicate != literal.Predicate)
         {
-            return new Literal(transformedPredicate, literal.IsNegated);
+            return new Literal(transformedPredicate, literal.IsNegative);
         }
 
         return literal;

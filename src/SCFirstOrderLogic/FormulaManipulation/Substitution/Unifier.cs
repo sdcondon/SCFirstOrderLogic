@@ -286,7 +286,7 @@ public static class Unifier
     // NB: 'unsafe' in that it can partially update the unifier on failure
     private static bool TryUpdateUnsafe(Literal x, Literal y, MutableVariableSubstitution unifier)
     {
-        if (x.IsNegated != y.IsNegated)
+        if (x.IsNegative != y.IsNegative)
         {
             return false;
         }

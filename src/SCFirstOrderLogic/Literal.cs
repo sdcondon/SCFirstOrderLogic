@@ -25,7 +25,7 @@ public sealed class Literal : IEquatable<Literal>
     {
         if (formula is Negation negation)
         {
-            IsNegated = true;
+            IsNegative = true;
             formula = negation.Formula;
         }
 
@@ -43,14 +43,14 @@ public sealed class Literal : IEquatable<Literal>
     /// Initialises a new instance of the <see cref="Literal"/> class.
     /// </summary>
     /// <param name="predicate">The atomic formula to which this literal refers.</param>
-    /// <param name="isNegated">A value indicating whether the atomic formula is negated.</param>
+    /// <param name="isNegative">A value indicating whether the atomic formula is negated.</param>
     // TODO*-BREAKING: looking at this with fresh eyes, its really counterintuitive - new Literal(MyPredicate, false)
     // would make more intuitive sense to be negated. That is, this should probably be Literal(predicate, isPositive)
     // This is unfortunately a really dangerous breaking change (because it'll still compile..)
-    public Literal(Predicate predicate, bool isNegated)
+    public Literal(Predicate predicate, bool isNegative)
     {
         Predicate = predicate;
-        IsNegated = isNegated;
+        IsNegative = isNegative;
     }
 
     /// <summary>
@@ -65,13 +65,12 @@ public sealed class Literal : IEquatable<Literal>
     /// <summary>
     /// Gets a value indicating whether this literal is a negation of the underlying atomic formula.
     /// </summary>
-    // TODO*-BREAKING-V8: IsNegative - for consistency with IsPositive
-    public bool IsNegated { get; }
+    public bool IsNegative { get; }
 
     /// <summary>
     /// Gets a value indicating whether this literal is not a negation of the underlying atomic formula.
     /// </summary>
-    public bool IsPositive => !IsNegated;
+    public bool IsPositive => !IsNegative;
 
     /// <summary>
     /// Gets the underlying atomic formula of this literal.
@@ -82,7 +81,7 @@ public sealed class Literal : IEquatable<Literal>
     /// Constructs and returns a literal that is the negation of this one.
     /// </summary>
     /// <returns>A literal that is the negation of this one.</returns>
-    public Literal Negate() => new(Predicate, !IsNegated);
+    public Literal Negate() => new(Predicate, !IsNegative);
 
     /// <summary>
     /// Converts the literal to a <see cref="Formula"/>
@@ -90,7 +89,7 @@ public sealed class Literal : IEquatable<Literal>
     /// <returns>A representation of this literal as a <see cref="Formula"/>.</returns>
     public Formula ToFormula()
     {
-        return IsNegated ? new Negation(Predicate) : Predicate;
+        return IsNegative ? new Negation(Predicate) : Predicate;
     }
 
     /// <summary>
@@ -113,11 +112,11 @@ public sealed class Literal : IEquatable<Literal>
     /// <inheritdoc />
     public bool Equals(Literal? other)
     {
-        return other != null && other.Predicate.Equals(Predicate) && other.IsNegated.Equals(IsNegated);
+        return other != null && other.Predicate.Equals(Predicate) && other.IsNegative.Equals(IsNegative);
     }
 
     /// <inheritdoc />
-    public override int GetHashCode() => HashCode.Combine(Predicate, IsNegated);
+    public override int GetHashCode() => HashCode.Combine(Predicate, IsNegative);
 
     /// <summary>
     /// Defines the conversion of a <see cref="SCFirstOrderLogic.Predicate"/> instance to a <see cref="Literal"/>.
