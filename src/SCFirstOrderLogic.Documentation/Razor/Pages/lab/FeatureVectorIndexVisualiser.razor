@@ -47,7 +47,7 @@
     <DataAnnotationsValidator />
     <div class="form-group">
         <label for="featureSetSelect">Feature Set</label>
-        <InputSelect class="form-control" id="featureSetSelect" disabled="@(index.Any())" @bind-Value=formData.FeatureSetDescription>
+        <InputSelect class="form-control" id="featureSetSelect" disabled="@(index.Any())" @bind-Value:get=formData.FeatureSetDescription @bind-Value:set="HandleFeatureSetChange">
             @foreach (var key in FeatureSetOptions.Keys)
             {
                 <option>@key</option>
@@ -80,12 +80,20 @@
 </ul>
 
 @code {
-    private static Dictionary<string, Func<(FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>, FeatureVectorIndex<MaxDepthFeature>)>> FeatureSetOptions = new()
+    private static Dictionary<string, Func<(FeatureVectorIndexListNode<CNFClause>, FeatureVectorIndex)>> FeatureSetOptions = new()
     {
         ["Max Depth"] = () =>
         {
-            var rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
-            var index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
+            var rootNode = new FeatureVectorIndexListNode<CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
+            var index = new FeatureVectorIndex(MaxDepthFeature.MakeFeatureVector, rootNode);
+
+            return (rootNode, index);
+        },
+
+        ["Occurence Count"] = () =>
+        {
+            var rootNode = new FeatureVectorIndexListNode<CNFClause>(OccurenceCountFeature.MakeFeatureComparer(Comparer<string>.Default));
+            var index = new FeatureVectorIndex(OccurenceCountFeature.MakeFeatureVector, rootNode);
 
             return (rootNode, index);
         }
@@ -94,8 +102,8 @@
     // TODO*-BREAKING-V8: make these objects then switch on runtime type when doing stuff. Or 
     // of course change the lib so that we can have a common type. Likely a
     // breaking change - generic type design here is a bit clumsy..
-    private FeatureVectorIndexListNode<MaxDepthFeature, CNFClause> rootNode;
-    private FeatureVectorIndex<MaxDepthFeature> index;
+    private FeatureVectorIndexListNode<CNFClause> rootNode;
+    private FeatureVectorIndex index;
 
     private Modal? explanationModal;
     private FormData formData;
@@ -112,7 +120,7 @@
         validationMessageStore = new(editContext);
     }
 
-    private RenderFragment RenderTree(string rootLabel, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> rootNode)
+    private RenderFragment RenderTree(string rootLabel, IFeatureVectorIndexNode<CNFClause> rootNode)
     {
         return @<li>
             @rootLabel
@@ -134,7 +142,15 @@
                     }
                 </ul>
             }
-        </li>;
+        </li>
+    ;
+    }
+
+    private void HandleFeatureSetChange(string s)
+    {
+        formData.FeatureSetDescription = s;
+        (rootNode, index) = FeatureSetOptions[formData.FeatureSetDescription].Invoke();
+        StateHasChanged();
     }
 
     private void HandleValidationRequest(object? sender, ValidationRequestedEventArgs args)

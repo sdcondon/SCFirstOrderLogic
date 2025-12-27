@@ -8,7 +8,7 @@ namespace SCFirstOrderLogic.Inference.Basic.Resolution;
 
 /// <summary>
 /// An implementation of <see cref="IKnowledgeBaseClauseStore"/> that maintains all known clauses in
-/// a <see cref="AsyncFeatureVectorIndex{TFeature}"/>.
+/// a <see cref="AsyncFeatureVectorIndex"/>.
 /// </summary>
 /// <remarks>
 /// Initializes a new instance of the <see cref="FeatureVectorIndexClauseStore{TFeature}"/> class.
@@ -16,14 +16,13 @@ namespace SCFirstOrderLogic.Inference.Basic.Resolution;
 /// <param name="featureVectorMaker">Delegate that makes the feature vector for a given clause.</param>
 /// <param name="featureVectorIndexRoot">The root node to use for the feature vector index.</param>
 // TODO-MAINTAINABILITY/PERFORMANCE: Remove as soon as possible, keep in sync with real implementation until then
-public class BlazorWasmFVIResClauseStore<TFeature>(
-    Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorMaker,
-    IClauseStoreFVINode<TFeature> featureVectorIndexRoot) : IKnowledgeBaseClauseStore
-    where TFeature : notnull
+public class BlazorWasmFVIResClauseStore(
+    Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorMaker,
+    IClauseStoreFVINode featureVectorIndexRoot) : IKnowledgeBaseClauseStore
 {
-    private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorMaker = featureVectorMaker;
-    private readonly IClauseStoreFVINode<TFeature> featureVectorIndexRoot = featureVectorIndexRoot;
-    private readonly AsyncFeatureVectorIndex<TFeature> featureVectorIndex = new(featureVectorMaker, featureVectorIndexRoot);
+    private readonly Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorMaker = featureVectorMaker;
+    private readonly IClauseStoreFVINode featureVectorIndexRoot = featureVectorIndexRoot;
+    private readonly AsyncFeatureVectorIndex featureVectorIndex = new(featureVectorMaker, featureVectorIndexRoot);
 
     /// <inheritdoc />
     public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
@@ -54,11 +53,11 @@ public class BlazorWasmFVIResClauseStore<TFeature>(
     /// Implementation of <see cref="IQueryClauseStore"/> that is used solely by <see cref="HashSetClauseStore"/>.
     /// </summary>
     private class QueryStore(
-        Func<CNFClause, IEnumerable<FeatureVectorComponent<TFeature>>> featureVectorSelector,
-        IClauseStoreFVINode<TFeature> featureVectorIndexRoot) : IQueryClauseStore
+        Func<CNFClause, IEnumerable<FeatureVectorComponent>> featureVectorSelector,
+        IClauseStoreFVINode featureVectorIndexRoot) : IQueryClauseStore
     {
-        private readonly IClauseStoreFVINode<TFeature> featureVectorIndexRoot = featureVectorIndexRoot;
-        private readonly AsyncFeatureVectorIndex<TFeature> featureVectorIndex = new(featureVectorSelector, featureVectorIndexRoot);
+        private readonly IClauseStoreFVINode featureVectorIndexRoot = featureVectorIndexRoot;
+        private readonly AsyncFeatureVectorIndex featureVectorIndex = new(featureVectorSelector, featureVectorIndexRoot);
 
         /// <inheritdoc />
         public async Task<bool> AddAsync(CNFClause clause, CancellationToken cancellationToken = default)
