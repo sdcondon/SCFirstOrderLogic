@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SCFirstOrderLogic.LanguageIntegration;
+namespace SCFirstOrderLogic.FormulaCreation.Linq;
 
 /// <summary>
 /// Extension methods for <see cref="IEnumerable{T}"/>, primarily to allow for succinctly declaring multi-variable quantifications with LINQ expressions.

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
+using SCFirstOrderLogic.FormulaCreation.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -7,14 +8,13 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-// TODO*-V8-MAYBE: -> SCFirstOrderLogic.FormulaCreation.Linq?
-namespace SCFirstOrderLogic.LanguageIntegration;
+namespace SCFirstOrderLogic.FormulaCreation.Linq;
 
 /// <summary>
 /// Static factory methods for creating <see cref="Formula"/> instances from LINQ expressions operating on an (<see cref="IEnumerable{T}"/>) object representing the domain.
 /// The conventions used can be found in library documentation.
 /// </summary>
-public static class FormulaFactory
+public static class LinqFormulaFactory
 {
     private static readonly MethodInfo IfMethod;
     private static readonly MethodInfo IffMethod;
@@ -25,7 +25,7 @@ public static class FormulaFactory
     private static readonly MethodInfo ShorthandAllMethod2;
     private static readonly MethodInfo ShorthandAllMethod3;
 
-    static FormulaFactory()
+    static LinqFormulaFactory()
     {
         IfMethod = typeof(Operators).GetMethod(nameof(Operators.If)) ?? throw new NotSupportedException("Couldn't find 'If' method");
 

@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2021-2025 Simon Condon.
 // You may use this file in accordance with the terms of the MIT license.
-namespace SCFirstOrderLogic.LanguageIntegration;
+namespace SCFirstOrderLogic.FormulaCreation.Linq;
 
 /// <summary>
 /// Static methods for logical operators that don't exist in C#.

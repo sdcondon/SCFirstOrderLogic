@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using static SCFirstOrderLogic.LanguageIntegration.Operators;
+using static SCFirstOrderLogic.FormulaCreation.Linq.Operators;
 
-namespace SCFirstOrderLogic.LanguageIntegration;
+namespace SCFirstOrderLogic.FormulaCreation.Linq;
 
-public class FormulaFactoryTests
+public class LinqFormulaFactoryTests
 {
     private interface IDomain : IEnumerable<IElement>
     {
@@ -88,7 +88,7 @@ public class FormulaFactoryTests
                         new Function(new MemberFunctionIdentifier(parent), [new VariableReference(new VariableDeclaration("x"))]),
                         new Function(new MemberFunctionIdentifier(constant1))))),
         })
-        .When(tc => FormulaFactory.Create<IDomain, IElement>(tc.Expression))
+        .When(tc => LinqFormulaFactory.Create<IDomain, IElement>(tc.Expression))
         .ThenReturns((tc, formula) =>
         {
             formula.Should().BeEquivalentTo(tc.ExpectedFormula, o => o.RespectingRuntimeTypes());

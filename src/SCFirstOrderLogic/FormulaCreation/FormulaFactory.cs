@@ -11,7 +11,7 @@ namespace SCFirstOrderLogic.FormulaCreation;
 /// <code>Predicate MyBinaryPredicate(Term arg1, Term arg2) => new Predicate(nameof(MyBinaryPredicate), arg1, arg2);</code>
 /// ..which means that (if you include an appropriate 'using static' directive) you can then write things like:
 /// <code>ForAll(X, ThereExists(Y, MyBinaryPredicate(X, Y)));</code>
-/// See the <see cref="LanguageIntegration.FormulaFactory"/> class for an alternative method of creating formulas (from lambda expressions acting on interfaces representing the domain and entities therein).
+/// See the <see cref="Linq.LinqFormulaFactory"/> class for an alternative method of creating formulas (from lambda expressions acting on interfaces representing the domain and entities therein).
 /// </para>
 /// </summary>
 public static class FormulaFactory

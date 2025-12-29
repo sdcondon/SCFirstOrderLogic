@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace SCFirstOrderLogic.LanguageIntegration;
+namespace SCFirstOrderLogic.FormulaCreation.Linq;
 
 /// <summary>
 /// <para>
