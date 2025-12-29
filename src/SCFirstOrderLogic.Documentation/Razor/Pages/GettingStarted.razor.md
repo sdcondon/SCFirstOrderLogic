@@ -84,14 +84,14 @@ Notice that:
 * Other aspects of this factory are the same as `FormulaFactory` - it also offers `ThereExists`, `ForAll`, `Iff`, `If` and single-letter variable declaration properties.
 * The only proviso is that the supporting methods for domain-specific elements now need to use `Operable..` as their return type - which is easy as these types are implicitly convertible from the normal equivalents.
 
-### Writing Formulas as Code - with LanguageIntegration
+### Writing Formulas as Code - with LinqFormulaFactory
 
-The `LanguageIntegration` namespace contains classes for writing formulas in a language-integrated manner. The `FormulaFactory` in this namespace is based on the idea of
+The `FormulaCreation.Linq` namespace contains classes for writing formulas in a language-integrated manner. The `LinqFormulaFactory` class in this namespace is based on the idea of
 modelling the domain as an IEnumerable&lt;T&gt;, then expressing our formula as a boolean-valued LINQ expression. Like this:
 
 ```
-using SCFirstOrderLogic.LanguageIntegration;
-using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff and If methods
+using SCFirstOrderLogic.FormulaCreation.Linq;
+using static SCFirstOrderLogic.FormulaCreation.Linq.Operators; // Contains Iff and If methods
 
 // The helper methods recommended for the other approaches become full interfaces
 // when language integration is used (no implementation is needed):
@@ -106,7 +106,7 @@ interface IPerson
 // via the "Any" and "All" LINQ to objects extension methods (the library provides some overloads
 // for quantifying multiple variables at once).
 var grandparentDefn = 
-    FormulaFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
+    LinqFormulaFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
 ```
 
 Notice that:
