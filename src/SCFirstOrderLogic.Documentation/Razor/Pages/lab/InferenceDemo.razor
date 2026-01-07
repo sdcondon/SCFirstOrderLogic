@@ -3,8 +3,8 @@
 @using System.ComponentModel.DataAnnotations;
 @using SCFirstOrderLogic;
 @using SCFirstOrderLogic.ClauseIndexing.Features
-@using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingSentenceParser;
-@using SCFirstOrderLogic.SentenceCreation
+@using SCFirstOrderLogic.ExampleDomains.FromAIaMA.Chapter9.UsingFormulaParser;
+@using SCFirstOrderLogic.FormulaCreation
 @using SCFirstOrderLogic.Inference;
 @using SCFirstOrderLogic.Inference.Basic.BackwardChaining;
 @using SCFirstOrderLogic.Inference.Basic.ForwardChaining;
@@ -34,7 +34,7 @@
                     I am intending (assuming no one else beats me to it) to create some better KB implementations at some point.
                 </li>
                 <li>Use the buttons at the top of the form to populate it with example queries, taken from "Artificial Intelligence: A Modern Approach".</li>
-                <li>Guidance for writing sentences as strings can be found on the "getting started" page.</li>
+                <li>Guidance for writing formulas as strings can be found on the "getting started" page.</li>
                 <li>
                     The source code for this page can be found <a href="https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic.Documentation/Razor/Pages/lab/InferenceDemo.razor">here</a>.
                 </li>
@@ -150,9 +150,9 @@
             ClauseResolutionPriorityComparisons.UnitPreference)),
 
         ["Resolution (Linear, Feature Vector Index Clause Storage)"] = () => new ResolutionKnowledgeBase(new LinearResolutionStrategy(
-            new BlazorWasmFVIResClauseStore<MaxDepthFeature>(
+            new BlazorWasmFVIResClauseStore(
                 MaxDepthFeature.MakeFeatureVector,
-                new ClauseStoreFVIListNode<MaxDepthFeature>(MaxDepthFeature.MakeFeatureComparer())),
+                new ClauseStoreFVIListNode(MaxDepthFeature.MakeFeatureComparer())),
             ClauseResolutionPriorityComparisons.UnitPreference)),
     };
 
@@ -197,7 +197,7 @@
         editContext.Properties.Remove(nameof(formData.Knowledge));
         editContext.Properties.Remove(nameof(formData.Query));
 
-        if (!SentenceParser.Default.TryParseList(formData.Knowledge, out var knowledge, out var errors))
+        if (!FormulaParser.Default.TryParseList(formData.Knowledge, out var knowledge, out var errors))
         {
             foreach (var error in errors)
             {
@@ -205,7 +205,7 @@
             }
         }
 
-        if (!SentenceParser.Default.TryParse(formData.Query, out var query, out errors))
+        if (!FormulaParser.Default.TryParse(formData.Query, out var query, out errors))
         {
             foreach (var error in errors)
             {
@@ -228,10 +228,10 @@
 
             // Instantiate knowledge base and tell it all the knowledge.
             var knowledgeBase = KnowledgeBaseOptions[formData.KnowledgeBaseDescription].Invoke();
-            await knowledgeBase.TellAsync((Sentence[])editContext.Properties[nameof(formData.Knowledge)], currentQueryCancellation.Token);
+            await knowledgeBase.TellAsync((Formula[])editContext.Properties[nameof(formData.Knowledge)], currentQueryCancellation.Token);
 
             // Create and begin new query
-            currentQuery = await knowledgeBase.CreateQueryAsync((Sentence)editContext.Properties[nameof(formData.Query)], currentQueryCancellation.Token);
+            currentQuery = await knowledgeBase.CreateQueryAsync((Formula)editContext.Properties[nameof(formData.Query)], currentQueryCancellation.Token);
             currentQueryExecution = currentQuery.ExecuteAsync(currentQueryCancellation.Token);
 
             // Re-render to disable submit button

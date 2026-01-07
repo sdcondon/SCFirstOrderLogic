@@ -4,9 +4,9 @@
 @using SCFirstOrderLogic;
 @using SCFirstOrderLogic.ClauseIndexing
 @using SCFirstOrderLogic.ClauseIndexing.Features
-@using SCFirstOrderLogic.SentenceCreation
-@using SCFirstOrderLogic.SentenceManipulation
-@using SCFirstOrderLogic.SentenceManipulation.Normalisation
+@using SCFirstOrderLogic.FormulaCreation
+@using SCFirstOrderLogic.FormulaManipulation
+@using SCFirstOrderLogic.FormulaManipulation.Normalisation
 @using SCFirstOrderLogic.TermIndexing
 
 <PageTitle>Lab - Feature Vector Index Visualiser</PageTitle>
@@ -47,7 +47,7 @@
     <DataAnnotationsValidator />
     <div class="form-group">
         <label for="featureSetSelect">Feature Set</label>
-        <InputSelect class="form-control" id="featureSetSelect" disabled="@(index.Any())" @bind-Value=formData.FeatureSetDescription>
+        <InputSelect class="form-control" id="featureSetSelect" disabled="@(index.Any())" @bind-Value:get=formData.FeatureSetDescription @bind-Value:set="HandleFeatureSetChange">
             @foreach (var key in FeatureSetOptions.Keys)
             {
                 <option>@key</option>
@@ -61,8 +61,8 @@
     </div>
     <div class="form-group">
         <label for="queryText">Clause</label>
-        <InputText class="form-control" id="queryText" spellcheck="false" @bind-Value=formData.Sentence />
-        <ValidationMessage For="@(() => formData.Sentence)" />
+        <InputText class="form-control" id="queryText" spellcheck="false" @bind-Value=formData.Formula />
+        <ValidationMessage For="@(() => formData.Formula)" />
     </div>
     <div class="form-group mt-2">
         <button type="submit" @onclick="@(() => formData.Operation = Operations.Add)" class="btn btn-primary">Add</button>
@@ -80,22 +80,27 @@
 </ul>
 
 @code {
-    private static Dictionary<string, Func<(FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>, FeatureVectorIndex<MaxDepthFeature>)>> FeatureSetOptions = new()
+    private static Dictionary<string, Func<(FeatureVectorIndexListNode<CNFClause>, FeatureVectorIndex)>> FeatureSetOptions = new()
     {
         ["Max Depth"] = () =>
         {
-            var rootNode = new FeatureVectorIndexListNode<MaxDepthFeature, CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
-            var index = new FeatureVectorIndex<MaxDepthFeature>(MaxDepthFeature.MakeFeatureVector, rootNode);
+            var rootNode = new FeatureVectorIndexListNode<CNFClause>(MaxDepthFeature.MakeFeatureComparer(Comparer<string>.Default));
+            var index = new FeatureVectorIndex(MaxDepthFeature.MakeFeatureVector, rootNode);
+
+            return (rootNode, index);
+        },
+
+        ["Occurence Count"] = () =>
+        {
+            var rootNode = new FeatureVectorIndexListNode<CNFClause>(OccurenceCountFeature.MakeFeatureComparer(Comparer<string>.Default));
+            var index = new FeatureVectorIndex(OccurenceCountFeature.MakeFeatureVector, rootNode);
 
             return (rootNode, index);
         }
     };
 
-    // TODO*-BREAKING-V8: make these objects then switch on runtime type when doing stuff. Or 
-    // of course change the lib so that we can have a common type. Likely a
-    // breaking change - generic type design here is a bit clumsy..
-    private FeatureVectorIndexListNode<MaxDepthFeature, CNFClause> rootNode;
-    private FeatureVectorIndex<MaxDepthFeature> index;
+    private FeatureVectorIndexListNode<CNFClause> rootNode;
+    private FeatureVectorIndex index;
 
     private Modal? explanationModal;
     private FormData formData;
@@ -112,7 +117,7 @@
         validationMessageStore = new(editContext);
     }
 
-    private RenderFragment RenderTree(string rootLabel, IFeatureVectorIndexNode<MaxDepthFeature, CNFClause> rootNode)
+    private RenderFragment RenderTree(string rootLabel, IFeatureVectorIndexNode<CNFClause> rootNode)
     {
         return @<li>
             @rootLabel
@@ -134,26 +139,34 @@
                     }
                 </ul>
             }
-        </li>;
+        </li>
+    ;
+    }
+
+    private void HandleFeatureSetChange(string s)
+    {
+        formData.FeatureSetDescription = s;
+        (rootNode, index) = FeatureSetOptions[formData.FeatureSetDescription].Invoke();
+        StateHasChanged();
     }
 
     private void HandleValidationRequest(object? sender, ValidationRequestedEventArgs args)
     {
         validationMessageStore.Clear();
-        editContext.Properties.Remove(nameof(formData.Sentence));
+        editContext.Properties.Remove(nameof(formData.Formula));
 
-        if (!SentenceParser.Default.TryParseDeclarationList(formData.Variables, out var declarations, out var syntaxErrors))
+        if (!FormulaParser.Default.TryParseDeclarationList(formData.Variables, out var declarations, out var syntaxErrors))
         {
             foreach (var syntaxError in syntaxErrors)
             {
                 validationMessageStore.Add(() => formData.Variables, syntaxError.ToString());
             }
         }
-        else if (!SentenceParser.Default.TryParse(formData.Sentence, declarations, out var sentence, out var errors))
+        else if (!FormulaParser.Default.TryParse(formData.Formula, declarations, out var formula, out var errors))
         {
             foreach (var error in errors)
             {
-                validationMessageStore.Add(() => formData.Sentence, error.ToString());
+                validationMessageStore.Add(() => formData.Formula, error.ToString());
             }
         }
         else
@@ -161,28 +174,28 @@
             CNFClause clause;
             try
             {
-                clause = new CNFClause(sentence);
+                clause = new CNFClause(formula);
             }
             catch (ArgumentException)
             {
-                validationMessageStore.Add(() => formData.Sentence, "Must be a clause - a disjunction of literals");
+                validationMessageStore.Add(() => formData.Formula, "Must be a clause - a disjunction of literals");
                 return;
             }
 
             if (formData.Operation == Operations.Add && index.Contains(clause))
             {
-                validationMessageStore.Add(() => formData.Sentence, "Index already contains clause");
+                validationMessageStore.Add(() => formData.Formula, "Index already contains clause");
             }
             else
             {
-                editContext.Properties[nameof(formData.Sentence)] = clause;
+                editContext.Properties[nameof(formData.Formula)] = clause;
             }
         }
     }
 
     private void HandleValidClauseSubmission(EditContext editContext)
     {
-        var clause = (CNFClause)editContext.Properties[nameof(formData.Sentence)];
+        var clause = (CNFClause)editContext.Properties[nameof(formData.Formula)];
 
         if (formData.Operation == Operations.Add)
         {
@@ -210,11 +223,11 @@
         StateHasChanged();
     }
 
-    private class FormData(string featureSetDescription, string variables, string sentence)
+    private class FormData(string featureSetDescription, string variables, string formula)
     {
         public string FeatureSetDescription { get; set; } = featureSetDescription;
         public string Variables { get; set; } = variables;
-        public string Sentence { get; set; } = sentence;
+        public string Formula { get; set; } = formula;
         public Operations? Operation { get; set; }
     }
 

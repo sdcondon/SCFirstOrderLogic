@@ -1,5 +1,5 @@
 ﻿using SCFirstOrderLogic.Documentation.Types;
-using SCFirstOrderLogic.SentenceManipulation.Normalisation;
+using SCFirstOrderLogic.FormulaManipulation.Normalisation;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
@@ -35,12 +35,12 @@ public class BlazorWasmResClauseStore : IKnowledgeBaseClauseStore
     /// We only include it here because of (the in-memory nature of this implementation and) its usefulness for tests.
     /// </para>
     /// </summary>
-    /// <param name="sentences">The initial content of the store.</param>
-    public BlazorWasmResClauseStore(IEnumerable<Sentence> sentences)
+    /// <param name="formulas">The initial content of the store.</param>
+    public BlazorWasmResClauseStore(IEnumerable<Formula> formulas)
     {
-        foreach (var sentence in sentences)
+        foreach (var formula in formulas)
         {
-            foreach (var clause in sentence.ToCNF().Clauses)
+            foreach (var clause in formula.ToCNF().Clauses)
             {
                 clauses.TryAdd(clause, 0);
             }

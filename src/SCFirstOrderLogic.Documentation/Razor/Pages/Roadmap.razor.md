@@ -13,4 +13,4 @@ Further ahead:
   For example, some or all of:
   * Further development of the linear resolution strategy, gradually heading towards SLD resolution (though if I get that far it will likely go in its own package).
   * Some improvements to the chaining knowledge bases. More flexibility when chaining. The current implementations are very constrained in their consideration of clauses, don't handle loops, etc.
-* The next major version bump of the core package is likely to be an overhaul of the sentence formatting logic - I'm not very happy with it as it stands.
+* The next major version bump of the core package is likely to be an overhaul of the formula formatting logic - I'm not very happy with it as it stands.

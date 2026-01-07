@@ -19,13 +19,13 @@
   <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.5" />
     <PackageReference Include="Blazorise.Icons.Bootstrap" Version="1.7.5" />
-    <PackageReference Include="Markdig" Version="0.38.0" />
+    <PackageReference Include="Markdig" Version="0.44.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.7" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
-    <PackageReference Include="SCFirstOrderLogic" Version="7.7.1" />
-    <PackageReference Include="SCFirstOrderLogic.ExampleDomains" Version="1.1.0" />
-    <PackageReference Include="SCFirstOrderLogic.Inference.Basic" Version="2.0.0" />
+    <PackageReference Include="SCFirstOrderLogic" Version="8.0.0" />
+    <PackageReference Include="SCFirstOrderLogic.ExampleDomains" Version="2.0.0" />
+    <PackageReference Include="SCFirstOrderLogic.Inference.Basic" Version="3.0.0-pre.3" />
   </ItemGroup>
 
   <ItemGroup>

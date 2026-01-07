@@ -2,17 +2,17 @@
 
 NB: This guide assumes some familiarity with first-order logic. It won't explain first-order logic concepts - it'll just explain how to use FoL via this library.
 
-## Writing Sentences
+## Writing Formulas
 
-The first challenge is to write sentences. This can be done in several ways. This section will use the following sentence as an example:
+The first challenge is to write formulas. This can be done in several ways. This section will use the following formula as an example:
 
 `∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]`
 
 ..that is, a definition of a grandparent. We use this example because its very straightforward but includes a decent cross-section of FoL elements.
 
-### Writing Sentences as Code - Directly
+### Writing Formulas as Code - Directly
 
-The most direct way to express sentences is to directly compose instances of the types found in the top-level `SCFirstOrderLogic` namespace into a tree structure, like this:
+The most direct way to express formulas is to directly compose instances of the types found in the top-level `SCFirstOrderLogic` namespace into a tree structure, like this:
 
 ```
 using SCFirstOrderLogic;
@@ -21,36 +21,36 @@ using SCFirstOrderLogic;
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new(nameof(IsParent), parent, child);
 
-// Now the sentence itself, with some intermediate variables so that it isn't completely unreadable:
+// Now the formula itself, with some intermediate variables so that it isn't completely unreadable:
 var g = new VariableDeclaration("g");
 var c = new VariableDeclaration("c");
 var p = new VariableDeclaration("p");
 var equivalenceLHS = IsGrandparent(g, c);
 var equivalenceRHS = new ExistentialQuantification(p, new Conjunction(IsParent(g, p), IsParent(p, c)));
-Sentence grandparentDefn = new UniversalQuantification(g, new UniversalQuantification(c, new Equivalence(equivalenceLHS, equivalenceRHS)));
+Formula grandparentDefn = new UniversalQuantification(g, new UniversalQuantification(c, new Equivalence(equivalenceLHS, equivalenceRHS)));
 ```
 
 Notice that:
 
-* This is very "simple" in that it involves nothing other than the sentence types themselves, but is obviously far too verbose to be workable in most scenarios. Hence the alternatives below.
-* There's a `VariableDeclaration` class. One of the first things to notice about the sentence model is that we have two classes for variables. First, we have a `VariableReference` class, 
-  which appears in sentence trees - it's a subtype of a `Term` class. We also have a `VariableDeclaration` class, which is NOT a subtype of `Term` - it appears only as a property of quantifications
-  and `VariableReference`s. `VariableDeclaration`s are however implicitly convertible to `VariableReference`s that refer to them (note that we utilise this in the example above), to aid with succinct sentence creation.
+* This is very "simple" in that it involves nothing other than the formula types themselves, but is obviously far too verbose to be workable in most scenarios. Hence the alternatives below.
+* There's a `VariableDeclaration` class. One of the first things to notice about the formula model is that we have two classes for variables. First, we have a `VariableReference` class, 
+  which appears in formula trees - it's a subtype of a `Term` class. We also have a `VariableDeclaration` class, which is NOT a subtype of `Term` - it appears only as a property of quantifications
+  and `VariableReference`s. `VariableDeclaration`s are however implicitly convertible to `VariableReference`s that refer to them (note that we utilise this in the example above), to aid with succinct formula creation.
 
-### Writing Sentences as Code - with SentenceFactory
+### Writing Formulas as Code - with FormulaFactory
 
-The `SentenceCreation` namespace contains a static class called `SentenceFactory`. It is intended to be used via a `using static` directive,
-and includes a number of static methods and properties to assist with succinct sentence creation. Here's how the example looks with this one:
+The `FormulaCreation` namespace contains a static class called `FormulaFactory`. It is intended to be used via a `using static` directive,
+and includes a number of static methods and properties to assist with succinct formula creation. Here's how the example looks with this one:
 
 ```
 using SCFirstOrderLogic;
-using static SCFirstOrderLogic.SentenceCreation.SentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.FormulaFactory;
 
 // Helper methods for creating your predicates (and functions) are recommended to avoid repetition:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
-// Using the factory, the sentence itself is a little less verbose:
+// Using the factory, the formula itself is a little less verbose:
 var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, And(IsParent(G, P), IsParent(P, C)))));
 ```
 
@@ -61,13 +61,13 @@ Notice that:
 * The factory provides methods for conjunctions (`And`), disjunctions (`Or`) and negations (`Not`). See the next two examples if you really want to use C# operators for these.
 * The factory provides `A` through `Z` as properties that return variable declarations with these letters as their identifier. There is also a `Var` method that allows you to specify an identifier.
 
-### Writing Sentences as Code - with OperableSentenceFactory
+### Writing Formulas as Code - with OperableFormulaFactory
 
-The `SentenceCreation` namespace also contains a static class called `OperableSentenceFactory`. It works similarly to `SentenceFactory`, but lets you use operators:
+The `FormulaCreation` namespace also contains a static class called `OperableFormulaFactory`. It works similarly to `FormulaFactory`, but lets you use operators:
 
 ```
 using SCFirstOrderLogic;
-using static SCFirstOrderLogic.SentenceCreation.OperableSentenceFactory;
+using static SCFirstOrderLogic.FormulaCreation.OperableFormulaFactory;
 
 // Helper methods for creating your predicates (and functions) are recommended to avoid repetition
 // (NB: the return type here is OperablePredicate, not Predicate):
@@ -80,18 +80,18 @@ var grandparentDefn = ForAll(G, C, Iff(IsGrandparent(G, C), ThereExists(P, IsPar
 
 Notice that:
 
-* We've only used `&` (for a conjunction) above, but `|` works for disjunctions, and `!` for negations. In addition, `==` (applied to terms rather than sentences, of course) works for the equality predicate.
-* Other aspects of this factory are the same as `SentenceFactory` - it also offers `ThereExists`, `ForAll`, `Iff`, `If` and single-letter variable declaration properties.
+* We've only used `&` (for a conjunction) above, but `|` works for disjunctions, and `!` for negations. In addition, `==` (applied to terms rather than formulas, of course) works for the equality predicate.
+* Other aspects of this factory are the same as `FormulaFactory` - it also offers `ThereExists`, `ForAll`, `Iff`, `If` and single-letter variable declaration properties.
 * The only proviso is that the supporting methods for domain-specific elements now need to use `Operable..` as their return type - which is easy as these types are implicitly convertible from the normal equivalents.
 
-### Writing Sentences as Code - with LanguageIntegration
+### Writing Formulas as Code - with LinqFormulaFactory
 
-The `LanguageIntegration` namespace contains classes for writing sentences in a language-integrated manner. The `SentenceFactory` in this namespace is based on the idea of
-modelling the domain as an IEnumerable&lt;T&gt;, then expressing our sentence as a boolean-valued LINQ expression. Like this:
+The `FormulaCreation.Linq` namespace contains classes for writing formulas in a language-integrated manner. The `LinqFormulaFactory` class in this namespace is based on the idea of
+modelling the domain as an IEnumerable&lt;T&gt;, then expressing our formula as a boolean-valued LINQ expression. Like this:
 
 ```
-using SCFirstOrderLogic.LanguageIntegration;
-using static SCFirstOrderLogic.LanguageIntegration.Operators; // Contains Iff and If methods
+using SCFirstOrderLogic.FormulaCreation.Linq;
+using static SCFirstOrderLogic.FormulaCreation.Linq.Operators; // Contains Iff and If methods
 
 // The helper methods recommended for the other approaches become full interfaces
 // when language integration is used (no implementation is needed):
@@ -101,30 +101,30 @@ interface IPerson
     bool IsGrandparentOf(IPerson person);
 }
 
-// The sentence is expressed as a boolean-valued lambda that we are asserting will evaluate
+// The formula is expressed as a boolean-valued lambda that we are asserting will evaluate
 // as true when provided an enumerable representing the domain. Quantifiers are provided
 // via the "Any" and "All" LINQ to objects extension methods (the library provides some overloads
 // for quantifying multiple variables at once).
 var grandparentDefn = 
-    SentenceFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
+    LinqFormulaFactory.Create<IPerson>(d => d.All((g, c) => Iff(g.IsGrandparentOf(c), d.Any(p => g.IsParentOf(p) && p.IsParentOf(c)))));
 ```
 
 Notice that:
 
 * This is obviously non-trivial - more information can be found on the [language integration](beyond-getting-started/language-integration.md) page.
 
-### Writing Sentences as Strings
+### Writing Formulas as Strings
 
-The `SentenceCreation` namespace contains a `SentenceParser` class, that facilitates the expression of sentences as strings, like this:
+The `FormulaCreation` namespace contains a `FormulaParser` class, that facilitates the expression of formulas as strings, like this:
 
 ```
-using SCFirstOrderLogic.SentenceCreation;
+using SCFirstOrderLogic.FormulaCreation;
 
-var grandparentDefn = SentenceParser.BasicParser.Parse("∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]");
+var grandparentDefn = FormulaParser.BasicParser.Parse("∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]");
 ```
 
 Notes:
-* *The grammar definition is [here](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic/SentenceCreation/FirstOrderLogic.g4). For those familiar with BNF-like notation, this is perhaps the quickest way to discover the syntax.*
+* *The grammar definition is [here](https://github.com/sdcondon/SCFirstOrderLogic/blob/main/src/SCFirstOrderLogic/FormulaCreation/FirstOrderLogic.g4). For those familiar with BNF-like notation, this is perhaps the quickest way to discover the syntax.*
 * Writing strings that include the proper FoL symbols might be awkward, so the parser allows for some alternatives to be used. The following are recognised (NB all **case sensitive**):
   * `∀` ([U+2200](https://www.google.com/search?q=unicode+code+point+U%2B2200)), `forall`, `FORALL`, `for-all` or `FOR-ALL` for universal quantifications
   * `∃` ([U+2203](https://www.google.com/search?q=unicode+code+point+U%2B2203)), `exists`, `EXISTS`, `there-exists` or `THERE-EXISTS` for existential quantifications
@@ -133,7 +133,7 @@ Notes:
   * `¬` ([U+00AC](https://www.google.com/search?q=unicode+code+point+U%2B00AC)), `!`, `not` or `NOT` for negations
   * `⇒` ([U+21D2](https://www.google.com/search?q=unicode+code+point+U%2B21D2)), `->` or `=>` for implications
   * `⇔` ([U+21D4](https://www.google.com/search?q=unicode+code+point+U%2B21D4)), `<->` or `<=>` for equivalences
-* You can use `[ ... ]` or `( ... )` for bracketing sub-sentences.
+* You can use `[ ... ]` or `( ... )` for bracketing sub-formulas.
 * Variable, function and predicate identifiers must be alphanumeric (i.e. must match the regex `[A-Za-z0-9]+`).
 * Constants (that is, zero-arity functions) can be written with or without parentheses. Whether the returned identifiers for `myConstant` and `myConstant()` are the same depends upon the configuration of the parser. 
 * To create a predicate that refers to the `EqualityIdentifier` type (and thus capable of being leveraged by KBs that have particular handling for equality, etc), use `{term} = {term}`.
@@ -142,14 +142,14 @@ Notes:
 
 ## Storing Knowledge & Making Inferences - with SCFirstOrderLogic.Inference.Basic
 
-Once you have some sentences, storing them and making inferences can be done with the aid of the types in the `SCFirstOrderLogic.Inference.Basic` package.
+Once you have some formulas, storing them and making inferences can be done with the aid of the types in the `SCFirstOrderLogic.Inference.Basic` package.
 This library includes a few very simple knowledge bases - one that uses forward chaining, one that uses backward chaining, and one that uses resolution.
 These implementations are not as yet sophisticated enough to be useful in a production scenario, but should be useful as a learning tool, and perhaps even as a starting point for more capable implementations.
 Some examples follow, but first, here's our domain, taken from section 9.3 of 'Artificial Intelligence: A Modern Approach':
 
 ```
 using SCFirstOrderLogic;
-using SCFirstOrderLogic.SentenceCreation;
+using SCFirstOrderLogic.FormulaCreation;
 using System.Linq;
 
 var rules = new[]
@@ -175,7 +175,7 @@ var rules = new[]
     // "The country Nono, an enemy of America..":
     "IsEnemyOf(Nono, America)",
 
-}.Select(s => SentenceParser.BasicParser.Parse(s));
+}.Select(s => FormulaParser.Default.Parse(s));
 ```
 
 ### Using Forward Chaining
@@ -194,7 +194,7 @@ using SCFirstOrderLogic.Inference.Basic.ForwardChaining;
 // of IClauseStore to use external storage and/or customised indexing, for example.
 var kb = new ForwardChainingKnowledgeBase(new HashSetClauseStore());
 kb.Tell(rules);
-var querySentence = SentenceParser.BasicParser.Parse("IsCriminal(West)");
+var querySentence = FormulaParser.Default.Parse("IsCriminal(West)");
 
 // Succinct way to get a true/false result:
 Console.WriteLine(kb.Ask(querySentence)); // "True"
@@ -220,7 +220,7 @@ using SCFirstOrderLogic.Inference.Basic.BackwardChaining;
 // just stores things in memory.
 var kb = new BackwardChainingKnowledgeBase(new DictionaryClauseStore());
 kb.Tell(rules);
-var result = kb.Ask(SentenceParser.BasicParser.Parse("IsCriminal(West)")); // == true
+var result = kb.Ask(FormulaParser.Default.Parse("IsCriminal(West)")); // == true
 // ..Or can get an explanation in the same way as above
 ```
 
@@ -245,13 +245,13 @@ var kb = new ResolutionKnowledgeBase(new LinearResolutionStrategy(
     ClauseResolutionPriorityComparisons.UnitPreference));
 
 kb.Tell(rules);
-var result = kb.Ask(SentenceParser.BasicParser.Parse("IsCriminal(West)")); // == true
+var result = kb.Ask(FormulaParser.Default.Parse("IsCriminal(West)")); // == true
 // ..Or can get an explanation in the same way as above
 ```
 
 Notice that:
 
-* Formatting of sentences and query result explanations includes the appropriate symbols (∀, ⇔, ∃, ∧ and so on).
+* Formatting of formulas and query result explanations includes the appropriate symbols (∀, ⇔, ∃, ∧ and so on).
   Depending on your environment, you might need to take action so that these are outputted properly.
   E.g. For running on Windows it might be worth adding `Console.OutputEncoding = Encoding.Unicode;` to your application start-up.
 * The `Tell`, `Ask`, `CreateQuery` and `Execute` methods used above are actually extension methods that are are synchronous wrappers around underlying async versions.
