@@ -25,7 +25,7 @@
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
     <PackageReference Include="SCFirstOrderLogic" Version="8.0.0" />
     <PackageReference Include="SCFirstOrderLogic.ExampleDomains" Version="2.0.0" />
-    <PackageReference Include="SCFirstOrderLogic.Inference.Basic" Version="3.0.0-pre.3" />
+    <PackageReference Include="SCFirstOrderLogic.Inference.Basic" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>

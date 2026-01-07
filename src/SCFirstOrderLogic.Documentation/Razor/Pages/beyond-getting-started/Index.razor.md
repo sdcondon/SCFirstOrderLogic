@@ -13,7 +13,7 @@ Having said all that, some hopefully useful notes do follow here.
 * **Equality:** The SCFirstOrderLogic namespace includes EqualityIdentifier, intended to be used as the identifier for the equality predicate.
   The various formula creation methods make use of this in created formulas where appropriate.
 
-### `SCFirstOrderLogic.LanguageIntegration`
+### `SCFirstOrderLogic.FormulaCreation.Linq`
 
 As mentioned briefly in 'getting started', a language-integrated approach to formula creation is available. See [here](beyond-getting-started/language-integration.md) for details.
 
