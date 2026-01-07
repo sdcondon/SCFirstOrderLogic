@@ -120,7 +120,7 @@ The `FormulaCreation` namespace contains a `FormulaParser` class, that facilitat
 ```
 using SCFirstOrderLogic.FormulaCreation;
 
-var grandparentDefn = FormulaParser.BasicParser.Parse("∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]");
+var grandparentDefn = FormulaParser.Default.Parse("∀ g, c, IsGrandparentOf(g, c) ⇔ [∃ p, IsParentOf(g, p) ∧ IsParentOf(p, c)]");
 ```
 
 Notes:
