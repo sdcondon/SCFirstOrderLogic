@@ -9,24 +9,26 @@ public static class FormulaFormatterTests
     public static Test FormatBehaviour => TestThat
         .GivenEachOf<FormatTestCase>(() =>
         [
-            new(Formula: "P(C())",            Expected: "P(C())"),
-            new(Formula: "P() & Q() & R()",   Expected: "P() ∧ Q() ∧ R()"),
+            new(Formula: "P(C())", Expected: "P(C())"),
+            new(Formula: "P() & Q() & R()", Expected: "P() ∧ Q() ∧ R()"),
             new(Formula: "[P() | Q()] & R()", Expected: "[P() ∨ Q()] ∧ R()"),
             new(Formula: "P() | [Q() & R()]", Expected: "P() ∨ [Q() ∧ R()]"),
-            new(Formula: "![P() | Q()]",      Expected: "¬[P() ∨ Q()]"),
-            new(Formula: "![P()]",            Expected: "¬P()"),
+            new(Formula: "![P() | Q()]", Expected: "¬[P() ∨ Q()]"),
+            new(Formula: "![P()]", Expected: "¬P()"),
 
             //∃∀
-            new(Formula: "∃ x, P(x)",        Expected: "∃ x, P(x)"),
+            new(Formula: "∃ x, P(x)", Expected: "∃ x, P(x)"),
             new(Formula: "∃ x, P(x) | Q(x)", Expected: "∃ x, P(x) ∨ Q(x)"),
             new(Formula: "∃ x, P(x) => Q(x)", Expected: "∃ x, P(x) ⇒ Q(x)"),
 
-            new(Formula: "∃ x, ∀ y, P(x, y)",        Expected: "∃ x, ∀ y, P(x, y)"),
+            new(Formula: "∃ x, ∀ y, P(x, y)", Expected: "∃ x, ∀ y, P(x, y)"),
 
             new(Formula: "∀ x, P(x) => Q(x) => R(x)", Expected: "∀ x, [P(x) ⇒ Q(x)] ⇒ R(x)"),
 
             new(Formula: "∀ x, ∀ y, P(x, y)", Expected: "∀ x, y, P(x, y)"),
             new(Formula: "∃ x, ∃ y, P(x, y)", Expected: "∃ x, y, P(x, y)"),
+
+            new(Formula: "∀ x, [∀ y, Animal(y) ⇒ Loves(x, y)] ⇒ [∃ y, Loves(y, x)]", Expected: "∀ x, [∀ y, Animal(y) ⇒ Loves(x, y)] ⇒ [∃ y, Loves(y, x)]")
         ])
         .When(tc => new FormulaFormatter().Format(FormulaParser.Default.Parse(tc.Formula)))
         .ThenReturns()

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace SCFirstOrderLogic.FormulaFormatting;
 
 /// <summary>
-/// Interface for types capable of creating labels for identifiers that are unique (within a specified scope).
+/// Interface for types capable of creating labels for identifiers that are unique within a specified scope.
 /// </summary>
 public interface ILabeller
 {

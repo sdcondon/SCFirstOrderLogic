@@ -10,8 +10,8 @@ namespace SCFirstOrderLogic;
 
 /// <summary>
 /// <para>
-/// Streamlined representation of a <see cref="Formula"/> in conjunctive normal form (CNF).
-/// Consists of a set of <see cref="CNFClause"/>s.
+/// Streamlined representation of a first-order logic formula in conjunctive normal form (CNF).
+/// Consists of a <see cref="IReadOnlySet{T}"/> of <see cref="CNFClause"/>s.
 /// </para>
 /// <para>
 /// Note that this type is NOT a subtype of <see cref="Formula"/>. To represent CNF as a <see cref="Formula"/>, 
@@ -39,7 +39,13 @@ public class CNFFormula : IEquatable<CNFFormula>
     }
 
     /// <summary>
+    /// <para>
     /// Initialises a new instance of the <see cref="CNFFormula"/> class from a <see cref="Formula"/> that is a conjunction of disjunctions of literals (a literal being a predicate or a negated predicate).
+    /// </para>
+    /// <para>
+    /// An <see cref="ArgumentException"/> will be thrown if the provided formula is not a conjunction of disjunctions of literals.
+    /// In other words, conversion to CNF is NOT carried out by this constructor.
+    /// </para>
     /// </summary>
     /// <param name="cnfFormula">
     /// The formula, in CNF but represented as a <see cref="Formula"/>. An <see cref="ArgumentException"/> will be thrown if it is not a conjunction of disjunctions of literals.

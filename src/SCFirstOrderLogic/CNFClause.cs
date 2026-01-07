@@ -10,8 +10,8 @@ namespace SCFirstOrderLogic;
 
 /// <summary>
 /// <para>
-/// Streamlined representation of an individual clause (i.e. a disjunction of <see cref="Literal"/>s) of a first-order logic formula in conjunctive normal form.
-/// Consists of a set of <see cref="Literal"/>s.
+/// Streamlined representation of an individual clause of a first-order logic formula in conjunctive normal form (CNF).
+/// Consists of a <see cref="IReadOnlySet{T}"/> set of <see cref="Literal"/>s.
 /// </para>
 /// <para>
 /// Note that this type is NOT a subtype of <see cref="Formula"/>. To represent a clause as a <see cref="Formula"/>, 

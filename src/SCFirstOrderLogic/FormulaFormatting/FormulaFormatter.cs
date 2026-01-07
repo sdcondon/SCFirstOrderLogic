@@ -10,7 +10,8 @@ namespace SCFirstOrderLogic.FormulaFormatting;
 
 /// <summary>
 /// This class provides functionality for rendering <see cref="Formula"/> instances (and <see cref="CNFFormula"/> instances) in the standard first-order logic syntax.
-/// Using a single <see cref="FormulaFormatter"/> instance allows for unique (and customisable) labelling of standardised variables and Skolem functions for all formulas formatted with the instance.
+/// Using a single <see cref="FormulaFormatter"/> instance allows for unique (and customisable) labelling of identifiers (e.g. standardised variables and Skolem functions)
+/// for all formulas formatted with the instance.
 /// </summary>
 public class FormulaFormatter
 {
