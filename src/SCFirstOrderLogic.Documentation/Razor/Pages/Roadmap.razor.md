@@ -7,7 +7,7 @@ I'm *almost* at the point that I consider the core SCFirstOrderLogic package "do
 
 ..but, at the present time at least, I don't see this package as needing much more than that.
 
-After that, might turn my attention to look at the inference package a bit more - maybe even implement some KBs that conceivably *could* be of use in a prod environment. For example:
+After that, might turn my attention to look at the inference package a bit more - maybe even implement some KBs that conceivably *could* be of use in a "production" scenario. For example:
 
 * Further development of the linear resolution strategy, gradually heading towards SLD resolution.
 * Some improvements to the chaining knowledge bases. More flexibility when chaining. The current implementations are very constrained in their consideration of clauses, don't handle loops, etc.

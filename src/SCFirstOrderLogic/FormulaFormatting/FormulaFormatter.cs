@@ -156,7 +156,6 @@ public class FormulaFormatter
         return $"{lOpen}{Format(conjunction.Left)}{lClose} ∧ {rOpen}{Format(conjunction.Right)}{rClose}";
     }
 
-
     /// <summary>
     /// Returns a string representation of a given <see cref="Disjunction"/> instance.
     /// </summary>
