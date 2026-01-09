@@ -1,16 +1,13 @@
 ﻿# Roadmap
 
-Long-term, this library will be "done" when I think that it does its "learning and experimentation" job adequately, and provides enough extension points for people to extend it should they so wish - perhaps even to the point of being useful in a production scenario.
+I'm *almost* at the point that I consider the core SCFirstOrderLogic package "done". At some point perhaps toward the middle of 2026, v9 might roll around, in which I might:
 
-Priorities at the time of writing:
+* Make some adjustments to the FormulaFormatting namespace - I'm not very happy with it as it stands
+* Perhaps add a few things to the FormulaManipulation.Substitution namespace - slightly more advanced unification stuff.
 
-* *Nothing at the moment - working on other things for the time being*
+..but, at the present time at least, I don't see this package as needing much more than that.
 
-Further ahead:
+After that, might turn my attention to look at the inference package a bit more - maybe even implement some KBs that conceivably *could* be of use in a prod environment. For example:
 
-* More improvements to the inference algorithms in the Inference.Basic.Package:
-  As mentioned above and elsewhere, this package is more about the fundamentals than especially powerful inference logic, but we should probably cover at least some of the relatively fundamental problems and techniques - the inference demo is rather underwhelming at the moment.
-  For example, some or all of:
-  * Further development of the linear resolution strategy, gradually heading towards SLD resolution (though if I get that far it will likely go in its own package).
-  * Some improvements to the chaining knowledge bases. More flexibility when chaining. The current implementations are very constrained in their consideration of clauses, don't handle loops, etc.
-* The next major version bump of the core package is likely to be an overhaul of the formula formatting logic - I'm not very happy with it as it stands.
+* Further development of the linear resolution strategy, gradually heading towards SLD resolution.
+* Some improvements to the chaining knowledge bases. More flexibility when chaining. The current implementations are very constrained in their consideration of clauses, don't handle loops, etc.
