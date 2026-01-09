@@ -6,12 +6,12 @@ namespace SCFirstOrderLogic.FormulaManipulation;
 
 /// <summary>
 /// <para>
-/// Base class for recursive transformations of <see cref="Formula"/> instances to other <see cref="Formula"/> instances.
+/// Base class for recursive transformations of <see cref="Formula"/> (and <see cref="Term"/>) instances to other <see cref="Formula"/> (and <see cref="Term"/>, respectively) instances.
 /// </para>
 /// <para>
 /// That is, a base class for transformations in which the default implementation for any non-terminal
-/// formula/term element leaves the element type unchanged and transforms the element's children - and does
-/// nothing for terminal elements.
+/// element leaves the element type unchanged and transforms the element's children - and does nothing
+/// for terminal elements.
 /// </para>
 /// </summary>
 public abstract class RecursiveFormulaTransformation : IFormulaTransformation<Formula>, ITermTransformation<Term>

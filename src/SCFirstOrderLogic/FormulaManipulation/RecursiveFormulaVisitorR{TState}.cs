@@ -4,11 +4,11 @@ namespace SCFirstOrderLogic.FormulaManipulation;
 
 /// <summary>
 /// <para>
-/// Base class for recursive visitors of <see cref="Formula"/> instances that reference external state that is passed in by reference.
+/// Base class for recursive visitors of <see cref="Formula"/> (and <see cref="Term"/>) instances that reference external state that is passed in by reference.
 /// </para>
 /// <para>
 /// That is, a base class for visitors in which the default implementation for any non-terminal
-/// formula/term element simply visits the element's children - and does nothing for terminal elements.
+/// element simply visits the element's children - and does nothing for terminal elements.
 /// </para>
 /// </summary>
 public abstract class RecursiveFormulaVisitorR<TState> : IFormulaVisitorR<TState>, ITermVisitorR<TState>

@@ -8,11 +8,11 @@ namespace SCFirstOrderLogic.FormulaManipulation;
 
 /// <summary>
 /// <para>
-/// Base class for recursive asynchronous visitors of <see cref="Formula"/> instances.
+/// Base class for recursive asynchronous visitors of <see cref="Formula"/> (and <see cref="Term"/>) instances.
 /// </para>
 /// <para>
 /// That is, a base class for asynchronous visitors in which the default implementation for any non-terminal
-/// formula/term element simply visits the element's children (in parallel) - and does nothing for terminal elements.
+/// element simply visits the element's children (in parallel) - and does nothing for terminal elements.
 /// </para>
 /// </summary>
 public abstract class RecursiveAsyncFormulaVisitor : IAsyncFormulaVisitor, IAsyncTermVisitor
