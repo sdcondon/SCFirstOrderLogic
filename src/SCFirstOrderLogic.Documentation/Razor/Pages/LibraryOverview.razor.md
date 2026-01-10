@@ -9,7 +9,12 @@ Here is a quick overview of the namespaces found within the SCFirstOrderLogic li
   * **`ClauseIndexing`:** clause indexing data structures, for fast lookup of stored clauses that subsume or are subsumed by a query clause.
     Specifically, there are feature vector index implementations in here.
     Customisation of the backing store is allowed for via an abstraction for tree nodes, and both synchronous and asynchronous versions exist.
-  * **`FormulaCreation`:** logic to ease the creation of formulas.
+    * **`Features:`** a couple of well-known features to use in feature vector index instances - max depth and occurence count.
+    The use of these is of course optional - you can use your own feature specifications, too.
+  * **`FormulaCreation`:** logic to ease the creation of formulas. Directly contains a formula parser, as well as a couple of static factory classes for the succinct creation of formulas.
+    All formula creation options aside from the specialised ones (see below) are demonstrated in [getting started](getting-started.md).
+    * **`Linq:`** logic for creating formulas in a language-integrated manner. Essentially allows for creating formulas from LINQ expressions.
+    * **`Specialised:`** Formula creation logic for use in certain specialised situations.
   * **`FormulaFormatting`:** logic for creating string representations of formulas. Includes logic for ensuring unique labelling of e.g. standardised variables and Skolem functions across a set of formulas.
   * **`FormulaManipulation`:** contains some interfaces and base classes for the manipulation of formulas - formula visitors and transformations.
     * **`Normalisation`:** formula manipulation & interrogation logic related to normalisation. For example; transformation to CNF, and restandardisation of variables in a formula already in CNF.
