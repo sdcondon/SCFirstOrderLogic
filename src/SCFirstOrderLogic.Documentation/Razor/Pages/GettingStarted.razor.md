@@ -17,7 +17,7 @@ The most direct way to express formulas is to directly compose instances of the 
 ```
 using SCFirstOrderLogic;
 
-// Helper methods for creating your predicates (and functions) are recommended to avoid repetition:
+// Methods for creating predicates (and functions) with a particular identifier are recommended to avoid identifier repetition:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new(nameof(IsParent), parent, child);
 
@@ -46,7 +46,7 @@ and includes a number of static methods and properties to assist with succinct f
 using SCFirstOrderLogic;
 using static SCFirstOrderLogic.FormulaCreation.FormulaFactory;
 
-// Helper methods for creating your predicates (and functions) are recommended to avoid repetition:
+// Methods for creating predicates (and functions) with a particular identifier are recommended to avoid identifier repetition:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
@@ -69,7 +69,7 @@ The `FormulaCreation` namespace also contains a static class called `OperableFor
 using SCFirstOrderLogic;
 using static SCFirstOrderLogic.FormulaCreation.OperableFormulaFactory;
 
-// Helper methods for creating your predicates (and functions) are recommended to avoid repetition
+// Methods for creating predicates (and functions) with a particular identifier are recommended to avoid identifier repetition.
 // (NB: the return type here is OperablePredicate, not Predicate):
 OperablePredicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 OperablePredicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
@@ -93,7 +93,7 @@ modelling the domain as an IEnumerable&lt;T&gt;, then expressing our formula as 
 using SCFirstOrderLogic.FormulaCreation.Linq;
 using static SCFirstOrderLogic.FormulaCreation.Linq.Operators; // Contains Iff and If methods
 
-// The helper methods recommended for the other approaches become full interfaces
+// The helper methods recommended for the other approaches become interfaces
 // when language integration is used (no implementation is needed):
 interface IPerson
 {
