@@ -24,7 +24,7 @@ ANTLR is a Java tool - something Antlr4BuildTasks handles by downloading the JRE
 ## Issues and Contributions
 
 I'm not expecting anyone to want to get involved given the low download figures on NuGet, but please feel free to do so.
-I do keep an eye on the [issues](https://github.com/sdcondon/SCFirstOrderLogic/issues) tab, and will add a CONTRIBUTING.md if anyone drops me a message expressing interest.
+I do keep an eye on the [issues](https://github.com/sdcondon/SCFirstOrderLogic/issues) tab, and will add some contribution guidelines if anyone drops me a message expressing interest.
 Do bear in mind that I have a very particular scope in mind for the library, though - see the [roadmap](https://sdcondon.net/SCFirstOrderLogic/roadmap.md) for details.
 
 ## See Also
