@@ -17,7 +17,8 @@ The most direct way to express formulas is to directly compose instances of the 
 ```
 using SCFirstOrderLogic;
 
-// Methods for creating predicates (and functions) with a particular identifier are recommended to avoid identifier repetition:
+// Helper methods for creating predicates (and functions) with a 
+// particular identifier are recommended to avoid identifier repetition:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new(nameof(IsParent), parent, child);
 
@@ -46,7 +47,8 @@ and includes a number of static methods and properties to assist with succinct f
 using SCFirstOrderLogic;
 using static SCFirstOrderLogic.FormulaCreation.FormulaFactory;
 
-// Methods for creating predicates (and functions) with a particular identifier are recommended to avoid identifier repetition:
+// Helper methods for creating predicates (and functions) with a 
+// particular identifier are recommended to avoid identifier repetition:
 Predicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 Predicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);
 
@@ -69,7 +71,8 @@ The `FormulaCreation` namespace also contains a static class called `OperableFor
 using SCFirstOrderLogic;
 using static SCFirstOrderLogic.FormulaCreation.OperableFormulaFactory;
 
-// Methods for creating predicates (and functions) with a particular identifier are recommended to avoid identifier repetition.
+// Helper methods for creating predicates (and functions) with a 
+// particular identifier are recommended to avoid identifier repetition.
 // (NB: the return type here is OperablePredicate, not Predicate):
 OperablePredicate IsGrandparent(Term grandparent, Term grandchild) => new Predicate(nameof(IsGrandparent), grandparent, grandchild);
 OperablePredicate IsParent(Term parent, Term child) => new Predicate(nameof(IsParent), parent, child);

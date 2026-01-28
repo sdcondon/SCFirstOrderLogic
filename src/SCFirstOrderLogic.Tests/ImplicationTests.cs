@@ -8,6 +8,7 @@ public static class ImplicationTests
     private static Predicate A => new(nameof(A));
     private static Predicate B => new(nameof(B));
 
+    // Equality should have value semantics
     public static Test CloneComparison => TestThat
         .When(() => new
         {

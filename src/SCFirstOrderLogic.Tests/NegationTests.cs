@@ -7,6 +7,7 @@ public static class NegationTests
 {
     private static Predicate A => new(nameof(A));
 
+    // Equality should have value semantics
     public static Test CloneComparison => TestThat
         .When(() => new
         {

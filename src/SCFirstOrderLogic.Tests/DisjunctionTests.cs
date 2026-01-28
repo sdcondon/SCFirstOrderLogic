@@ -9,6 +9,7 @@ public static class DisjunctionTests
     private static Predicate B => new(nameof(B));
     private static Predicate C => new(nameof(C));
 
+    // Equality should have value semantics
     public static Test CloneComparison => TestThat
         .When(() => new
         {

@@ -9,6 +9,7 @@ public static class VariableReferenceTests
         .When(() => new VariableReference("X").IsGroundTerm)
         .ThenReturns(isGroundTerm => isGroundTerm.Should().Be(false));
 
+    // Equality should have value semantics
     public static Test CloneComparison => TestThat
         .When(() => new
         {

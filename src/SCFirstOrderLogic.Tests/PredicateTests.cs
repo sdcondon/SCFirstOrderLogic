@@ -5,6 +5,7 @@ namespace SCFirstOrderLogic;
 
 public static class PredicateTests
 {
+    // Equality should have value semantics
     public static Test CloneComparison => TestThat
         .When(() => new
         {

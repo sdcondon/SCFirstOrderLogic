@@ -21,6 +21,7 @@ public static class FunctionTests
         .When(tc => tc.Function.IsGroundTerm)
         .ThenReturns((tc, isGroundTerm) => isGroundTerm.Should().Be(tc.IsGroundTermExpectation));
 
+    // Equality should have value semantics
     public static Test CloneComparison => TestThat
         .When(() => new
         {
