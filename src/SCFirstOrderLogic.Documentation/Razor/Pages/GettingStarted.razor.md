@@ -238,9 +238,9 @@ using SCFirstOrderLogic.Inference.Basic.Resolution;
 // .. paste the domain listing here ..
 
 // The resolution KB has more configurability/extensibility than the other two:
-var clauseStore = new FeatureVectorIndexClauseStore<MaxDepthFeature>(
+var clauseStore = new FeatureVectorIndexClauseStore(
     MaxDepthFeature.MakeFeatureVector,
-    new ClauseStoreFVIListNode<MaxDepthFeature>(MaxDepthFeature.MakeFeatureComparer()));
+    new ClauseStoreFVIListNode(MaxDepthFeature.MakeFeatureComparer()));
 // ..or var clauseStore = new HashSetClauseStore(); for a simpler, less powerful clause store.
 
 var kb = new ResolutionKnowledgeBase(new LinearResolutionStrategy(
